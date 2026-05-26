@@ -1,0 +1,42 @@
+/* Performance Optimizations */
+* {
+  box-sizing: border-box;
+}
+
+/* Reduce animation complexity */
+.nav-item {
+  will-change: transform, background-color;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize GPU acceleration */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Reduce repaints */
+.dashboard-card {
+  contain: layout style paint;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimize images */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Reduce motion for performance */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
