@@ -1,0 +1,6 @@
+{
+  "/page": "app/page.js",
+  "/achievements/page": "app/achievements/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/chatbot/page": "app/chatbot/page.js"
+}
