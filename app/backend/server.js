@@ -6,8 +6,32 @@ require('dotenv').config()
 
 const app = express()
 
+// ✅ Allowed Origins
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://localhost:5173',
+].filter(Boolean)
+
+// ✅ CORS — must be before everything else
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      console.warn(`🚫 CORS blocked request from: ${origin}`)
+      callback(new Error(`CORS blocked: ${origin}`))
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}))
+
+// ✅ Handle preflight requests for all routes
+app.options('*', cors())
+
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }))
 app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
@@ -18,15 +42,12 @@ function safeRoute(path) {
     return require(path)
   } catch (e) {
     console.warn(`⚠️ Route not found (skipped): ${path} — ${e.message}`)
-
     const router = express.Router()
-
     router.all('*', (req, res) => {
       res.status(503).json({
         error: `Route module missing: ${path}`,
       })
     })
-
     return router
   }
 }
@@ -53,13 +74,12 @@ app.get('/', (req, res) => {
 
 // Health Check Route
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok' })
+  res.json({ status: 'ok', allowedOrigins })
 })
 
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err)
-
   res.status(500).json({
     error: 'Internal server error',
   })
@@ -67,9 +87,9 @@ app.use((err, req, res, next) => {
 
 // Start Server
 const PORT = process.env.PORT || 10000
-
 const server = app.listen(PORT, () => {
   console.log(`✅ NutriAI backend running on port ${PORT}`)
+  console.log(`🌐 Allowed origins: ${allowedOrigins.join(', ')}`)
 })
 
 // Graceful Shutdown
@@ -79,7 +99,6 @@ process.on('SIGTERM', async () => {
       const { prisma } = require('./prisma.config')
       await prisma.$disconnect()
     } catch (_) {}
-
     console.log('Server shut down')
   })
 })
