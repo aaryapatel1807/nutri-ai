@@ -46,9 +46,17 @@ export const auth = {
   getMe: () => api.get('/api/auth/me'),
   updateProfile: (data) => api.put('/api/auth/profile', data),
   logout: () => {
-    localStorage.removeItem('nutriai_token')
-    localStorage.removeItem('nutriai_user')
-  },
+  localStorage.removeItem('nutriai_token')
+  localStorage.removeItem('nutriai_user')
+  
+  // Clear all user-scoped chat history
+  const keys = Object.keys(localStorage)
+  keys.forEach(key => {
+    if (key.startsWith('nutriai_chat_')) {
+      localStorage.removeItem(key)
+    }
+  })
+},
   getCurrentUser: () => {
     try {
       const user = localStorage.getItem('nutriai_user')
