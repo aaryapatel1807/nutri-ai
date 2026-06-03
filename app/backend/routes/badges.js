@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/badges - get all badges with unlock status
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const allBadges = await prisma.badge.findMany()
     const userBadges = await prisma.userBadge.findMany({
@@ -25,7 +25,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // GET /api/badges/xp - get user XP and level
-router.get('/xp', auth, async (req, res) => {
+router.get('/xp', authMiddleware, async (req, res) => {
   try {
     const userBadges = await prisma.userBadge.findMany({
       where: { userId: req.userId },
