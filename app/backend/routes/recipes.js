@@ -4,7 +4,7 @@ const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/recipes - get all saved recipes for user
-router.get('/', authMIddleware, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const recipes = await prisma.recipe.findMany({
       where: { userId: req.userId },
