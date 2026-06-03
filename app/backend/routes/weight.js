@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/weight - get all weight logs for the user
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const logs = await prisma.weightLog.findMany({
       where: { userId: req.userId },
@@ -19,7 +19,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // GET /api/weight/latest - get the most recent weight log
-router.get('/latest', auth, async (req, res) => {
+router.get('/latest', authMiddleware, async (req, res) => {
   try {
     const log = await prisma.weightLog.findFirst({
       where: { userId: req.userId },
@@ -33,7 +33,7 @@ router.get('/latest', auth, async (req, res) => {
 })
 
 // GET /api/weight/history - get last 30 days of weight logs
-router.get('/history', auth, async (req, res) => {
+router.get('/history', authMiddleware, async (req, res) => {
   try {
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -50,7 +50,7 @@ router.get('/history', auth, async (req, res) => {
 })
 
 // POST /api/weight - log a new weight entry
-router.post('/', auth, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { weight } = req.body
     if (!weight || weight <= 0)
@@ -74,7 +74,7 @@ router.post('/', auth, async (req, res) => {
 })
 
 // DELETE /api/weight/:id - delete a weight log entry
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const log = await prisma.weightLog.findUnique({ where: { id: req.params.id } })
     if (!log) return res.status(404).json({ error: 'Log not found' })
