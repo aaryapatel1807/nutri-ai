@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // REGISTER
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
 })
 
 // GET ME
-router.get('/me', auth, async (req, res) => {
+router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.userId } })
 
@@ -84,7 +84,7 @@ router.get('/me', auth, async (req, res) => {
 })
 
 // UPDATE PROFILE
-router.put('/profile', auth, async (req, res) => {
+router.put('/profile', authMiddleware, async (req, res) => {
   try {
     const userId = req.userId
 
