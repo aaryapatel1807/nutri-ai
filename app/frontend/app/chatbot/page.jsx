@@ -158,7 +158,7 @@ export default function AICoach() {
 
   useEffect(() => {
     // Load chat history from localStorage on persona change
-    const savedHistory = localStorage.getItem(`nutriai_chat_${activePersona.id}`)
+    const savedHistory = localStorage.getItem(`nutriai_chat_${userId}_${activePersona.id}`)
     if (savedHistory) {
       const parsed = JSON.parse(savedHistory)
       setMessages(parsed.messages || [])
