@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/stats - get full user statistics
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.userId } })
     const totalMeals = await prisma.meal.count({ where: { userId: req.userId } })
