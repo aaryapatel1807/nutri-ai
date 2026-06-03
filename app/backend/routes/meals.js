@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/meals - get all meals for user
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const meals = await prisma.meal.findMany({
       where: { userId: req.userId },
@@ -17,7 +17,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // GET /api/meals/today - get today's meals with totals
-router.get('/today', auth, async (req, res) => {
+router.get('/today', authmiddleware, async (req, res) => {
   try {
     // Use a 30-hour window (last 6h + today 24h) to handle any timezone offset up to UTC+14
     const now = new Date()
@@ -66,7 +66,7 @@ router.get('/today', auth, async (req, res) => {
 })
 
 // GET /api/meals/weekly - get last 7 days nutrition
-router.get('/weekly', auth, async (req, res) => {
+router.get('/weekly', authMiddleware, async (req, res) => {
   try {
     const now = new Date()
     const sevenDaysAgo = new Date(now)
@@ -114,7 +114,7 @@ router.get('/weekly', auth, async (req, res) => {
 })
 
 // POST /api/meals - log a new meal
-router.post('/', auth, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { name, calories, protein, carbs, fat, mealType, date } = req.body
     const meal = await prisma.meal.create({
@@ -140,7 +140,7 @@ router.post('/', auth, async (req, res) => {
 })
 
 // DELETE /api/meals/:id - delete a meal
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     // Verify meal belongs to this user before deleting
     const meal = await prisma.meal.findFirst({
