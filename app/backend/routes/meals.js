@@ -17,7 +17,7 @@ router.get('/', authMiddleware, async (req, res) => {
 })
 
 // GET /api/meals/today - get today's meals with totals
-router.get('/today', authmiddleware, async (req, res) => {
+router.get('/today', authMiddleware, async (req, res) => {
   try {
     // Use a 30-hour window (last 6h + today 24h) to handle any timezone offset up to UTC+14
     const now = new Date()
