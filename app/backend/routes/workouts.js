@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/workouts - get all workouts
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const workouts = await prisma.workout.findMany({
       where: { userId: req.userId },
@@ -17,7 +17,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // GET /api/workouts/stats - get workout statistics
-router.get('/stats', auth, async (req, res) => {
+router.get('/stats', authMiddleware, async (req, res) => {
   try {
     const total = await prisma.workout.count({ where: { userId: req.userId } })
     const thisWeek = await prisma.workout.count({
@@ -41,7 +41,7 @@ router.get('/stats', auth, async (req, res) => {
 })
 
 // POST /api/workouts - log completed workout
-router.post('/', auth, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { name, duration, calories, category, difficulty } = req.body
     const workout = await prisma.workout.create({
@@ -61,7 +61,7 @@ router.post('/', auth, async (req, res) => {
 })
 
 // PUT /api/workouts/:id - update a workout
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const { name, duration, calories, category, difficulty } = req.body
     const existing = await prisma.workout.findFirst({
@@ -86,7 +86,7 @@ router.put('/:id', auth, async (req, res) => {
 })
 
 // DELETE /api/workouts/:id - delete a workout
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const existing = await prisma.workout.findFirst({
       where: { id: req.params.id, userId: req.userId }
@@ -101,7 +101,7 @@ router.delete('/:id', auth, async (req, res) => {
 })
 
 // POST /api/workouts/:id/complete - mark as complete (no-op, already saved as completed)
-router.post('/:id/complete', auth, async (req, res) => {
+router.post('/:id/complete', authMiddleware, async (req, res) => {
   try {
     const workout = await prisma.workout.findFirst({
       where: { id: req.params.id, userId: req.userId }
