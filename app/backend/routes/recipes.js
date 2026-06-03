@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/recipes - get all saved recipes for user
-router.get('/', auth, async (req, res) => {
+router.get('/', authMIddleware, async (req, res) => {
   try {
     const recipes = await prisma.recipe.findMany({
       where: { userId: req.userId },
@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // GET /api/recipes/:id - get a single recipe
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const recipe = await prisma.recipe.findUnique({ where: { id: req.params.id } })
     if (!recipe) return res.status(404).json({ error: 'Recipe not found' })
@@ -31,7 +31,7 @@ router.get('/:id', auth, async (req, res) => {
 })
 
 // POST /api/recipes - save a new recipe
-router.post('/', auth, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { title, ingredients, instructions, calories, protein, carbs, fat, imageUrl } = req.body
     if (!title || !ingredients || !instructions)
@@ -58,7 +58,7 @@ router.post('/', auth, async (req, res) => {
 })
 
 // PUT /api/recipes/:id - update a recipe
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const existing = await prisma.recipe.findUnique({ where: { id: req.params.id } })
     if (!existing) return res.status(404).json({ error: 'Recipe not found' })
@@ -87,7 +87,7 @@ router.put('/:id', auth, async (req, res) => {
 })
 
 // DELETE /api/recipes/:id - delete a recipe
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const recipe = await prisma.recipe.findUnique({ where: { id: req.params.id } })
     if (!recipe) return res.status(404).json({ error: 'Recipe not found' })
