@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 require('dotenv').config()
 
 // POST /api/ai/chat
 // Body: { messages: [{role, content}], systemPrompt: string, model?: string }
-router.post('/chat', auth, async (req, res) => {
+router.post('/chat', authMiddleware, async (req, res) => {
   const { messages, systemPrompt, model } = req.body
 
   if (!messages || !Array.isArray(messages) || messages.length === 0)
