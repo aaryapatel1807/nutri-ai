@@ -1,9 +1,8 @@
-const { PrismaClient } = require('@prisma/client')
+const { prisma } = require('../prisma.config')
 const BaseRepository = require('./base.repository')
 
 class BadgeRepository extends BaseRepository {
   constructor() {
-    const prisma = new PrismaClient()
     super(prisma.badge)
     this.prisma = prisma
   }

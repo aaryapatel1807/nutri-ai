@@ -1,20 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const jwt = require('jsonwebtoken')
+const auth = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
-
-// Auth middleware
-const auth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) return res.status(401).json({ error: 'No token' })
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.userId = decoded.userId
-    next()
-  } catch (error) {
-    res.status(401).json({ error: 'Invalid token' })
-  }
-}
 
 // GET /api/water - get water logs for today (or by date query param)
 router.get('/', auth, async (req, res) => {

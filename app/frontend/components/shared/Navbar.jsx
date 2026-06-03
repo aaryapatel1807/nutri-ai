@@ -62,7 +62,7 @@ export default function Navbar() {
       top: 0,
       left: '260px',
       right: 0,
-      height: '64px',
+      height: '80px',
       background: 'rgba(10,10,15,0.95)',
       backdropFilter: 'blur(20px)',
       borderBottom: '1px solid rgba(255,255,255,0.06)',

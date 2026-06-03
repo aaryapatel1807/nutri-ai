@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getMeals, logMeal, deleteMeal, getCurrentUser } from '../../lib/api'
+import { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
 
@@ -26,6 +26,8 @@ export default function MealLogger() {
   const [logged, setLogged] = useState([])
   const [showSearch, setShowSearch] = useState(false)
   const [showCamera, setShowCamera] = useState(false)
+  const [isScanning, setIsScanning] = useState(false)
+  const [scanError, setScanError] = useState('')
   const [showCustom, setShowCustom] = useState(false)
   const [custom, setCustom] = useState({ name: '', calories: '', protein: '', carbs: '', fat: '' })
   const [loading, setLoading] = useState(true)
@@ -155,7 +157,6 @@ export default function MealLogger() {
   }
 
   return (
-    <>
       <div style={{ width: '100%' }}>
 
         {/* HEADER */}
@@ -574,16 +575,66 @@ export default function MealLogger() {
                 <p style={{ color: '#6B7280', marginBottom: '24px', fontSize: '0.9rem' }}>
                   Take a photo of your food and AI will detect calories automatically
                 </p>
-                <div style={{
-                  border: '2px dashed rgba(0,255,135,0.3)',
-                  borderRadius: '16px', padding: '40px',
-                  marginBottom: '20px', cursor: 'pointer',
-                  background: 'rgba(0,255,135,0.03)'
-                }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🤖</div>
-                  <div style={{ color: '#00FF87', fontSize: '0.9rem' }}>
-                    ML service coming soon...
+                <div 
+                  onClick={() => !isScanning && document.getElementById('food-input').click()}
+                  style={{
+                    border: isScanning ? '2px solid #00FF87' : '2px dashed rgba(0,255,135,0.3)',
+                    borderRadius: '16px', padding: '40px',
+                    marginBottom: '20px', cursor: isScanning ? 'wait' : 'pointer',
+                    background: 'rgba(0,255,135,0.03)',
+                    transition: 'all 0.3s'
+                  }}
+                >
+                  <input 
+                    id="food-input" 
+                    type="file" 
+                    accept="image/*" 
+                    hidden 
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      
+                      setIsScanning(true)
+                      setScanError('')
+                      try {
+                        const formData = new FormData()
+                        formData.append('image', file)
+                        const res = await ml.detect(formData)
+                        
+                        if (res.data && res.data.detection) {
+                          const { name, calories, protein, carbs, fat } = res.data.detection
+                          // Automatically add the detected food
+                          await addFood({
+                            name: name || 'Detected Food',
+                            calories: calories || 0,
+                            protein: protein || 0,
+                            carbs: carbs || 0,
+                            fat: fat || 0,
+                            emoji: '🤖'
+                          })
+                          setShowCamera(false)
+                        } else {
+                          setScanError('Could not identify food. Please try another photo.')
+                        }
+                      } catch (err) {
+                        console.error('Scan error:', err)
+                        setScanError('AI Service error. Please try again later.')
+                      } finally {
+                        setIsScanning(false)
+                      }
+                    }}
+                  />
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
+                    {isScanning ? '🔍' : '🤖'}
                   </div>
+                  <div style={{ color: '#00FF87', fontSize: '0.9rem', fontWeight: 600 }}>
+                    {isScanning ? 'AI is analyzing...' : 'Click to Upload Photo'}
+                  </div>
+                  {scanError && (
+                    <div style={{ color: '#FF6B35', fontSize: '0.8rem', marginTop: '8px' }}>
+                      {scanError}
+                    </div>
+                  )}
                   <div style={{ color: '#6B7280', fontSize: '0.8rem', marginTop: '4px' }}>
                     YOLOv8 food detection
                   </div>
@@ -603,6 +654,5 @@ export default function MealLogger() {
         </AnimatePresence>
 
       </div>
-    </>
   )
 }

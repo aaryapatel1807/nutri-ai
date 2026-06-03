@@ -2,14 +2,16 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import CountUp from 'react-countup'
-import { getCurrentUser, getTodayNutrition, getWeeklyNutrition, getUserXP } from '../../lib/api'
+import api, { getCurrentUser, getTodayNutrition, getWeeklyNutrition, getUserXP } from '../../lib/api'
 
 export default function Dashboard() {
   const [user, setUser] = useState({ name: 'Loading...' })
-  const [water, setWater] = useState(6)
+  const [water, setWater] = useState(0)
+  const [waterLogs, setWaterLogs] = useState([])
   const [todayNutrition, setTodayNutrition] = useState(null)
   const [weeklyData, setWeeklyData] = useState([])
   const [userXP, setUserXP] = useState({ xp: 0, level: 1 })
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -51,26 +53,30 @@ export default function Dashboard() {
           setUser(localUser)
         }
 
-        // Load today's nutrition, weekly data, and XP in parallel
-        const [nutritionData, weekData, xpData] = await Promise.allSettled([
+        // Load all dashboard data in parallel
+        const [nutritionData, weekData, xpData, statsData, waterData] = await Promise.allSettled([
           getTodayNutrition(),
           getWeeklyNutrition(),
           getUserXP(),
+          api.get('/api/stats').then(res => res.data),
+          api.get('/api/water').then(res => res.data)
         ])
 
         if (nutritionData.status === 'fulfilled' && nutritionData.value) {
-          console.log('✅ Today nutrition:', nutritionData.value)
           setTodayNutrition(nutritionData.value)
-        } else {
-          console.error('❌ Nutrition fetch failed:', nutritionData.reason)
         }
-
         if (weekData.status === 'fulfilled' && weekData.value) {
           setWeeklyData(weekData.value)
         }
-
         if (xpData.status === 'fulfilled' && xpData.value) {
           setUserXP(xpData.value)
+        }
+        if (statsData.status === 'fulfilled' && statsData.value) {
+          setStats(statsData.value)
+        }
+        if (waterData.status === 'fulfilled' && waterData.value) {
+          setWater(waterData.value.totalMl / 250) // Assuming 250ml per glass
+          setWaterLogs(waterData.value.logs)
         }
 
       } catch (err) {
@@ -143,22 +149,20 @@ export default function Dashboard() {
     )
   }
 
+  const handleAddWater = async () => {
+    try {
+      const res = await api.post('/api/water', { amountMl: 250 })
+      if (res.data) {
+        setWater(w => Math.min(w + 1, 8))
+        setWaterLogs(prev => [res.data, ...prev])
+      }
+    } catch (err) {
+      console.error('Failed to log water:', err)
+    }
+  }
+
   return (
       <div style={{ width: '100%', margin: '0', padding: '0', position: 'relative', zIndex: 1 }}>
-
-        {/* TEMP DEBUG PANEL - remove after fixing */}
-        <div style={{
-          background: 'rgba(255,100,0,0.15)', border: '1px solid orange',
-          borderRadius: '10px', padding: '12px 16px', marginBottom: '16px',
-          fontSize: '0.8rem', color: '#FFB347', fontFamily: 'monospace'
-        }}>
-          <strong>🔍 DEBUG:</strong>{' '}
-          API calories: <strong>{todayNutrition?.calories ?? 'null'}</strong> |
-          goal: <strong>{todayNutrition?.goalCalories ?? 'null'}</strong> |
-          meals count: <strong>{todayNutrition?.meals?.length ?? 'null'}</strong> |
-          loaded: <strong>{loading ? 'yes' : 'no'}</strong> |
-          error: <strong>{error || 'none'}</strong>
-        </div>
 
         {/* Hero Greeting */}
         <motion.div
@@ -184,7 +188,7 @@ export default function Dashboard() {
             marginTop: '4px',
             fontFamily: "'Satoshi',sans-serif"
           }}>
-            Monday, 9 March 2026 • Here's your health summary
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} • Here's your health summary
           </p>
           <div style={{
             display: 'inline-flex',
@@ -230,8 +234,23 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  Calories Today
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div style={{ color: '#6B7280', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                    Calories Today
+                  </div>
+                  {stats?.streak > 0 && (
+                    <div style={{
+                      padding: '2px 8px',
+                      borderRadius: '99px',
+                      background: 'rgba(255,107,53,0.1)',
+                      color: '#FF6B35',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      border: '1px solid rgba(255,107,53,0.2)'
+                    }}>
+                      🔥 {stats.streak} Day Streak
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                   <svg width="160" height="160" viewBox="0 0 160 160">
@@ -325,23 +344,23 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' }}>
                   {[...Array(8)].map((_, i) => (
-                    <div key={i} onClick={() => setWater(i + 1)}
+                    <div key={i}
                       style={{
-                        fontSize: '1.8rem', textAlign: 'center', cursor: 'pointer',
-                        filter: i < water ? 'none' : 'grayscale(1) opacity(0.3)',
-                        transform: i < water ? 'scale(1)' : 'scale(0.9)',
+                        fontSize: '1.8rem', textAlign: 'center',
+                        filter: i < Math.floor(water) ? 'none' : 'grayscale(1) opacity(0.3)',
+                        transform: i < Math.floor(water) ? 'scale(1)' : 'scale(0.9)',
                         transition: 'all 0.2s ease'
                       }}>💧</div>
                   ))}
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ ...bigNumberStyle, color: '#00D4FF', textShadow: '0 0 20px rgba(0,212,255,0.8), 0 0 40px rgba(0,212,255,0.4)' }}>
-                    {water}
+                    {Math.floor(water)}
                   </span>
                   <span style={{ color: '#6B7280', fontSize: '1rem' }}> / 8 glasses</span>
                 </div>
                 <button
-                  onClick={() => setWater(w => Math.min(w + 1, 8))}
+                  onClick={handleAddWater}
                   style={{
                     width: '100%', marginTop: '12px', padding: '8px',
                     background: 'transparent',

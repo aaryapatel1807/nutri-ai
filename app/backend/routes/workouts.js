@@ -1,20 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const { PrismaClient } = require('@prisma/client')
-const jwt = require('jsonwebtoken')
-const prisma = new PrismaClient()
-
-const auth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) return res.status(401).json({ error: 'No token' })
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'nutriai_secret')
-    req.userId = decoded.userId
-    next()
-  } catch {
-    res.status(401).json({ error: 'Invalid token' })
-  }
-}
+const auth = require('../middleware/auth.middleware')
+const { prisma } = require('../prisma.config')
 
 // GET /api/workouts - get all workouts
 router.get('/', auth, async (req, res) => {
@@ -73,8 +60,6 @@ router.post('/', auth, async (req, res) => {
   }
 })
 
-module.exports = router
-
 // PUT /api/workouts/:id - update a workout
 router.put('/:id', auth, async (req, res) => {
   try {
@@ -127,3 +112,5 @@ router.post('/:id/complete', auth, async (req, res) => {
     res.status(500).json({ error: err.message })
   }
 })
+
+module.exports = router

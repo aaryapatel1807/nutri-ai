@@ -40,6 +40,7 @@ model User {
   waterLogs     WaterLog[]
   weightLogs    WeightLog[]
   savedRecipes  Recipe[]
+  chatMessages  ChatMessage[]
 }
 
 model Meal {
@@ -67,6 +68,19 @@ model Workout {
   completedAt DateTime @default(now())
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises   WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id         String   @id @default(cuid())
+  workoutId  String
+  name       String
+  sets       Int?
+  reps       Int?
+  weight     Float?
+  duration   Int?     // in seconds
+  calories   Int?
+  workout    Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
 }
 
 model Badge {
@@ -129,4 +143,14 @@ model Recipe {
   imageUrl    String?
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // 'user' or 'assistant'
+  content   String
+  persona   String?  // 'nutrition', 'workout', etc.
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

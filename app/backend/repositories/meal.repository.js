@@ -1,9 +1,8 @@
-const { PrismaClient } = require('@prisma/client')
+const { prisma } = require('../prisma.config')
 const BaseRepository = require('./base.repository')
 
 class MealRepository extends BaseRepository {
   constructor() {
-    const prisma = new PrismaClient()
     super(prisma.meal)
     this.prisma = prisma
   }
@@ -31,25 +30,31 @@ class MealRepository extends BaseRepository {
   }
 
   async findWeeklyMeals(userId) {
+    const now = new Date()
+    const sevenDaysAgo = new Date(now)
+    sevenDaysAgo.setDate(now.getDate() - 7)
+    sevenDaysAgo.setHours(0, 0, 0, 0)
+
+    const meals = await this.model.findMany({
+      where: {
+        userId,
+        date: { gte: sevenDaysAgo }
+      },
+      orderBy: { date: 'asc' }
+    })
+
     const days = []
     for (let i = 6; i >= 0; i--) {
-      const date = new Date()
-      date.setDate(date.getDate() - i)
-      date.setHours(0, 0, 0, 0)
-      const nextDate = new Date(date)
-      nextDate.setDate(nextDate.getDate() + 1)
-
-      const meals = await this.model.findMany({
-        where: {
-          userId,
-          date: { gte: date, lt: nextDate }
-        }
-      })
-
+      const d = new Date(now)
+      d.setDate(now.getDate() - i)
+      const dateStr = d.toISOString().split('T')[0]
+      
+      const dayMeals = meals.filter(m => m.date.toISOString().split('T')[0] === dateStr)
+      
       days.push({
-        date: date.toISOString().split('T')[0],
-        meals,
-        totals: meals.reduce((acc, meal) => ({
+        date: dateStr,
+        meals: dayMeals,
+        totals: dayMeals.reduce((acc, meal) => ({
           calories: acc.calories + meal.calories,
           protein: acc.protein + meal.protein,
           carbs: acc.carbs + meal.carbs,

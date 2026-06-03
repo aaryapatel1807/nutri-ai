@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion'
+import api from '../../lib/api'
 
 
-const BADGES = [
+const BADGES_MOCK = [
   // NUTRITION BADGES
   { id:1,  name:'First Bite',        emoji:'🍽️', category:'Nutrition',  rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Log your very first meal',                 color:'#00FF87', unlockDate:'Jan 15' },
   { id:2,  name:'Protein King',      emoji:'💪', category:'Nutrition',  rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Hit 200g+ protein for 7 days straight',    color:'#00FF87', unlockDate:'Feb 2' },
@@ -304,16 +305,45 @@ export default function Achievements() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeFilter, setActiveFilter] = useState('All')
   const [showConfetti, setShowConfetti] = useState(false)
-  const [userXP] = useState(12340)
+  const [userXP, setUserXP] = useState(0)
+  const [levelInfo, setLevelInfo] = useState({ level: 1, levelName: 'Rookie', nextLevelXP: 500 })
+  const [streak, setStreak] = useState(0)
+  const [badges, setBadges] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [xpRes, badgesRes, statsRes] = await Promise.all([
+          api.get('/api/badges/xp'),
+          api.get('/api/badges'),
+          api.get('/api/stats')
+        ])
+        setUserXP(xpRes.data.totalXP)
+        setLevelInfo({
+          level: xpRes.data.level,
+          levelName: xpRes.data.levelName,
+          nextLevelXP: xpRes.data.nextLevelXP
+        })
+        setBadges(badgesRes.data)
+        setStreak(statsRes.data.streak)
+      } catch (err) {
+        console.error('Failed to load achievements:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
   // Calculate user level
-  const currentLevel = LEVELS.find(l => userXP >= l.minXP && userXP <= l.maxXP) || LEVELS[0]
+  const currentLevel = LEVELS.find(l => l.level === levelInfo.level) || LEVELS[0]
   const nextLevel = LEVELS.find(l => l.level === currentLevel.level + 1)
   const progressToNext = nextLevel ? ((userXP - currentLevel.minXP) / (nextLevel.minXP - currentLevel.minXP)) * 100 : 100
 
   // Filter badges
-  const filteredBadges = BADGES.filter(badge => {
+  const filteredBadges = (badges.length > 0 ? badges : BADGES_MOCK).filter(badge => {
     const categoryMatch = activeCategory === 'All' || badge.category === activeCategory
     const filterMatch = activeFilter === 'All' || 
       (activeFilter === 'Unlocked' && badge.unlocked) || 
@@ -331,11 +361,12 @@ export default function Achievements() {
     }
   }
 
+  const currentBadges = badges.length > 0 ? badges : BADGES_MOCK
   const stats = {
-    total: BADGES.length,
-    unlocked: BADGES.filter(b => b.unlocked).length,
-    totalXP: BADGES.filter(b => b.unlocked).reduce((sum, b) => sum + b.xp, 0),
-    rare: BADGES.filter(b => b.unlocked && ['Rare','Epic','Legendary','Mythic'].includes(b.rarity)).length
+    total: currentBadges.length,
+    unlocked: currentBadges.filter(b => b.unlocked).length,
+    totalXP: currentBadges.filter(b => b.unlocked).reduce((sum, b) => sum + b.xp, 0),
+    rare: currentBadges.filter(b => b.unlocked && ['Rare','Epic','Legendary','Mythic'].includes(b.rarity)).length
   }
 
   const card = {
@@ -437,7 +468,7 @@ export default function Achievements() {
                   {[
                     { label:'Badges', val:stats.unlocked, total:stats.total, color:'#00FF87' },
                     { label:'Rare+', val:stats.rare, total:stats.unlocked, color:'#7B61FF' },
-                    { label:'Streak', val:'30', total:'days', color:'#FF6B35' },
+                    { label:'Streak', val:streak, total:'days', color:'#FF6B35' },
                     { label:'Rank', val:'#6', total:'global', color:'#FFD700' }
                   ].map((stat, i) => (
                     <div key={i} style={{ textAlign:'center' }}>
@@ -522,7 +553,7 @@ export default function Achievements() {
 
             {/* Results count */}
             <div style={{ color:'#6B7280', fontSize:'0.85rem' }}>
-              Showing {filteredBadges.length} of {BADGES.length} achievements
+              Showing {filteredBadges.length} of {(badges.length > 0 ? badges : BADGES_MOCK).length} achievements
             </div>
           </motion.div>
 

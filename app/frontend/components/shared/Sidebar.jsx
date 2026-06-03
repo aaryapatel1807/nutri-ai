@@ -12,11 +12,11 @@ const navItems = [
   { icon: '📅', label: 'Meal Plan',    href: '/meal-plan'    },
   { icon: '🤖', label: 'AI Coach',     href: '/chatbot'      },
   { icon: '🏆', label: 'Achievements', href: '/achievements' },
-  { icon: '�', label: 'Quizzes',      href: '/quizzes'      },
+  { icon: '📝', label: 'Quizzes',      href: '/quizzes'      },
   { icon: '📜', label: 'Certificates', href: '/certificates' },
   { icon: '🗺️', label: 'Roadmap',      href: '/roadmap'      },
   { icon: '🌟', label: 'Careers',      href: '/careers'      },
-  { icon: '�👤', label: 'Profile',      href: '/profile'      },
+  { icon: '👤', label: 'Profile',      href: '/profile'      },
 ]
 
 const LEVELS = [

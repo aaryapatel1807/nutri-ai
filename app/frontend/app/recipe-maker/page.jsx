@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
+import { ml } from '../../lib/api'
 
 const RECIPES = [
   {
@@ -81,13 +82,48 @@ export default function RecipeMaker() {
     mouseY.set(e.clientY)
   }
 
-  const handleAIMatch = () => {
+  const handleAIMatch = async () => {
     if (!ingredients.trim()) return
     setAiLoading(true)
-    setTimeout(() => {
-      setAiLoading(false)
+    setAiResult(null)
+    try {
+      const res = await ml.recipe({
+        ingredients: ingredients.split(',').map(i => i.trim()),
+        dietary_preferences: [], // could be pulled from user profile
+        meal_type: 'any'
+      })
+      
+      if (res.data && res.data.recipe) {
+        // Map ML service response to UI format
+        const r = res.data.recipe
+        setAiResult({
+          id: 'ai-' + Date.now(),
+          name: r.title || 'AI Suggestion',
+          emoji: '✨',
+          time: r.readyInMinutes || 30,
+          calories: r.calories || 0,
+          protein: r.protein || 0,
+          carbs: r.carbs || 0,
+          fat: r.fat || 0,
+          difficulty: 'Medium',
+          cuisine: 'AI Personalized',
+          tags: r.tags || ['AI Generated'],
+          color: '#00FF87',
+          glow: 'rgba(0,255,135,0.3)',
+          ingredients: r.ingredients || [],
+          steps: r.instructions || []
+        })
+      } else {
+        // Fallback to random if ML service doesn't return a recipe
+        setAiResult(RECIPES[Math.floor(Math.random() * RECIPES.length)])
+      }
+    } catch (err) {
+      console.error('AI Match error:', err)
+      // Fallback to mock on error
       setAiResult(RECIPES[Math.floor(Math.random() * RECIPES.length)])
-    }, 2000)
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   const card = (glowColor = 'rgba(0,255,135,0.1)') => ({

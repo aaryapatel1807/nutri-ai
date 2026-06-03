@@ -2,16 +2,8 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const auth = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
-
-// Auth middleware helper
-function getToken(req) {
-  return req.headers.authorization?.split(' ')[1]
-}
-
-function verifyToken(token) {
-  return jwt.verify(token, process.env.JWT_SECRET)
-}
 
 // REGISTER
 router.post('/register', async (req, res) => {
@@ -79,14 +71,9 @@ router.post('/login', async (req, res) => {
 })
 
 // GET ME
-router.get('/me', async (req, res) => {
+router.get('/me', auth, async (req, res) => {
   try {
-    const token = getToken(req)
-    if (!token) return res.status(401).json({ error: 'No token provided' })
-
-    const { userId } = verifyToken(token)
-
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await prisma.user.findUnique({ where: { id: req.userId } })
 
     if (!user) return res.status(404).json({ error: 'User not found' })
     const { password: _pw, ...safeUser } = user
@@ -97,11 +84,9 @@ router.get('/me', async (req, res) => {
 })
 
 // UPDATE PROFILE
-router.put('/profile', async (req, res) => {
+router.put('/profile', auth, async (req, res) => {
   try {
-    const token = getToken(req)
-    if (!token) return res.status(401).json({ error: 'No token provided' })
-    const { userId } = verifyToken(token)
+    const userId = req.userId
 
     const updates = { ...req.body }
     // Strip sensitive / immutable fields

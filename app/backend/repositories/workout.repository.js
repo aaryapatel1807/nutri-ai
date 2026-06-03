@@ -1,9 +1,8 @@
-const { PrismaClient } = require('@prisma/client')
+const { prisma } = require('../prisma.config')
 const BaseRepository = require('./base.repository')
 
 class WorkoutRepository extends BaseRepository {
   constructor() {
-    const prisma = new PrismaClient()
     super(prisma.workout)
     this.prisma = prisma
   }
@@ -36,26 +35,32 @@ class WorkoutRepository extends BaseRepository {
   }
 
   async findWeeklyWorkouts(userId) {
+    const now = new Date()
+    const sevenDaysAgo = new Date(now)
+    sevenDaysAgo.setDate(now.getDate() - 7)
+    sevenDaysAgo.setHours(0, 0, 0, 0)
+
+    const workouts = await this.model.findMany({
+      where: {
+        userId,
+        completedAt: { gte: sevenDaysAgo }
+      },
+      orderBy: { completedAt: 'asc' }
+    })
+
     const days = []
     for (let i = 6; i >= 0; i--) {
-      const date = new Date()
-      date.setDate(date.getDate() - i)
-      date.setHours(0, 0, 0, 0)
-      const nextDate = new Date(date)
-      nextDate.setDate(nextDate.getDate() + 1)
-
-      const workouts = await this.model.findMany({
-        where: {
-          userId,
-          completedAt: { gte: date, lt: nextDate }
-        }
-      })
-
+      const d = new Date(now)
+      d.setDate(now.getDate() - i)
+      const dateStr = d.toISOString().split('T')[0]
+      
+      const dayWorkouts = workouts.filter(w => w.completedAt.toISOString().split('T')[0] === dateStr)
+      
       days.push({
-        date: date.toISOString().split('T')[0],
-        workouts,
-        totalCalories: workouts.reduce((sum, w) => sum + w.calories, 0),
-        totalDuration: workouts.reduce((sum, w) => sum + w.duration, 0)
+        date: dateStr,
+        workouts: dayWorkouts,
+        totalCalories: dayWorkouts.reduce((sum, w) => sum + w.calories, 0),
+        totalDuration: dayWorkouts.reduce((sum, w) => sum + w.duration, 0)
       })
     }
     return days

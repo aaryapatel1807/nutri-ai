@@ -1,6 +1,6 @@
 'use client'
 import { motion } from 'framer-motion'
-import PageWrapper from '../../components/shared/PageWrapper'
+// PageWrapper removed to fix double-wrap bug
 
 export default function RoadmapPage() {
   const roadmapItems = [
@@ -60,7 +60,6 @@ export default function RoadmapPage() {
   ]
 
   return (
-    <PageWrapper>
       <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] to-[#1A1A2E] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
@@ -153,6 +152,5 @@ export default function RoadmapPage() {
           </motion.div>
         </motion.div>
       </div>
-    </PageWrapper>
   )
 }

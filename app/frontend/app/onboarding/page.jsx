@@ -48,7 +48,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center p-4">
       {/* Progress Bar */}
       <div className="absolute top-0 left-0 right-0">
         <div className="h-1 bg-white/10">

@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import PageWrapper from '../../components/shared/PageWrapper'
+import { ml } from '../../lib/api'
+// PageWrapper removed to fix double-wrap bug
 
 const COACH_PERSONAS = [
   {
@@ -156,16 +157,35 @@ export default function AICoach() {
   }, [messages, streamedText])
 
   useEffect(() => {
-    // Welcome message when persona changes
-    setMessages([{
-      role:'assistant',
-      content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
-      timestamp: new Date().toISOString(),
-      persona: activePersona.id
-    }])
-    setConversationHistory([])
-    setShowQuickActions(true)
+    // Load chat history from localStorage on persona change
+    const savedHistory = localStorage.getItem(`nutriai_chat_${activePersona.id}`)
+    if (savedHistory) {
+      const parsed = JSON.parse(savedHistory)
+      setMessages(parsed.messages || [])
+      setConversationHistory(parsed.history || [])
+      setShowQuickActions(false)
+    } else {
+      // Welcome message when persona changes and no history exists
+      setMessages([{
+        role:'assistant',
+        content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
+        timestamp: new Date().toISOString(),
+        persona: activePersona.id
+      }])
+      setConversationHistory([])
+      setShowQuickActions(true)
+    }
   }, [activePersona.id])
+
+  // Save chat history to localStorage whenever messages change
+  useEffect(() => {
+    if (messages.length > 1) { // Don't save if it's just the welcome message
+      localStorage.setItem(`nutriai_chat_${activePersona.id}`, JSON.stringify({
+        messages,
+        history: conversationHistory
+      }))
+    }
+  }, [messages, conversationHistory, activePersona.id])
 
   const sendMessage = async (messageText) => {
     const text = messageText || input.trim()
@@ -192,29 +212,19 @@ export default function AICoach() {
 
     try {
       // ✅ FIXED: Route all AI calls through the backend proxy.
-      // Never call the Gemini API directly from the browser — it exposes your API key.
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
-      const token = localStorage.getItem('nutriai_token')
-
-      const response = await fetch(`${API_URL}/api/ai/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          messages: updatedHistory,
-          systemPrompt: activePersona.systemPrompt
-        })
+      // Contract: { message, history, user_data }
+      const res = await ml.chat({
+        message: text,
+        history: updatedHistory.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
+        user_data: { persona: activePersona.id, systemPrompt: activePersona.systemPrompt }
       })
+      const data = res.data
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'AI service error')
+      if (!data || data.error) {
+        throw new Error(data?.error || 'AI service error')
       }
 
-      const assistantText = data.text || 'Sorry, I could not generate a response.'
+      const assistantText = data.text || data.response || 'Sorry, I could not generate a response.'
 
       // Simulate streaming effect
       let displayed = ''
@@ -258,6 +268,7 @@ export default function AICoach() {
   }
 
   const clearChat = () => {
+    localStorage.removeItem(`nutriai_chat_${activePersona.id}`)
     setConversationHistory([])
     setMessages([{
       role:'assistant',

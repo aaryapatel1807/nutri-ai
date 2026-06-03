@@ -1,20 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const { PrismaClient } = require('@prisma/client')
-const jwt = require('jsonwebtoken')
-const prisma = new PrismaClient()
-
-const auth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) return res.status(401).json({ error: 'No token' })
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'nutriai_secret')
-    req.userId = decoded.userId
-    next()
-  } catch {
-    res.status(401).json({ error: 'Invalid token' })
-  }
-}
+const auth = require('../middleware/auth.middleware')
+const { prisma } = require('../prisma.config')
 
 // GET /api/badges - get all badges with unlock status
 router.get('/', auth, async (req, res) => {

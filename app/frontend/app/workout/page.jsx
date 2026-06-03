@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import PageWrapper from '../../components/shared/PageWrapper'
+// PageWrapper removed to fix double-wrap bug
 
 const WORKOUTS = [
   {

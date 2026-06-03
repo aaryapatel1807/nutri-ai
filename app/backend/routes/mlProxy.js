@@ -1,24 +1,33 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
-const jwt = require('jsonwebtoken')
+const auth = require('../middleware/auth.middleware')
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000'
 
-function getUserId(req) {
-  const token = req.headers.authorization?.split(' ')[1]
-  if (!token) throw new Error('No token')
-  const { userId } = jwt.verify(token, process.env.JWT_SECRET)
-  return userId
-}
+const multer = require('multer')
+const upload = multer()
+const FormData = require('form-data')
 
 // POST /api/ml/detect-food
 // ML service exposes: POST /detect  (with multipart file)
-router.post('/detect-food', async (req, res) => {
+router.post('/detect-food', auth, upload.single('image'), async (req, res) => {
   try {
-    getUserId(req) // auth check
-    const response = await axios.post(`${ML_SERVICE_URL}/detect`, {
-      image: req.body.image
+    
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file uploaded' })
+    }
+
+    const form = new FormData()
+    form.append('image', req.file.buffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+    })
+
+    const response = await axios.post(`${ML_SERVICE_URL}/detect`, form, {
+      headers: {
+        ...form.getHeaders()
+      }
     })
     res.json(response.data)
   } catch (error) {
@@ -29,9 +38,8 @@ router.post('/detect-food', async (req, res) => {
 
 // POST /api/ml/recipe-suggestions
 // ML service exposes: POST /recipe-suggestions
-router.post('/recipe-suggestions', async (req, res) => {
+router.post('/recipe-suggestions', auth, async (req, res) => {
   try {
-    getUserId(req)
     const response = await axios.post(`${ML_SERVICE_URL}/recipe-suggestions`, {
       ingredients: req.body.ingredients,
       dietary_preferences: req.body.dietary_preferences,
@@ -46,9 +54,8 @@ router.post('/recipe-suggestions', async (req, res) => {
 
 // POST /api/ml/nutrition-forecast
 // ML service exposes: POST /forecast
-router.post('/nutrition-forecast', async (req, res) => {
+router.post('/nutrition-forecast', auth, async (req, res) => {
   try {
-    getUserId(req)
     const response = await axios.post(`${ML_SERVICE_URL}/forecast`, {
       user_data: req.body.user_data,
       historical_data: req.body.historical_data
@@ -62,9 +69,8 @@ router.post('/nutrition-forecast', async (req, res) => {
 
 // POST /api/ml/chat
 // ML service exposes: POST /chat
-router.post('/chat', async (req, res) => {
+router.post('/chat', auth, async (req, res) => {
   try {
-    getUserId(req)
     const response = await axios.post(`${ML_SERVICE_URL}/chat`, {
       message: req.body.message,
       history: req.body.history,

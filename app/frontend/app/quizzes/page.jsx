@@ -1,7 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import PageWrapper from '../../components/shared/PageWrapper'
+// PageWrapper removed to fix double-wrap bug
 
 export default function QuizzesPage() {
   const [selectedQuiz, setSelectedQuiz] = useState(null)
@@ -50,7 +50,6 @@ export default function QuizzesPage() {
   ]
 
   return (
-    <PageWrapper>
       <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] to-[#1A1A2E] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
@@ -118,6 +117,5 @@ export default function QuizzesPage() {
           </motion.div>
         </motion.div>
       </div>
-    </PageWrapper>
   )
 }

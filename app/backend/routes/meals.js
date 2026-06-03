@@ -1,23 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const jwt = require('jsonwebtoken')
+const auth = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
-
-// Auth middleware
-const auth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) return res.status(401).json({ error: 'No token' })
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET environment variable is required')
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.userId = decoded.userId
-    next()
-  } catch (error) {
-    res.status(401).json({ error: error.message || 'Invalid token' })
-  }
-}
 
 // GET /api/meals - get all meals for user
 router.get('/', auth, async (req, res) => {
@@ -84,34 +68,43 @@ router.get('/today', auth, async (req, res) => {
 // GET /api/meals/weekly - get last 7 days nutrition
 router.get('/weekly', auth, async (req, res) => {
   try {
-    const days = []
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date()
-      date.setDate(date.getDate() - i)
-      date.setHours(0, 0, 0, 0)
-      const nextDate = new Date(date)
-      nextDate.setDate(nextDate.getDate() + 1)
+    const now = new Date()
+    const sevenDaysAgo = new Date(now)
+    sevenDaysAgo.setDate(now.getDate() - 7)
+    sevenDaysAgo.setHours(0, 0, 0, 0)
 
-      const meals = await prisma.meal.findMany({
+    const [meals, user] = await Promise.all([
+      prisma.meal.findMany({
         where: {
           userId: req.userId,
-          date: { gte: date, lt: nextDate }
-        }
-      })
-
-      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-      // Fetch user goal
-      const user = await prisma.user.findUnique({
+          date: { gte: sevenDaysAgo }
+        },
+        orderBy: { date: 'asc' }
+      }),
+      prisma.user.findUnique({
         where: { id: req.userId },
         select: { calorieGoal: true }
       })
+    ])
+
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    const days = []
+    const goal = user?.calorieGoal || 2000
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now)
+      d.setDate(now.getDate() - i)
+      const dateStr = d.toISOString().split('T')[0]
+      
+      const dayMeals = meals.filter(m => m.date.toISOString().split('T')[0] === dateStr)
+      
       days.push({
-        day:     dayNames[date.getDay()],
-        cal:     Math.round(meals.reduce((a, m) => a + m.calories, 0)),
-        protein: Math.round(meals.reduce((a, m) => a + m.protein, 0)),
-        carbs:   Math.round(meals.reduce((a, m) => a + m.carbs, 0)),
-        fat:     Math.round(meals.reduce((a, m) => a + m.fat, 0)),
-        goal:    user?.calorieGoal || 2000
+        day:     dayNames[d.getDay()],
+        cal:     Math.round(dayMeals.reduce((a, m) => a + m.calories, 0)),
+        protein: Math.round(dayMeals.reduce((a, m) => a + m.protein, 0)),
+        carbs:   Math.round(dayMeals.reduce((a, m) => a + m.carbs, 0)),
+        fat:     Math.round(dayMeals.reduce((a, m) => a + m.fat, 0)),
+        goal:    goal
       })
     }
     res.json(days)
