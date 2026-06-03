@@ -1,10 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 // GET /api/water - get water logs for today (or by date query param)
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const { date } = req.query
     let whereClause = { userId: req.userId }
@@ -38,7 +38,7 @@ router.get('/', auth, async (req, res) => {
 })
 
 // GET /api/water/history - get last 7 days of water logs
-router.get('/history', auth, async (req, res) => {
+router.get('/history', authMiddleware, async (req, res) => {
   try {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
@@ -55,7 +55,7 @@ router.get('/history', auth, async (req, res) => {
 })
 
 // POST /api/water - log water intake
-router.post('/', auth, async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     const { amountMl } = req.body
     if (!amountMl || amountMl <= 0)
@@ -72,7 +72,7 @@ router.post('/', auth, async (req, res) => {
 })
 
 // DELETE /api/water/:id - delete a water log entry
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const log = await prisma.waterLog.findUnique({ where: { id: req.params.id } })
     if (!log) return res.status(404).json({ error: 'Log not found' })
