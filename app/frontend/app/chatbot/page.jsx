@@ -157,36 +157,40 @@ export default function AICoach() {
   }, [messages, streamedText])
 
   useEffect(() => {
-    // Load chat history from localStorage on persona change
-    const savedHistory = localStorage.getItem(`nutriai_chat_${userId}_${activePersona.id}`)
-    if (savedHistory) {
-      const parsed = JSON.parse(savedHistory)
-      setMessages(parsed.messages || [])
-      setConversationHistory(parsed.history || [])
-      setShowQuickActions(false)
-    } else {
-      // Welcome message when persona changes and no history exists
-      setMessages([{
-        role:'assistant',
-        content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
-        timestamp: new Date().toISOString(),
-        persona: activePersona.id
-      }])
-      setConversationHistory([])
-      setShowQuickActions(true)
-    }
-  }, [activePersona.id])
+  // Skip if userId is not loaded yet
+  if (!userId) return
+
+  // Load chat history from localStorage on persona change (scoped to user)
+  const chatKey = `nutriai_chat_${userId}_${activePersona.id}`
+  const savedHistory = localStorage.getItem(chatKey)
+  if (savedHistory) {
+    const parsed = JSON.parse(savedHistory)
+    setMessages(parsed.messages || [])
+    setConversationHistory(parsed.history || [])
+    setShowQuickActions(false)
+  } else {
+    // Welcome message when persona changes and no history exists
+    setMessages([{
+      role:'assistant',
+      content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
+      timestamp: new Date().toISOString(),
+      persona: activePersona.id
+    }])
+    setConversationHistory([])
+    setShowQuickActions(true)
+  }
+}, [activePersona.id, userId])  // ← Add userId to dependency array
 
   // Save chat history to localStorage whenever messages change
   useEffect(() => {
-    if (messages.length > 1) { // Don't save if it's just the welcome message
-      localStorage.setItem(`nutriai_chat_${activePersona.id}`, JSON.stringify({
-        messages,
-        history: conversationHistory
-      }))
-    }
-  }, [messages, conversationHistory, activePersona.id])
-
+  if (messages.length > 1 && userId) {
+    const chatKey = `nutriai_chat_${userId}_${activePersona.id}`
+    localStorage.setItem(chatKey, JSON.stringify({
+      messages,
+      history: conversationHistory
+    }))
+  }
+}, [messages, conversationHistory, activePersona.id, userId])  // ← Add userId
   const sendMessage = async (messageText) => {
     const text = messageText || input.trim()
     if (!text || loading) return
@@ -268,16 +272,19 @@ export default function AICoach() {
   }
 
   const clearChat = () => {
-    localStorage.removeItem(`nutriai_chat_${activePersona.id}`)
-    setConversationHistory([])
-    setMessages([{
-      role:'assistant',
-      content:`Chat cleared! I'm ready to help you again. What would you like to know about ${activePersona.title.toLowerCase()}?`,
-      timestamp: new Date().toISOString(),
-      persona: activePersona.id
-    }])
-    setShowQuickActions(true)
+  if (userId) {
+    const chatKey = `nutriai_chat_${userId}_${activePersona.id}`
+    localStorage.removeItem(chatKey)
   }
+  setConversationHistory([])
+  setMessages([{
+    role:'assistant',
+    content:`Chat cleared! I'm ready to help you again. What would you like to know about ${activePersona.title.toLowerCase()}?`,
+    timestamp: new Date().toISOString(),
+    persona: activePersona.id
+  }])
+  setShowQuickActions(true)
+}
 
   const formatMessage = (text) => {
     // Convert markdown-like text to styled spans
