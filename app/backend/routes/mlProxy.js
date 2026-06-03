@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
-const auth = require('../middleware/auth.middleware')
+const { authMiddleware } = require('../middleware/auth.middleware')
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000'
 
@@ -11,7 +11,7 @@ const FormData = require('form-data')
 
 // POST /api/ml/detect-food
 // ML service exposes: POST /detect  (with multipart file)
-router.post('/detect-food', auth, upload.single('image'), async (req, res) => {
+router.post('/detect-food', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     
     if (!req.file) {
@@ -38,7 +38,7 @@ router.post('/detect-food', auth, upload.single('image'), async (req, res) => {
 
 // POST /api/ml/recipe-suggestions
 // ML service exposes: POST /recipe-suggestions
-router.post('/recipe-suggestions', auth, async (req, res) => {
+router.post('/recipe-suggestions', authMiddleware, async (req, res) => {
   try {
     const response = await axios.post(`${ML_SERVICE_URL}/recipe-suggestions`, {
       ingredients: req.body.ingredients,
@@ -54,7 +54,7 @@ router.post('/recipe-suggestions', auth, async (req, res) => {
 
 // POST /api/ml/nutrition-forecast
 // ML service exposes: POST /forecast
-router.post('/nutrition-forecast', auth, async (req, res) => {
+router.post('/nutrition-forecast', authMiddleware, async (req, res) => {
   try {
     const response = await axios.post(`${ML_SERVICE_URL}/forecast`, {
       user_data: req.body.user_data,
@@ -69,7 +69,7 @@ router.post('/nutrition-forecast', auth, async (req, res) => {
 
 // POST /api/ml/chat
 // ML service exposes: POST /chat
-router.post('/chat', auth, async (req, res) => {
+router.post('/chat', authMiddleware, async (req, res) => {
   try {
     const response = await axios.post(`${ML_SERVICE_URL}/chat`, {
       message: req.body.message,
