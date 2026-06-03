@@ -67,6 +67,7 @@ export const auth = {
       return null
     }
   },
+  
   getToken: () => {
     try {
       const token = localStorage.getItem('nutriai_token')
