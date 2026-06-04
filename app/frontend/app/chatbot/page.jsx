@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ml } from '../../lib/api'
+import { ml, auth } from '../../lib/api'
 // PageWrapper removed to fix double-wrap bug
 
 const COACH_PERSONAS = [
@@ -152,45 +152,54 @@ export default function AICoach() {
   const [streamedText, setStreamedText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
 
+  // ✅ FIX: userId stored in state, resolved lazily on client only (safe for Next.js SSR).
+  // localStorage does not exist during server-side prerender — must be accessed inside useEffect.
+  const [userId, setUserId] = useState('guest')
+
+  // chatKey is a pure function of userId
+  const chatKey = (personaId) => `nutriai_chat_${userId}_${personaId}`
+
+  // Resolve userId from localStorage once on mount (client only, never runs on server)
+  useEffect(() => {
+    const currentUser = auth.getCurrentUser()
+    if (currentUser?.id) setUserId(currentUser.id)
+  }, [])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior:'smooth' })
   }, [messages, streamedText])
 
   useEffect(() => {
-  // Skip if userId is not loaded yet
-  if (!userId) return
-
-  // Load chat history from localStorage on persona change (scoped to user)
-  const chatKey = `nutriai_chat_${userId}_${activePersona.id}`
-  const savedHistory = localStorage.getItem(chatKey)
-  if (savedHistory) {
-    const parsed = JSON.parse(savedHistory)
-    setMessages(parsed.messages || [])
-    setConversationHistory(parsed.history || [])
-    setShowQuickActions(false)
-  } else {
-    // Welcome message when persona changes and no history exists
-    setMessages([{
-      role:'assistant',
-      content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
-      timestamp: new Date().toISOString(),
-      persona: activePersona.id
-    }])
-    setConversationHistory([])
-    setShowQuickActions(true)
-  }
-}, [activePersona.id, userId])  // ← Add userId to dependency array
+    // Load chat history from localStorage on persona change OR when userId resolves
+    const savedHistory = localStorage.getItem(chatKey(activePersona.id))
+    if (savedHistory) {
+      const parsed = JSON.parse(savedHistory)
+      setMessages(parsed.messages || [])
+      setConversationHistory(parsed.history || [])
+      setShowQuickActions(false)
+    } else {
+      // Welcome message when persona changes and no history exists
+      setMessages([{
+        role:'assistant',
+        content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
+        timestamp: new Date().toISOString(),
+        persona: activePersona.id
+      }])
+      setConversationHistory([])
+      setShowQuickActions(true)
+    }
+  }, [activePersona.id, userId])
 
   // Save chat history to localStorage whenever messages change
   useEffect(() => {
-  if (messages.length > 1 && userId) {
-    const chatKey = `nutriai_chat_${userId}_${activePersona.id}`
-    localStorage.setItem(chatKey, JSON.stringify({
-      messages,
-      history: conversationHistory
-    }))
-  }
-}, [messages, conversationHistory, activePersona.id, userId])  // ← Add userId
+    if (messages.length > 1 && userId !== 'guest') { // wait for real userId before saving
+      localStorage.setItem(chatKey(activePersona.id), JSON.stringify({
+        messages,
+        history: conversationHistory
+      }))
+    }
+  }, [messages, conversationHistory, activePersona.id, userId])
+
   const sendMessage = async (messageText) => {
     const text = messageText || input.trim()
     if (!text || loading) return
@@ -272,19 +281,16 @@ export default function AICoach() {
   }
 
   const clearChat = () => {
-  if (userId) {
-    const chatKey = `nutriai_chat_${userId}_${activePersona.id}`
-    localStorage.removeItem(chatKey)
+    localStorage.removeItem(chatKey(activePersona.id))
+    setConversationHistory([])
+    setMessages([{
+      role:'assistant',
+      content:`Chat cleared! I'm ready to help you again. What would you like to know about ${activePersona.title.toLowerCase()}?`,
+      timestamp: new Date().toISOString(),
+      persona: activePersona.id
+    }])
+    setShowQuickActions(true)
   }
-  setConversationHistory([])
-  setMessages([{
-    role:'assistant',
-    content:`Chat cleared! I'm ready to help you again. What would you like to know about ${activePersona.title.toLowerCase()}?`,
-    timestamp: new Date().toISOString(),
-    persona: activePersona.id
-  }])
-  setShowQuickActions(true)
-}
 
   const formatMessage = (text) => {
     // Convert markdown-like text to styled spans
