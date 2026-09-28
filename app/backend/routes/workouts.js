@@ -54,9 +54,10 @@ router.post('/', authMiddleware, async (req, res) => {
         difficulty: difficulty || 'Intermediate',
       }
     })
-    res.json(workout)
+    res.status(201).json(workout)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Create workout error:', err.message)
+    res.status(500).json({ error: 'Failed to log workout' })
   }
 })
 

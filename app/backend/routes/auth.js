@@ -2,17 +2,31 @@ const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { authMiddleware } = require('../middleware/auth.middleware')
+const { authMiddleware, rateLimitMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
+// Stricter limits on the credential endpoints (brute-force protection)
+const authLimiter = rateLimitMiddleware(20, 15 * 60 * 1000)
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function signToken(userId) {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '30d' })
+}
+
 // REGISTER
-router.post('/register', async (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   try {
     const { name, email, password } = req.body
-    console.log('Register:', name, email)
 
     if (!name || !email || !password)
       return res.status(400).json({ error: 'All fields required' })
+
+    if (!EMAIL_RE.test(email))
+      return res.status(400).json({ error: 'Invalid email address' })
+
+    if (password.length < 6)
+      return res.status(400).json({ error: 'Password must be at least 6 characters' })
 
     // Check if email exists
     const existing = await prisma.user.findUnique({ where: { email } })
@@ -28,21 +42,20 @@ router.post('/register', async (req, res) => {
     })
 
     // Generate JWT
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' })
+    const token = signToken(user.id)
 
-    console.log('User created:', user.id)
     res.status(201).json({
       token,
       user: { id: user.id, email: user.email, name: user.name }
     })
   } catch (err) {
-    console.log('Register error:', err.message)
-    res.status(500).json({ error: err.message })
+    console.error('Register error:', err.message)
+    res.status(500).json({ error: 'Registration failed' })
   }
 })
 
 // LOGIN
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body
 
@@ -59,14 +72,14 @@ router.post('/login', async (req, res) => {
     if (!valid)
       return res.status(401).json({ error: 'Invalid email or password' })
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' })
+    const token = signToken(user.id)
 
     // Don't expose the hashed password
     const { password: _pw, ...safeUser } = user
     res.json({ token, user: safeUser })
   } catch (err) {
-    console.log('Login error:', err.message)
-    res.status(500).json({ error: err.message })
+    console.error('Login error:', err.message)
+    res.status(500).json({ error: 'Login failed' })
   }
 })
 
@@ -79,27 +92,60 @@ router.get('/me', authMiddleware, async (req, res) => {
     const { password: _pw, ...safeUser } = user
     res.json(safeUser)
   } catch (err) {
-    res.status(401).json({ error: 'Invalid token' })
+    // Token was already verified by authMiddleware — a failure here is a server/DB issue, not auth
+    console.error('Get me error:', err.message)
+    res.status(500).json({ error: 'Failed to load profile' })
   }
 })
 
-// UPDATE PROFILE
+// UPDATE PROFILE — whitelisted fields only, with type validation
+const STRING_FIELDS = ['name', 'phone', 'dob', 'gender', 'location', 'fitnessGoal', 'dietType', 'activityLevel']
+const FLOAT_FIELDS = ['height', 'weight', 'targetWeight', 'bodyFat', 'muscleMass', 'waterGoal', 'sleepGoal']
+const INT_FIELDS = ['calorieGoal', 'proteinGoal', 'carbGoal', 'fatGoal']
+
 router.put('/profile', authMiddleware, async (req, res) => {
   try {
     const userId = req.userId
+    const updates = {}
 
-    const updates = { ...req.body }
-    // Strip sensitive / immutable fields
-    delete updates.password
-    delete updates.email
-    delete updates.id
-    delete updates.createdAt
+    for (const f of STRING_FIELDS) {
+      if (req.body[f] !== undefined) {
+        if (typeof req.body[f] !== 'string')
+          return res.status(400).json({ error: `Invalid value for ${f}` })
+        updates[f] = req.body[f]
+      }
+    }
+    for (const f of FLOAT_FIELDS) {
+      if (req.body[f] !== undefined) {
+        const n = Number(req.body[f])
+        if (!Number.isFinite(n) || n < 0)
+          return res.status(400).json({ error: `Invalid value for ${f}` })
+        updates[f] = n
+      }
+    }
+    for (const f of INT_FIELDS) {
+      if (req.body[f] !== undefined) {
+        const n = Number(req.body[f])
+        if (!Number.isInteger(n) || n < 0)
+          return res.status(400).json({ error: `Invalid value for ${f}` })
+        updates[f] = n
+      }
+    }
 
-    // Auto-compute BMI if both height (cm) and weight (kg) provided
-    // Schema uses `height` (Float) and `weight` (Float) in metric units
-    if (updates.height && updates.weight) {
-      const hMeters = updates.height / 100
-      updates.bmi = parseFloat((updates.weight / (hMeters * hMeters)).toFixed(1))
+    // Recompute BMI from merged existing + new height/weight (either may have been updated alone)
+    if (updates.height !== undefined || updates.weight !== undefined) {
+      const current = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { height: true, weight: true }
+      })
+      const height = updates.height !== undefined ? updates.height : current?.height
+      const weight = updates.weight !== undefined ? updates.weight : current?.weight
+      if (height && weight) {
+        const hMeters = height / 100
+        updates.bmi = parseFloat((weight / (hMeters * hMeters)).toFixed(1))
+      } else {
+        updates.bmi = null
+      }
     }
 
     // Always update updatedAt
@@ -113,8 +159,8 @@ router.put('/profile', authMiddleware, async (req, res) => {
     const { password: _pw, ...safeUser } = user
     res.json(safeUser)
   } catch (err) {
-    console.log('Profile update error:', err.message)
-    res.status(500).json({ error: err.message })
+    console.error('Profile update error:', err.message)
+    res.status(500).json({ error: 'Profile update failed' })
   }
 })
 

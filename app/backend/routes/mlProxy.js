@@ -1,10 +1,21 @@
 const express = require('express')
 const router = express.Router()
-const axios = require('axios')
 const { authMiddleware } = require('../middleware/auth.middleware')
 const multer = require('multer')
-const upload = multer()
-const FormData = require('form-data')
+// Cap uploads at 5MB — default multer buffers the whole file in memory (OOM risk on serverless)
+const upload = multer({ limits: { fileSize: 5 * 1024 * 1024 } })
+
+// Multer errors skip the route handler, so translate them here
+const uploadSingle = (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE')
+        return res.status(413).json({ error: 'Image too large (max 5MB)' })
+      return res.status(400).json({ error: 'Image upload failed' })
+    }
+    next()
+  })
+}
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY
 const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b' // Groq free tier (30 RPM / 1K req/day)
@@ -120,7 +131,7 @@ Respond in JSON: { "forecast": [], "recommendations": [] }`
 })
 
 // POST /api/ml/detect-food — stays on Gemini Vision (Groq's free tier has no vision-capable model)
-router.post('/detect-food', authMiddleware, upload.single('image'), async (req, res) => {
+router.post('/detect-food', authMiddleware, uploadSingle, async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No image file uploaded' })
     if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
@@ -130,7 +141,7 @@ router.post('/detect-food', authMiddleware, upload.single('image'), async (req, 
     const mimeType = req.file.mimetype
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -6,17 +6,18 @@ const { prisma } = require('../prisma.config')
 // GET /api/stats - get full user statistics
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.userId } })
-    const totalMeals = await prisma.meal.count({ where: { userId: req.userId } })
-    const totalWorkouts = await prisma.workout.count({ where: { userId: req.userId } })
-    const totalBadges = await prisma.userBadge.count({ where: { userId: req.userId } })
-
-    // Efficient streak calculation: Fetch all unique dates user logged meals
-    const mealDates = await prisma.meal.findMany({
-      where: { userId: req.userId },
-      select: { date: true },
-      orderBy: { date: 'desc' }
-    })
+    const [user, totalMeals, totalWorkouts, totalBadges, mealDates] = await Promise.all([
+      prisma.user.findUnique({ where: { id: req.userId } }),
+      prisma.meal.count({ where: { userId: req.userId } }),
+      prisma.workout.count({ where: { userId: req.userId } }),
+      prisma.userBadge.count({ where: { userId: req.userId } }),
+      // Efficient streak calculation: Fetch all unique dates user logged meals
+      prisma.meal.findMany({
+        where: { userId: req.userId },
+        select: { date: true },
+        orderBy: { date: 'desc' }
+      })
+    ])
 
     // Group dates by day (YYYY-MM-DD) to count unique days
     const uniqueDays = [...new Set(mealDates.map(m => m.date.toISOString().split('T')[0]))]

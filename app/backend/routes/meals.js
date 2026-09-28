@@ -117,6 +117,14 @@ router.get('/weekly', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { name, calories, protein, carbs, fat, mealType, date } = req.body
+
+    let parsedDate = new Date()
+    if (date) {
+      parsedDate = new Date(date)
+      if (isNaN(parsedDate.getTime()))
+        return res.status(400).json({ error: 'Invalid date' })
+    }
+
     const meal = await prisma.meal.create({
       data: {
         userId:   req.userId,
@@ -126,16 +134,17 @@ router.post('/', authMiddleware, async (req, res) => {
         carbs:    parseFloat(carbs)    || 0,
         fat:      parseFloat(fat)      || 0,
         mealType: mealType || 'Breakfast',
-        date:     date ? new Date(date) : new Date()
+        date:     parsedDate
       }
     })
 
     // Auto award badges after logging meal
     await checkAndAwardBadges(req.userId)
 
-    res.json(meal)
+    res.status(201).json(meal)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Create meal error:', err.message)
+    res.status(500).json({ error: 'Failed to log meal' })
   }
 })
 

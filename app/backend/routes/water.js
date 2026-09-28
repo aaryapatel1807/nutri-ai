@@ -58,11 +58,12 @@ router.get('/history', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { amountMl } = req.body
-    if (!amountMl || amountMl <= 0)
+    const ml = Number(amountMl)
+    if (!Number.isFinite(ml) || ml <= 0)
       return res.status(400).json({ error: 'amountMl must be a positive number' })
 
     const log = await prisma.waterLog.create({
-      data: { userId: req.userId, amountMl: parseInt(amountMl) }
+      data: { userId: req.userId, amountMl: Math.round(ml) }
     })
     res.status(201).json(log)
   } catch (err) {

@@ -53,6 +53,8 @@ router.post('/', authMiddleware, async (req, res) => {
 // POST /api/posts/:id/like - like a post
 router.post('/:id/like', authMiddleware, async (req, res) => {
   try {
+    const existing = await prisma.post.findUnique({ where: { id: req.params.id } })
+    if (!existing) return res.status(404).json({ error: 'Post not found' })
     const post = await prisma.post.update({
       where: { id: req.params.id },
       data: { likes: { increment: 1 } }

@@ -6,6 +6,9 @@ require('dotenv').config()
 
 const app = express()
 
+// Trust the first proxy (Vercel) so rate limiting sees real client IPs
+app.set('trust proxy', 1)
+
 // ✅ Allowed Origins
 const allowedOrigins = [
   process.env.FRONTEND_URL,
@@ -20,7 +23,9 @@ app.use(cors({
       callback(null, true)
     } else {
       console.warn(`🚫 CORS blocked request from: ${origin}`)
-      callback(new Error(`CORS blocked: ${origin}`))
+      const err = new Error(`CORS blocked: ${origin}`)
+      err.status = 403
+      callback(err)
     }
   },
   credentials: true,
@@ -65,7 +70,6 @@ app.use('/api/posts', safeRoute('./routes/posts'))
 app.use('/api/water', safeRoute('./routes/water'))
 app.use('/api/weight', safeRoute('./routes/weight'))
 app.use('/api/recipes', safeRoute('./routes/recipes'))
-app.use('/api/ai', safeRoute('./routes/ai'))
 
 // Root Route
 app.get('/', (req, res) => {
@@ -74,14 +78,16 @@ app.get('/', (req, res) => {
 
 // Health Check Route
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', allowedOrigins })
+  res.json({ status: 'ok' })
 })
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err)
-  res.status(500).json({
-    error: 'Internal server error',
+  console.error('Unhandled error:', err.message)
+  // CORS rejections carry their own status
+  const status = err.status || 500
+  res.status(status).json({
+    error: status === 500 ? 'Internal server error' : err.message,
   })
 })
 

@@ -53,11 +53,12 @@ router.get('/history', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { weight } = req.body
-    if (!weight || weight <= 0)
+    const kg = Number(weight)
+    if (!Number.isFinite(kg) || kg <= 0)
       return res.status(400).json({ error: 'weight must be a positive number (kg)' })
 
     const log = await prisma.weightLog.create({
-      data: { userId: req.userId, weight: parseFloat(weight) }
+      data: { userId: req.userId, weight: kg }
     })
 
     // Optionally update user's current weight field too
