@@ -6,43 +6,52 @@ const multer = require('multer')
 const upload = multer()
 const FormData = require('form-data')
 
+const GROQ_API_KEY = process.env.GROQ_API_KEY
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b' // Groq free tier (30 RPM / 1K req/day)
+// Gemini is kept ONLY for food-photo vision — Groq's free tier currently has no vision-capable model
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 const GEMINI_MODEL = 'gemini-2.5-flash'
 
-// Helper — call Gemini directly
-async function callGemini(messages, systemPrompt) {
-  const geminiMessages = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }))
+// Helper — call Groq (OpenAI-compatible API)
+async function callGroq(messages, systemPrompt, jsonMode = false) {
+  const groqMessages = [
+    { role: 'system', content: systemPrompt || 'You are Mentor Nova, a helpful AI nutrition and fitness coach.' },
+    ...messages.map(m => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content: m.content
+    }))
+  ]
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+    'https://api.groq.com/openai/v1/chat/completions',
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
+      },
       body: JSON.stringify({
-        contents: geminiMessages,
-        systemInstruction: {
-          parts: [{ text: systemPrompt || 'You are Mentor Nova, a helpful AI nutrition and fitness coach.' }]
-        },
-        generationConfig: { maxOutputTokens: 1024 }
+        model: GROQ_MODEL,
+        messages: groqMessages,
+        max_tokens: 2048,
+        temperature: 0.7,
+        ...(jsonMode ? { response_format: { type: 'json_object' } } : {})
       })
     }
   )
 
   const data = await response.json()
-  if (!response.ok) throw new Error(data.error?.message || 'Gemini error')
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+  if (!response.ok) throw new Error(data.error?.message || 'Groq error')
+  return data.choices?.[0]?.message?.content || ''
 }
 
-// POST /api/ml/chat — powered by Gemini
+// POST /api/ml/chat — powered by Groq
 router.post('/chat', authMiddleware, async (req, res) => {
   try {
     const { message, history = [], user_data } = req.body
 
     if (!message) return res.status(400).json({ error: 'message is required' })
-    if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
+    if (!GROQ_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
 
     const messages = [
       ...history,
@@ -53,7 +62,7 @@ router.post('/chat', authMiddleware, async (req, res) => {
       ? `You are Mentor Nova, a helpful AI nutrition and fitness coach. User profile: ${JSON.stringify(user_data)}`
       : 'You are Mentor Nova, a helpful AI nutrition and fitness coach.'
 
-    const text = await callGemini(messages, systemPrompt)
+    const text = await callGroq(messages, systemPrompt)
     res.json({ response: text, text })
   } catch (error) {
     console.error('Chat error:', error.message)
@@ -61,18 +70,18 @@ router.post('/chat', authMiddleware, async (req, res) => {
   }
 })
 
-// POST /api/ml/recipe-suggestions — powered by Gemini
+// POST /api/ml/recipe-suggestions — powered by Groq
 router.post('/recipe-suggestions', authMiddleware, async (req, res) => {
   try {
     const { ingredients = [], dietary_preferences = [], meal_type = 'any' } = req.body
-    if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
+    if (!GROQ_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
 
     const prompt = `Suggest 3 recipes using these ingredients: ${ingredients.join(', ')}.
 Dietary preferences: ${dietary_preferences.join(', ') || 'none'}.
 Meal type: ${meal_type}.
 Respond in JSON format: { "recipes": [{ "name": "", "ingredients": [], "instructions": "", "calories": 0 }] }`
 
-    const text = await callGemini([{ role: 'user', content: prompt }])
+    const text = await callGroq([{ role: 'user', content: prompt }], undefined, true)
     
     // Try to parse JSON from response
     const clean = text.replace(/```json|```/g, '').trim()
@@ -87,17 +96,17 @@ Respond in JSON format: { "recipes": [{ "name": "", "ingredients": [], "instruct
   }
 })
 
-// POST /api/ml/nutrition-forecast — powered by Gemini
+// POST /api/ml/nutrition-forecast — powered by Groq
 router.post('/nutrition-forecast', authMiddleware, async (req, res) => {
   try {
     const { user_data, historical_data } = req.body
-    if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
+    if (!GROQ_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
 
     const prompt = `Based on this user data: ${JSON.stringify(user_data)} and historical nutrition data: ${JSON.stringify(historical_data)},
 provide a 7-day nutrition forecast and recommendations.
 Respond in JSON: { "forecast": [], "recommendations": [] }`
 
-    const text = await callGemini([{ role: 'user', content: prompt }])
+    const text = await callGroq([{ role: 'user', content: prompt }], undefined, true)
     const clean = text.replace(/```json|```/g, '').trim()
     try {
       res.json(JSON.parse(clean))
@@ -110,7 +119,7 @@ Respond in JSON: { "forecast": [], "recommendations": [] }`
   }
 })
 
-// POST /api/ml/detect-food — still requires ML service (image detection)
+// POST /api/ml/detect-food — stays on Gemini Vision (Groq's free tier has no vision-capable model)
 router.post('/detect-food', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No image file uploaded' })
