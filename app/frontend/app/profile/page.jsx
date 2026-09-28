@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
 import { useTheme } from '../../components/shared/ThemeContext'
+import { auth } from '../../lib/api'
 
 /* ══════════ DATA ══════════ */
 const AVATAR_STYLES = [
@@ -168,22 +169,43 @@ export default function ProfilePage() {
     waterGoal:3, sleepGoal:8,
   })
 
-  // Hydrate identity from the logged-in user instead of hardcoded demo data
+  // Hydrate from the real backend profile (falls back to cached identity)
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('nutriai_user')
-      if (raw && raw !== 'undefined') {
-        const u = JSON.parse(raw)
-        const name = u.name || 'User'
-        const derivedUsername = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
-        setProfile(p => ({
-          ...p,
-          name,
-          username: p.username || derivedUsername,
-          email: u.email || p.email,
-        }))
-      }
-    } catch (e) {}
+    const applyUser = (u) => {
+      if (!u) return
+      const name = u.name || 'User'
+      const derivedUsername = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+      setProfile(p => ({
+        ...p,
+        name,
+        username: p.username || derivedUsername,
+        email: u.email || p.email,
+        phone: u.phone ?? p.phone,
+        dob: u.dob || p.dob,
+        gender: u.gender || p.gender,
+        location: u.location || p.location,
+        height: u.height ?? p.height,
+        weight: u.weight ?? p.weight,
+        targetWeight: u.targetWeight ?? p.targetWeight,
+        bodyFat: u.bodyFat ?? p.bodyFat,
+        muscle: u.muscleMass ?? p.muscle,
+        goal: u.fitnessGoal || p.goal,
+        diet: u.dietType || p.diet,
+        activity: u.activityLevel || p.activity,
+        calorieGoal: u.calorieGoal ?? p.calorieGoal,
+        proteinGoal: u.proteinGoal ?? p.proteinGoal,
+        carbGoal: u.carbGoal ?? p.carbGoal,
+        fatGoal: u.fatGoal ?? p.fatGoal,
+        waterGoal: u.waterGoal ?? p.waterGoal,
+        sleepGoal: u.sleepGoal ?? p.sleepGoal,
+      }))
+    }
+    auth.getMe().then(res => applyUser(res.data)).catch(() => {
+      try {
+        const raw = localStorage.getItem('nutriai_user')
+        if (raw && raw !== 'undefined') applyUser(JSON.parse(raw))
+      } catch (e) {}
+    })
   }, [])
 
   const theme  = THEMES.find(t=>t.id===selectedTheme) || THEMES[0]
@@ -257,9 +279,36 @@ export default function ProfilePage() {
     </div>
   )
 
-  const handleSave = () => {
-    setSaved(true); setEditMode(false)
-    setTimeout(()=>setSaved(false), 2500)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+
+  const handleSave = async () => {
+    setSaving(true); setSaveError('')
+    try {
+      const res = await auth.updateProfile({
+        name: profile.name, phone: profile.phone, dob: profile.dob,
+        gender: profile.gender, location: profile.location,
+        height: profile.height, weight: profile.weight,
+        targetWeight: profile.targetWeight, bodyFat: profile.bodyFat,
+        muscleMass: profile.muscle,
+        fitnessGoal: profile.goal, dietType: profile.diet, activityLevel: profile.activity,
+        calorieGoal: profile.calorieGoal, proteinGoal: profile.proteinGoal,
+        carbGoal: profile.carbGoal, fatGoal: profile.fatGoal,
+        waterGoal: profile.waterGoal, sleepGoal: profile.sleepGoal,
+      })
+      // keep the cached identity in sync so other pages show the new name
+      try {
+        const raw = localStorage.getItem('nutriai_user')
+        const cached = raw && raw !== 'undefined' ? JSON.parse(raw) : {}
+        localStorage.setItem('nutriai_user', JSON.stringify({ ...cached, name: res.data?.name || profile.name, email: res.data?.email || profile.email }))
+      } catch {}
+      setSaved(true); setEditMode(false)
+      setTimeout(() => setSaved(false), 2500)
+    } catch (e) {
+      setSaveError(e.response?.data?.error || 'Could not save changes')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -469,7 +518,10 @@ export default function ProfilePage() {
                         color:'#000', fontWeight:800, cursor:'pointer', fontSize:'0.88rem',
                         fontFamily:"'Satoshi',sans-serif"
                       }}
-                    >💾 Save Changes</motion.button>
+                    >{saving ? '⏳ Saving...' : '💾 Save Changes'}</motion.button>
+                    {saveError && (
+                      <div style={{ color: '#FF6B6B', fontSize: '0.8rem', alignSelf: 'center' }}>{saveError}</div>
+                    )}
                     <motion.button
                       whileHover={{ scale:1.04 }}
                       whileTap={{ scale:0.96 }}

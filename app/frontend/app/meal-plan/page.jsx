@@ -142,6 +142,18 @@ const GOALS = ['All','Muscle Building','Fat Loss','Maintenance','Ketosis','IF']
 const DIFFICULTIES = ['All','Beginner','Intermediate','Advanced']
 const DIET_TYPES = ['All','High Protein','Vegetarian','Keto','Indian','Vegan','Balanced']
 
+// Goal filter labels don't literally appear in plan data — map each label to the
+// goal/tag keywords it should match (e.g. 'Muscle Building' ↔ goal 'Hypertrophy')
+const GOAL_MATCH = {
+  'Muscle Building': ['Hypertrophy'],
+  'Fat Loss': ['Fat Loss'],
+  'Maintenance': ['Maintenance'],
+  'Ketosis': ['Ketosis'],
+  'IF': ['IF'],
+}
+// 'Vegan' filter should also match plans tagged 'Plant Based'
+const DIET_MATCH = { 'Vegan': ['Vegan', 'Plant Based'] }
+
 const WEEKLY_NUTRITION = [
   { day:'Mon', cal:2240, pro:168, carb:252, fat:68 },
   { day:'Tue', cal:2180, pro:162, carb:244, fat:64 },
@@ -212,9 +224,11 @@ export default function MealPlanPage() {
   const [waterGlasses, setWaterGlasses] = useState(6)
 
   const filtered = MEAL_PLANS.filter(p => {
-    const matchGoal = activeGoal === 'All' || p.goal.includes(activeGoal)
+    const goalKeys = GOAL_MATCH[activeGoal] || [activeGoal]
+    const matchGoal = activeGoal === 'All' || goalKeys.some(g => p.goal.includes(g) || p.tags.some(t => t.includes(g)))
     const matchDiff = activeDifficulty === 'All' || p.difficulty === activeDifficulty
-    const matchDiet = activeDiet === 'All' || p.tags.includes(activeDiet)
+    const dietKeys = DIET_MATCH[activeDiet] || [activeDiet]
+    const matchDiet = activeDiet === 'All' || dietKeys.some(d => p.tags.includes(d))
     const matchSrch = p.name.toLowerCase().includes(search.toLowerCase())
     return matchGoal && matchDiff && matchDiet && matchSrch
   })
@@ -867,7 +881,7 @@ export default function MealPlanPage() {
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'28px', marginBottom:'20px', width:'100%' }}>
                   {[
                     { label:'Total Items',    val:Object.values(GROCERY_LIST).flat().length, icon:'🛒', color:'#F97316' },
-                    { label:'Est. Cost',      val:'₹2,840',  icon:'💰', color:'#FFD700' },
+                    { label:'Est. Cost',      val:`₹${Object.values(GROCERY_LIST).flat().reduce((s,i)=>s+parseInt(i.price.replace(/[₹,]/g,'')),0).toLocaleString('en-IN')}`, icon:'💰', color:'#FFD700' },
                     { label:'Checked',        val:`${checkedGrocery.length}/${Object.values(GROCERY_LIST).flat().length}`, icon:'✅', color:'#FB923C' },
                     { label:'Categories',     val:Object.keys(GROCERY_LIST).length, icon:'📦', color:'#F97316' },
                   ].map(s => (

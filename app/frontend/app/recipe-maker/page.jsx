@@ -66,6 +66,7 @@ export default function RecipeMaker() {
   const [aiMode, setAiMode] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [aiResult, setAiResult] = useState(null)
+  const [aiNotice, setAiNotice] = useState(null) // 'unavailable' when AI failed and we show a collection pick instead
   const [hoveredId, setHoveredId] = useState(null)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -82,6 +83,26 @@ export default function RecipeMaker() {
   const handleMouseMove = (e) => {
     mouseX.set(e.clientX)
     mouseY.set(e.clientY)
+  }
+
+  // Real ingredient-match %: share of the recipe's ingredients that mention
+  // something the user typed. Returns null when it can't be computed.
+  const matchPct = (recipeIngredients, userInput) => {
+    const mine = String(userInput || '').toLowerCase().split(',').map(x => x.trim()).filter(Boolean)
+    const theirs = (recipeIngredients || []).map(i => String(i).toLowerCase())
+    if (!mine.length || !theirs.length) return null
+    const hits = theirs.filter(ing => mine.some(m => ing.includes(m) || m.includes(ing))).length
+    return Math.round((hits / theirs.length) * 100)
+  }
+
+  // Best honest fallback: the collection recipe closest to the user's ingredients
+  const bestCollectionPick = (userInput) => {
+    let best = RECIPES[0], bestScore = -1
+    for (const r of RECIPES) {
+      const score = matchPct(r.ingredients, userInput) ?? 0
+      if (score > bestScore) { bestScore = score; best = r }
+    }
+    return { ...best, _ai: false, _match: bestScore > 0 ? bestScore : null }
   }
 
   const handleAIMatch = async () => {
@@ -113,16 +134,20 @@ export default function RecipeMaker() {
           color: '#F97316',
           glow: 'rgba(249,115,22,0.3)',
           ingredients: r.ingredients || [],
-          steps: r.instructions || []
+          steps: r.instructions || [],
+          _ai: true,
+          _match: matchPct(r.ingredients, ingredients)
         })
+        setAiNotice(null)
       } else {
-        // Fallback to random if ML service doesn't return a recipe
-        setAiResult(RECIPES[Math.floor(Math.random() * RECIPES.length)])
+        // No recipe from AI — show the closest collection recipe, labelled honestly
+        setAiResult(bestCollectionPick(ingredients))
+        setAiNotice('unavailable')
       }
     } catch (err) {
       console.error('AI Match error:', err)
-      // Fallback to mock on error
-      setAiResult(RECIPES[Math.floor(Math.random() * RECIPES.length)])
+      setAiResult(bestCollectionPick(ingredients))
+      setAiNotice('unavailable')
     } finally {
       setAiLoading(false)
     }
@@ -326,15 +351,26 @@ export default function RecipeMaker() {
                         boxShadow:`0 0 60px ${aiResult.glow}, 0 8px 40px var(--shadow-color)` 
                       }}
                     >
-                      <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px', flexWrap:'wrap' }}>
                         <div style={{
                           background:`${aiResult.color}20`,
                           border:`1px solid ${aiResult.color}40`,
                           borderRadius:'99px', padding:'4px 14px',
                           color: aiResult.color, fontSize:'0.78rem', fontWeight:700
-                        }}>🤖 AI RECOMMENDED</div>
-                        <div style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>95% ingredient match</div>
+                        }}>{aiResult._ai ? '🤖 AI RECOMMENDED' : '📚 Closest match from our collection'}</div>
+                        {aiResult._match != null && (
+                          <div style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>{aiResult._match}% ingredient match</div>
+                        )}
                       </div>
+                      {aiNotice === 'unavailable' && (
+                        <div style={{
+                          background:'rgba(255,180,0,0.08)', border:'1px solid rgba(255,180,0,0.3)',
+                          borderRadius:'12px', padding:'10px 14px', marginBottom:'16px',
+                          color:'var(--text-muted)', fontSize:'0.8rem'
+                        }}>
+                          ⚠️ AI matching is unavailable right now — showing the closest recipe from our collection instead.
+                        </div>
+                      )}
                       <div style={{ display:'flex', gap:'24px', flexWrap:'wrap' }}>
                         <div style={{ fontSize:'5rem' }}>{aiResult.emoji}</div>
                         <div style={{ flex:1 }}>

@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import CountUp from 'react-countup'
-import api, { getCurrentUser, getTodayNutrition, getWeeklyNutrition, getUserXP } from '../../lib/api'
+import api, { getCurrentUser, getTodayNutrition, getWeeklyNutrition, getUserXP, badges } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
 
 function getGreeting() {
@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [todayNutrition, setTodayNutrition] = useState(null)
   const [weeklyData, setWeeklyData] = useState([])
   const [userXP, setUserXP] = useState({ xp: 0, level: 1 })
+  const [realBadges, setRealBadges] = useState([])
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -63,12 +64,13 @@ export default function Dashboard() {
         }
 
         // Load all dashboard data in parallel
-        const [nutritionData, weekData, xpData, statsData, waterData] = await Promise.allSettled([
+        const [nutritionData, weekData, xpData, statsData, waterData, badgesData] = await Promise.allSettled([
           getTodayNutrition(),
           getWeeklyNutrition(),
           getUserXP(),
           api.get('/api/stats').then(res => res.data),
-          api.get('/api/water').then(res => res.data)
+          api.get('/api/water').then(res => res.data),
+          badges.getAll().then(res => res.data)
         ])
 
         if (nutritionData.status === 'fulfilled' && nutritionData.value) {
@@ -86,6 +88,13 @@ export default function Dashboard() {
         if (waterData.status === 'fulfilled' && waterData.value) {
           setWater(waterData.value.totalMl / 250) // Assuming 250ml per glass
           setWaterLogs(waterData.value.logs)
+        }
+        if (badgesData.status === 'fulfilled' && Array.isArray(badgesData.value)) {
+          const unlocked = badgesData.value
+            .filter(b => b.unlocked)
+            .sort((a, b) => new Date(b.unlockedAt || 0) - new Date(a.unlockedAt || 0))
+            .slice(0, 3)
+          setRealBadges(unlocked)
         }
 
       } catch (err) {
@@ -152,13 +161,27 @@ export default function Dashboard() {
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '1.2rem', color: '#FF6B35', marginBottom: '16px' }}>⚠️ Error</div>
-          <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{error}</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>{error}</div>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '12px 28px', borderRadius: '99px', border: 'none', cursor: 'pointer',
+              background: 'linear-gradient(135deg,#F97316,#FF6B35)', color: '#fff',
+              fontSize: '0.9rem', fontWeight: 700
+            }}
+          >
+            Try Again
+          </button>
         </div>
       </div>
     )
   }
 
+  const [addingWater, setAddingWater] = useState(false)
+
   const handleAddWater = async () => {
+    if (addingWater) return // prevent double-click double-logging
+    setAddingWater(true)
     try {
       const res = await api.post('/api/water', { amountMl: 250 })
       if (res.data) {
@@ -167,6 +190,8 @@ export default function Dashboard() {
       }
     } catch (err) {
       console.error('Failed to log water:', err)
+    } finally {
+      setAddingWater(false)
     }
   }
 
@@ -278,11 +303,11 @@ export default function Dashboard() {
                       }}
                       strokeDashoffset="102"
                       initial={{ strokeDasharray: '0 408.4' }}
-                      animate={{ strokeDasharray: `${Math.min(todayNutrition?.calories || 0, todayNutrition?.goalCalories || 1800) / (todayNutrition?.goalCalories || 1800) * 408.4} 408.4` }}
+                      animate={{ strokeDasharray: `${Math.min(todayNutrition?.calories || 0, (todayNutrition?.goalCalories || stats?.calorieGoal || 2000)) / ((todayNutrition?.goalCalories || stats?.calorieGoal || 2000)) * 408.4} 408.4` }}
                       transition={{ duration: 2, ease: "easeOut" }}
                     />
                     <text x="80" y="72" textAnchor="middle" fill="var(--text-primary)" fontSize="28" fontFamily="'Clash Display',sans-serif" fontWeight="700">{todayNutrition?.calories || 0}</text>
-                    <text x="80" y="92" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontFamily="'Satoshi',sans-serif">of {todayNutrition?.goalCalories || 1800} kcal</text>
+                    <text x="80" y="92" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontFamily="'Satoshi',sans-serif">of {(todayNutrition?.goalCalories || stats?.calorieGoal || 2000)} kcal</text>
                   </svg>
                   <div style={{
                     background: 'rgba(249,115,22,0.15)',
@@ -293,7 +318,7 @@ export default function Dashboard() {
                     fontSize: '0.8rem',
                     fontWeight: 700,
                     marginTop: '8px'
-                  }}>{Math.round(((todayNutrition?.calories || 0) / (todayNutrition?.goalCalories || 1800)) * 100)}% of Daily Goal</div>
+                  }}>{Math.round(((todayNutrition?.calories || 0) / ((todayNutrition?.goalCalories || stats?.calorieGoal || 2000))) * 100)}% of Daily Goal</div>
                 </div>
               </motion.div>
             </div>
@@ -311,9 +336,9 @@ export default function Dashboard() {
                   Today's Macros
                 </div>
                 {[
-                  { label: 'Protein', val: todayNutrition?.protein || 0, goal: 150, color: '#F97316' },
-                  { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: 230, color: '#7B61FF' },
-                  { label: 'Fat', val: todayNutrition?.fat || 0, goal: 70, color: '#FF6B35' },
+                  { label: 'Protein', val: todayNutrition?.protein || 0, goal: stats?.proteinGoal || 150, color: '#F97316' },
+                  { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: stats?.carbGoal || 250, color: '#7B61FF' },
+                  { label: 'Fat', val: todayNutrition?.fat || 0, goal: stats?.fatGoal || 65, color: '#FF6B35' },
                 ].map(m => (
                   <div key={m.label} style={{ marginBottom: '18px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -370,14 +395,16 @@ export default function Dashboard() {
                 </div>
                 <button
                   onClick={handleAddWater}
+                  disabled={addingWater}
                   style={{
                     width: '100%', marginTop: '12px', padding: '8px',
                     background: 'transparent',
                     border: '1px solid rgba(251,146,60,0.3)',
                     borderRadius: '10px', color: '#FB923C',
-                    fontSize: '0.85rem', cursor: 'pointer',
+                    fontSize: '0.85rem', cursor: addingWater ? 'wait' : 'pointer',
+                    opacity: addingWater ? 0.6 : 1,
                     transition: 'all 0.2s'
-                  }}>+ Add Glass</button>
+                  }}>{addingWater ? 'Adding...' : '+ Add Glass'}</button>
               </motion.div>
             </div>
           </div>
@@ -480,7 +507,9 @@ export default function Dashboard() {
                     {e}
                   </div>
                 ))}
-                <button style={{
+                <button
+                  onClick={() => { window.location.href = '/workout' }}
+                  style={{
                   width: '100%', marginTop: '16px', padding: '12px',
                   background: 'linear-gradient(135deg,#F97316,#FB923C)',
                   border: 'none', borderRadius: '12px',
@@ -510,7 +539,7 @@ export default function Dashboard() {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  Risk Score 🛡️
+                  Fitness Level 🏆
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <span style={bigNumberStyle}>
@@ -523,16 +552,25 @@ export default function Dashboard() {
                     borderRadius: '99px', padding: '4px 16px',
                     color: '#F97316', fontSize: '0.8rem', fontWeight: 700,
                     marginBottom: '12px'
-                  }}>Level {userXP?.level || 1} ✅</div>
-                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    {['Diabetes', 'Obesity', 'Hypertension'].map(r => (
-                      <span key={r} style={{
-                        background: 'var(--border)',
-                        borderRadius: '99px', padding: '3px 10px',
-                        color: 'var(--text-muted)', fontSize: '0.72rem'
-                      }}>{r}</span>
-                    ))}
+                  }}>{userXP?.levelName || 'Rookie'} ✅</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '8px' }}>
+                    {(userXP?.totalXP || 0).toLocaleString()} XP · {userXP?.unlockedBadges || 0} badges earned
                   </div>
+                  {userXP?.nextLevelXP ? (
+                    <div>
+                      <div style={{ height: '8px', background: 'var(--border)', borderRadius: '99px', overflow: 'hidden', marginBottom: '6px' }}>
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(100, ((userXP?.totalXP || 0) / userXP.nextLevelXP) * 100)}%` }}
+                          transition={{ duration: 1, delay: 0.6 }}
+                          style={{ height: '100%', background: 'linear-gradient(90deg,#F97316,#FFD700)', borderRadius: '99px' }}
+                        />
+                      </div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>
+                        {((userXP?.nextLevelXP || 0) - (userXP?.totalXP || 0)).toLocaleString()} XP to next level
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </motion.div>
             </div>
@@ -547,39 +585,50 @@ export default function Dashboard() {
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  30-Day Forecast 📈
+                  Weekly Calories 📊
                 </div>
-                <svg width="100%" height="100" viewBox="0 0 200 80">
-                  <defs>
-                    <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#F97316" />
-                      <stop offset="100%" stopColor="#7B61FF" />
-                    </linearGradient>
-                  </defs>
-                  <polyline
-                    points="0,60 25,55 50,58 75,50 100,45 125,35 150,30 175,22 200,15"
-                    fill="none" stroke="url(#lineGrad)" strokeWidth="2.5"
-                    strokeLinecap="round"
-                    style={{ filter: 'drop-shadow(0 0 6px rgba(249,115,22,0.5))' }}
-                  />
-                  <polyline
-                    points="100,45 125,38 150,32 175,25 200,18"
-                    fill="none" stroke="#7B61FF" strokeWidth="2"
-                    strokeDasharray="5,4" opacity="0.7"
-                  />
-                  <line x1="100" y1="0" x2="100" y2="80"
-                    stroke="var(--border)" strokeWidth="1" strokeDasharray="3,3" />
-                </svg>
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '6px',
-                  background: 'rgba(249,115,22,0.1)',
-                  border: '1px solid rgba(249,115,22,0.25)',
-                  borderRadius: '99px', padding: '5px 14px',
-                  color: '#F97316', fontSize: '0.82rem', fontWeight: 600,
-                  marginTop: '8px'
-                }}>
-                  📉 -2.1kg predicted in 30 days
-                </div>
+                {weeklyData && weeklyData.length > 0 ? (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '110px', marginBottom: '10px' }}>
+                      {weeklyData.slice(-7).map((d, i) => {
+                        const goal = d.goal || stats?.calorieGoal || 2000
+                        const pct = Math.min(100, ((d.cal || 0) / goal) * 100)
+                        return (
+                          <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', height: '100%' }} title={`${d.day || ''}: ${d.cal || 0} / ${goal} kcal`}>
+                            <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginBottom: '4px', fontWeight: 700 }}>{d.cal || 0}</div>
+                            <motion.div
+                              initial={{ height: 0 }}
+                              animate={{ height: `${Math.max(4, pct * 0.9)}%` }}
+                              transition={{ duration: 0.6, delay: 0.5 + i * 0.07 }}
+                              style={{
+                                width: '100%', maxWidth: '34px', borderRadius: '6px',
+                                background: (d.cal || 0) >= goal * 0.9
+                                  ? 'linear-gradient(180deg,#F97316,#FF6B35)'
+                                  : 'linear-gradient(180deg,rgba(249,115,22,0.55),rgba(249,115,22,0.25))',
+                                boxShadow: (d.cal || 0) >= goal * 0.9 ? '0 0 10px rgba(249,115,22,0.4)' : 'none'
+                              }}
+                            />
+                            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '6px' }}>{(d.day || '').slice(0, 3)}</div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      background: 'rgba(249,115,22,0.1)',
+                      border: '1px solid rgba(249,115,22,0.25)',
+                      borderRadius: '99px', padding: '5px 14px',
+                      color: '#F97316', fontSize: '0.82rem', fontWeight: 600,
+                      marginTop: '8px'
+                    }}>
+                      🔥 {Math.round(weeklyData.slice(-7).reduce((a, d) => a + (d.cal || 0), 0) / Math.max(1, weeklyData.slice(-7).length)).toLocaleString()} kcal/day avg
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '24px 0' }}>
+                    No meals logged this week yet.<br />Log a meal to see your trend 📈
+                  </div>
+                )}
               </motion.div>
             </div>
 
@@ -595,13 +644,9 @@ export default function Dashboard() {
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Latest Badges 🏆
                 </div>
-                {[
-                  { emoji: '🔥', name: 'On Fire', xp: 200 },
-                  { emoji: '💪', name: 'Iron Will', xp: 300 },
-                  { emoji: '🎯', name: 'Goal Crusher', xp: 400 },
-                ].map((b, i) => (
+                {realBadges.length > 0 ? realBadges.map((b, i) => (
                   <motion.div
-                    key={b.name}
+                    key={b.id || b.name}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 + 0.8 }}
@@ -609,7 +654,7 @@ export default function Dashboard() {
                       display: 'flex', alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '10px 0',
-                      borderBottom: i < 2 ? '1px solid var(--border)' : 'none'
+                      borderBottom: i < realBadges.length - 1 ? '1px solid var(--border)' : 'none'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -623,7 +668,12 @@ export default function Dashboard() {
                       color: '#F97316', fontSize: '0.75rem', fontWeight: 700
                     }}>+{b.xp} XP</span>
                   </motion.div>
-                ))}
+                )) : (
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '20px 0' }}>
+                    No badges earned yet 🏅<br />
+                    Log meals and finish workouts to unlock your first badge
+                  </div>
+                )}
                 <div style={{ marginTop: '12px', textAlign: 'center' }}>
                   <a href="/achievements" style={{ color: '#7B61FF', fontSize: '0.82rem', textDecoration: 'none' }}>
                     View All Badges →

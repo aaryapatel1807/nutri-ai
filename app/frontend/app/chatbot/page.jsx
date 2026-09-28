@@ -173,22 +173,37 @@ export default function AICoach() {
     chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior:'smooth' })
   }, [messages, streamedText])
 
+  const welcomeMessage = () => ({
+    role:'assistant',
+    content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
+    timestamp: new Date().toISOString(),
+    persona: activePersona.id
+  })
+
   useEffect(() => {
     // Load chat history from localStorage on persona change OR when userId resolves
     const savedHistory = localStorage.getItem(chatKey(activePersona.id))
     if (savedHistory) {
-      const parsed = JSON.parse(savedHistory)
-      setMessages(parsed.messages || [])
-      setConversationHistory(parsed.history || [])
-      setShowQuickActions(false)
+      try {
+        const parsed = JSON.parse(savedHistory)
+        // Validate shape — a corrupt entry must not crash the page
+        if (parsed && Array.isArray(parsed.messages) && Array.isArray(parsed.history)) {
+          setMessages(parsed.messages)
+          setConversationHistory(parsed.history)
+          setShowQuickActions(false)
+        } else {
+          throw new Error('bad shape')
+        }
+      } catch {
+        console.warn('Discarding corrupt chat history for', activePersona.id)
+        localStorage.removeItem(chatKey(activePersona.id))
+        setMessages([welcomeMessage()])
+        setConversationHistory([])
+        setShowQuickActions(true)
+      }
     } else {
       // Welcome message when persona changes and no history exists
-      setMessages([{
-        role:'assistant',
-        content: `Hey! I'm **${activePersona.name}**, your ${activePersona.title}. 🎯\n\nI'm here to help you with ${activePersona.description.toLowerCase()}.\n\nAsk me anything or pick a quick action below to get started!`,
-        timestamp: new Date().toISOString(),
-        persona: activePersona.id
-      }])
+      setMessages([welcomeMessage()])
       setConversationHistory([])
       setShowQuickActions(true)
     }
@@ -197,10 +212,14 @@ export default function AICoach() {
   // Save chat history to localStorage whenever messages change
   useEffect(() => {
     if (messages.length > 1 && userId !== 'guest') { // wait for real userId before saving
-      localStorage.setItem(chatKey(activePersona.id), JSON.stringify({
-        messages,
-        history: conversationHistory
-      }))
+      try {
+        localStorage.setItem(chatKey(activePersona.id), JSON.stringify({
+          messages,
+          history: conversationHistory
+        }))
+      } catch {
+        // Storage full or unavailable — history just won't persist
+      }
     }
   }, [messages, conversationHistory, activePersona.id, userId])
 
@@ -349,7 +368,7 @@ export default function AICoach() {
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>AI Coach 🤖</h1>
                 <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
-                  Powered by Gemini AI · Real-time personalized coaching
+                  Powered by Groq · Real-time personalized coaching
                 </p>
               </div>
               <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
@@ -364,7 +383,7 @@ export default function AICoach() {
                     transition={{ duration:2, repeat:Infinity }}
                     style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#F97316' }}
                   />
-                  <span style={{ color:'#F97316', fontSize:'0.8rem', fontWeight:600 }}>Gemini AI Live</span>
+                  <span style={{ color:'#F97316', fontSize:'0.8rem', fontWeight:600 }}>Groq AI Live</span>
                 </div>
                 <button onClick={clearChat} style={{
                   background:'var(--border)',
@@ -781,7 +800,7 @@ export default function AICoach() {
                   { label:'Messages',   val:messages.filter(m=>m.role==='user').length,     icon:'💬', color:activePersona.color },
                   { label:'AI Responses',val:messages.filter(m=>m.role==='assistant').length,icon:'🤖', color:'#7B61FF' },
                   { label:'Coach',       val:activePersona.name,                              icon:'👤', color:'#FB923C' },
-                  { label:'Model',       val:'Gemini 2.5 Flash',                              icon:'⚡', color:'#FFD700' },
+                  { label:'Model',       val:'GPT-OSS 120B',                              icon:'⚡', color:'#FFD700' },
                 ].map(s => (
                   <div key={s.label} style={{
                     display:'flex', justifyContent:'space-between', alignItems:'center',

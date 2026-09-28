@@ -74,7 +74,7 @@ const Input = forwardRef(({
             type="button"
             onClick={type === 'password' ? togglePassword : undefined}
             disabled={disabled}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors pointer-events-none"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
           >
             {type === 'password' ? (
               showPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />

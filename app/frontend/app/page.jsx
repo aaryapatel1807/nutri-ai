@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -12,6 +12,13 @@ export default function LandingPage() {
   const [error, setError] = useState('')
   const [shake, setShake] = useState(false)
   const router = useRouter()
+
+  // Already signed in? Skip the login form.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('nutriai_token')) window.location.href = '/dashboard'
+    } catch {}
+  }, [])
 
   // Form states
   const [loginForm, setLoginForm] = useState({
@@ -108,7 +115,7 @@ export default function LandingPage() {
         <div className="absolute bottom-[20%] left-[25%] w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(123,97,255,0.05)_0%,transparent_70%)] rounded-full animate-[float_12s_ease-in-out_infinite_reverse] pointer-events-none z-0" />
 
         {/* Hero Content */}
-        <div className="relative z-1">
+        <div className="relative z-[1]">
           <motion.h1
             variants={fadeInUp}
             initial="initial"
@@ -241,21 +248,7 @@ export default function LandingPage() {
                 </button>
               </form>
 
-              {/* OR Divider */}
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-white/20" />
-                <span className="text-[var(--text-muted)] text-[0.875rem]">or</span>
-                <div className="flex-1 h-px bg-white/20" />
-              </div>
 
-              <button
-                disabled={loading}
-                className={`w-full py-3 font-semibold border border-white/20 rounded-xl text-[0.95rem] cursor-pointer transition-all duration-200 ${
-                  loading ? 'opacity-50 cursor-not-allowed' : 'opacity-100'
-                } bg-transparent text-[var(--text-primary)]`}
-              >
-                Continue with Google
-              </button>
             </motion.div>
           )}
 

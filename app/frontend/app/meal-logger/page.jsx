@@ -42,11 +42,15 @@ export default function MealLogger() {
         setError('')
         const meals = await getMeals()
         if (meals) {
-          // Group meals by type and filter for today
-          const today = new Date().toISOString().split('T')[0]
-          const todayMeals = meals.filter(meal => 
-            meal.date && meal.date.startsWith(today)
-          )
+          // Group meals by type and filter for today (local timezone, not UTC)
+          const now = new Date()
+          const todayMeals = meals.filter(meal => {
+            if (!meal.date) return false
+            const md = new Date(meal.date)
+            return md.getFullYear() === now.getFullYear() &&
+                   md.getMonth() === now.getMonth() &&
+                   md.getDate() === now.getDate()
+          })
           setLogged(todayMeals)
         }
       } catch (err) {
@@ -124,17 +128,25 @@ export default function MealLogger() {
 
   const removeFood = async (idx) => {
     const mealToRemove = logged[idx]
-    
+    if (!mealToRemove) return
+
     // Update UI immediately (optimistic UI)
     setLogged(prev => prev.filter((_, i) => i !== idx))
-    
-    // If it has a database ID, delete it from the backend
-    if (mealToRemove && mealToRemove.id && typeof mealToRemove.id === 'string' && mealToRemove.id.length > 10) {
+
+    // Only persisted meals have backend IDs — optimistic entries use numeric
+    // timestamps (Date.now()), backend ids are cuid() which always contain letters
+    const isPersisted = typeof mealToRemove.id === 'string' && /[a-zA-Z]/.test(mealToRemove.id)
+    if (isPersisted) {
       try {
         await deleteMeal(mealToRemove.id)
       } catch (err) {
         console.error('Failed to delete meal from backend:', err)
-        // If deletion failed, we could optionally revert the UI change here
+        // Revert the optimistic removal so the meal isn't silently lost
+        setLogged(prev => {
+          const next = [...prev]
+          next.splice(Math.min(idx, next.length), 0, mealToRemove)
+          return next
+        })
       }
     }
   }
@@ -594,6 +606,8 @@ export default function MealLogger() {
                     hidden 
                     onChange={async (e) => {
                       const file = e.target.files?.[0]
+                      // Reset so re-selecting the same photo retriggers onChange
+                      e.target.value = ''
                       if (!file) return
                       
                       setIsScanning(true)
@@ -602,18 +616,23 @@ export default function MealLogger() {
                         const formData = new FormData()
                         formData.append('image', file)
                         const res = await ml.detect(formData)
-                        
-                        if (res.data && res.data.detection) {
-                          const { name, calories, protein, carbs, fat } = res.data.detection
-                          // Automatically add the detected food
-                          await addFood({
-                            name: name || 'Detected Food',
-                            calories: calories || 0,
-                            protein: protein || 0,
-                            carbs: carbs || 0,
-                            fat: fat || 0,
-                            emoji: '🤖'
-                          })
+
+                        // Backend returns { foods: [{ name, calories, confidence }], total_calories }
+                        const foods = res.data?.foods || []
+                        if (foods.length > 0) {
+                          // Log every detected item (a plate photo often has several),
+                          // highest confidence first
+                          const sorted = [...foods].sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
+                          for (const item of sorted) {
+                            await addFood({
+                              name: item.name || 'Detected Food',
+                              calories: Math.round(item.calories || 0),
+                              protein: 0,
+                              carbs: 0,
+                              fat: 0,
+                              emoji: '🤖'
+                            })
+                          }
                           setShowCamera(false)
                         } else {
                           setScanError('Could not identify food. Please try another photo.')
@@ -638,7 +657,7 @@ export default function MealLogger() {
                     </div>
                   )}
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '4px' }}>
-                    YOLOv8 food detection
+                    AI vision food detection
                   </div>
                 </div>
                 <button

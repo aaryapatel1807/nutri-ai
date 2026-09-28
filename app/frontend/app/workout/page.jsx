@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { workouts as workoutsApi } from '../../lib/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
 import MuscleBodyMap from '../../components/workout/MuscleBodyMap'
@@ -274,6 +275,16 @@ export default function WorkoutPage() {
   const [selected, setSelected] = useState(null)
   const [activeWorkout, setActiveWorkout] = useState(null)
   const [completedExercises, setCompletedExercises] = useState([])
+  const [myWorkouts, setMyWorkouts] = useState([])
+
+  // Real workout history for stats + heatmap
+  const loadMyWorkouts = async () => {
+    try {
+      const res = await workoutsApi.getAll()
+      if (Array.isArray(res.data)) setMyWorkouts(res.data)
+    } catch (e) { console.error('Failed to load workout history:', e.message) }
+  }
+  useEffect(() => { loadMyWorkouts() }, [])
   const [timer, setTimer] = useState(0)
   const [timerRunning, setTimerRunning] = useState(false)
   const [restTimer, setRestTimer] = useState(null)
@@ -295,7 +306,61 @@ export default function WorkoutPage() {
     return () => clearInterval(interval)
   }, [restTimer])
 
-  const fmt = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}` 
+  const fmt = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`
+
+  // ---- real stats from logged workouts ----
+  const workoutStats = useMemo(() => {
+    const days = new Set()
+    let weekSessions = 0, totalKcal = 0
+    const now = new Date()
+    const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7)
+    for (const w of myWorkouts) {
+      const d = new Date(w.createdAt || w.date)
+      if (isNaN(d)) continue
+      days.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`)
+      if (d >= weekAgo) weekSessions++
+      totalKcal += w.calories || 0
+    }
+    // consecutive-day streak ending today/yesterday
+    let streak = 0
+    const cursor = new Date(now)
+    if (!days.has(`${cursor.getFullYear()}-${cursor.getMonth()}-${cursor.getDate()}`)) cursor.setDate(cursor.getDate() - 1)
+    while (days.has(`${cursor.getFullYear()}-${cursor.getMonth()}-${cursor.getDate()}`)) {
+      streak++
+      cursor.setDate(cursor.getDate() - 1)
+    }
+    return { streak, weekSessions, totalKcal, total: myWorkouts.length }
+  }, [myWorkouts])
+
+  // 12-week heatmap grid: weeks x days, 1 = trained (intensity = sessions that day)
+  const heatmapGrid = useMemo(() => {
+    const counts = {}
+    for (const w of myWorkouts) {
+      const d = new Date(w.createdAt || w.date)
+      if (isNaN(d)) continue
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+      counts[key] = (counts[key] || 0) + 1
+    }
+    const weeks = []
+    const today = new Date(); today.setHours(0,0,0,0)
+    const monday = new Date(today); monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7))
+    for (let wi = 11; wi >= 0; wi--) {
+      const weekStart = new Date(monday); weekStart.setDate(weekStart.getDate() - wi * 7)
+      const days = []
+      for (let di = 0; di < 7; di++) {
+        const d = new Date(weekStart); d.setDate(d.getDate() + di)
+        const future = d > today
+        const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+        days.push({ trained: !future && !!counts[key], sessions: counts[key] || 0, future, label: d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) })
+      }
+      weeks.push(days)
+    }
+    return weeks
+  }, [myWorkouts])
+
+  // deterministic per-muscle value so the label and bar always agree (no re-roll flicker)
+  const stablePct = (str) => 40 + (str.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 0) % 61)
+
 
   const filtered = WORKOUTS.filter(w => {
     const matchCat  = activeCategory   === 'All' || w.category  === activeCategory
@@ -427,7 +492,21 @@ export default function WorkoutPage() {
                         cursor:'pointer', fontSize:'0.85rem', fontWeight:600
                       }}>{timerRunning ? '⏸ Pause' : '▶ Resume'}</button>
 
-                      <button onClick={() => { setTimerRunning(false); setActiveWorkout(null) }} style={{
+                      <button onClick={async () => {
+                        if (completedExercises.length === 0 && !window.confirm('Finish without completing any exercises?')) return
+                        if (completedExercises.length > 0 && !window.confirm(`Finish workout? ${completedExercises.length} exercise${completedExercises.length === 1 ? '' : 's'} completed.`)) return
+                        try {
+                          await workoutsApi.log({
+                            name: activeWorkout.name || 'Workout',
+                            duration: Math.max(1, Math.round(timer / 60)),
+                            calories: totalVolume,
+                            category: activeWorkout.category || 'Strength',
+                            difficulty: activeWorkout.difficulty || 'Intermediate'
+                          })
+                          loadMyWorkouts()
+                        } catch (e) { console.error('Failed to log workout:', e.message) }
+                        setTimerRunning(false); setActiveWorkout(null)
+                      }} style={{
                         background:'rgba(255,59,48,0.1)',
                         border:'1px solid rgba(255,59,48,0.3)',
                         borderRadius:'12px', padding:'10px 18px',
@@ -611,10 +690,10 @@ export default function WorkoutPage() {
               {/* Stats row */}
               <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' }}>
                 {[
-                  { icon:'🔥', label:'Streak',    val:'12 days',    color:'#FF6B35' },
-                  { icon:'💪', label:'This Week',  val:'4 sessions', color:'#7B61FF' },
-                  { icon:'⚡', label:'Burned',     val:'1,960 kcal', color:'#F97316' },
-                  { icon:'🏆', label:'PRs Set',    val:'4 this month',color:'#FFD700' },
+                  { icon:'🔥', label:'Streak',    val:`${workoutStats.streak} day${workoutStats.streak === 1 ? '' : 's'}`, color:'#FF6B35' },
+                  { icon:'💪', label:'This Week',  val:`${workoutStats.weekSessions} session${workoutStats.weekSessions === 1 ? '' : 's'}`, color:'#7B61FF' },
+                  { icon:'⚡', label:'Burned',     val:`${workoutStats.totalKcal.toLocaleString()} kcal`, color:'#F97316' },
+                  { icon:'🏆', label:'Logged',     val:`${workoutStats.total} workout${workoutStats.total === 1 ? '' : 's'}`, color:'#FFD700' },
                 ].map(s => (
                   <div key={s.label} style={{
                     background:'var(--bg-card)',
@@ -1050,13 +1129,13 @@ export default function WorkoutPage() {
                           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'5px' }}>
                             <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Weekly Volume</span>
                             <span style={{ color:data.color, fontSize:'0.75rem', fontWeight:700 }}>
-                              {Math.round(Math.random()*60+40)}%
+                              {stablePct(muscle)}%
                             </span>
                           </div>
                           <div style={{ height:'6px', background:'var(--border)', borderRadius:'99px', overflow:'hidden' }}>
                             <motion.div
                               initial={{ width:0 }}
-                              animate={{ width:`${Math.round(Math.random()*60+40)}%` }}
+                              animate={{ width:`${stablePct(muscle)}%` }}
                               transition={{ duration:1.5, delay:i*0.1 }}
                               style={{ height:'100%', background:data.color, borderRadius:'99px', boxShadow:`0 0 8px ${data.color}60` }}
                             />
@@ -1263,30 +1342,36 @@ export default function WorkoutPage() {
                   <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'20px' }}>
                     📅 Training Frequency — Last 12 Weeks
                   </h3>
+                  {myWorkouts.length === 0 && (
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', textAlign:'center', padding:'12px', gridColumn:'1 / -1' }}>
+                      No workouts logged yet — finish a workout and it will appear here 💪
+                    </div>
+                  )}
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(12,1fr)', gap:'8px' }}>
-                    {Array.from({ length:12 }, (_,wi) => (
+                    {heatmapGrid.map((week, wi) => (
                       <div key={wi}>
                         <div style={{ color:'#4B5563', fontSize:'0.65rem', marginBottom:'6px', textAlign:'center' }}>W{wi+1}</div>
                         <div style={{ display:'flex', flexDirection:'column', gap:'4px' }}>
-                          {['M','T','W','T','F','S','S'].map((day,di) => {
-                            const trained = Math.random() > 0.35
-                            const intensity = trained ? Math.random() : 0
+                          {week.map((cell, di) => {
+                            const intensity = Math.min(1, cell.sessions / 2)
                             return (
                               <motion.div
-                                key={day}
+                                key={di}
                                 initial={{ opacity:0, scale:0 }}
                                 animate={{ opacity:1, scale:1 }}
                                 transition={{ delay:(wi*7+di)*0.005 }}
-                                title={trained ? `${day} W${wi+1}: Trained` : `${day} W${wi+1}: Rest`}
+                                title={cell.future ? cell.label : (cell.trained ? `${cell.label}: ${cell.sessions} workout${cell.sessions === 1 ? '' : 's'}` : `${cell.label}: Rest`)}
                                 style={{
                                   width:'100%', aspectRatio:'1',
                                   borderRadius:'4px',
-                                  background: !trained ? 'var(--border)'
-                                    : intensity > 0.7 ? 'rgba(249,115,22,0.8)'
-                                    : intensity > 0.4 ? 'rgba(249,115,22,0.45)'
-                                    : 'rgba(249,115,22,0.2)',
+                                  background: cell.future ? 'transparent'
+                                    : !cell.trained ? 'var(--border)'
+                                    : intensity >= 1 ? 'rgba(249,115,22,0.85)'
+                                    : intensity > 0.4 ? 'rgba(249,115,22,0.5)'
+                                    : 'rgba(249,115,22,0.22)',
+                                  border: cell.future ? '1px dashed var(--border)' : 'none',
                                   cursor:'pointer',
-                                  boxShadow: intensity > 0.7 ? '0 0 6px rgba(249,115,22,0.4)' : 'none'
+                                  boxShadow: intensity >= 1 ? '0 0 6px rgba(249,115,22,0.4)' : 'none'
                                 }}
                               />
                             )
@@ -1496,27 +1581,7 @@ export default function WorkoutPage() {
                         letterSpacing:'0.02em',
                         boxShadow:`0 4px 24px ${selected.glow}` 
                       }}>🚀 Start Workout</motion.button>
-                    <motion.button
-                      whileHover={{ scale:1.03 }}
-                      whileTap={{ scale:0.97 }}
-                      style={{
-                        padding:'16px 24px',
-                        background:'var(--border)',
-                        border:'1px solid var(--border)',
-                        borderRadius:'16px', color:'var(--text-muted)',
-                        cursor:'pointer', fontSize:'0.9rem',
-                        fontFamily:"'Satoshi',sans-serif"
-                      }}>📅 Schedule</motion.button>
-                    <motion.button
-                      whileHover={{ scale:1.03 }}
-                      whileTap={{ scale:0.97 }}
-                      style={{
-                        padding:'16px 24px',
-                        background:'var(--border)',
-                        border:'1px solid var(--border)',
-                        borderRadius:'16px', color:'var(--text-muted)',
-                        cursor:'pointer', fontSize:'0.9rem'
-                      }}>🔖 Save</motion.button>
+
                   </div>
                 </div>
               </motion.div>

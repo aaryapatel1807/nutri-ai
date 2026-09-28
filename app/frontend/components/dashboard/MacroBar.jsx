@@ -1,7 +1,8 @@
 'use client'
 
-export default function MacroBar({ label, current, goal, color }) {
-  const percent = Math.min((current / goal) * 100, 100)
+export default function MacroBar({ label, current = 0, goal = 1, color = '#F97316' }) {
+  const safeGoal = goal > 0 ? goal : 1
+  const percent = Math.min((current / safeGoal) * 100, 100)
   return (
     <div style={{ marginBottom: '16px' }}>
       <div style={{

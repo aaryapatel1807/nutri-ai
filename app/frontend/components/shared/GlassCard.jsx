@@ -23,12 +23,12 @@ export default function GlassCard({
         border: '1px solid var(--border)',
         borderRadius: '24px',
         boxShadow: '0 8px 32px var(--shadow-color)',
-        padding: '24px',
         cursor: hover ? 'pointer' : 'default',
         ...style
       }}
       onClick={onClick}
       {...motionProps}
+      className={`${padding} ${className}`}
     >
       {children}
     </motion.div>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import NeonButton from '@/components/shared/NeonButton'
 import GlassCard from '@/components/shared/GlassCard'
 import { staggerContainer, fadeInUp } from '@/lib/animations'
+import { auth } from '@/lib/api'
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -34,9 +35,54 @@ export default function OnboardingPage() {
     return { label: 'Obese', color: '#FF6B35' }
   }
 
+  const [stepError, setStepError] = useState('')
+  const [finishing, setFinishing] = useState(false)
+
+  const validateStep = (step) => {
+    if (step === 1) {
+      if (!formData.name.trim()) return 'Please tell us your name'
+      const age = Number(formData.age)
+      if (!formData.age || isNaN(age) || age < 10 || age > 120) return 'Enter a valid age (10–120)'
+      if (!formData.gender) return 'Please pick an option'
+    }
+    if (step === 2) {
+      const h = Number(formData.height), w = Number(formData.weight)
+      if (!formData.height || isNaN(h) || h < 100 || h > 250) return 'Enter a valid height in cm (100–250)'
+      if (!formData.weight || isNaN(w) || w < 30 || w > 300) return 'Enter a valid weight in kg (30–300)'
+    }
+    if (step === 3 && !formData.goal) return 'Pick a fitness goal to continue'
+    if (step === 4 && !formData.diet) return 'Pick a diet preference to continue'
+    if (step === 5 && !formData.activity) return 'Pick your activity level to continue'
+    return ''
+  }
+
+  const finishOnboarding = async () => {
+    setFinishing(true); setStepError('')
+    try {
+      await auth.updateProfile({
+        name: formData.name.trim(),
+        gender: formData.gender,
+        height: Number(formData.height),
+        weight: Number(formData.weight),
+        fitnessGoal: formData.goal,
+        dietType: formData.diet,
+        activityLevel: formData.activity,
+      })
+      try { localStorage.setItem('nutriai_onboarded', '1') } catch {}
+    } catch (e) {
+      // don't trap the user — keep going, the dashboard will use defaults
+      console.error('Onboarding save failed:', e.message)
+    } finally {
+      window.location.href = '/dashboard'
+    }
+  }
+
   const nextStep = () => {
+    const err = validateStep(currentStep)
+    if (err) { setStepError(err); return }
+    setStepError('')
     if (currentStep < 5) setCurrentStep(currentStep + 1)
-    else window.location.href = '/dashboard'
+    else finishOnboarding()
   }
 
   const prevStep = () => {
@@ -293,8 +339,9 @@ export default function OnboardingPage() {
               </NeonButton>
             )}
             <div className="flex-1" />
-            <NeonButton onClick={nextStep}>
-              {currentStep === 5 ? "Let's Go! →" : "Continue →"}
+            {stepError && <span className="text-red-400 text-sm self-center mr-3">{stepError}</span>}
+            <NeonButton onClick={nextStep} loading={finishing}>
+              {finishing ? 'Saving...' : currentStep === 5 ? "Let's Go! →" : "Continue →"}
             </NeonButton>
           </div>
         </GlassCard>

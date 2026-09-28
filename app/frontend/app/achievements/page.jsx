@@ -120,6 +120,36 @@ function Confetti({ active }) {
     x: Math.random()*100, delay: Math.random()*0.5,
     size: Math.random()*8+4, rotation: Math.random()*360
   }))
+  if (loading) {
+    return (
+      <div style={{ width:'100%', minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <div style={{ textAlign:'center', color:'var(--text-muted)' }}>
+          <div style={{ fontSize:'2rem', marginBottom:'12px' }}>🏆</div>
+          <div>Loading your achievements...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ width:'100%', minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <div style={{ textAlign:'center', maxWidth:'380px', padding:'0 20px' }}>
+          <div style={{ fontSize:'2rem', marginBottom:'12px' }}>😕</div>
+          <div style={{ color:'var(--text-primary)', fontWeight:700, marginBottom:'8px' }}>Couldn't load achievements</div>
+          <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', marginBottom:'20px' }}>
+            Check your connection and try again — your badges are safe.
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ padding:'12px 28px', borderRadius:'99px', border:'none', cursor:'pointer',
+              background:'linear-gradient(135deg,#F97316,#FF6B35)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
+          >Try Again</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:999, overflow:'hidden' }}>
       {pieces.map(p => (
@@ -312,6 +342,7 @@ export default function Achievements() {
   const [streak, setStreak] = useState(0)
   const [badges, setBadges] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
@@ -332,6 +363,7 @@ export default function Achievements() {
         setStreak(statsRes.data.streak)
       } catch (err) {
         console.error('Failed to load achievements:', err)
+        setLoadError(true)
       } finally {
         setLoading(false)
       }
@@ -345,7 +377,7 @@ export default function Achievements() {
   const progressToNext = nextLevel ? ((userXP - currentLevel.minXP) / (nextLevel.minXP - currentLevel.minXP)) * 100 : 100
 
   // Filter badges
-  const filteredBadges = (badges.length > 0 ? badges : BADGES_MOCK).filter(badge => {
+  const filteredBadges = badges.filter(badge => {
     const categoryMatch = activeCategory === 'All' || badge.category === activeCategory
     const filterMatch = activeFilter === 'All' || 
       (activeFilter === 'Unlocked' && badge.unlocked) || 
@@ -568,6 +600,13 @@ export default function Achievements() {
                 display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',
                 gap:'16px'
               }}>
+                {filteredBadges.length === 0 && (
+                  <div style={{ gridColumn:'1 / -1', textAlign:'center', padding:'48px 20px', color:'var(--text-muted)' }}>
+                    <div style={{ fontSize:'2.5rem', marginBottom:'12px' }}>🌱</div>
+                    <div style={{ fontWeight:700, color:'var(--text-primary)', marginBottom:'8px' }}>No badges yet</div>
+                    <div style={{ fontSize:'0.85rem' }}>Log your first meal or finish a workout to start earning badges.</div>
+                  </div>
+                )}
                 {filteredBadges.map((badge, index) => (
                   <BadgeCard
                     key={badge.id}
