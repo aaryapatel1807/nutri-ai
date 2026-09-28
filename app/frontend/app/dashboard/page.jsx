@@ -195,6 +195,25 @@ export default function Dashboard() {
     }
   }
 
+  // ── Day Score: one glanceable 0–100 ring (Whoop-style), color-shifts red→amber→green
+  const goalCals = todayNutrition?.goalCalories || stats?.calorieGoal || 2000
+  const proteinGoal = stats?.proteinGoal || 150
+  const calRatio = (todayNutrition?.calories || 0) / goalCals
+  const calPts = 40 * Math.max(0, 1 - Math.abs(calRatio - 0.95) / 0.95)
+  const proteinPts = 20 * Math.min((todayNutrition?.protein || 0) / proteinGoal, 1)
+  const waterPts = 20 * Math.min(water / 8, 1)
+  const mealCount = todayNutrition?.meals?.length || 0
+  const mealPts = 20 * Math.min(mealCount / 3, 1)
+  const dayScore = Math.round(calPts + proteinPts + waterPts + mealPts)
+  const scoreColor = dayScore < 40 ? '#FF6B6B' : dayScore < 70 ? '#F5A524' : '#2ECC71'
+  const scoreZone = dayScore < 40 ? 'WARMING UP' : dayScore < 70 ? 'BUILDING' : dayScore < 90 ? 'STRONG' : 'ON FIRE'
+  const scoreBreakdown = [
+    { icon: '🍽', label: 'Fuel', val: `${todayNutrition?.calories || 0}/${goalCals}` },
+    { icon: '💪', label: 'Protein', val: `${todayNutrition?.protein || 0}g/${proteinGoal}g` },
+    { icon: '💧', label: 'Water', val: `${Math.floor(water)}/8` },
+    { icon: '📝', label: 'Meals', val: `${mealCount}/3` },
+  ]
+
   return (
       <div style={{ width: '100%', margin: '0', padding: '0', position: 'relative', zIndex: 1 }}>
 
@@ -259,7 +278,7 @@ export default function Dashboard() {
             marginBottom: '20px'
           }}>
 
-            {/* CALORIE RING */}
+            {/* DAY SCORE RING */}
             <div style={gradientBorderStyle}>
               <motion.div
                 {...tilt1}
@@ -270,7 +289,7 @@ export default function Dashboard() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                    Calories Today
+                    Day Score
                   </div>
                   {stats?.streak > 0 && (
                     <div style={{
@@ -288,37 +307,42 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                   <svg width="160" height="160" viewBox="0 0 160 160">
-                    <defs>
-                      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#F97316" />
-                        <stop offset="100%" stopColor="#FB923C" />
-                      </linearGradient>
-                    </defs>
                     <circle cx="80" cy="80" r="65" fill="none" stroke="var(--border)" strokeWidth="10" />
                     <motion.circle cx="80" cy="80" r="65" fill="none"
-                      stroke="url(#ringGrad)" strokeWidth="10"
+                      stroke={scoreColor} strokeWidth="10"
                       strokeLinecap="round"
                       style={{
-                        filter: 'drop-shadow(0 0 8px rgba(249,115,22,0.6))'
+                        filter: `drop-shadow(0 0 8px ${scoreColor}99)`,
+                        fontVariantNumeric: 'tabular-nums'
                       }}
                       strokeDashoffset="102"
                       initial={{ strokeDasharray: '0 408.4' }}
-                      animate={{ strokeDasharray: `${Math.min(todayNutrition?.calories || 0, (todayNutrition?.goalCalories || stats?.calorieGoal || 2000)) / ((todayNutrition?.goalCalories || stats?.calorieGoal || 2000)) * 408.4} 408.4` }}
+                      animate={{ strokeDasharray: `${(dayScore / 100) * 408.4} 408.4` }}
                       transition={{ duration: 2, ease: "easeOut" }}
                     />
-                    <text x="80" y="72" textAnchor="middle" fill="var(--text-primary)" fontSize="28" fontFamily="'Clash Display',sans-serif" fontWeight="700">{todayNutrition?.calories || 0}</text>
-                    <text x="80" y="92" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontFamily="'Satoshi',sans-serif">of {(todayNutrition?.goalCalories || stats?.calorieGoal || 2000)} kcal</text>
+                    <text x="80" y="72" textAnchor="middle" fill="var(--text-primary)" fontSize="34" fontFamily="'Clash Display',sans-serif" fontWeight="700" style={{ fontVariantNumeric: 'tabular-nums' }}>{dayScore}</text>
+                    <text x="80" y="94" textAnchor="middle" fill="var(--text-muted)" fontSize="10" fontFamily="'Satoshi',sans-serif" letterSpacing="2">DAY SCORE</text>
                   </svg>
                   <div style={{
-                    background: 'rgba(249,115,22,0.15)',
-                    border: '1px solid rgba(249,115,22,0.3)',
+                    background: `${scoreColor}26`,
+                    border: `1px solid ${scoreColor}55`,
                     borderRadius: '99px',
                     padding: '4px 16px',
-                    color: '#F97316',
+                    color: scoreColor,
                     fontSize: '0.8rem',
                     fontWeight: 700,
-                    marginTop: '8px'
-                  }}>{Math.round(((todayNutrition?.calories || 0) / ((todayNutrition?.goalCalories || stats?.calorieGoal || 2000))) * 100)}% of Daily Goal</div>
+                    marginTop: '8px',
+                    letterSpacing: '0.08em'
+                  }}>{scoreZone}</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '6px', marginTop: '14px', width: '100%' }}>
+                    {scoreBreakdown.map(b => (
+                      <div key={b.label} style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '1rem' }}>{b.icon}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '2px' }}>{b.label}</div>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '0.72rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{b.val}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             </div>

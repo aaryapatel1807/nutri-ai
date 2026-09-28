@@ -2,9 +2,74 @@
 import { useState, useEffect, useMemo } from 'react'
 import { workouts as workoutsApi } from '../../lib/api'
 import { motion, AnimatePresence } from 'framer-motion'
+import confetti from 'canvas-confetti'
 import useIsMobile from '../../lib/useIsMobile'
 import MuscleBodyMap from '../../components/workout/MuscleBodyMap'
 // PageWrapper removed to fix double-wrap bug
+
+// ─── Gym utility helpers ──────────────────────────────────────────────────────
+const PLATES = [
+  { kg: 25,   color: '#EF4444' },
+  { kg: 20,   color: '#3B82F6' },
+  { kg: 15,   color: '#EAB308' },
+  { kg: 10,   color: '#22C55E' },
+  { kg: 5,    color: '#E5E7EB' },
+  { kg: 2.5,  color: '#EF4444' },
+  { kg: 1.25, color: '#9CA3AF' },
+]
+
+/** Greedy plate loading: returns array of {kg,color} per side + remainder */
+function calcPlates(targetKg, barKg) {
+  let perSide = (targetKg - barKg) / 2
+  if (perSide <= 0) return { plates: [], remainder: perSide }
+  const plates = []
+  for (const p of PLATES) {
+    while (perSide >= p.kg - 1e-9) {
+      plates.push(p)
+      perSide = Math.round((perSide - p.kg) * 100) / 100
+    }
+  }
+  return { plates, remainder: Math.round(perSide * 100) / 100 }
+}
+
+/** Epley estimated 1RM: weight × (1 + reps/30) */
+function epley1RM(weightKg, reps) {
+  const w = Number(weightKg)
+  const r = Number(reps)
+  if (!Number.isFinite(w) || w <= 0 || !Number.isFinite(r) || r <= 0) return null
+  return Math.round(w * (1 + r / 30) * 2) / 2
+}
+
+/** Parse a rep scheme like '6-8', '10/leg', '30 sec', 'flows' → representative rep number */
+function parseReps(repStr) {
+  if (!repStr) return null
+  const s = String(repStr)
+  const range = s.match(/(\d+)\s*-\s*(\d+)/)
+  if (range) return Math.round((Number(range[1]) + Number(range[2])) / 2)
+  const single = s.match(/(\d+)/)
+  if (single) return Number(single[1])
+  return null
+}
+
+const PR_STORAGE_KEY = 'nutriai_prs_v1'
+const SESSION_LOG_KEY = 'nutriai_session_log_v1'
+
+function loadPRs() {
+  try { return JSON.parse(localStorage.getItem(PR_STORAGE_KEY) || '{}') } catch { return {} }
+}
+function savePR(exName, weight, reps, oneRM) {
+  const prs = loadPRs()
+  prs[exName] = { weight, reps, oneRM, date: new Date().toISOString() }
+  try { localStorage.setItem(PR_STORAGE_KEY, JSON.stringify(prs)) } catch {}
+  return prs
+}
+function appendSessionLog(entry) {
+  try {
+    const log = JSON.parse(localStorage.getItem(SESSION_LOG_KEY) || '[]')
+    log.push(entry)
+    localStorage.setItem(SESSION_LOG_KEY, JSON.stringify(log.slice(-200)))
+  } catch {}
+}
 
 const WORKOUTS = [
   {
@@ -293,6 +358,15 @@ export default function WorkoutPage() {
   const [search, setSearch] = useState('')
   const [hoveredId, setHoveredId] = useState(null)
   const [expandedExercise, setExpandedExercise] = useState(null)
+  // ─── Gym utilities state ───
+  const [showPlateCalc, setShowPlateCalc] = useState(false)
+  const [plateTarget, setPlateTarget] = useState(100)
+  const [plateBar, setPlateBar] = useState(20)
+  const [prCelebration, setPrCelebration] = useState([])
+  const [exInputs, setExInputs] = useState({}) // idx → { weight, reps } working-set input during active workout
+  const [detailWeights, setDetailWeights] = useState({}) // idx → weight input inside the detail modal
+  const [realPRs, setRealPRs] = useState({})
+  useEffect(() => { try { setRealPRs(loadPRs()) } catch {} }, [])
 
   useEffect(() => {
     let interval
@@ -395,6 +469,60 @@ export default function WorkoutPage() {
         .reduce((a,e) => a + e.calories, 0)
     : 0
 
+  // ─── Finish workout: log it, detect PRs from working-set inputs, persist session ───
+  const finishWorkout = async () => {
+    if (!activeWorkout) return
+    if (completedExercises.length === 0 && !window.confirm('Finish without completing any exercises?')) return
+    if (completedExercises.length > 0 && !window.confirm(`Finish workout? ${completedExercises.length} exercise${completedExercises.length === 1 ? '' : 's'} completed.`)) return
+
+    // PR detection: best Epley 1RM per completed exercise from the user's working-set inputs
+    const newPRs = []
+    const prs = loadPRs()
+    const sessionExercises = []
+    for (const idx of completedExercises) {
+      const ex = activeWorkout.exercises[idx]
+      const input = exInputs[idx] || {}
+      const weight = Number(input.weight)
+      const reps = Number(input.reps) || parseReps(ex.reps)
+      sessionExercises.push({ name: ex.name, weight: Number.isFinite(weight) ? weight : null, reps })
+      const oneRM = epley1RM(weight, reps)
+      if (oneRM == null) continue
+      const prev = prs[ex.name]
+      if (!prev || oneRM > prev.oneRM) {
+        savePR(ex.name, weight, reps, oneRM)
+        newPRs.push({ name: ex.name, oneRM, prev: prev ? prev.oneRM : null, weight, reps })
+      }
+    }
+    if (newPRs.length > 0) {
+      setPrCelebration(newPRs)
+      setRealPRs(loadPRs())
+      confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#F5A524', '#F97316', '#FFD700', '#ffffff'] })
+      setTimeout(() => confetti({ particleCount: 90, angle: 60, spread: 60, origin: { x: 0, y: 0.4 }, colors: ['#F5A524', '#FFD700'] }), 250)
+      setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 60, origin: { x: 1, y: 0.4 }, colors: ['#F5A524', '#FFD700'] }), 400)
+    }
+    // Persist session for the recap page (volume, top exercises)
+    appendSessionLog({
+      date: new Date().toISOString(),
+      name: activeWorkout.name,
+      category: activeWorkout.category,
+      durationMin: Math.max(1, Math.round(timer / 60)),
+      calories: totalVolume,
+      exercises: sessionExercises,
+    })
+
+    try {
+      await workoutsApi.log({
+        name: activeWorkout.name || 'Workout',
+        duration: Math.max(1, Math.round(timer / 60)),
+        calories: totalVolume,
+        category: activeWorkout.category || 'Strength',
+        difficulty: activeWorkout.difficulty || 'Intermediate'
+      })
+      loadMyWorkouts()
+    } catch (e) { console.error('Failed to log workout:', e.message) }
+    setTimerRunning(false); setActiveWorkout(null); setExInputs({})
+  }
+
   const card = {
     background:'var(--bg-card)',
     backdropFilter:'blur(24px)',
@@ -492,21 +620,7 @@ export default function WorkoutPage() {
                         cursor:'pointer', fontSize:'0.85rem', fontWeight:600
                       }}>{timerRunning ? '⏸ Pause' : '▶ Resume'}</button>
 
-                      <button onClick={async () => {
-                        if (completedExercises.length === 0 && !window.confirm('Finish without completing any exercises?')) return
-                        if (completedExercises.length > 0 && !window.confirm(`Finish workout? ${completedExercises.length} exercise${completedExercises.length === 1 ? '' : 's'} completed.`)) return
-                        try {
-                          await workoutsApi.log({
-                            name: activeWorkout.name || 'Workout',
-                            duration: Math.max(1, Math.round(timer / 60)),
-                            calories: totalVolume,
-                            category: activeWorkout.category || 'Strength',
-                            difficulty: activeWorkout.difficulty || 'Intermediate'
-                          })
-                          loadMyWorkouts()
-                        } catch (e) { console.error('Failed to log workout:', e.message) }
-                        setTimerRunning(false); setActiveWorkout(null)
-                      }} style={{
+                      <button onClick={finishWorkout} style={{
                         background:'rgba(255,59,48,0.1)',
                         border:'1px solid rgba(255,59,48,0.3)',
                         borderRadius:'12px', padding:'10px 18px',
@@ -624,6 +738,45 @@ export default function WorkoutPage() {
                               <div style={{ color:'var(--text-muted)', fontSize:'0.72rem' }}>
                                 {ex.sets}×{ex.reps} · {ex.rest}s rest · {ex.calories} kcal
                               </div>
+                              {/* Working-set input → live Epley 1RM (feeds PR detection on finish) */}
+                              {!done && (() => {
+                                const inp = exInputs[idx] || {}
+                                const oneRM = epley1RM(inp.weight, inp.reps || parseReps(ex.reps))
+                                const prevPR = realPRs[ex.name]
+                                const setInp = (k, v) => setExInputs(p => ({ ...p, [idx]: { ...(p[idx] || {}), [k]: v } }))
+                                const mini = {
+                                  width:'64px', background:'var(--shadow-color)',
+                                  border:'1px solid var(--border)', borderRadius:'8px',
+                                  padding:'4px 8px', color:'var(--text-primary)',
+                                  fontSize:'0.75rem', outline:'none',
+                                  fontVariantNumeric:'tabular-nums'
+                                }
+                                return (
+                                  <div
+                                    style={{ display:'flex', alignItems:'center', gap:'6px', marginTop:'8px', flexWrap:'wrap' }}
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    <input type="number" min="0" step="0.5" placeholder="kg" aria-label={`${ex.name} weight in kg`}
+                                      value={inp.weight || ''} onChange={e => setInp('weight', e.target.value)} style={mini} />
+                                    <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>×</span>
+                                    <input type="number" min="0" step="1" placeholder={String(parseReps(ex.reps) || 'reps')} aria-label={`${ex.name} reps`}
+                                      value={inp.reps || ''} onChange={e => setInp('reps', e.target.value)} style={mini} />
+                                    {oneRM != null && (
+                                      <span style={{
+                                        background:'rgba(245,165,36,0.12)', border:'1px solid rgba(245,165,36,0.35)',
+                                        borderRadius:'99px', padding:'3px 10px',
+                                        color:'#F5A524', fontSize:'0.7rem', fontWeight:700,
+                                        fontVariantNumeric:'tabular-nums'
+                                      }}>1RM ≈ {oneRM} kg</span>
+                                    )}
+                                    {prevPR && (
+                                      <span style={{ color:'var(--text-muted)', fontSize:'0.68rem' }} title={`Set ${new Date(prevPR.date).toLocaleDateString('en-GB')}`}>
+                                        🏆 PR {prevPR.oneRM} kg
+                                      </span>
+                                    )}
+                                  </div>
+                                )
+                              })()}
                               <AnimatePresence>
                                 {expandedExercise===idx && (
                                   <motion.div
@@ -747,6 +900,34 @@ export default function WorkoutPage() {
                   )}
                 </motion.button>
               ))}
+            </div>
+
+            {/* Utility buttons */}
+            <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', marginTop:'10px' }}>
+              <motion.button
+                whileHover={{ scale:1.03 }}
+                whileTap={{ scale:0.97 }}
+                onClick={() => setShowPlateCalc(true)}
+                style={{
+                  padding:'9px 20px', borderRadius:'12px',
+                  border:'1px solid rgba(245,165,36,0.4)',
+                  background:'rgba(245,165,36,0.1)',
+                  color:'#F5A524', fontWeight:700, cursor:'pointer',
+                  fontSize:'0.85rem', fontFamily:"'Satoshi',sans-serif"
+                }}
+              >🏋️ Plate Calc</motion.button>
+              <motion.button
+                whileHover={{ scale:1.03 }}
+                whileTap={{ scale:0.97 }}
+                onClick={() => { window.location.href = '/recap' }}
+                style={{
+                  padding:'9px 20px', borderRadius:'12px',
+                  border:'1px solid var(--border)',
+                  background:'var(--bg-card)',
+                  color:'var(--text-muted)', fontWeight:600, cursor:'pointer',
+                  fontSize:'0.85rem', fontFamily:"'Satoshi',sans-serif"
+                }}
+              >📊 My Recap</motion.button>
             </div>
           </motion.div>
 
@@ -1156,6 +1337,41 @@ export default function WorkoutPage() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
+                {/* Real PRs logged from finished workouts */}
+                {Object.keys(realPRs).length > 0 && (
+                  <div style={{ marginBottom:'28px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'var(--text-primary)', fontSize:'1.1rem', marginBottom:'16px', fontWeight:700 }}>
+                      🏆 Your Logged PRs <span style={{ color:'var(--text-muted)', fontSize:'0.75rem', fontWeight:400 }}>(est. 1RM from finished workouts)</span>
+                    </h3>
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'16px' }}>
+                      {Object.entries(realPRs).map(([name, pr], i) => (
+                        <motion.div
+                          key={name}
+                          initial={{ opacity:0, scale:0.85 }}
+                          animate={{ opacity:1, scale:1 }}
+                          transition={{ delay:i*0.06, type:'spring', stiffness:200 }}
+                          style={{
+                            ...card, padding:'22px', textAlign:'center',
+                            background:'rgba(245,165,36,0.06)',
+                            border:'1px solid rgba(245,165,36,0.3)',
+                            boxShadow:'0 0 32px rgba(245,165,36,0.12)'
+                          }}
+                        >
+                          <div style={{ fontSize:'2rem', marginBottom:'8px' }}>🏆</div>
+                          <div style={{
+                            fontFamily:"'Clash Display',sans-serif", fontSize:'1.9rem', fontWeight:900,
+                            color:'#F5A524', fontVariantNumeric:'tabular-nums',
+                            textShadow:'0 0 20px rgba(245,165,36,0.5)'
+                          }}>{pr.oneRM}<span style={{ fontSize:'0.85rem', fontWeight:400 }}> kg</span></div>
+                          <div style={{ color:'var(--text-primary)', fontSize:'0.85rem', fontWeight:600, margin:'4px 0' }}>{name}</div>
+                          <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>
+                            {pr.weight} kg × {pr.reps} · {new Date(pr.date).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'20px', marginBottom:'24px' }}>
                   {PRS.map((pr, i) => (
                     <motion.div
@@ -1549,6 +1765,30 @@ export default function WorkoutPage() {
                       <div style={{ flex:1 }}>
                         <div style={{ color:'var(--text-primary)', fontSize:'0.9rem', fontWeight:600 }}>{ex.name}</div>
                         <div style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>{ex.muscle} · 💡 {ex.tip}</div>
+                        {(() => {
+                          const w = detailWeights[i]
+                          const reps = parseReps(ex.reps)
+                          const oneRM = epley1RM(w, reps)
+                          return (
+                            <div style={{ display:'flex', alignItems:'center', gap:'6px', marginTop:'6px' }}>
+                              <input type="number" min="0" step="0.5" placeholder="Your kg" aria-label={`${ex.name} working weight in kg`}
+                                value={w || ''} onChange={e => setDetailWeights(p => ({ ...p, [i]: e.target.value }))}
+                                style={{
+                                  width:'76px', background:'var(--shadow-color)',
+                                  border:'1px solid var(--border)', borderRadius:'8px',
+                                  padding:'3px 8px', color:'var(--text-primary)', fontSize:'0.72rem', outline:'none',
+                                  fontVariantNumeric:'tabular-nums'
+                                }} />
+                              {oneRM != null ? (
+                                <span style={{ color:'#F5A524', fontSize:'0.72rem', fontWeight:700, fontVariantNumeric:'tabular-nums' }}>
+                                  est. 1RM {oneRM} kg{reps ? ` @ ${reps} reps` : ''}
+                                </span>
+                              ) : (
+                                <span style={{ color:'#4B5563', fontSize:'0.68rem' }}>Enter weight for 1RM estimate</span>
+                              )}
+                            </div>
+                          )
+                        })()}
                       </div>
                       <div style={{ display:'flex', gap:'20px', textAlign:'center', flexShrink:0 }}>
                         {[
@@ -1587,6 +1827,200 @@ export default function WorkoutPage() {
               </motion.div>
             </motion.div>
           )}
+        </AnimatePresence>
+
+        {/* ═══ PR CELEBRATION BANNER ═══ */}
+        <AnimatePresence>
+          {prCelebration.length > 0 && (
+            <div style={{
+              position:'fixed', top:'20px', left:0, right:0, zIndex:400,
+              display:'flex', justifyContent:'center', pointerEvents:'none',
+              padding:'0 16px', boxSizing:'border-box'
+            }}>
+            <motion.div
+              initial={{ opacity:0, y:-60, scale:0.9 }}
+              animate={{ opacity:1, y:0, scale:1 }}
+              exit={{ opacity:0, y:-60, scale:0.9 }}
+              transition={{ type:'spring', stiffness:260, damping:20 }}
+              style={{
+                maxWidth:'560px', width:'100%', pointerEvents:'auto',
+                background:'linear-gradient(135deg, rgba(20,16,10,0.98), rgba(60,40,8,0.98))',
+                border:'1px solid rgba(245,165,36,0.55)',
+                borderRadius:'20px', padding:'18px 26px',
+                boxShadow:'0 0 60px rgba(245,165,36,0.45), 0 20px 60px var(--shadow-color)',
+                textAlign:'center'
+              }}
+            >
+              <div style={{ fontSize:'2rem', marginBottom:'6px' }}>🎉</div>
+              <div style={{
+                fontFamily:"'Clash Display',sans-serif", color:'#F5A524',
+                fontSize:'1.2rem', fontWeight:800, marginBottom:'8px'
+              }}>New PR{prCelebration.length > 1 ? 's' : ''}!</div>
+              {prCelebration.map(pr => (
+                <div key={pr.name} style={{ color:'var(--text-primary)', fontSize:'0.88rem', marginBottom:'4px' }}>
+                  <strong>{pr.name}</strong> — <span style={{ color:'#F5A524', fontWeight:700, fontVariantNumeric:'tabular-nums' }}>
+                    {pr.oneRM} kg est. 1RM
+                  </span>
+                  <span style={{ color:'var(--text-muted)', fontSize:'0.78rem' }}>
+                    {' '}({pr.weight} kg × {pr.reps}{pr.prev ? `, prev ${pr.prev} kg` : ', first logged'})
+                  </span>
+                </div>
+              ))}
+              <button
+                onClick={() => setPrCelebration([])}
+                style={{
+                  marginTop:'12px', background:'rgba(245,165,36,0.15)',
+                  border:'1px solid rgba(245,165,36,0.4)', borderRadius:'99px',
+                  padding:'8px 24px', color:'#F5A524', cursor:'pointer',
+                  fontSize:'0.82rem', fontWeight:700
+                }}>Keep Going 💪</button>
+            </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* ═══ PLATE CALCULATOR MODAL ═══ */}
+        <AnimatePresence>
+          {showPlateCalc && (() => {
+            const target = Number(plateTarget)
+            const bar = Number(plateBar)
+            const { plates, remainder } = calcPlates(target, bar)
+            const valid = Number.isFinite(target) && target > 0 && Number.isFinite(bar) && bar >= 0
+            const tooLight = valid && target < bar
+            return (
+              <motion.div
+                initial={{ opacity:0 }}
+                animate={{ opacity:1 }}
+                exit={{ opacity:0 }}
+                style={{
+                  position:'fixed', inset:0, zIndex:300,
+                  background:'var(--shadow-color)',
+                  backdropFilter:'blur(16px)',
+                  display:'flex', alignItems:'center', justifyContent:'center', padding:'20px'
+                }}
+                onClick={e => e.target === e.currentTarget && setShowPlateCalc(false)}
+              >
+                <motion.div
+                  initial={{ scale:0.85, opacity:0, y:40 }}
+                  animate={{ scale:1, opacity:1, y:0 }}
+                  exit={{ scale:0.85, opacity:0, y:40 }}
+                  transition={{ type:'spring', stiffness:280, damping:24 }}
+                  style={{
+                    width:'100%', maxWidth:'560px',
+                    background:'rgba(10,10,18,0.99)',
+                    border:'1px solid rgba(245,165,36,0.3)',
+                    borderRadius:'28px', padding:'32px',
+                    boxShadow:'0 40px 100px var(--shadow-color), 0 0 60px rgba(245,165,36,0.15)'
+                  }}
+                >
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
+                    <h2 style={{ fontFamily:"'Clash Display',sans-serif", color:'var(--text-primary)', fontSize:'1.4rem', margin:0, fontWeight:800 }}>
+                      🏋️ Plate Calculator
+                    </h2>
+                    <button onClick={() => setShowPlateCalc(false)} style={{
+                      background:'var(--border)', border:'1px solid var(--border)',
+                      borderRadius:'50%', width:'36px', height:'36px',
+                      color:'var(--text-muted)', cursor:'pointer', fontSize:'1rem'
+                    }}>✕</button>
+                  </div>
+
+                  <div style={{ display:'flex', gap:'12px', marginBottom:'24px', flexWrap:'wrap' }}>
+                    {[
+                      { label:'Target weight (kg)', val:plateTarget, set:setPlateTarget },
+                      { label:'Bar weight (kg)', val:plateBar, set:setPlateBar },
+                    ].map(f => (
+                      <div key={f.label} style={{ flex:1, minWidth:'140px' }}>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'6px' }}>
+                          {f.label}
+                        </div>
+                        <input type="number" min="0" step="0.5" value={f.val}
+                          onChange={e => f.set(e.target.value)}
+                          style={{
+                            width:'100%', boxSizing:'border-box',
+                            background:'var(--shadow-color)', border:'1px solid var(--border)',
+                            borderRadius:'12px', padding:'12px 14px',
+                            color:'var(--text-primary)', fontSize:'1.05rem', outline:'none',
+                            fontFamily:"'Clash Display',sans-serif", fontVariantNumeric:'tabular-nums'
+                          }} />
+                      </div>
+                    ))}
+                  </div>
+
+                  {!valid ? (
+                    <div style={{ color:'#FF6B6B', fontSize:'0.85rem', textAlign:'center', padding:'20px' }}>
+                      Enter a valid target weight.
+                    </div>
+                  ) : tooLight ? (
+                    <div style={{ color:'#FF6B6B', fontSize:'0.85rem', textAlign:'center', padding:'20px' }}>
+                      Target is lighter than the bar — use dumbbells or just the bar ({bar} kg).
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'12px', textAlign:'center' }}>
+                        Load per side · {(target - bar) / 2} kg
+                      </div>
+                      {/* Bar visualisation */}
+                      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'3px', marginBottom:'8px', minHeight:'120px' }}>
+                        {plates.map((p, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ scaleY:0 }}
+                            animate={{ scaleY:1 }}
+                            transition={{ delay:i*0.05, type:'spring', stiffness:300, damping:20 }}
+                            title={`${p.kg} kg`}
+                            style={{
+                              width: p.kg >= 10 ? '26px' : p.kg >= 5 ? '20px' : '14px',
+                              height: `${60 + p.kg * 2.4}px`,
+                              maxHeight:'120px',
+                              background:`linear-gradient(180deg, ${p.color}, ${p.color}88)`,
+                              border:'1px solid rgba(255,255,255,0.25)',
+                              borderRadius:'6px',
+                              display:'flex', alignItems:'flex-start', justifyContent:'center',
+                              boxShadow:`0 0 12px ${p.color}44`
+                            }}
+                          >
+                            <span style={{
+                              writingMode:'vertical-rl', color: p.kg === 5 ? '#111' : '#fff',
+                              fontSize:'0.6rem', fontWeight:800, marginTop:'6px',
+                              fontVariantNumeric:'tabular-nums'
+                            }}>{p.kg}</span>
+                          </motion.div>
+                        ))}
+                        {/* bar sleeve */}
+                        <div style={{
+                          width:'70px', height:'14px', borderRadius:'7px',
+                          background:'linear-gradient(180deg,#9CA3AF,#4B5563)',
+                          marginLeft:'4px'
+                        }} />
+                      </div>
+                      {/* Plate list */}
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:'8px', justifyContent:'center', marginTop:'16px' }}>
+                        {plates.length === 0 && (
+                          <span style={{ color:'var(--text-muted)', fontSize:'0.85rem' }}>Just the bar — no plates needed.</span>
+                        )}
+                        {[...new Set(plates.map(p => p.kg))].map(kg => {
+                          const count = plates.filter(p => p.kg === kg).length
+                          return (
+                            <span key={kg} style={{
+                              background:'var(--border)', border:'1px solid var(--border)',
+                              borderRadius:'99px', padding:'5px 14px',
+                              color:'var(--text-primary)', fontSize:'0.8rem', fontWeight:600,
+                              fontVariantNumeric:'tabular-nums'
+                            }}>{count} × {kg} kg</span>
+                          )
+                        })}
+                      </div>
+                      {remainder > 0.001 && (
+                        <div style={{ color:'#FFD700', fontSize:'0.8rem', textAlign:'center', marginTop:'12px' }}>
+                          ⚠️ {remainder} kg per side can't be made with standard plates — add fractional plates or adjust target.
+                        </div>
+                      )}
+                    </>
+                  )}
+                </motion.div>
+              </motion.div>
+            )
+          })()}
         </AnimatePresence>
       </div>
 

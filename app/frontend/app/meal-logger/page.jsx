@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
@@ -34,6 +34,8 @@ export default function MealLogger() {
   const [custom, setCustom] = useState({ name: '', calories: '', protein: '', carbs: '', fat: '' })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [listening, setListening] = useState(false)
+  const [voiceError, setVoiceError] = useState('')
 
   useEffect(() => {
     const loadTodayMeals = async () => {
@@ -110,6 +112,45 @@ export default function MealLogger() {
     }
     setShowSearch(false)
     setSearch('')
+  }
+
+  // Voice logging: speech → search text → the page's existing food-search flow.
+  const recognitionRef = useRef(null)
+
+  const startVoice = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SR) {
+      setVoiceError('Voice input is not supported in this browser — please type instead.')
+      return
+    }
+    if (recognitionRef.current) return // already listening
+    const rec = new SR()
+    recognitionRef.current = rec
+    rec.lang = 'en-GB'
+    rec.interimResults = false
+    rec.maxAlternatives = 1
+    setListening(true)
+    setVoiceError('')
+    rec.onresult = (e) => {
+      const transcript = e.results[0]?.[0]?.transcript
+      if (transcript) {
+        // Reuse the existing text flow: fill the search box and open the
+        // food picker so matching entries are shown for one tap to log.
+        setSearch(transcript)
+        setShowSearch(true)
+      }
+    }
+    rec.onerror = () => {
+      setVoiceError('Could not hear you — please try again or type instead.')
+    }
+    rec.onend = () => {
+      recognitionRef.current = null
+      setListening(false)
+    }
+    try { rec.start() } catch {
+      recognitionRef.current = null
+      setListening(false)
+    }
   }
 
   const addCustom = () => {
@@ -189,6 +230,25 @@ export default function MealLogger() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={startVoice}
+              title={listening ? 'Listening…' : 'Log by voice'}
+              style={{
+                background: listening ? 'rgba(249,115,22,0.25)' : 'rgba(249,115,22,0.1)',
+                border: listening ? '1px solid #F97316' : '1px solid rgba(249,115,22,0.3)',
+                borderRadius: '12px', padding: '10px 18px',
+                color: '#F97316', cursor: 'pointer',
+                fontSize: '0.85rem', fontWeight: 600,
+                display: 'flex', alignItems: 'center', gap: '8px'
+              }}>
+              <motion.span
+                animate={listening ? { scale: [1, 1.3, 1] } : {}}
+                transition={listening ? { duration: 1, repeat: Infinity } : {}}
+              >🎙️</motion.span>
+              {listening ? 'Listening…' : 'Voice'}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => { setShowCamera(true) }}
               style={{
                 background: 'rgba(249,115,22,0.1)',
@@ -216,6 +276,25 @@ export default function MealLogger() {
             </motion.button>
           </div>
         </div>
+
+        {/* VOICE ERROR */}
+        {voiceError && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              marginBottom: '16px', padding: '10px 16px',
+              background: 'rgba(255,107,53,0.08)',
+              border: '1px solid rgba(255,107,53,0.3)',
+              borderRadius: '12px', color: '#FF6B35', fontSize: '0.85rem',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}>
+            <span>{voiceError}</span>
+            <button
+              onClick={() => setVoiceError('')}
+              style={{ background: 'none', border: 'none', color: '#FF6B35', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
+          </motion.div>
+        )}
 
         {/* DAILY SUMMARY */}
         <motion.div

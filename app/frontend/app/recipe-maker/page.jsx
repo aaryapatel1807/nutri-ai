@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
-import { ml } from '../../lib/api'
+import api, { ml } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
 
 const RECIPES = [
@@ -67,6 +67,9 @@ export default function RecipeMaker() {
   const [aiLoading, setAiLoading] = useState(false)
   const [aiResult, setAiResult] = useState(null)
   const [aiNotice, setAiNotice] = useState(null) // 'unavailable' when AI failed and we show a collection pick instead
+  const [urlInput, setUrlInput] = useState('')
+  const [urlLoading, setUrlLoading] = useState(false)
+  const [urlError, setUrlError] = useState('')
   const [hoveredId, setHoveredId] = useState(null)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -153,6 +156,45 @@ export default function RecipeMaker() {
     }
   }
 
+  // Import a recipe from a web URL: the backend fetches the page and the AI
+  // extracts ingredients, steps and nutrition. The result reuses the same
+  // result card UI as the AI ingredient matcher below.
+  const handleUrlImport = async () => {
+    if (!urlInput.trim()) return
+    setUrlLoading(true)
+    setUrlError('')
+    setAiResult(null)
+    try {
+      const res = await api.post('/api/recipes/import', { url: urlInput.trim() })
+      const r = res.data
+      setAiResult({
+        id: 'url-' + Date.now(),
+        name: r.title || 'Imported Recipe',
+        emoji: '🌐',
+        time: 30,
+        calories: r.calories || 0,
+        protein: r.protein || 0,
+        carbs: r.carbs || 0,
+        fat: r.fat || 0,
+        difficulty: 'Imported',
+        cuisine: 'Web Import',
+        tags: ['Imported', 'From URL'],
+        color: '#F97316',
+        glow: 'rgba(249,115,22,0.3)',
+        ingredients: r.ingredients || [],
+        steps: r.instructions || [],
+        _ai: false,
+        _imported: true,
+        _match: null,
+      })
+      setAiNotice(null)
+    } catch (err) {
+      setUrlError(err.response?.data?.error || 'Could not import that recipe URL.')
+    } finally {
+      setUrlLoading(false)
+    }
+  }
+
   const card = (glowColor = 'rgba(249,115,22,0.1)') => ({
     background: 'var(--bg-card)',
     backdropFilter: 'blur(24px)',
@@ -229,6 +271,66 @@ export default function RecipeMaker() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
+                {/* IMPORT FROM URL */}
+                <div style={{
+                  ...card(),
+                  padding:'24px',
+                  marginBottom:'24px',
+                  border:'1px solid rgba(249,115,22,0.15)',
+                }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'14px' }}>
+                    <span style={{ fontSize:'1.6rem' }}>🔗</span>
+                    <div>
+                      <div style={{
+                        fontFamily:"'Clash Display',sans-serif",
+                        color:'var(--text-primary)', fontSize:'1rem', fontWeight:700
+                      }}>Import from URL</div>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.78rem' }}>
+                        Paste a recipe link and AI extracts the full recipe
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
+                    <input
+                      placeholder="https://example.com/best-dal-recipe"
+                      value={urlInput}
+                      onChange={e => setUrlInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleUrlImport()}
+                      style={{
+                        flex:1, minWidth:'220px',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
+                        borderRadius:'12px', padding:'12px 16px',
+                        color:'var(--text-primary)', fontSize:'0.9rem',
+                        outline:'none', fontFamily:"'Satoshi',sans-serif"
+                      }}
+                    />
+                    <motion.button
+                      whileHover={{ scale:1.03 }}
+                      whileTap={{ scale:0.97 }}
+                      onClick={handleUrlImport}
+                      disabled={urlLoading || !urlInput.trim()}
+                      style={{
+                        padding:'12px 24px',
+                        background:'linear-gradient(135deg,#F97316,#FB923C)',
+                        border:'none', borderRadius:'12px',
+                        color:'#000', fontWeight:700, cursor:'pointer',
+                        fontSize:'0.9rem', fontFamily:"'Satoshi',sans-serif",
+                        opacity: urlInput.trim() ? 1 : 0.5
+                      }}>
+                      {urlLoading ? 'Importing…' : '📥 Import'}
+                    </motion.button>
+                  </div>
+                  {urlError && (
+                    <div style={{
+                      marginTop:'12px', padding:'10px 14px',
+                      background:'rgba(255,107,53,0.08)',
+                      border:'1px solid rgba(255,107,53,0.3)',
+                      borderRadius:'12px', color:'#FF6B35', fontSize:'0.82rem'
+                    }}>{urlError}</div>
+                  )}
+                </div>
+
                 <div style={{
                   ...card(),
                   padding:'40px',
@@ -357,7 +459,7 @@ export default function RecipeMaker() {
                           border:`1px solid ${aiResult.color}40`,
                           borderRadius:'99px', padding:'4px 14px',
                           color: aiResult.color, fontSize:'0.78rem', fontWeight:700
-                        }}>{aiResult._ai ? '🤖 AI RECOMMENDED' : '📚 Closest match from our collection'}</div>
+                        }}>{aiResult._ai ? '🤖 AI RECOMMENDED' : aiResult._imported ? '🌐 IMPORTED FROM URL' : '📚 Closest match from our collection'}</div>
                         {aiResult._match != null && (
                           <div style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>{aiResult._match}% ingredient match</div>
                         )}
