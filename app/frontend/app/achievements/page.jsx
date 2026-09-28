@@ -7,12 +7,12 @@ import useIsMobile from '../../lib/useIsMobile'
 
 const BADGES_MOCK = [
   // NUTRITION BADGES
-  { id:1,  name:'First Bite',        emoji:'🍽️', category:'Nutrition',  rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Log your very first meal',                 color:'#00FF87', unlockDate:'Jan 15' },
-  { id:2,  name:'Protein King',      emoji:'💪', category:'Nutrition',  rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Hit 200g+ protein for 7 days straight',    color:'#00FF87', unlockDate:'Feb 2' },
-  { id:3,  name:'Hydration Hero',    emoji:'💧', category:'Nutrition',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Drink 8 glasses of water for 14 days',     color:'#00D4FF', unlockDate:'Feb 10' },
-  { id:4,  name:'Clean Eater',       emoji:'🥗', category:'Nutrition',  rarity:'Epic',      xp:800,  unlocked:true,  progress:100, desc:'30 days of hitting all macro targets',     color:'#4ADE80', unlockDate:'Feb 28' },
+  { id:1,  name:'First Bite',        emoji:'🍽️', category:'Nutrition',  rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Log your very first meal',                 color:'#F97316', unlockDate:'Jan 15' },
+  { id:2,  name:'Protein King',      emoji:'💪', category:'Nutrition',  rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Hit 200g+ protein for 7 days straight',    color:'#F97316', unlockDate:'Feb 2' },
+  { id:3,  name:'Hydration Hero',    emoji:'💧', category:'Nutrition',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Drink 8 glasses of water for 14 days',     color:'#FB923C', unlockDate:'Feb 10' },
+  { id:4,  name:'Clean Eater',       emoji:'🥗', category:'Nutrition',  rarity:'Epic',      xp:800,  unlocked:true,  progress:100, desc:'30 days of hitting all macro targets',     color:'#FDBA74', unlockDate:'Feb 28' },
   { id:5,  name:'Macro Master',      emoji:'⚖️', category:'Nutrition',  rarity:'Legendary', xp:2000, unlocked:false, progress:68,  desc:'Perfect macros 60 days in a row',          color:'#FFD700' },
-  { id:6,  name:'Veggie Warrior',    emoji:'🥦', category:'Nutrition',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Eat 5 servings of vegetables daily for 21 days', color:'#4ADE80', unlockDate:'Mar 1' },
+  { id:6,  name:'Veggie Warrior',    emoji:'🥦', category:'Nutrition',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Eat 5 servings of vegetables daily for 21 days', color:'#FDBA74', unlockDate:'Mar 1' },
   { id:7,  name:'Sugar Slayer',      emoji:'🚫', category:'Nutrition',  rarity:'Epic',      xp:750,  unlocked:false, progress:45,  desc:'Zero added sugar for 30 consecutive days', color:'#FF6B35' },
   { id:8,  name:'Meal Prep God',     emoji:'🍱', category:'Nutrition',  rarity:'Legendary', xp:1500, unlocked:false, progress:30,  desc:'Prep 52 weeks of meals in advance',        color:'#F97316' },
 
@@ -23,7 +23,7 @@ const BADGES_MOCK = [
   { id:12, name:'Beast Mode',        emoji:'🦁', category:'Fitness',   rarity:'Legendary', xp:2500, unlocked:false, progress:72,  desc:'500 total workouts completed',             color:'#FF6B35' },
   { id:13, name:'Early Bird',        emoji:'🌅', category:'Fitness',   rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Work out before 7am for 10 days',          color:'#FFD700', unlockDate:'Jan 28' },
   { id:14, name:'Night Owl',         emoji:'🦉', category:'Fitness',   rarity:'Rare',      xp:300,  unlocked:false, progress:60,  desc:'Work out after 9pm for 15 days',           color:'#A78BFA' },
-  { id:15, name:'Cardio King',       emoji:'🏃', category:'Fitness',   rarity:'Epic',      xp:800,  unlocked:false, progress:55,  desc:'Run 100km total distance',                 color:'#00D4FF' },
+  { id:15, name:'Cardio King',       emoji:'🏃', category:'Fitness',   rarity:'Epic',      xp:800,  unlocked:false, progress:55,  desc:'Run 100km total distance',                 color:'#FB923C' },
   { id:16, name:'Strength Legend',   emoji:'⚡', category:'Fitness',   rarity:'Legendary', xp:3000, unlocked:false, progress:25,  desc:'Lift 1000 total tons (volume)',             color:'#FFD700' },
 
   // STREAK BADGES
@@ -32,28 +32,28 @@ const BADGES_MOCK = [
   { id:19, name:'Monthly Monster',   emoji:'📆', category:'Streak',    rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'30-day streak achieved',                   color:'#FF6B35', unlockDate:'Feb 15' },
   { id:20, name:'Quarter Legend',    emoji:'🗓️', category:'Streak',   rarity:'Epic',      xp:2000, unlocked:false, progress:40,  desc:'90-day streak — true dedication',          color:'#FF6B35' },
   { id:21, name:'Year of Champions', emoji:'👑', category:'Streak',   rarity:'Mythic',    xp:10000,unlocked:false, progress:3,   desc:'365-day unbroken streak',                  color:'#FFD700' },
-  { id:22, name:'Comeback Kid',      emoji:'↩️', category:'Streak',   rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Return after a 7+ day break',              color:'#00FF87', unlockDate:'Feb 20' },
+  { id:22, name:'Comeback Kid',      emoji:'↩️', category:'Streak',   rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Return after a 7+ day break',              color:'#F97316', unlockDate:'Feb 20' },
 
   // WEIGHT/BODY BADGES
-  { id:23, name:'First Kilo',        emoji:'⚖️', category:'Body',     rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'Lose your first kilogram',                 color:'#00D4FF', unlockDate:'Jan 30' },
-  { id:24, name:'5kg Club',          emoji:'🏅', category:'Body',     rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'Lose 5 kilograms total',                   color:'#00D4FF', unlockDate:'Feb 28' },
+  { id:23, name:'First Kilo',        emoji:'⚖️', category:'Body',     rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'Lose your first kilogram',                 color:'#FB923C', unlockDate:'Jan 30' },
+  { id:24, name:'5kg Club',          emoji:'🏅', category:'Body',     rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'Lose 5 kilograms total',                   color:'#FB923C', unlockDate:'Feb 28' },
   { id:25, name:'10kg Champion',     emoji:'🥇', category:'Body',     rarity:'Epic',      xp:1500, unlocked:false, progress:48,  desc:'Lose 10 kilograms total',                  color:'#FFD700' },
   { id:26, name:'Body Recomp',       emoji:'🔄', category:'Body',     rarity:'Legendary', xp:3000, unlocked:false, progress:20,  desc:'Lose 5% body fat while gaining muscle',    color:'#7B61FF' },
-  { id:27, name:'Muscle Machine',    emoji:'💪', category:'Body',     rarity:'Epic',      xp:1200, unlocked:false, progress:62,  desc:'Gain 5kg of lean muscle mass',             color:'#00FF87' },
+  { id:27, name:'Muscle Machine',    emoji:'💪', category:'Body',     rarity:'Epic',      xp:1200, unlocked:false, progress:62,  desc:'Gain 5kg of lean muscle mass',             color:'#F97316' },
 
   // SOCIAL/SPECIAL
-  { id:28, name:'Profile Complete',  emoji:'✅', category:'Special',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Complete your NutriAI profile',            color:'#4ADE80', unlockDate:'Jan 15' },
-  { id:29, name:'AI Apprentice',     emoji:'🤖', category:'Special',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Have 50 conversations with AI Coach',      color:'#00D4FF', unlockDate:'Mar 1' },
+  { id:28, name:'Profile Complete',  emoji:'✅', category:'Special',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Complete your NutriAI profile',            color:'#FDBA74', unlockDate:'Jan 15' },
+  { id:29, name:'AI Apprentice',     emoji:'🤖', category:'Special',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Have 50 conversations with AI Coach',      color:'#FB923C', unlockDate:'Mar 1' },
   { id:30, name:'Data Nerd',         emoji:'📊', category:'Special',  rarity:'Epic',      xp:600,  unlocked:false, progress:78,  desc:'Log data every single day for 60 days',   color:'#7B61FF' },
   { id:31, name:'Recipe Master',     emoji:'👨‍🍳',category:'Special',  rarity:'Rare',      xp:500,  unlocked:false, progress:40,  desc:'Save and cook 25 different recipes',      color:'#F97316' },
   { id:32, name:'NutriAI Legend',    emoji:'🌟', category:'Special',  rarity:'Mythic',    xp:50000,unlocked:false, progress:8,   desc:'The ultimate achievement — master of all', color:'#FFD700' },
 ]
 
 const LEVELS = [
-  { level:1,  name:'Rookie',         minXP:0,     maxXP:500,   color:'#9CA3AF', emoji:'🌱' },
-  { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#4ADE80', emoji:'🌿' },
-  { level:3,  name:'Novice',         minXP:1200,  maxXP:2500,  color:'#00FF87', emoji:'⚡' },
-  { level:4,  name:'Apprentice',     minXP:2500,  maxXP:4500,  color:'#00D4FF', emoji:'💫' },
+  { level:1,  name:'Rookie',         minXP:0,     maxXP:500,   color:'var(--text-muted)', emoji:'🌱' },
+  { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#FDBA74', emoji:'🌿' },
+  { level:3,  name:'Novice',         minXP:1200,  maxXP:2500,  color:'#F97316', emoji:'⚡' },
+  { level:4,  name:'Apprentice',     minXP:2500,  maxXP:4500,  color:'#FB923C', emoji:'💫' },
   { level:5,  name:'Intermediate',   minXP:4500,  maxXP:7000,  color:'#7B61FF', emoji:'🔥' },
   { level:6,  name:'Advanced',       minXP:7000,  maxXP:10000, color:'#A78BFA', emoji:'💎' },
   { level:7,  name:'Expert',         minXP:10000, maxXP:14000, color:'#F97316', emoji:'🏆' },
@@ -63,10 +63,10 @@ const LEVELS = [
 ]
 
 const CHALLENGES = [
-  { id:1, name:'7-Day Protein Sprint', emoji:'💪', desc:'Hit 180g+ protein every day this week', progress:5, total:7, reward:500, xp:300,  color:'#00FF87', deadline:'2 days left',  type:'Weekly' },
-  { id:2, name:'10k Steps Daily',      emoji:'👟', desc:'Walk 10,000 steps for 5 consecutive days', progress:3, total:5, reward:300, xp:200, color:'#00D4FF', deadline:'3 days left',  type:'Weekly' },
+  { id:1, name:'7-Day Protein Sprint', emoji:'💪', desc:'Hit 180g+ protein every day this week', progress:5, total:7, reward:500, xp:300,  color:'#F97316', deadline:'2 days left',  type:'Weekly' },
+  { id:2, name:'10k Steps Daily',      emoji:'👟', desc:'Walk 10,000 steps for 5 consecutive days', progress:3, total:5, reward:300, xp:200, color:'#FB923C', deadline:'3 days left',  type:'Weekly' },
   { id:3, name:'Hydration Master',     emoji:'💧', desc:'8 glasses of water for 7 days straight',  progress:4, total:7, reward:250, xp:150, color:'#60A5FA', deadline:'4 days left',  type:'Weekly' },
-  { id:4, name:'Zero Cheat Days',      emoji:'🥗', desc:'Stick to meal plan all 30 days this month',progress:14,total:30,reward:2000,xp:1000,color:'#4ADE80', deadline:'16 days left', type:'Monthly' },
+  { id:4, name:'Zero Cheat Days',      emoji:'🥗', desc:'Stick to meal plan all 30 days this month',progress:14,total:30,reward:2000,xp:1000,color:'#FDBA74', deadline:'16 days left', type:'Monthly' },
   { id:5, name:'Strength PR Week',     emoji:'🏋️', desc:'Set a new PR in any lift this week',      progress:0, total:1, reward:400, xp:250, color:'#7B61FF', deadline:'5 days left',  type:'Weekly' },
   { id:6, name:'100 Push Ups Today',   emoji:'⬆️', desc:'Complete 100 push ups in a single day',  progress:67,total:100,reward:200,xp:100, color:'#FF6B35', deadline:'Today',        type:'Daily' },
   { id:7, name:'Meal Prep Sunday',     emoji:'🍱', desc:'Prep all meals for next 5 days today',    progress:0, total:1, reward:350, xp:200, color:'#F97316', deadline:'Today',        type:'Daily' },
@@ -77,16 +77,16 @@ const LEADERBOARD = [
   { rank:1, name:'Priya S.',    xp:28450, level:9, avatar:'PS', color:'#FFD700', badge:'👑', change:'↑2' },
   { rank:2, name:'Rahul M.',    xp:24200, level:9, avatar:'RM', color:'#C0C0C0', badge:'🥈', change:'↓1' },
   { rank:3, name:'Arjun K.',    xp:19800, level:8, avatar:'AK', color:'#CD7F32', badge:'🥉', change:'↑1' },
-  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#00FF87', badge:'⭐', change:'↑3' },
+  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#F97316', badge:'⭐', change:'↑3' },
   { rank:5, name:'Vikram T.',   xp:14200, level:7, avatar:'VT', color:'#7B61FF', badge:'🏆', change:'↓2' },
-  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#00D4FF', badge:'💎', change:'↑4', isUser:true },
+  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#FB923C', badge:'💎', change:'↑4', isUser:true },
   { rank:7, name:'Meera R.',    xp:11800, level:7, avatar:'MR', color:'#F97316', badge:'🔥', change:'↓1' },
-  { rank:8, name:'Karan S.',    xp:9400,  level:6, avatar:'KS', color:'#4ADE80', badge:'💫', change:'→0' },
+  { rank:8, name:'Karan S.',    xp:9400,  level:6, avatar:'KS', color:'#FDBA74', badge:'💫', change:'→0' },
 ]
 
 const RARITY_CONFIG = {
-  Common:    { color:'#9CA3AF', bg:'rgba(156,163,175,0.1)', border:'rgba(156,163,175,0.3)', glow:'rgba(156,163,175,0.2)', stars:1 },
-  Rare:      { color:'#00D4FF', bg:'rgba(0,212,255,0.1)',   border:'rgba(0,212,255,0.3)',   glow:'rgba(0,212,255,0.3)',   stars:2 },
+  Common:    { color:'var(--text-muted)', bg:'rgba(156,163,175,0.1)', border:'rgba(156,163,175,0.3)', glow:'rgba(156,163,175,0.2)', stars:1 },
+  Rare:      { color:'#FB923C', bg:'rgba(251,146,60,0.1)',   border:'rgba(251,146,60,0.3)',   glow:'rgba(251,146,60,0.3)',   stars:2 },
   Epic:      { color:'#7B61FF', bg:'rgba(123,97,255,0.1)',  border:'rgba(123,97,255,0.3)',  glow:'rgba(123,97,255,0.4)',  stars:3 },
   Legendary: { color:'#FFD700', bg:'rgba(255,215,0,0.1)',   border:'rgba(255,215,0,0.4)',   glow:'rgba(255,215,0,0.5)',   stars:4 },
   Mythic:    { color:'#FF6B35', bg:'rgba(255,107,53,0.15)', border:'rgba(255,107,53,0.5)',  glow:'rgba(255,107,53,0.6)',  stars:5 },
@@ -116,7 +116,7 @@ function useTilt() {
 function Confetti({ active }) {
   if (!active) return null
   const pieces = Array.from({ length:60 }, (_,i) => ({
-    id:i, color:['#00FF87','#7B61FF','#FFD700','#FF6B35','#00D4FF','#F97316'][i%6],
+    id:i, color:['#F97316','#7B61FF','#FFD700','#FF6B35','#FB923C','#F97316'][i%6],
     x: Math.random()*100, delay: Math.random()*0.5,
     size: Math.random()*8+4, rotation: Math.random()*360
   }))
@@ -168,12 +168,12 @@ function BadgeCard({ badge, onClick, index }) {
         style={{
           background: badge.unlocked ? rarity.bg : 'rgba(10,10,18,0.8)',
           backdropFilter:'blur(20px)',
-          border:`1px solid ${badge.unlocked ? rarity.border : 'rgba(255,255,255,0.05)'}`,
+          border:`1px solid ${badge.unlocked ? rarity.border : 'var(--border)'}`,
           borderRadius:'20px',
           padding:'20px',
           boxShadow: hovered && badge.unlocked
-            ? `0 20px 60px ${rarity.glow}, 0 0 0 1px ${rarity.color}30, inset 0 1px 0 rgba(255,255,255,0.1)` 
-            : `0 4px 20px rgba(0,0,0,0.4)`,
+            ? `0 20px 60px ${rarity.glow}, 0 0 0 1px ${rarity.color}30, inset 0 1px 0 var(--border)` 
+            : `0 4px 20px var(--shadow-color)`,
           transition:'box-shadow 0.3s',
           overflow:'hidden',
           position:'relative',
@@ -188,7 +188,7 @@ function BadgeCard({ badge, onClick, index }) {
             style={{
               position:'absolute', top:0, left:0,
               width:'50%', height:'100%',
-              background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent)',
+              background:'linear-gradient(90deg,transparent,var(--track),transparent)',
               transform:'skewX(-20deg)', pointerEvents:'none', zIndex:10
             }}
           />
@@ -222,8 +222,8 @@ function BadgeCard({ badge, onClick, index }) {
 
           <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px' }}>
             <span style={{
-              background: badge.unlocked ? rarity.bg : 'rgba(255,255,255,0.04)',
-              border:`1px solid ${badge.unlocked ? rarity.border : 'rgba(255,255,255,0.08)'}`,
+              background: badge.unlocked ? rarity.bg : 'var(--border)',
+              border:`1px solid ${badge.unlocked ? rarity.border : 'var(--border)'}`,
               borderRadius:'99px', padding:'2px 10px',
               color: badge.unlocked ? rarity.color : '#4B5563',
               fontSize:'0.65rem', fontWeight:700,
@@ -251,7 +251,7 @@ function BadgeCard({ badge, onClick, index }) {
         }}>{badge.name}</div>
 
         <div style={{
-          color: badge.unlocked ? '#9CA3AF' : '#374151',
+          color: badge.unlocked ? 'var(--text-muted)' : '#374151',
           fontSize:'0.72rem', marginBottom:'12px',
           lineHeight:1.4, transform:'translateZ(8px)'
         }}>{badge.desc}</div>
@@ -273,11 +273,11 @@ function BadgeCard({ badge, onClick, index }) {
         ) : (
           <div>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'6px' }}>
-              <span style={{ color:'#6B7280', fontSize:'0.7rem' }}>Progress</span>
+              <span style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>Progress</span>
               <span style={{ color:rarity.color, fontSize:'0.7rem', fontWeight:700 }}>{badge.progress}%</span>
             </div>
             <div style={{
-              height:'6px', background:'rgba(255,255,255,0.05)',
+              height:'6px', background:'var(--border)',
               borderRadius:'99px', overflow:'hidden', position:'relative'
             }}>
               <motion.div
@@ -292,7 +292,7 @@ function BadgeCard({ badge, onClick, index }) {
             </div>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:'6px' }}>
               <span style={{ color:'#4B5563', fontSize:'0.65rem' }}>{badge.xp} XP</span>
-              <span style={{ color:'#6B7280', fontSize:'0.65rem' }}>Keep going!</span>
+              <span style={{ color:'var(--text-muted)', fontSize:'0.65rem' }}>Keep going!</span>
             </div>
           </div>
         )}
@@ -372,10 +372,10 @@ export default function Achievements() {
   }
 
   const card = {
-    background:'rgba(18,18,26,0.85)',
+    background:'var(--bg-card)',
     backdropFilter:'blur(24px)',
     WebkitBackdropFilter:'blur(24px)',
-    border:'1px solid rgba(255,255,255,0.07)',
+    border:'1px solid var(--border)',
     borderRadius:'24px',
     overflow:'hidden',
   }
@@ -389,7 +389,7 @@ export default function Achievements() {
           background:`
             radial-gradient(800px circle at 20% 40%, rgba(255,215,0,0.08) 0%, transparent 60%),
             radial-gradient(600px circle at 80% 60%, rgba(123,97,255,0.06) 0%, transparent 60%),
-            radial-gradient(400px circle at 50% 20%, rgba(0,255,135,0.04) 0%, transparent 60%)
+            radial-gradient(400px circle at 50% 20%, rgba(249,115,22,0.04) 0%, transparent 60%)
           `
         }}/>
 
@@ -410,7 +410,7 @@ export default function Achievements() {
                   background:'linear-gradient(135deg,#FFD700 0%,#FF6B35 50%,#7B61FF 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>Achievements 🏆</h1>
-                <p style={{ color:'#6B7280', margin:0, fontSize:'1rem' }}>
+                <p style={{ color:'var(--text-muted)', margin:0, fontSize:'1rem' }}>
                   Track your fitness journey, unlock badges, and climb leaderboard
                 </p>
               </div>
@@ -435,7 +435,7 @@ export default function Achievements() {
                     style={{ fontSize:'3rem', filter:`drop-shadow(0 0 12px ${currentLevel.color})` }}
                   >{currentLevel.emoji}</motion.div>
                   <div>
-                    <div style={{ color:'#6B7280', fontSize:'0.8rem', marginBottom:'2px' }}>Level {currentLevel.level}</div>
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.8rem', marginBottom:'2px' }}>Level {currentLevel.level}</div>
                     <div style={{
                       fontFamily:"'Clash Display',sans-serif",
                       color:currentLevel.color, fontSize:'1.4rem', fontWeight:800
@@ -445,13 +445,13 @@ export default function Achievements() {
                 
                 <div style={{ marginBottom:'12px' }}>
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'6px' }}>
-                    <span style={{ color:'#9CA3AF', fontSize:'0.8rem' }}>{userXP.toLocaleString()} XP</span>
-                    <span style={{ color:'#6B7280', fontSize:'0.75rem' }}>
+                    <span style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>{userXP.toLocaleString()} XP</span>
+                    <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>
                       {nextLevel ? `${nextLevel.minXP - userXP} to next` : 'Max Level'}
                     </span>
                   </div>
                   <div style={{
-                    height:'8px', background:'rgba(255,255,255,0.05)',
+                    height:'8px', background:'var(--border)',
                     borderRadius:'99px', overflow:'hidden', position:'relative'
                   }}>
                     <motion.div
@@ -468,14 +468,14 @@ export default function Achievements() {
 
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'12px' }}>
                   {[
-                    { label:'Badges', val:stats.unlocked, total:stats.total, color:'#00FF87' },
+                    { label:'Badges', val:stats.unlocked, total:stats.total, color:'#F97316' },
                     { label:'Rare+', val:stats.rare, total:stats.unlocked, color:'#7B61FF' },
                     { label:'Streak', val:streak, total:'days', color:'#FF6B35' },
                     { label:'Rank', val:'#6', total:'global', color:'#FFD700' }
                   ].map((stat, i) => (
                     <div key={i} style={{ textAlign:'center' }}>
                       <div style={{ color:stat.color, fontSize:'1.1rem', fontWeight:700 }}>{stat.val}</div>
-                      <div style={{ color:'#6B7280', fontSize:'0.65rem' }}>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.65rem' }}>
                         {stat.label} {stat.total && `/ ${stat.total}`}
                       </div>
                     </div>
@@ -502,10 +502,10 @@ export default function Achievements() {
                   onChange={e => setSearchTerm(e.target.value)}
                   style={{
                     width:'100%', padding:'12px 16px 12px 42px',
-                    background:'rgba(255,255,255,0.05)',
-                    border:'1px solid rgba(255,255,255,0.08)',
+                    background:'var(--border)',
+                    border:'1px solid var(--border)',
                     borderRadius:'14px',
-                    color:'#F0F0FF', fontSize:'0.9rem',
+                    color:'var(--text-primary)', fontSize:'0.9rem',
                     outline:'none', fontFamily:"'Satoshi',sans-serif"
                   }}
                 />
@@ -521,10 +521,10 @@ export default function Achievements() {
                     whileTap={{ scale:0.95 }}
                     onClick={() => setActiveCategory(cat)}
                     style={{
-                      background: activeCategory === cat ? '#7B61FF' : 'rgba(255,255,255,0.05)',
-                      border: activeCategory === cat ? '1px solid #7B61FF' : '1px solid rgba(255,255,255,0.08)',
+                      background: activeCategory === cat ? '#7B61FF' : 'var(--border)',
+                      border: activeCategory === cat ? '1px solid #7B61FF' : '1px solid var(--border)',
                       borderRadius:'20px', padding:'8px 16px',
-                      color: activeCategory === cat ? '#000' : '#9CA3AF',
+                      color: activeCategory === cat ? '#000' : 'var(--text-muted)',
                       fontSize:'0.85rem', fontWeight:600, cursor:'pointer',
                       transition:'all 0.2s'
                     }}
@@ -541,10 +541,10 @@ export default function Achievements() {
                     whileTap={{ scale:0.95 }}
                     onClick={() => setActiveFilter(filter)}
                     style={{
-                      background: activeFilter === filter ? '#00FF87' : 'rgba(255,255,255,0.05)',
-                      border: activeFilter === filter ? '1px solid #00FF87' : '1px solid rgba(255,255,255,0.08)',
+                      background: activeFilter === filter ? '#F97316' : 'var(--border)',
+                      border: activeFilter === filter ? '1px solid #F97316' : '1px solid var(--border)',
                       borderRadius:'20px', padding:'8px 16px',
-                      color: activeFilter === filter ? '#000' : '#9CA3AF',
+                      color: activeFilter === filter ? '#000' : 'var(--text-muted)',
                       fontSize:'0.85rem', fontWeight:600, cursor:'pointer',
                       transition:'all 0.2s'
                     }}
@@ -554,7 +554,7 @@ export default function Achievements() {
             </div>
 
             {/* Results count */}
-            <div style={{ color:'#6B7280', fontSize:'0.85rem' }}>
+            <div style={{ color:'var(--text-muted)', fontSize:'0.85rem' }}>
               Showing {filteredBadges.length} of {(badges.length > 0 ? badges : BADGES_MOCK).length} achievements
             </div>
           </motion.div>
@@ -588,7 +588,7 @@ export default function Achievements() {
                   }}
                 >
                   <div style={{ fontSize:'3rem', marginBottom:'16px', opacity:0.5 }}>🔍</div>
-                  <div style={{ color:'#6B7280', fontSize:'1.1rem', marginBottom:'8px' }}>
+                  <div style={{ color:'var(--text-muted)', fontSize:'1.1rem', marginBottom:'8px' }}>
                     No achievements found
                   </div>
                   <div style={{ color:'#4B5563', fontSize:'0.9rem' }}>
@@ -610,7 +610,7 @@ export default function Achievements() {
               >
                 <div style={{
                   fontFamily:"'Clash Display',sans-serif",
-                  color:'white', fontSize:'1rem', fontWeight:700,
+                  color: 'var(--text-primary)', fontSize:'1rem', fontWeight:700,
                   marginBottom:'16px', display:'flex', alignItems:'center', gap:'8px'
                 }}>
                   ⚡ Active Challenges
@@ -624,8 +624,8 @@ export default function Achievements() {
                       transition={{ delay:0.4 + i*0.1 }}
                       whileHover={{ x:4 }}
                       style={{
-                        background:'rgba(255,255,255,0.03)',
-                        border:'1px solid rgba(255,255,255,0.06)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         borderRadius:'12px', padding:'12px',
                         cursor:'pointer'
                       }}
@@ -634,15 +634,15 @@ export default function Achievements() {
                         <span style={{ fontSize:'1.2rem' }}>{challenge.emoji}</span>
                         <div style={{ flex:1 }}>
                           <div style={{
-                            color:'white', fontSize:'0.85rem', fontWeight:600,
+                            color: 'var(--text-primary)', fontSize:'0.85rem', fontWeight:600,
                             marginBottom:'2px'
                           }}>{challenge.name}</div>
-                          <div style={{ color:'#6B7280', fontSize:'0.7rem' }}>{challenge.desc}</div>
+                          <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>{challenge.desc}</div>
                         </div>
                       </div>
                       <div style={{ marginBottom:'8px' }}>
                         <div style={{
-                          height:'4px', background:'rgba(255,255,255,0.05)',
+                          height:'4px', background:'var(--border)',
                           borderRadius:'99px', overflow:'hidden'
                         }}>
                           <motion.div
@@ -666,7 +666,7 @@ export default function Achievements() {
                       </div>
                       <div style={{
                         marginTop:'6px',
-                        color:challenge.type === 'Daily' ? '#FF6B35' : '#00D4FF',
+                        color:challenge.type === 'Daily' ? '#FF6B35' : '#FB923C',
                         fontSize:'0.65rem', fontWeight:600
                       }}>
                         {challenge.deadline}
@@ -685,7 +685,7 @@ export default function Achievements() {
               >
                 <div style={{
                   fontFamily:"'Clash Display',sans-serif",
-                  color:'white', fontSize:'1rem', fontWeight:700,
+                  color: 'var(--text-primary)', fontSize:'1rem', fontWeight:700,
                   marginBottom:'16px', display:'flex', alignItems:'center', gap:'8px'
                 }}>
                   🏆 Leaderboard
@@ -701,8 +701,8 @@ export default function Achievements() {
                       style={{
                         display:'flex', alignItems:'center', gap:'10px',
                         padding:'10px', borderRadius:'10px',
-                        background: user.isUser ? 'rgba(0,212,255,0.1)' : 'rgba(255,255,255,0.02)',
-                        border: user.isUser ? '1px solid rgba(0,212,255,0.3)' : '1px solid rgba(255,255,255,0.04)',
+                        background: user.isUser ? 'rgba(251,146,60,0.1)' : 'var(--border)',
+                        border: user.isUser ? '1px solid rgba(251,146,60,0.3)' : '1px solid var(--border)',
                         cursor: user.isUser ? 'default' : 'pointer'
                       }}
                     >
@@ -724,10 +724,10 @@ export default function Achievements() {
                       </div>
                       <div style={{ flex:1 }}>
                         <div style={{
-                          color:user.isUser ? '#00D4FF' : 'white',
+                          color:user.isUser ? '#FB923C' : 'white',
                           fontSize:'0.85rem', fontWeight:600
                         }}>{user.name}</div>
-                        <div style={{ color:'#6B7280', fontSize:'0.7rem' }}>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>
                           Level {user.level} • {user.xp.toLocaleString()} XP
                         </div>
                       </div>
@@ -735,8 +735,8 @@ export default function Achievements() {
                         <div style={{ fontSize:'1rem' }}>{user.badge}</div>
                         <div style={{
                           fontSize:'0.65rem', fontWeight:600,
-                          color: user.change.includes('↑') ? '#00FF87' : 
-                                 user.change.includes('↓') ? '#FF6B35' : '#6B7280'
+                          color: user.change.includes('↑') ? '#F97316' : 
+                                 user.change.includes('↓') ? '#FF6B35' : 'var(--text-muted)'
                         }}>{user.change}</div>
                       </div>
                     </motion.div>
@@ -757,7 +757,7 @@ export default function Achievements() {
               onClick={() => setSelectedBadge(null)}
               style={{
                 position:'fixed', inset:0, zIndex:999,
-                background:'rgba(0,0,0,0.8)', backdropFilter:'blur(8px)',
+                background:'var(--shadow-color)', backdropFilter:'blur(8px)',
                 display:'flex', alignItems:'center', justifyContent:'center',
                 padding:'20px'
               }}
@@ -776,7 +776,7 @@ export default function Achievements() {
                     : 'rgba(10,10,18,0.95)',
                   border: selectedBadge.unlocked 
                     ? `1px solid ${RARITY_CONFIG[selectedBadge.rarity].border}` 
-                    : '1px solid rgba(255,255,255,0.08)'
+                    : '1px solid var(--border)'
                 }}
               >
                 <div style={{ textAlign:'center', marginBottom:'24px' }}>
@@ -800,11 +800,11 @@ export default function Achievements() {
                     fontSize:'1.6rem', fontWeight:800, marginBottom:'8px'
                   }}>{selectedBadge.name}</div>
                   <div style={{
-                    color: selectedBadge.unlocked ? RARITY_CONFIG[selectedBadge.rarity].color : '#6B7280',
+                    color: selectedBadge.unlocked ? RARITY_CONFIG[selectedBadge.rarity].color : 'var(--text-muted)',
                     fontSize:'0.9rem', fontWeight:700, marginBottom:'4px'
                   }}>{selectedBadge.rarity} • {selectedBadge.category}</div>
                   <div style={{
-                    color: selectedBadge.unlocked ? '#9CA3AF' : '#374151',
+                    color: selectedBadge.unlocked ? 'var(--text-muted)' : '#374151',
                     fontSize:'1rem', lineHeight:1.6
                   }}>{selectedBadge.desc}</div>
                 </div>
@@ -828,14 +828,14 @@ export default function Achievements() {
                 ) : (
                   <div style={{ marginBottom:'20px' }}>
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'8px' }}>
-                      <span style={{ color:'#9CA3AF', fontSize:'0.9rem' }}>Progress</span>
+                      <span style={{ color:'var(--text-muted)', fontSize:'0.9rem' }}>Progress</span>
                       <span style={{ 
                         color:RARITY_CONFIG[selectedBadge.rarity].color, 
                         fontSize:'0.9rem', fontWeight:700 
                       }}>{selectedBadge.progress}%</span>
                     </div>
                     <div style={{
-                      height:'8px', background:'rgba(255,255,255,0.05)',
+                      height:'8px', background:'var(--border)',
                       borderRadius:'99px', overflow:'hidden'
                     }}>
                       <motion.div
@@ -859,9 +859,9 @@ export default function Achievements() {
                     width:'100%', padding:'12px',
                     background:selectedBadge.unlocked 
                       ? RARITY_CONFIG[selectedBadge.rarity].color 
-                      : 'rgba(255,255,255,0.1)',
+                      : 'var(--border)',
                     border:'none', borderRadius:'10px',
-                    color:selectedBadge.unlocked ? '#000' : '#9CA3AF',
+                    color:selectedBadge.unlocked ? '#000' : 'var(--text-muted)',
                     fontSize:'0.9rem', fontWeight:700, cursor:'pointer'
                   }}
                 >

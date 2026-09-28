@@ -98,13 +98,13 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#0A0A0F] overflow-hidden relative">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-[var(--bg-primary)] overflow-hidden relative">
 
       {/* LEFT PANEL - HERO SECTION */}
       <div className="w-full lg:w-[60%] flex flex-col justify-center px-6 py-14 sm:p-12 lg:p-[80px_60px] relative">
 
         {/* Background Orbs */}
-        <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,255,135,0.06)_0%,transparent_70%)] rounded-full animate-[float_8s_ease-in-out_infinite] pointer-events-none z-0" />
+        <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(249,115,22,0.06)_0%,transparent_70%)] rounded-full animate-[float_8s_ease-in-out_infinite] pointer-events-none z-0" />
         <div className="absolute bottom-[20%] left-[25%] w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(123,97,255,0.05)_0%,transparent_70%)] rounded-full animate-[float_12s_ease-in-out_infinite_reverse] pointer-events-none z-0" />
 
         {/* Hero Content */}
@@ -113,7 +113,7 @@ export default function LandingPage() {
             variants={fadeInUp}
             initial="initial"
             animate="animate"
-            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#F0F0FF] leading-[1.1] m-0"
+            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[var(--text-primary)] leading-[1.1] m-0"
           >
             YOUR BODY.
           </motion.h1>
@@ -122,7 +122,7 @@ export default function LandingPage() {
             initial="initial"
             animate="animate"
             transition={{ delay: 0.2 }}
-            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#F0F0FF] leading-[1.1] m-0"
+            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[var(--text-primary)] leading-[1.1] m-0"
           >
             YOUR DATA.
           </motion.h1>
@@ -131,8 +131,8 @@ export default function LandingPage() {
             initial="initial"
             animate="animate"
             transition={{ delay: 0.4 }}
-            style={{ textShadow: '0 0 40px rgba(0,255,135,0.6)' }}
-            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#00FF87] leading-[1.1] m-0"
+            style={{ textShadow: '0 0 40px rgba(249,115,22,0.6)' }}
+            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#F97316] leading-[1.1] m-0"
           >
             YOUR AI.
           </motion.h1>
@@ -141,7 +141,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-[#6B7280] text-[1.1rem] mt-6 max-w-[500px]"
+            className="text-[var(--text-muted)] text-[1.1rem] mt-6 max-w-[500px]"
           >
             Track nutrition. Predict health. Get fit with AI.
           </motion.p>
@@ -157,7 +157,7 @@ export default function LandingPage() {
               <motion.div
                 key={feature}
                 whileHover={{ scale: 1.05 }}
-                className="bg-[rgba(22,22,31,0.7)] border border-[rgba(0,255,135,0.2)] rounded-[99px] px-4 py-2 text-white text-[0.85rem]"
+                className="bg-[var(--bg-card)] border border-[rgba(249,115,22,0.2)] rounded-[99px] px-4 py-2 text-[var(--text-primary)] text-[0.85rem]"
               >
                 {feature}
               </motion.div>
@@ -170,19 +170,19 @@ export default function LandingPage() {
       <div className="w-full lg:w-[40%] flex items-center justify-center p-6 lg:p-10 pb-12 lg:pb-10">
 
         {/* Auth Glass Card */}
-        <div className="bg-[rgba(22,22,31,0.8)] backdrop-blur-[20px] border border-[rgba(255,255,255,0.08)] rounded-[24px] p-10 w-full max-w-[420px]">
+        <div className="bg-[var(--bg-card)] backdrop-blur-[20px] border border-[var(--border)] rounded-[24px] p-10 w-full max-w-[420px]">
 
           {/* Logo */}
           <div className="text-center mb-8">
-            <h2 className="font-['Clash_Display'] text-[1.8rem] text-[#F0F0FF] m-0">🥗 NutriAI</h2>
+            <h2 className="font-['Clash_Display'] text-[1.8rem] text-[var(--text-primary)] m-0">🥗 NutriAI</h2>
           </div>
 
           {/* Tab Toggle */}
-          <div className="flex bg-[rgba(255,255,255,0.05)] rounded-[99px] p-1 mb-7">
+          <div className="flex bg-[var(--border)] rounded-[99px] p-1 mb-7">
             <button
               onClick={() => setActiveTab('login')}
               className={`flex-1 px-2 font-bold border-0 rounded-[99px] cursor-pointer transition-all duration-200 ${
-                activeTab === 'login' ? 'bg-[#00FF87] text-black' : 'bg-transparent text-[#6B7280]'
+                activeTab === 'login' ? 'bg-[#F97316] text-black' : 'bg-transparent text-[var(--text-muted)]'
               }`}
             >
               Login
@@ -190,7 +190,7 @@ export default function LandingPage() {
             <button
               onClick={() => setActiveTab('signup')}
               className={`flex-1 px-2 font-bold border-0 rounded-[99px] cursor-pointer transition-all duration-200 ${
-                activeTab === 'signup' ? 'bg-[#00FF87] text-black' : 'bg-transparent text-[#6B7280]'
+                activeTab === 'signup' ? 'bg-[#F97316] text-black' : 'bg-transparent text-[var(--text-muted)]'
               }`}
             >
               Sign Up
@@ -215,7 +215,7 @@ export default function LandingPage() {
                 <input
                   type="email"
                   placeholder="Email"
-                  className="w-full bg-[#16161F] border border-white/10 rounded-xl px-4 py-3 text-[#F0F0FF] text-[0.95rem] outline-none mb-3 box-border"
+                  className="w-full bg-[var(--card-solid)] border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.95rem] outline-none mb-3 box-border"
                   value={loginForm.email}
                   onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                   required
@@ -224,7 +224,7 @@ export default function LandingPage() {
                 <input
                   type="password"
                   placeholder="Password"
-                  className="w-full bg-[#16161F] border border-white/10 rounded-xl px-4 py-3 text-[#F0F0FF] text-[0.95rem] outline-none mb-5 box-border"
+                  className="w-full bg-[var(--card-solid)] border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.95rem] outline-none mb-5 box-border"
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                   required
@@ -233,7 +233,7 @@ export default function LandingPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-3.5 font-bold border-0 rounded-xl text-base cursor-pointer mt-2 transition-all duration-200 bg-gradient-to-r from-[#00FF87] to-[#00D4FF] text-black ${
+                  className={`w-full py-3.5 font-bold border-0 rounded-xl text-base cursor-pointer mt-2 transition-all duration-200 bg-gradient-to-r from-[#F97316] to-[#FB923C] text-black ${
                     loading ? 'opacity-70 cursor-not-allowed' : 'opacity-100'
                   }`}
                 >
@@ -244,7 +244,7 @@ export default function LandingPage() {
               {/* OR Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 h-px bg-white/20" />
-                <span className="text-[#6B7280] text-[0.875rem]">or</span>
+                <span className="text-[var(--text-muted)] text-[0.875rem]">or</span>
                 <div className="flex-1 h-px bg-white/20" />
               </div>
 
@@ -252,7 +252,7 @@ export default function LandingPage() {
                 disabled={loading}
                 className={`w-full py-3 font-semibold border border-white/20 rounded-xl text-[0.95rem] cursor-pointer transition-all duration-200 ${
                   loading ? 'opacity-50 cursor-not-allowed' : 'opacity-100'
-                } bg-transparent text-[#F0F0FF]`}
+                } bg-transparent text-[var(--text-primary)]`}
               >
                 Continue with Google
               </button>
@@ -270,7 +270,7 @@ export default function LandingPage() {
                 <input
                   type="text"
                   placeholder="Name"
-                  className="w-full bg-[#16161F] border border-white/10 rounded-xl px-4 py-3 text-[#F0F0FF] text-[0.95rem] outline-none mb-3 box-border"
+                  className="w-full bg-[var(--card-solid)] border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.95rem] outline-none mb-3 box-border"
                   value={signupForm.name}
                   onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
                   required
@@ -279,7 +279,7 @@ export default function LandingPage() {
                 <input
                   type="email"
                   placeholder="Email"
-                  className="w-full bg-[#16161F] border border-white/10 rounded-xl px-4 py-3 text-[#F0F0FF] text-[0.95rem] outline-none mb-3 box-border"
+                  className="w-full bg-[var(--card-solid)] border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.95rem] outline-none mb-3 box-border"
                   value={signupForm.email}
                   onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
                   required
@@ -288,7 +288,7 @@ export default function LandingPage() {
                 <input
                   type="password"
                   placeholder="Password"
-                  className="w-full bg-[#16161F] border border-white/10 rounded-xl px-4 py-3 text-[#F0F0FF] text-[0.95rem] outline-none mb-3 box-border"
+                  className="w-full bg-[var(--card-solid)] border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.95rem] outline-none mb-3 box-border"
                   value={signupForm.password}
                   onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
                   required
@@ -297,7 +297,7 @@ export default function LandingPage() {
                 <input
                   type="password"
                   placeholder="Confirm Password"
-                  className="w-full bg-[#16161F] border border-white/10 rounded-xl px-4 py-3 text-[#F0F0FF] text-[0.95rem] outline-none mb-5 box-border"
+                  className="w-full bg-[var(--card-solid)] border border-white/10 rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.95rem] outline-none mb-5 box-border"
                   value={signupForm.confirmPassword}
                   onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })}
                   required
@@ -306,7 +306,7 @@ export default function LandingPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-3.5 font-bold border-0 rounded-xl text-base cursor-pointer mt-2 transition-all duration-200 bg-gradient-to-r from-[#00FF87] to-[#00D4FF] text-black ${
+                  className={`w-full py-3.5 font-bold border-0 rounded-xl text-base cursor-pointer mt-2 transition-all duration-200 bg-gradient-to-r from-[#F97316] to-[#FB923C] text-black ${
                     loading ? 'opacity-70 cursor-not-allowed' : 'opacity-100'
                   }`}
                 >
@@ -317,7 +317,7 @@ export default function LandingPage() {
           )}
 
           {/* Footer */}
-          <p className="text-center text-[#6B7280] text-[0.75rem] mt-6">
+          <p className="text-center text-[var(--text-muted)] text-[0.75rem] mt-6">
             No credit card required · Free forever
           </p>
         </div>

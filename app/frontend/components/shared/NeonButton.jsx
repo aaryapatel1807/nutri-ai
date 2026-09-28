@@ -19,7 +19,7 @@ export default function NeonButton({
       case 'ghost':
         return 'btn-ghost'
       case 'outline':
-        return 'bg-transparent border border-neon-green text-neon-green hover:bg-neon-green hover:text-black'
+        return 'bg-transparent border border-brand text-brand hover:bg-brand hover:text-black'
       default:
         return 'btn-neon'
     }

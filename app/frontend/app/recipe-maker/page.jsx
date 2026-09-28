@@ -17,7 +17,7 @@ const RECIPES = [
     id:2, name:'Grilled Chicken Bowl', emoji:'🍗', time:25, calories:380,
     protein:42, carbs:22, fat:12, difficulty:'Easy', cuisine:'Western',
     tags:['High Protein','Low Carb','Keto'],
-    color:'#00FF87', glow:'rgba(0,255,135,0.3)',
+    color:'#F97316', glow:'rgba(249,115,22,0.3)',
     ingredients:['200g Chicken','Brown Rice','Broccoli','Olive Oil','Garlic','Lemon'],
     steps:['Marinate chicken 30 mins','Grill 6 mins each side','Steam broccoli','Assemble bowl']
   },
@@ -41,7 +41,7 @@ const RECIPES = [
     id:5, name:'Salmon Teriyaki', emoji:'🐟', time:20, calories:310,
     protein:35, carbs:18, fat:10, difficulty:'Medium', cuisine:'Japanese',
     tags:['Omega-3','High Protein','Heart Healthy'],
-    color:'#00D4FF', glow:'rgba(0,212,255,0.3)',
+    color:'#FB923C', glow:'rgba(251,146,60,0.3)',
     ingredients:['180g Salmon','Teriyaki Sauce','Sesame Seeds','Spring Onion','Ginger','Rice'],
     steps:['Marinate salmon','Pan sear 4 mins each side','Glaze with sauce','Serve with rice']
   },
@@ -49,7 +49,7 @@ const RECIPES = [
     id:6, name:'Avocado Egg Toast', emoji:'🥑', time:10, calories:280,
     protein:12, carbs:24, fat:18, difficulty:'Easy', cuisine:'Western',
     tags:['Healthy Fats','Quick','Breakfast'],
-    color:'#4ADE80', glow:'rgba(74,222,128,0.3)',
+    color:'#FDBA74', glow:'rgba(253,186,116,0.3)',
     ingredients:['2 Eggs','1 Avocado','Sourdough Bread','Cherry Tomatoes','Chili Flakes','Lime'],
     steps:['Toast sourdough','Mash avocado with lime','Poach or fry eggs','Top and season']
   },
@@ -110,8 +110,8 @@ export default function RecipeMaker() {
           difficulty: 'Medium',
           cuisine: 'AI Personalized',
           tags: r.tags || ['AI Generated'],
-          color: '#00FF87',
-          glow: 'rgba(0,255,135,0.3)',
+          color: '#F97316',
+          glow: 'rgba(249,115,22,0.3)',
           ingredients: r.ingredients || [],
           steps: r.instructions || []
         })
@@ -128,13 +128,13 @@ export default function RecipeMaker() {
     }
   }
 
-  const card = (glowColor = 'rgba(0,255,135,0.1)') => ({
-    background: 'rgba(18,18,26,0.85)',
+  const card = (glowColor = 'rgba(249,115,22,0.1)') => ({
+    background: 'var(--bg-card)',
     backdropFilter: 'blur(24px)',
     WebkitBackdropFilter: 'blur(24px)',
-    border: '1px solid rgba(255,255,255,0.07)',
+    border: '1px solid var(--border)',
     borderRadius: '24px',
-    boxShadow: `0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)`,
+    boxShadow: `0 8px 40px var(--shadow-color), 0 0 0 1px var(--border)`,
     overflow: 'hidden',
   })
 
@@ -145,7 +145,7 @@ export default function RecipeMaker() {
         <div style={{
           position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
           background:`
-            radial-gradient(600px circle at 20% 30%, rgba(0,255,135,0.04) 0%, transparent 60%),
+            radial-gradient(600px circle at 20% 30%, rgba(249,115,22,0.04) 0%, transparent 60%),
             radial-gradient(400px circle at 80% 70%, rgba(123,97,255,0.04) 0%, transparent 60%)
           `
         }}/>
@@ -164,27 +164,27 @@ export default function RecipeMaker() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.2rem', fontWeight:800,
                   margin:0, marginBottom:'6px',
-                  background:'linear-gradient(135deg, #ffffff 0%, #00FF87 100%)',
+                  background:'linear-gradient(135deg, var(--text-primary) 0%, #F97316 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>
                   Recipe Intelligence 👨‍🍳
                 </h1>
-                <p style={{ color:'#6B7280', margin:0, fontSize:'0.9rem' }}>
+                <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
                   AI-powered recipe matching from your ingredients
                 </p>
               </div>
               <motion.button
-                whileHover={{ scale:1.05, boxShadow:'0 0 30px rgba(0,255,135,0.4)' }}
+                whileHover={{ scale:1.05, boxShadow:'0 0 30px rgba(249,115,22,0.4)' }}
                 whileTap={{ scale:0.95 }}
                 onClick={() => setAiMode(!aiMode)}
                 style={{
                   padding:'12px 24px',
                   background: aiMode
-                    ? 'linear-gradient(135deg,#00FF87,#00D4FF)'
-                    : 'rgba(0,255,135,0.1)',
-                  border:'1px solid rgba(0,255,135,0.4)',
+                    ? 'linear-gradient(135deg,#F97316,#FB923C)'
+                    : 'rgba(249,115,22,0.1)',
+                  border:'1px solid rgba(249,115,22,0.4)',
                   borderRadius:'14px',
-                  color: aiMode ? '#000' : '#00FF87',
+                  color: aiMode ? '#000' : '#F97316',
                   fontWeight:700, cursor:'pointer',
                   fontSize:'0.9rem', fontFamily:"'Satoshi',sans-serif",
                   display:'flex', alignItems:'center', gap:'8px',
@@ -208,15 +208,15 @@ export default function RecipeMaker() {
                   ...card(),
                   padding:'40px',
                   marginBottom:'24px',
-                  background:'linear-gradient(135deg, rgba(18,18,26,0.95), rgba(0,255,135,0.03))',
-                  border:'1px solid rgba(0,255,135,0.15)',
+                  background:'linear-gradient(135deg, var(--bg-card), rgba(249,115,22,0.03))',
+                  border:'1px solid rgba(249,115,22,0.15)',
                 }}>
                   {/* Animated orbs */}
                   <div style={{ position:'relative' }}>
                     <div style={{
                       position:'absolute', top:'-20px', right:'-20px',
                       width:'200px', height:'200px', borderRadius:'50%',
-                      background:'radial-gradient(circle, rgba(0,255,135,0.08) 0%, transparent 70%)',
+                      background:'radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%)',
                       pointerEvents:'none'
                     }}/>
                     <div style={{
@@ -234,9 +234,9 @@ export default function RecipeMaker() {
                       >🧠</motion.div>
                       <h2 style={{
                         fontFamily:"'Clash Display',sans-serif",
-                        fontSize:'1.6rem', color:'white', margin:0, marginBottom:'8px'
+                        fontSize:'1.6rem', color: 'var(--text-primary)', margin:0, marginBottom:'8px'
                       }}>What's in your kitchen?</h2>
-                      <p style={{ color:'#6B7280', margin:0, fontSize:'0.9rem' }}>
+                      <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
                         Type your available ingredients and AI finds the perfect recipe
                       </p>
                     </div>
@@ -250,14 +250,14 @@ export default function RecipeMaker() {
                           rows={3}
                           style={{
                             width:'100%', boxSizing:'border-box',
-                            background:'rgba(255,255,255,0.04)',
-                            border:'1px solid rgba(0,255,135,0.2)',
+                            background:'var(--border)',
+                            border:'1px solid rgba(249,115,22,0.2)',
                             borderRadius:'16px', padding:'16px 20px',
-                            color:'#F0F0FF', fontSize:'0.95rem',
+                            color:'var(--text-primary)', fontSize:'0.95rem',
                             outline:'none', resize:'none',
                             fontFamily:"'Satoshi',sans-serif",
                             lineHeight:1.6,
-                            boxShadow:'inset 0 0 20px rgba(0,0,0,0.2)'
+                            boxShadow:'inset 0 0 20px var(--shadow-color)'
                           }}
                         />
                         <div style={{
@@ -275,10 +275,10 @@ export default function RecipeMaker() {
                             whileTap={{ scale:0.95 }}
                             onClick={() => setIngredients(p => p ? `${p}, ${ing}` : ing)}
                             style={{
-                              background:'rgba(255,255,255,0.04)',
-                              border:'1px solid rgba(255,255,255,0.1)',
+                              background:'var(--border)',
+                              border:'1px solid var(--border)',
                               borderRadius:'99px', padding:'5px 14px',
-                              color:'#9CA3AF', cursor:'pointer',
+                              color:'var(--text-muted)', cursor:'pointer',
                               fontSize:'0.8rem',
                               fontFamily:"'Satoshi',sans-serif"
                             }}>+ {ing}</motion.button>
@@ -286,13 +286,13 @@ export default function RecipeMaker() {
                       </div>
 
                       <motion.button
-                        whileHover={{ scale:1.02, boxShadow:'0 8px 40px rgba(0,255,135,0.4)' }}
+                        whileHover={{ scale:1.02, boxShadow:'0 8px 40px rgba(249,115,22,0.4)' }}
                         whileTap={{ scale:0.98 }}
                         onClick={handleAIMatch}
                         disabled={aiLoading || !ingredients.trim()}
                         style={{
                           width:'100%', padding:'16px',
-                          background:'linear-gradient(135deg,#00FF87,#00D4FF)',
+                          background:'linear-gradient(135deg,#F97316,#FB923C)',
                           border:'none', borderRadius:'16px',
                           color:'#000', fontWeight:800,
                           fontSize:'1rem', cursor:'pointer',
@@ -323,7 +323,7 @@ export default function RecipeMaker() {
                         ...card(aiResult.glow),
                         padding:'32px',
                         border:`1px solid ${aiResult.color}40`,
-                        boxShadow:`0 0 60px ${aiResult.glow}, 0 8px 40px rgba(0,0,0,0.5)` 
+                        boxShadow:`0 0 60px ${aiResult.glow}, 0 8px 40px var(--shadow-color)` 
                       }}
                     >
                       <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px' }}>
@@ -333,33 +333,33 @@ export default function RecipeMaker() {
                           borderRadius:'99px', padding:'4px 14px',
                           color: aiResult.color, fontSize:'0.78rem', fontWeight:700
                         }}>🤖 AI RECOMMENDED</div>
-                        <div style={{ color:'#6B7280', fontSize:'0.8rem' }}>95% ingredient match</div>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>95% ingredient match</div>
                       </div>
                       <div style={{ display:'flex', gap:'24px', flexWrap:'wrap' }}>
                         <div style={{ fontSize:'5rem' }}>{aiResult.emoji}</div>
                         <div style={{ flex:1 }}>
                           <h2 style={{
                             fontFamily:"'Clash Display',sans-serif",
-                            fontSize:'1.8rem', color:'white', margin:0, marginBottom:'8px'
+                            fontSize:'1.8rem', color: 'var(--text-primary)', margin:0, marginBottom:'8px'
                           }}>{aiResult.name}</h2>
                           <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', marginBottom:'16px' }}>
                             {aiResult.tags.map(t => (
                               <span key={t} style={{
-                                background:'rgba(255,255,255,0.06)',
+                                background:'var(--border)',
                                 borderRadius:'99px', padding:'3px 12px',
-                                color:'#9CA3AF', fontSize:'0.75rem'
+                                color:'var(--text-muted)', fontSize:'0.75rem'
                               }}>{t}</span>
                             ))}
                           </div>
                           <div style={{ display:'flex', gap:'20px', flexWrap:'wrap' }}>
                             {[
                               { label:'Calories', val:`${aiResult.calories} kcal`, color:aiResult.color },
-                              { label:'Protein',  val:`${aiResult.protein}g`,      color:'#00FF87' },
-                              { label:'Time',     val:`${aiResult.time} min`,      color:'#00D4FF' },
+                              { label:'Protein',  val:`${aiResult.protein}g`,      color:'#F97316' },
+                              { label:'Time',     val:`${aiResult.time} min`,      color:'#FB923C' },
                             ].map(s => (
                               <div key={s.label}>
                                 <div style={{ color: s.color, fontFamily:"'Clash Display',sans-serif", fontSize:'1.4rem', fontWeight:700 }}>{s.val}</div>
-                                <div style={{ color:'#6B7280', fontSize:'0.75rem' }}>{s.label}</div>
+                                <div style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>{s.label}</div>
                               </div>
                             ))}
                           </div>
@@ -404,16 +404,16 @@ export default function RecipeMaker() {
                       onChange={e => setSearch(e.target.value)}
                       style={{
                         width:'100%', boxSizing:'border-box',
-                        background:'rgba(22,22,31,0.8)',
+                        background:'var(--bg-card)',
                         backdropFilter:'blur(20px)',
-                        border:'1px solid rgba(255,255,255,0.08)',
+                        border:'1px solid var(--border)',
                         borderRadius:'14px', padding:'14px 16px 14px 48px',
-                        color:'#F0F0FF', fontSize:'0.95rem', outline:'none',
+                        color:'var(--text-primary)', fontSize:'0.95rem', outline:'none',
                         fontFamily:"'Satoshi',sans-serif",
                         transition:'border-color 0.2s',
                       }}
-                      onFocus={e => e.target.style.borderColor='rgba(0,255,135,0.4)'}
-                      onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.08)'}
+                      onFocus={e => e.target.style.borderColor='rgba(249,115,22,0.4)'}
+                      onBlur={e => e.target.style.borderColor='var(--border)'}
                     />
                   </div>
                   <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
@@ -425,11 +425,11 @@ export default function RecipeMaker() {
                         onClick={() => setActiveFilter(f)}
                         style={{
                           padding:'7px 18px', borderRadius:'99px',
-                          border: activeFilter===f ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                          border: activeFilter===f ? 'none' : '1px solid var(--border)',
                           background: activeFilter===f
-                            ? 'linear-gradient(135deg,#00FF87,#00D4FF)'
-                            : 'rgba(22,22,31,0.8)',
-                          color: activeFilter===f ? '#000' : '#9CA3AF',
+                            ? 'linear-gradient(135deg,#F97316,#FB923C)'
+                            : 'var(--bg-card)',
+                          color: activeFilter===f ? '#000' : 'var(--text-muted)',
                           fontWeight: activeFilter===f ? 700 : 400,
                           cursor:'pointer', fontSize:'0.82rem',
                           fontFamily:"'Satoshi',sans-serif",
@@ -462,7 +462,7 @@ export default function RecipeMaker() {
                         transition:'box-shadow 0.3s',
                         boxShadow: hoveredId===recipe.id
                           ? `0 20px 60px ${recipe.glow}, 0 0 0 1px ${recipe.color}30` 
-                          : '0 8px 32px rgba(0,0,0,0.4)',
+                          : '0 8px 32px var(--shadow-color)',
                       }}
                     >
                       {/* Card top accent */}
@@ -488,7 +488,7 @@ export default function RecipeMaker() {
 
                         <h3 style={{
                           fontFamily:"'Clash Display',sans-serif",
-                          fontSize:'1.05rem', color:'white',
+                          fontSize:'1.05rem', color: 'var(--text-primary)',
                           margin:0, marginBottom:'10px', fontWeight:700
                         }}>{recipe.name}</h3>
 
@@ -502,9 +502,9 @@ export default function RecipeMaker() {
                             }}>{t}</span>
                           ))}
                           <span style={{
-                            background:'rgba(255,255,255,0.04)',
+                            background:'var(--border)',
                             borderRadius:'99px', padding:'3px 10px',
-                            color:'#6B7280', fontSize:'0.72rem'
+                            color:'var(--text-muted)', fontSize:'0.72rem'
                           }}>⏱ {recipe.time}m</span>
                         </div>
 
@@ -515,14 +515,14 @@ export default function RecipeMaker() {
                         }}>
                           {[
                             { label:'Cal',  val:recipe.calories, color:'#FF6B35' },
-                            { label:'Prot', val:`${recipe.protein}g`, color:'#00FF87' },
+                            { label:'Prot', val:`${recipe.protein}g`, color:'#F97316' },
                             { label:'Carb', val:`${recipe.carbs}g`,   color:'#7B61FF' },
                           ].map(m => (
                             <div key={m.label} style={{
-                              background:'rgba(255,255,255,0.03)',
+                              background:'var(--border)',
                               borderRadius:'10px', padding:'8px 6px',
                               textAlign:'center',
-                              border:'1px solid rgba(255,255,255,0.05)'
+                              border:'1px solid var(--border)'
                             }}>
                               <div style={{ color:m.color, fontWeight:700, fontSize:'0.85rem' }}>{m.val}</div>
                               <div style={{ color:'#4B5563', fontSize:'0.68rem', marginTop:'2px' }}>{m.label}</div>
@@ -556,7 +556,7 @@ export default function RecipeMaker() {
               exit={{ opacity:0 }}
               style={{
                 position:'fixed', inset:0, zIndex:200,
-                background:'rgba(0,0,0,0.75)',
+                background:'var(--shadow-color)',
                 backdropFilter:'blur(12px)',
                 display:'flex', alignItems:'center',
                 justifyContent:'center', padding:'20px'
@@ -575,7 +575,7 @@ export default function RecipeMaker() {
                   backdropFilter:'blur(40px)',
                   border:`1px solid ${selected.color}30`,
                   borderRadius:'28px',
-                  boxShadow:`0 40px 100px rgba(0,0,0,0.8), 0 0 80px ${selected.glow}`,
+                  boxShadow:`0 40px 100px var(--shadow-color), 0 0 80px ${selected.glow}`,
                 }}
               >
                 {/* Modal top accent */}
@@ -600,7 +600,7 @@ export default function RecipeMaker() {
                       <div>
                         <h2 style={{
                           fontFamily:"'Clash Display',sans-serif",
-                          fontSize:'1.6rem', color:'white',
+                          fontSize:'1.6rem', color: 'var(--text-primary)',
                           margin:0, marginBottom:'6px'
                         }}>{selected.name}</h2>
                         <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
@@ -618,10 +618,10 @@ export default function RecipeMaker() {
                     <button
                       onClick={() => setSelected(null)}
                       style={{
-                        background:'rgba(255,255,255,0.06)',
-                        border:'1px solid rgba(255,255,255,0.1)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         borderRadius:'50%', width:'36px', height:'36px',
-                        color:'#9CA3AF', cursor:'pointer',
+                        color:'var(--text-muted)', cursor:'pointer',
                         fontSize:'1rem', display:'flex',
                         alignItems:'center', justifyContent:'center',
                         flexShrink:0
@@ -635,9 +635,9 @@ export default function RecipeMaker() {
                   }}>
                     {[
                       { label:'Calories', val:`${selected.calories}`, unit:'kcal', color:selected.color, icon:'🔥' },
-                      { label:'Protein',  val:`${selected.protein}`,  unit:'g',    color:'#00FF87',       icon:'💪' },
+                      { label:'Protein',  val:`${selected.protein}`,  unit:'g',    color:'#F97316',       icon:'💪' },
                       { label:'Carbs',    val:`${selected.carbs}`,    unit:'g',    color:'#7B61FF',       icon:'⚡' },
-                      { label:'Time',     val:`${selected.time}`,     unit:'min',  color:'#00D4FF',       icon:'⏱' },
+                      { label:'Time',     val:`${selected.time}`,     unit:'min',  color:'#FB923C',       icon:'⏱' },
                     ].map(s => (
                       <div key={s.label} style={{
                         background:`${s.color}08`,
@@ -651,7 +651,7 @@ export default function RecipeMaker() {
                           fontFamily:"'Clash Display',sans-serif",
                           fontSize:'1.4rem', fontWeight:700
                         }}>{s.val}<span style={{ fontSize:'0.75rem' }}>{s.unit}</span></div>
-                        <div style={{ color:'#6B7280', fontSize:'0.72rem', marginTop:'2px' }}>{s.label}</div>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', marginTop:'2px' }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
@@ -662,7 +662,7 @@ export default function RecipeMaker() {
                     <div>
                       <h3 style={{
                         fontFamily:"'Clash Display',sans-serif",
-                        color:'white', fontSize:'1rem',
+                        color: 'var(--text-primary)', fontSize:'1rem',
                         marginBottom:'14px', fontWeight:600
                       }}>🥬 Ingredients</h3>
                       {selected.ingredients.map((ing, i) => (
@@ -674,16 +674,16 @@ export default function RecipeMaker() {
                           style={{
                             display:'flex', alignItems:'center', gap:'10px',
                             padding:'8px 12px', marginBottom:'6px',
-                            background:'rgba(255,255,255,0.03)',
+                            background:'var(--border)',
                             borderRadius:'10px',
-                            border:'1px solid rgba(255,255,255,0.05)'
+                            border:'1px solid var(--border)'
                           }}
                         >
                           <span style={{
                             width:'6px', height:'6px', borderRadius:'50%',
                             background:selected.color, flexShrink:0
                           }}/>
-                          <span style={{ color:'#D1D5DB', fontSize:'0.85rem' }}>{ing}</span>
+                          <span style={{ color:'var(--text-faint)', fontSize:'0.85rem' }}>{ing}</span>
                         </motion.div>
                       ))}
                     </div>
@@ -692,7 +692,7 @@ export default function RecipeMaker() {
                     <div>
                       <h3 style={{
                         fontFamily:"'Clash Display',sans-serif",
-                        color:'white', fontSize:'1rem',
+                        color: 'var(--text-primary)', fontSize:'1rem',
                         marginBottom:'14px', fontWeight:600
                       }}>📋 Steps</h3>
                       {selected.steps.map((step, i) => (
@@ -714,7 +714,7 @@ export default function RecipeMaker() {
                             color:selected.color, fontSize:'0.75rem', fontWeight:700,
                             flexShrink:0
                           }}>{i+1}</div>
-                          <p style={{ color:'#9CA3AF', fontSize:'0.83rem', margin:0, lineHeight:1.5 }}>{step}</p>
+                          <p style={{ color:'var(--text-muted)', fontSize:'0.83rem', margin:0, lineHeight:1.5 }}>{step}</p>
                         </motion.div>
                       ))}
                     </div>
@@ -737,9 +737,9 @@ export default function RecipeMaker() {
                       whileTap={{ scale:0.97 }}
                       style={{
                         padding:'14px 20px',
-                        background:'rgba(255,255,255,0.05)',
-                        border:'1px solid rgba(255,255,255,0.1)',
-                        borderRadius:'14px', color:'#9CA3AF',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
+                        borderRadius:'14px', color:'var(--text-muted)',
                         cursor:'pointer', fontSize:'0.9rem'
                       }}>+ Add to Meal Plan</motion.button>
                   </div>

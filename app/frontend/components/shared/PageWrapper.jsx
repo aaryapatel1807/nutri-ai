@@ -13,7 +13,7 @@ export default function PageWrapper({ children }) {
       flexDirection: 'column',
       position: 'relative',
       zIndex: 1,
-      background: '#0A0A0F',
+      background: 'var(--bg-primary)',
       boxSizing: 'border-box',
     }}>
       <div style={{ padding: isMobile ? '16px' : '32px', flex: 1, width: '100%', maxWidth: '1600px', margin: '0 auto', boxSizing: 'border-box' }}>

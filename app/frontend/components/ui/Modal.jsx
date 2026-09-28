@@ -53,18 +53,18 @@ const Modal = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ duration: 0.2 }}
-          className={`relative w-full ${sizes[size]} glass-effect rounded-2xl shadow-2xl border border-white/20 ${className}`}
+          className={`relative w-full ${sizes[size]} glass rounded-2xl shadow-2xl border border-[var(--border)] ${className}`}
           onClick={(e) => e.stopPropagation()}
           {...props}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between p-6 border-b border-gray-700/30">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border)]">
               {title && (
                 <motion.h3
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="text-xl font-semibold text-white"
+                  className="text-xl font-semibold text-[var(--text-primary)]"
                 >
                   {title}
                 </motion.h3>
@@ -77,7 +77,7 @@ const Modal = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={onClose}
-                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-xl hover:bg-white/10"
+                  className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors rounded-xl hover:bg-[var(--track)]"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </motion.button>

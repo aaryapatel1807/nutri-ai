@@ -10,8 +10,8 @@ export default function ForecastChart({ actualData, forecastData }) {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="glass border border-white/10 rounded-lg p-2">
-          <p className="text-white text-sm">
+        <div className="glass rounded-lg p-2">
+          <p className="text-[var(--text-primary)] text-sm">
             {payload[0].value.toFixed(1)} kg
           </p>
         </div>
@@ -26,8 +26,8 @@ export default function ForecastChart({ actualData, forecastData }) {
         <AreaChart data={combinedData}>
           <defs>
             <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#00FF87" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#00FF87" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#F97316" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
             </linearGradient>
             <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#7B61FF" stopOpacity={0.8}/>
@@ -38,7 +38,7 @@ export default function ForecastChart({ actualData, forecastData }) {
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#00FF87"
+            stroke="#F97316"
             strokeWidth={2}
             fill="url(#greenGrad)"
             data={actualData}
@@ -56,7 +56,7 @@ export default function ForecastChart({ actualData, forecastData }) {
           
           <ReferenceLine 
             x={actualData.length - 1} 
-            stroke="rgba(255,255,255,0.2)" 
+            stroke="var(--track)" 
             strokeWidth={1}
           />
           

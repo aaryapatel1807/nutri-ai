@@ -1,10 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Bell, Menu } from 'lucide-react'
+import { Bell, Menu, Sun, Moon } from 'lucide-react'
 import { glowPulse } from '../../lib/animations'
 import api from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
+import { useTheme } from './ThemeContext'
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -15,6 +16,7 @@ function getGreeting() {
 
 export default function Navbar({ onMenuClick = () => {} }) {
   const isMobile = useIsMobile()
+  const { theme, toggleTheme } = useTheme()
   const [userName, setUserName]     = useState('User')
   const [userInitials, setUserInitials] = useState('U')
   const [streak, setStreak]         = useState(0)
@@ -65,9 +67,9 @@ export default function Navbar({ onMenuClick = () => {} }) {
       left: isMobile ? 0 : '260px',
       right: 0,
       height: isMobile ? '64px' : '80px',
-      background: 'rgba(10,10,15,0.95)',
+      background: 'var(--bg-primary)',
       backdropFilter: 'blur(20px)',
-      borderBottom: '1px solid rgba(255,255,255,0.06)',
+      borderBottom: '1px solid var(--border)',
       zIndex: 40,
       display: 'flex',
       alignItems: 'center',
@@ -84,7 +86,7 @@ export default function Navbar({ onMenuClick = () => {} }) {
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: 'white',
+                color: 'var(--text-primary)',
                 cursor: 'pointer',
                 padding: '8px',
                 display: 'flex',
@@ -96,7 +98,7 @@ export default function Navbar({ onMenuClick = () => {} }) {
             </button>
           )}
           <div style={{ minWidth: 0 }}>
-          <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? '0.95rem' : '1.2rem', color: 'white', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? '0.95rem' : '1.2rem', color: 'var(--text-primary)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {getGreeting()}, {userName.split(' ')[0]} 👋
           </h1>
           {tip && !isMobile && (
@@ -106,14 +108,14 @@ export default function Navbar({ onMenuClick = () => {} }) {
                 alignItems: 'center',
                 gap: '8px',
                 padding: '6px 12px',
-                background: 'rgba(255,255,255,0.03)',
+                background: 'var(--border)',
                 backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.06)',
+                border: '1px solid var(--border)',
                 borderLeft: '2px solid #7B61FF',
                 borderRadius: '8px'
               }}>
                 <span style={{ fontSize: '0.8rem' }}>🤖</span>
-                <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>{tip}</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{tip}</span>
               </div>
             </div>
           )}
@@ -137,11 +139,30 @@ export default function Navbar({ onMenuClick = () => {} }) {
             </div>
           )}
 
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
+            title={theme === 'light' ? 'Dark theme' : 'Light theme'}
+            style={{
+              background: 'var(--track)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              borderRadius: '12px'
+            }}
+          >
+            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+
           {/* Bell Icon */}
           <button style={{
             background: 'transparent',
             border: 'none',
-            color: '#6B7280',
+            color: 'var(--text-muted)',
             cursor: 'pointer',
             padding: '8px',
             display: 'flex',
@@ -156,12 +177,12 @@ export default function Navbar({ onMenuClick = () => {} }) {
               width: '36px',
               height: '36px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #00FF87, #7B61FF)',
+              background: 'linear-gradient(135deg, #F97316, #7B61FF)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '2px solid rgba(0,255,135,0.5)',
-              color: 'white',
+              border: '2px solid rgba(249,115,22,0.5)',
+              color: 'var(--text-primary)',
               fontSize: '0.85rem',
               fontWeight: 600
             }}

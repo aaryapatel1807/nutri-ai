@@ -10,7 +10,7 @@ export default function MacroBar({ label, current, goal, color }) {
         marginBottom: '6px'
       }}>
         <span style={{
-          color: '#F0F0FF',
+          color: 'var(--text-primary)',
           fontSize: '0.85rem',
           fontFamily: "'Satoshi', sans-serif"
         }}>{label}</span>
@@ -22,7 +22,7 @@ export default function MacroBar({ label, current, goal, color }) {
       </div>
       <div style={{
         height: '8px',
-        background: 'rgba(255,255,255,0.05)',
+        background: 'var(--border)',
         borderRadius: '99px',
         overflow: 'hidden'
       }}>
@@ -35,7 +35,7 @@ export default function MacroBar({ label, current, goal, color }) {
         }} />
       </div>
       <div style={{
-        color: '#6B7280',
+        color: 'var(--text-muted)',
         fontSize: '0.75rem',
         marginTop: '3px'
       }}>{Math.round(percent)}% of {goal}g</div>

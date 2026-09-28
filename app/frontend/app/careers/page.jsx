@@ -70,11 +70,11 @@ export default function CareersPage() {
   ]
 
   return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] to-[#1A1A2E] p-6">
+      <div className="min-h-screen bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-primary)] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-5xl font-bold text-white mb-2">🌟 Join Our Team</h1>
+            <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">🌟 Join Our Team</h1>
             <p className="text-gray-400">
               Help millions of people achieve their health and fitness goals. We're hiring talented, passionate individuals.
             </p>
@@ -85,7 +85,7 @@ export default function CareersPage() {
             {['All', 'Engineering', 'Health', 'Product', 'Marketing'].map((filter) => (
               <button
                 key={filter}
-                className="px-4 py-2 rounded-lg border border-white/20 text-white hover:bg-white/10 transition-all whitespace-nowrap"
+                className="px-4 py-2 rounded-lg border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--track)] transition-all whitespace-nowrap"
               >
                 {filter}
               </button>
@@ -103,15 +103,15 @@ export default function CareersPage() {
                 onClick={() => setSelectedJob(job)}
                 className="cursor-pointer group"
               >
-                <div className="p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm h-full">
+                <div className="p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-[var(--track)] hover:border-[var(--border)] transition-all duration-300 backdrop-blur-sm h-full">
                   {/* Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="text-3xl">{job.emoji}</div>
-                    <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-300 rounded-full">{job.type}</span>
+                    <span className="text-xs px-2 py-1 bg-[#F97316]/15 text-[#EA580C] rounded-full">{job.type}</span>
                   </div>
 
                   {/* Title & Department */}
-                  <h3 className="text-xl font-bold text-white mb-1">{job.title}</h3>
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">{job.title}</h3>
                   <p className="text-sm text-gray-400 mb-4">{job.department}</p>
 
                   {/* Description */}
@@ -128,7 +128,7 @@ export default function CareersPage() {
                   </div>
 
                   {/* CTA */}
-                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-lg font-semibold hover:opacity-90 transition-all">
+                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#FB923C] to-[#EA580C] text-white rounded-lg font-semibold hover:opacity-90 transition-all">
                     Apply Now
                   </button>
                 </div>
@@ -141,10 +141,10 @@ export default function CareersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="text-center p-8 rounded-xl border border-cyan-500/30 bg-cyan-500/10 backdrop-blur-sm"
+            className="text-center p-8 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 backdrop-blur-sm"
           >
             <p className="text-gray-300 mb-4">Don't see the right fit? We're always looking for talented people.</p>
-            <a href="mailto:careers@nutriai.com" className="inline-block px-8 py-3 bg-cyan-500 text-white rounded-lg font-semibold hover:bg-cyan-600 transition-all">
+            <a href="mailto:careers@nutriai.com" className="inline-block px-8 py-3 bg-[#F97316] text-white rounded-lg font-semibold hover:bg-[#EA580C] transition-all">
               Send Your Resume
             </a>
           </motion.div>

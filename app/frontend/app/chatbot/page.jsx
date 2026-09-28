@@ -8,7 +8,7 @@ import useIsMobile from '../../lib/useIsMobile'
 const COACH_PERSONAS = [
   {
     id:'nutrition', name:'NutriBot', emoji:'🥗',
-    color:'#00FF87', glow:'rgba(0,255,135,0.3)',
+    color:'#F97316', glow:'rgba(249,115,22,0.3)',
     title:'Nutrition Expert',
     description:'Personalized meal plans, macro calculations, food analysis',
     systemPrompt:`You are NutriBot, an elite AI nutrition coach for NutriAI fitness app.
@@ -69,7 +69,7 @@ Format with clear structure and emojis.`,
   },
   {
     id:'health', name:'WellnessAI', emoji:'🧬',
-    color:'#00D4FF', glow:'rgba(0,212,255,0.3)',
+    color:'#FB923C', glow:'rgba(251,146,60,0.3)',
     title:'Health & Wellness Coach',
     description:'Sleep, recovery, stress management, longevity',
     systemPrompt:`You are WellnessAI, an elite health and wellness coach for NutriAI.
@@ -300,21 +300,21 @@ export default function AICoach() {
     // Convert markdown-like text to styled spans
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong style="color:white;font-weight:700">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em style="color:#D1D5DB">$1</em>')
-      .replace(/`(.*?)`/g, '<code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;color:#00FF87">$1</code>')
+      .replace(/\*(.*?)\*/g, '<em style="color:var(--text-faint)">$1</em>')
+      .replace(/`(.*?)`/g, '<code style="background:var(--border);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;color:#F97316">$1</code>')
       .replace(/^### (.*)/gm, '<div style="color:white;font-weight:700;font-size:1rem;margin:12px 0 6px;font-family:Clash Display,sans-serif">$1</div>')
       .replace(/^## (.*)/gm, '<div style="color:white;font-weight:800;font-size:1.1rem;margin:14px 0 8px;font-family:Clash Display,sans-serif">$1</div>')
-      .replace(/^# (.*)/gm, '<div style="font-size:1.2rem;font-weight:800;margin:16px 0 10px;font-family:Clash Display,sans-serif;background:linear-gradient(135deg,#00FF87,#00D4FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$1</div>')
-      .replace(/^- (.*)/gm, '<div style="display:flex;gap:8px;margin:4px 0"><span style="color:#00FF87;margin-top:2px">▸</span><span>$1</span></div>')
+      .replace(/^# (.*)/gm, '<div style="font-size:1.2rem;font-weight:800;margin:16px 0 10px;font-family:Clash Display,sans-serif;background:linear-gradient(135deg,#F97316,#FB923C);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$1</div>')
+      .replace(/^- (.*)/gm, '<div style="display:flex;gap:8px;margin:4px 0"><span style="color:#F97316;margin-top:2px">▸</span><span>$1</span></div>')
       .replace(/^\d+\. (.*)/gm, '<div style="display:flex;gap:8px;margin:4px 0"><span style="color:#7B61FF;min-width:16px;margin-top:2px">•</span><span>$1</span></div>')
       .replace(/\n/g, '<br/>')
   }
 
   const card = {
-    background:'rgba(18,18,26,0.85)',
+    background:'var(--bg-card)',
     backdropFilter:'blur(24px)',
     WebkitBackdropFilter:'blur(24px)',
-    border:'1px solid rgba(255,255,255,0.07)',
+    border:'1px solid var(--border)',
     borderRadius:'24px',
     overflow:'hidden',
   }
@@ -345,32 +345,32 @@ export default function AICoach() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.4rem', fontWeight:800,
                   margin:0, marginBottom:'6px',
-                  background:`linear-gradient(135deg,#ffffff 0%,${activePersona.color} 100%)`,
+                  background:`linear-gradient(135deg,var(--text-primary) 0%,${activePersona.color} 100%)`,
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>AI Coach 🤖</h1>
-                <p style={{ color:'#6B7280', margin:0, fontSize:'0.9rem' }}>
+                <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
                   Powered by Gemini AI · Real-time personalized coaching
                 </p>
               </div>
               <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
                 <div style={{
                   display:'flex', alignItems:'center', gap:'8px',
-                  background:'rgba(0,255,135,0.1)',
-                  border:'1px solid rgba(0,255,135,0.25)',
+                  background:'rgba(249,115,22,0.1)',
+                  border:'1px solid rgba(249,115,22,0.25)',
                   borderRadius:'99px', padding:'6px 14px'
                 }}>
                   <motion.div
                     animate={{ scale:[1,1.4,1], opacity:[1,0.5,1] }}
                     transition={{ duration:2, repeat:Infinity }}
-                    style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#00FF87' }}
+                    style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#F97316' }}
                   />
-                  <span style={{ color:'#00FF87', fontSize:'0.8rem', fontWeight:600 }}>Gemini AI Live</span>
+                  <span style={{ color:'#F97316', fontSize:'0.8rem', fontWeight:600 }}>Gemini AI Live</span>
                 </div>
                 <button onClick={clearChat} style={{
-                  background:'rgba(255,255,255,0.05)',
-                  border:'1px solid rgba(255,255,255,0.1)',
+                  background:'var(--border)',
+                  border:'1px solid var(--border)',
                   borderRadius:'12px', padding:'8px 16px',
-                  color:'#9CA3AF', cursor:'pointer', fontSize:'0.82rem'
+                  color:'var(--text-muted)', cursor:'pointer', fontSize:'0.82rem'
                 }}>🗑️ Clear Chat</button>
               </div>
             </div>
@@ -391,10 +391,10 @@ export default function AICoach() {
                   ...card, cursor:'pointer', padding:'18px',
                   border: activePersona.id===persona.id
                     ? `1px solid ${persona.color}50` 
-                    : '1px solid rgba(255,255,255,0.07)',
+                    : '1px solid var(--border)',
                   background: activePersona.id===persona.id
                     ? `${persona.color}08` 
-                    : 'rgba(18,18,26,0.85)',
+                    : 'var(--bg-card)',
                   boxShadow: activePersona.id===persona.id
                     ? `0 0 40px ${persona.glow}` 
                     : 'none',
@@ -417,7 +417,7 @@ export default function AICoach() {
                       color: activePersona.id===persona.id ? persona.color : 'white',
                       fontSize:'0.9rem', fontWeight:700
                     }}>{persona.name}</div>
-                    <div style={{ color:'#6B7280', fontSize:'0.7rem' }}>{persona.title}</div>
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>{persona.title}</div>
                   </div>
                 </div>
                 <div style={{ color:'#4B5563', fontSize:'0.72rem', lineHeight:1.4 }}>
@@ -457,7 +457,7 @@ export default function AICoach() {
                 {/* Chat header */}
                 <div style={{
                   padding:'16px 20px',
-                  borderBottom:'1px solid rgba(255,255,255,0.06)',
+                  borderBottom:'1px solid var(--border)',
                   display:'flex', alignItems:'center', gap:'12px',
                   background:`${activePersona.color}05` 
                 }}>
@@ -467,10 +467,10 @@ export default function AICoach() {
                     style={{ fontSize:'1.5rem', filter:`drop-shadow(0 0 8px ${activePersona.color})` }}
                   >{activePersona.emoji}</motion.span>
                   <div>
-                    <div style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontWeight:700, fontSize:'0.95rem' }}>
+                    <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontWeight:700, fontSize:'0.95rem' }}>
                       {activePersona.name}
                     </div>
-                    <div style={{ color:'#6B7280', fontSize:'0.72rem' }}>
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.72rem' }}>
                       {loading ? '✍️ Thinking...' : `${activePersona.title} · Online`}
                     </div>
                   </div>
@@ -521,20 +521,20 @@ export default function AICoach() {
                           ? `linear-gradient(135deg,${activePersona.color},${activePersona.color}80)` 
                           : msg.isError
                             ? 'rgba(255,59,48,0.1)'
-                            : 'rgba(255,255,255,0.05)',
+                            : 'var(--border)',
                         border: msg.role==='user'
                           ? 'none'
                           : msg.isError
                             ? '1px solid rgba(255,59,48,0.2)'
-                            : '1px solid rgba(255,255,255,0.08)',
-                        color: msg.role==='user' ? '#000' : '#D1D5DB',
+                            : '1px solid var(--border)',
+                        color: msg.role==='user' ? '#000' : 'var(--text-faint)',
                         fontSize:'0.88rem',
                         lineHeight:1.6,
                         boxShadow: msg.role==='user' ? `0 4px 16px ${activePersona.glow}` : 'none'
                       }}>
                         {msg.role === 'assistant' ? (
                           <div
-                            style={{ color:'#D1D5DB', lineHeight:1.7 }}
+                            style={{ color:'var(--text-faint)', lineHeight:1.7 }}
                             dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
                           />
                         ) : (
@@ -542,7 +542,7 @@ export default function AICoach() {
                         )}
                         <div style={{
                           fontSize:'0.65rem',
-                          color: msg.role==='user' ? 'rgba(0,0,0,0.5)' : '#4B5563',
+                          color: msg.role==='user' ? 'var(--shadow-color)' : '#4B5563',
                           marginTop:'6px', textAlign: msg.role==='user' ? 'right' : 'left'
                         }}>
                           {new Date(msg.timestamp).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
@@ -552,10 +552,10 @@ export default function AICoach() {
                       {msg.role === 'user' && (
                         <div style={{
                           width:'32px', height:'32px', borderRadius:'50%',
-                          background:'linear-gradient(135deg,#7B61FF,#00D4FF)',
+                          background:'linear-gradient(135deg,#7B61FF,#FB923C)',
                           display:'flex', alignItems:'center',
                           justifyContent:'center', fontSize:'0.85rem',
-                          color:'white', fontWeight:700, flexShrink:0
+                          color: 'var(--text-primary)', fontWeight:700, flexShrink:0
                         }}>A</div>
                       )}
                     </motion.div>
@@ -578,12 +578,12 @@ export default function AICoach() {
                       <div style={{
                         maxWidth:'75%', padding:'12px 16px',
                         borderRadius:'4px 18px 18px 18px',
-                        background:'rgba(255,255,255,0.05)',
-                        border:'1px solid rgba(255,255,255,0.08)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         fontSize:'0.88rem', lineHeight:1.6
                       }}>
                         <div
-                          style={{ color:'#D1D5DB', lineHeight:1.7 }}
+                          style={{ color:'var(--text-faint)', lineHeight:1.7 }}
                           dangerouslySetInnerHTML={{ __html: formatMessage(streamedText) }}
                         />
                         <motion.span
@@ -607,8 +607,8 @@ export default function AICoach() {
                       }}>{activePersona.emoji}</div>
                       <div style={{
                         padding:'12px 16px', borderRadius:'4px 18px 18px 18px',
-                        background:'rgba(255,255,255,0.05)',
-                        border:'1px solid rgba(255,255,255,0.08)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         display:'flex', gap:'6px', alignItems:'center'
                       }}>
                         {[0,1,2].map(i => (
@@ -631,8 +631,8 @@ export default function AICoach() {
                 {/* Input area */}
                 <div style={{
                   padding:'16px 20px',
-                  borderTop:'1px solid rgba(255,255,255,0.06)',
-                  background:'rgba(0,0,0,0.2)'
+                  borderTop:'1px solid var(--border)',
+                  background:'var(--shadow-color)'
                 }}>
                   {/* Quick starter buttons */}
                   <AnimatePresence>
@@ -657,10 +657,10 @@ export default function AICoach() {
                               whileTap={{ scale:0.97 }}
                               onClick={() => sendMessage(starter)}
                               style={{
-                                background:'rgba(255,255,255,0.04)',
+                                background:'var(--border)',
                                 border:`1px solid ${activePersona.color}25`,
                                 borderRadius:'20px', padding:'6px 14px',
-                                color:'#9CA3AF', cursor:'pointer',
+                                color:'var(--text-muted)', cursor:'pointer',
                                 fontSize:'0.78rem', fontFamily:"'Satoshi',sans-serif",
                                 transition:'all 0.2s', textAlign:'left'
                               }}
@@ -688,10 +688,10 @@ export default function AICoach() {
                         rows={2}
                         style={{
                           width:'100%', boxSizing:'border-box',
-                          background:'rgba(255,255,255,0.05)',
+                          background:'var(--border)',
                           border:`1px solid ${activePersona.color}30`,
                           borderRadius:'14px', padding:'12px 16px',
-                          color:'#F0F0FF', fontSize:'0.9rem',
+                          color:'var(--text-primary)', fontSize:'0.9rem',
                           outline:'none', resize:'none',
                           fontFamily:"'Satoshi',sans-serif",
                           lineHeight:1.5,
@@ -714,8 +714,8 @@ export default function AICoach() {
                         width:'48px', height:'48px', borderRadius:'14px',
                         background: input.trim() && !loading
                           ? `linear-gradient(135deg,${activePersona.color},${activePersona.color}80)` 
-                          : 'rgba(255,255,255,0.06)',
-                        border:`1px solid ${input.trim() && !loading ? activePersona.color : 'rgba(255,255,255,0.1)'}`,
+                          : 'var(--border)',
+                        border:`1px solid ${input.trim() && !loading ? activePersona.color : 'var(--border)'}`,
                         color: input.trim() && !loading ? '#000' : '#4B5563',
                         cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
                         fontSize:'1.1rem', display:'flex',
@@ -740,7 +740,7 @@ export default function AICoach() {
 
               {/* Quick Actions */}
               <div style={{ ...card, padding:'20px', border:`1px solid ${activePersona.color}15` }}>
-                <div style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'0.95rem', fontWeight:700, marginBottom:'14px' }}>
+                <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'0.95rem', fontWeight:700, marginBottom:'14px' }}>
                   ⚡ Quick Actions
                 </div>
                 <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
@@ -755,10 +755,10 @@ export default function AICoach() {
                       onClick={() => sendMessage(action.prompt)}
                       disabled={loading}
                       style={{
-                        background:'rgba(255,255,255,0.03)',
-                        border:'1px solid rgba(255,255,255,0.06)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         borderRadius:'12px', padding:'10px 12px',
-                        color:'#D1D5DB', cursor: loading ? 'not-allowed' : 'pointer',
+                        color:'var(--text-faint)', cursor: loading ? 'not-allowed' : 'pointer',
                         fontSize:'0.8rem', textAlign:'left',
                         display:'flex', alignItems:'center', gap:'8px',
                         fontFamily:"'Satoshi',sans-serif",
@@ -774,20 +774,20 @@ export default function AICoach() {
 
               {/* Stats */}
               <div style={{ ...card, padding:'20px' }}>
-                <div style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'0.95rem', fontWeight:700, marginBottom:'14px' }}>
+                <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'0.95rem', fontWeight:700, marginBottom:'14px' }}>
                   📊 Session Stats
                 </div>
                 {[
                   { label:'Messages',   val:messages.filter(m=>m.role==='user').length,     icon:'💬', color:activePersona.color },
                   { label:'AI Responses',val:messages.filter(m=>m.role==='assistant').length,icon:'🤖', color:'#7B61FF' },
-                  { label:'Coach',       val:activePersona.name,                              icon:'👤', color:'#00D4FF' },
+                  { label:'Coach',       val:activePersona.name,                              icon:'👤', color:'#FB923C' },
                   { label:'Model',       val:'Gemini 2.5 Flash',                              icon:'⚡', color:'#FFD700' },
                 ].map(s => (
                   <div key={s.label} style={{
                     display:'flex', justifyContent:'space-between', alignItems:'center',
-                    padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)'
+                    padding:'8px 0', borderBottom:'1px solid var(--border)'
                   }}>
-                    <span style={{ color:'#6B7280', fontSize:'0.8rem', display:'flex', alignItems:'center', gap:'6px' }}>
+                    <span style={{ color:'var(--text-muted)', fontSize:'0.8rem', display:'flex', alignItems:'center', gap:'6px' }}>
                       {s.icon} {s.label}
                     </span>
                     <span style={{ color:s.color, fontWeight:700, fontSize:'0.82rem' }}>{s.val}</span>
@@ -812,7 +812,7 @@ export default function AICoach() {
                 ].map((tip, i) => (
                   <div key={i} style={{
                     display:'flex', gap:'8px', marginBottom:'8px',
-                    color:'#9CA3AF', fontSize:'0.75rem', lineHeight:1.5
+                    color:'var(--text-muted)', fontSize:'0.75rem', lineHeight:1.5
                   }}>
                     <span style={{ color:activePersona.color, flexShrink:0 }}>▸</span>
                     {tip}

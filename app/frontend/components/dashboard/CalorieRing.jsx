@@ -15,10 +15,10 @@ export default function CalorieRing({ current = 0, goal = 2000, size = 180 }) {
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="white"
           strokeWidth="12"
           fill="none"
-          opacity="0.05"
+          opacity="0.12"
+          style={{ stroke: 'var(--text-muted)' }}
         />
         
         {/* Progress Arc */}
@@ -38,15 +38,15 @@ export default function CalorieRing({ current = 0, goal = 2000, size = 180 }) {
         {/* Gradient Definition */}
         <defs>
           <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00FF87" />
-            <stop offset="100%" stopColor="#00D4FF" />
+            <stop offset="0%" stopColor="#F97316" />
+            <stop offset="100%" stopColor="#FB923C" />
           </linearGradient>
         </defs>
       </svg>
       
       {/* Center Text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="font-display text-[2rem] text-white">{current}</div>
+        <div className="font-display text-[2rem]" style={{ color: 'var(--text-primary)' }}>{current}</div>
         <div className="text-[var(--text-muted)] text-sm">of {goal} kcal</div>
       </div>
       

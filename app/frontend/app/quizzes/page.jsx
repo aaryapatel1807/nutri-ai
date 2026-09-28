@@ -50,11 +50,11 @@ export default function QuizzesPage() {
   ]
 
   return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] to-[#1A1A2E] p-6">
+      <div className="min-h-screen bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-primary)] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-5xl font-bold text-white mb-2">📚 Knowledge Quizzes</h1>
+            <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">📚 Knowledge Quizzes</h1>
             <p className="text-gray-400">Test your fitness and nutrition knowledge. Earn XP and unlock achievements!</p>
           </div>
 
@@ -69,7 +69,7 @@ export default function QuizzesPage() {
                 onClick={() => setSelectedQuiz(quiz)}
                 className="cursor-pointer group"
               >
-                <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
+                <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-[var(--track)] transition-all duration-300 backdrop-blur-sm">
                   {/* Badge */}
                   {quiz.completed && (
                     <div className="absolute top-3 right-3 bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">
@@ -79,13 +79,13 @@ export default function QuizzesPage() {
 
                   {/* Content */}
                   <div className="text-4xl mb-3">{quiz.emoji}</div>
-                  <h3 className="text-xl font-bold text-white mb-2">{quiz.title}</h3>
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">{quiz.title}</h3>
                   <p className="text-gray-400 text-sm mb-4">{quiz.description}</p>
 
                   {/* Meta */}
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex gap-3">
-                      <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">
+                      <span className="px-2 py-1 bg-[#F97316]/15 text-[#EA580C] rounded text-xs">
                         {quiz.difficulty}
                       </span>
                       <span className="text-gray-500">{quiz.questions} Qs</span>
@@ -96,7 +96,7 @@ export default function QuizzesPage() {
                   {/* Progress bar */}
                   <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
+                      className="h-full bg-gradient-to-r from-[#FB923C] to-[#EA580C]"
                       style={{ width: quiz.completed ? '100%' : '0%' }}
                     ></div>
                   </div>
@@ -110,10 +110,10 @@ export default function QuizzesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mt-12 p-8 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-sm text-center"
+            className="mt-12 p-8 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 backdrop-blur-sm text-center"
           >
             <p className="text-gray-300 mb-4">🎯 Complete all quizzes to unlock the Expert badge!</p>
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-green-400 to-cyan-400 rounded-full opacity-20"></div>
+            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#FDBA74] to-[#F97316] rounded-full opacity-20"></div>
           </motion.div>
         </motion.div>
       </div>

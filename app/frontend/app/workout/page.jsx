@@ -2,13 +2,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
+import MuscleBodyMap from '../../components/workout/MuscleBodyMap'
 // PageWrapper removed to fix double-wrap bug
 
 const WORKOUTS = [
   {
     id:1, name:'Upper Body Strength', emoji:'💪', duration:45, calories:320,
     difficulty:'Intermediate', category:'Strength', equipment:'Gym',
-    color:'#00FF87', glow:'rgba(0,255,135,0.3)',
+    color:'#F97316', glow:'rgba(249,115,22,0.3)',
     muscles:['Chest','Shoulders','Triceps','Back'],
     description:'Build powerful upper body with compound movements',
     exercises:[
@@ -65,7 +66,7 @@ const WORKOUTS = [
   {
     id:4, name:'Core Destroyer', emoji:'🎯', duration:35, calories:220,
     difficulty:'Intermediate', category:'Core', equipment:'Minimal',
-    color:'#00D4FF', glow:'rgba(0,212,255,0.3)',
+    color:'#FB923C', glow:'rgba(251,146,60,0.3)',
     muscles:['Rectus Abdominis','Obliques','Transverse Abs','Lower Back'],
     description:'Build a rock-solid core from every angle',
     exercises:[
@@ -122,7 +123,7 @@ const WORKOUTS = [
   {
     id:7, name:'Full Body Functional', emoji:'⚡', duration:45, calories:380,
     difficulty:'Beginner', category:'Functional', equipment:'Minimal',
-    color:'#4ADE80', glow:'rgba(74,222,128,0.3)',
+    color:'#FDBA74', glow:'rgba(253,186,116,0.3)',
     muscles:['Full Body','Core','Stability'],
     description:'Movement patterns for real world strength',
     exercises:[
@@ -237,9 +238,9 @@ const WORKOUTS = [
 
 const MUSCLE_GROUPS = {
   'Chest': { color:'#FF6B35', exercises:['Bench Press','Push Up','Fly','Dip'] },
-  'Back':  { color:'#00FF87', exercises:['Pull Up','Row','Deadlift','Pulldown'] },
+  'Back':  { color:'#F97316', exercises:['Pull Up','Row','Deadlift','Pulldown'] },
   'Legs':  { color:'#7B61FF', exercises:['Squat','Lunge','Press','Curl'] },
-  'Shoulders':{ color:'#00D4FF', exercises:['Press','Raise','Upright Row','Shrug'] },
+  'Shoulders':{ color:'#FB923C', exercises:['Press','Raise','Upright Row','Shrug'] },
   'Arms':  { color:'#FFD700', exercises:['Curl','Pushdown','Extension','Dip'] },
   'Core':  { color:'#F472B6', exercises:['Plank','Crunch','Twist','Raise'] },
 }
@@ -261,8 +262,8 @@ const EQUIPMENT = ['All','None','Minimal','Bar','Gym','Mat','Open Space','Bag/Gl
 const PRS = [
   { lift:'Bench Press', weight:'80kg', date:'Feb 28', emoji:'🏋️', color:'#FF6B35' },
   { lift:'Squat',       weight:'120kg',date:'Mar 2',  emoji:'🦵', color:'#7B61FF' },
-  { lift:'Deadlift',    weight:'140kg',date:'Mar 5',  emoji:'⚡', color:'#00FF87' },
-  { lift:'OHP',         weight:'55kg', date:'Feb 20', emoji:'⬆️', color:'#00D4FF' },
+  { lift:'Deadlift',    weight:'140kg',date:'Mar 5',  emoji:'⚡', color:'#F97316' },
+  { lift:'OHP',         weight:'55kg', date:'Feb 20', emoji:'⬆️', color:'#FB923C' },
 ]
 
 export default function WorkoutPage() {
@@ -330,12 +331,12 @@ export default function WorkoutPage() {
     : 0
 
   const card = {
-    background:'rgba(18,18,26,0.85)',
+    background:'var(--bg-card)',
     backdropFilter:'blur(24px)',
     WebkitBackdropFilter:'blur(24px)',
-    border:'1px solid rgba(255,255,255,0.07)',
+    border:'1px solid var(--border)',
     borderRadius:'24px',
-    boxShadow:'0 8px 40px rgba(0,0,0,0.5)',
+    boxShadow:'0 8px 40px var(--shadow-color)',
     overflow:'hidden',
   }
 
@@ -346,7 +347,7 @@ export default function WorkoutPage() {
         <div style={{
           position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
           background:`
-            radial-gradient(600px circle at 15% 40%, rgba(0,255,135,0.04) 0%, transparent 60%),
+            radial-gradient(600px circle at 15% 40%, rgba(249,115,22,0.04) 0%, transparent 60%),
             radial-gradient(400px circle at 85% 60%, rgba(123,97,255,0.04) 0%, transparent 60%),
             radial-gradient(300px circle at 50% 80%, rgba(255,107,53,0.03) 0%, transparent 60%)
           `
@@ -365,7 +366,7 @@ export default function WorkoutPage() {
                   ...card, marginBottom:'24px',
                   background:`linear-gradient(135deg, rgba(12,12,20,0.98), ${activeWorkout.color}10)`,
                   border:`1px solid ${activeWorkout.color}40`,
-                  boxShadow:`0 0 80px ${activeWorkout.glow}, 0 8px 40px rgba(0,0,0,0.6)`,
+                  boxShadow:`0 0 80px ${activeWorkout.glow}, 0 8px 40px var(--shadow-color)`,
                   overflow:'visible'
                 }}
               >
@@ -387,10 +388,10 @@ export default function WorkoutPage() {
                         }}
                       >🏋️</motion.div>
                       <div>
-                        <div style={{ color:'#6B7280', fontSize:'0.72rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.08em' }}>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.08em' }}>
                           ● LIVE WORKOUT
                         </div>
-                        <div style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.3rem', fontWeight:700 }}>
+                        <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.3rem', fontWeight:700 }}>
                           {activeWorkout.name}
                         </div>
                       </div>
@@ -401,10 +402,10 @@ export default function WorkoutPage() {
                       {[
                         { label:'TIME',     val:fmt(timer),        color:activeWorkout.color },
                         { label:'CALORIES', val:`${totalVolume} kcal`, color:'#FF6B35' },
-                        { label:'DONE',     val:`${completedExercises.length}/${activeWorkout.exercises.length}`, color:'#00D4FF' },
+                        { label:'DONE',     val:`${completedExercises.length}/${activeWorkout.exercises.length}`, color:'#FB923C' },
                       ].map(s => (
                         <div key={s.label} style={{
-                          background:'rgba(0,0,0,0.4)',
+                          background:'var(--shadow-color)',
                           border:`1px solid ${s.color}30`,
                           borderRadius:'12px', padding:'10px 16px',
                           textAlign:'center', minWidth:'80px'
@@ -419,10 +420,10 @@ export default function WorkoutPage() {
                       ))}
 
                       <button onClick={() => setTimerRunning(p=>!p)} style={{
-                        background: timerRunning ? 'rgba(255,107,53,0.15)' : 'rgba(0,255,135,0.15)',
-                        border:`1px solid ${timerRunning ? 'rgba(255,107,53,0.4)' : 'rgba(0,255,135,0.4)'}`,
+                        background: timerRunning ? 'rgba(255,107,53,0.15)' : 'rgba(249,115,22,0.15)',
+                        border:`1px solid ${timerRunning ? 'rgba(255,107,53,0.4)' : 'rgba(249,115,22,0.4)'}`,
                         borderRadius:'12px', padding:'10px 18px',
-                        color: timerRunning ? '#FF6B35' : '#00FF87',
+                        color: timerRunning ? '#FF6B35' : '#F97316',
                         cursor:'pointer', fontSize:'0.85rem', fontWeight:600
                       }}>{timerRunning ? '⏸ Pause' : '▶ Resume'}</button>
 
@@ -439,10 +440,10 @@ export default function WorkoutPage() {
                   {/* Progress */}
                   <div style={{ marginBottom:'16px' }}>
                     <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'8px' }}>
-                      <span style={{ color:'#6B7280', fontSize:'0.8rem' }}>Workout Progress</span>
+                      <span style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>Workout Progress</span>
                       <span style={{ color:activeWorkout.color, fontSize:'0.8rem', fontWeight:700 }}>{progress}% complete</span>
                     </div>
-                    <div style={{ height:'10px', background:'rgba(255,255,255,0.05)', borderRadius:'99px', overflow:'hidden' }}>
+                    <div style={{ height:'10px', background:'var(--border)', borderRadius:'99px', overflow:'hidden' }}>
                       <motion.div
                         animate={{ width:`${progress}%` }}
                         transition={{ duration:0.5, type:'spring' }}
@@ -464,8 +465,8 @@ export default function WorkoutPage() {
                         animate={{ opacity:1, scale:1 }}
                         exit={{ opacity:0, scale:0.9 }}
                         style={{
-                          background:'rgba(0,212,255,0.08)',
-                          border:'1px solid rgba(0,212,255,0.25)',
+                          background:'rgba(251,146,60,0.08)',
+                          border:'1px solid rgba(251,146,60,0.25)',
                           borderRadius:'16px', padding:'14px 20px',
                           marginBottom:'16px',
                           display:'flex', alignItems:'center',
@@ -479,8 +480,8 @@ export default function WorkoutPage() {
                             style={{ fontSize:'1.6rem' }}
                           >😮‍💨</motion.span>
                           <div>
-                            <div style={{ color:'#00D4FF', fontWeight:700, fontSize:'0.9rem' }}>Rest Time</div>
-                            <div style={{ color:'#6B7280', fontSize:'0.75rem' }}>
+                            <div style={{ color:'#FB923C', fontWeight:700, fontSize:'0.9rem' }}>Rest Time</div>
+                            <div style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>
                               Next: {activeWorkout.exercises[currentIdx]?.name}
                             </div>
                           </div>
@@ -488,17 +489,17 @@ export default function WorkoutPage() {
                         <motion.div
                           key={restTimer}
                           initial={{ scale:1.3, color:'#FF6B35' }}
-                          animate={{ scale:1, color:'#00D4FF' }}
+                          animate={{ scale:1, color:'#FB923C' }}
                           style={{
                             fontFamily:"'Clash Display',sans-serif",
                             fontSize:'2.5rem', fontWeight:900,
                           }}
                         >{restTimer}s</motion.div>
                         <button onClick={() => setRestTimer(0)} style={{
-                          background:'rgba(0,212,255,0.15)',
-                          border:'1px solid rgba(0,212,255,0.3)',
+                          background:'rgba(251,146,60,0.15)',
+                          border:'1px solid rgba(251,146,60,0.3)',
                           borderRadius:'10px', padding:'8px 16px',
-                          color:'#00D4FF', cursor:'pointer',
+                          color:'#FB923C', cursor:'pointer',
                           fontSize:'0.82rem', fontWeight:700
                         }}>Skip Rest →</button>
                       </motion.div>
@@ -518,12 +519,12 @@ export default function WorkoutPage() {
                           transition={{ delay:idx*0.04 }}
                           style={{
                             padding:'14px 16px', borderRadius:'14px',
-                            background: done    ? 'rgba(0,255,135,0.08)'
+                            background: done    ? 'rgba(249,115,22,0.08)'
                               : current ? `${activeWorkout.color}12` 
-                              : 'rgba(255,255,255,0.03)',
-                            border: done    ? '1px solid rgba(0,255,135,0.25)'
+                              : 'var(--border)',
+                            border: done    ? '1px solid rgba(249,115,22,0.25)'
                               : current ? `2px solid ${activeWorkout.color}50` 
-                              : '1px solid rgba(255,255,255,0.05)',
+                              : '1px solid var(--border)',
                             display:'flex', alignItems:'center',
                             justifyContent:'space-between', gap:'10px',
                             cursor:'pointer'
@@ -538,10 +539,10 @@ export default function WorkoutPage() {
                             >{done ? '✅' : ex.emoji}</motion.span>
                             <div style={{ flex:1 }}>
                               <div style={{
-                                color: done ? '#00FF87' : current ? activeWorkout.color : '#D1D5DB',
+                                color: done ? '#F97316' : current ? activeWorkout.color : 'var(--text-faint)',
                                 fontSize:'0.83rem', fontWeight: current ? 700 : 500
                               }}>{ex.name}</div>
-                              <div style={{ color:'#6B7280', fontSize:'0.72rem' }}>
+                              <div style={{ color:'var(--text-muted)', fontSize:'0.72rem' }}>
                                 {ex.sets}×{ex.reps} · {ex.rest}s rest · {ex.calories} kcal
                               </div>
                               <AnimatePresence>
@@ -554,9 +555,9 @@ export default function WorkoutPage() {
                                   >
                                     <div style={{
                                       marginTop:'6px', padding:'6px 8px',
-                                      background:'rgba(255,255,255,0.04)',
+                                      background:'var(--border)',
                                       borderRadius:'8px',
-                                      color:'#9CA3AF', fontSize:'0.72rem',
+                                      color:'var(--text-muted)', fontSize:'0.72rem',
                                       fontStyle:'italic'
                                     }}>💡 {ex.tip}</div>
                                   </motion.div>
@@ -570,10 +571,10 @@ export default function WorkoutPage() {
                               style={{
                                 background: current
                                   ? `linear-gradient(135deg,${activeWorkout.color},${activeWorkout.color}80)` 
-                                  : 'rgba(255,255,255,0.06)',
+                                  : 'var(--border)',
                                 border:'none', borderRadius:'8px',
                                 padding:'6px 12px',
-                                color: current ? '#000' : '#9CA3AF',
+                                color: current ? '#000' : 'var(--text-muted)',
                                 cursor:'pointer', fontSize:'0.75rem',
                                 fontWeight:700, flexShrink:0
                               }}>✓ Done</button>
@@ -599,10 +600,10 @@ export default function WorkoutPage() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.4rem', fontWeight:800,
                   margin:0, marginBottom:'6px',
-                  background:'linear-gradient(135deg,#ffffff 0%,#7B61FF 60%,#00FF87 100%)',
+                  background:'linear-gradient(135deg,var(--text-primary) 0%,#7B61FF 60%,#F97316 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>Workout Intelligence 💪</h1>
-                <p style={{ color:'#6B7280', margin:0, fontSize:'0.9rem' }}>
+                <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
                   {WORKOUTS.length} premium workouts · {WORKOUTS.reduce((a,w) => a+w.exercises.length,0)} total exercises
                 </p>
               </div>
@@ -612,13 +613,13 @@ export default function WorkoutPage() {
                 {[
                   { icon:'🔥', label:'Streak',    val:'12 days',    color:'#FF6B35' },
                   { icon:'💪', label:'This Week',  val:'4 sessions', color:'#7B61FF' },
-                  { icon:'⚡', label:'Burned',     val:'1,960 kcal', color:'#00FF87' },
+                  { icon:'⚡', label:'Burned',     val:'1,960 kcal', color:'#F97316' },
                   { icon:'🏆', label:'PRs Set',    val:'4 this month',color:'#FFD700' },
                 ].map(s => (
                   <div key={s.label} style={{
-                    background:'rgba(22,22,31,0.8)',
+                    background:'var(--bg-card)',
                     backdropFilter:'blur(20px)',
-                    border:'1px solid rgba(255,255,255,0.07)',
+                    border:'1px solid var(--border)',
                     borderRadius:'14px', padding:'12px 16px',
                     textAlign:'center', minWidth:'90px'
                   }}>
@@ -646,11 +647,11 @@ export default function WorkoutPage() {
                   onClick={() => setActiveTab(tab.id)}
                   style={{
                     padding:'9px 20px', borderRadius:'12px',
-                    border: activeTab===tab.id ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                    border: activeTab===tab.id ? 'none' : '1px solid var(--border)',
                     background: activeTab===tab.id
-                      ? 'linear-gradient(135deg,#7B61FF,#00D4FF)'
-                      : 'rgba(22,22,31,0.8)',
-                    color: activeTab===tab.id ? 'white' : '#9CA3AF',
+                      ? 'linear-gradient(135deg,#7B61FF,#FB923C)'
+                      : 'var(--bg-card)',
+                    color: activeTab===tab.id ? 'white' : 'var(--text-muted)',
                     fontWeight: activeTab===tab.id ? 700 : 400,
                     cursor:'pointer', fontSize:'0.85rem',
                     fontFamily:"'Satoshi',sans-serif",
@@ -660,7 +661,7 @@ export default function WorkoutPage() {
                   {tab.label}
                   {tab.count && (
                     <span style={{
-                      background: activeTab===tab.id ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
+                      background: activeTab===tab.id ? 'var(--track)' : 'var(--border)',
                       borderRadius:'99px', padding:'1px 8px',
                       fontSize:'0.72rem'
                     }}>{tab.count}</span>
@@ -688,15 +689,15 @@ export default function WorkoutPage() {
                     onChange={e => setSearch(e.target.value)}
                     style={{
                       width:'100%', boxSizing:'border-box',
-                      background:'rgba(22,22,31,0.8)',
+                      background:'var(--bg-card)',
                       backdropFilter:'blur(20px)',
-                      border:'1px solid rgba(255,255,255,0.08)',
+                      border:'1px solid var(--border)',
                       borderRadius:'14px', padding:'13px 16px 13px 44px',
-                      color:'#F0F0FF', fontSize:'0.95rem', outline:'none',
+                      color:'var(--text-primary)', fontSize:'0.95rem', outline:'none',
                       fontFamily:"'Satoshi',sans-serif"
                     }}
                     onFocus={e => e.target.style.borderColor='rgba(123,97,255,0.5)'}
-                    onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.08)'}
+                    onBlur={e => e.target.style.borderColor='var(--border)'}
                   />
                 </div>
 
@@ -713,9 +714,9 @@ export default function WorkoutPage() {
                         onClick={() => setActiveCategory(c)}
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
-                          border: activeCategory===c ? 'none' : '1px solid rgba(255,255,255,0.07)',
-                          background: activeCategory===c ? 'linear-gradient(135deg,#7B61FF,#00D4FF)' : 'rgba(22,22,31,0.8)',
-                          color: activeCategory===c ? 'white' : '#9CA3AF',
+                          border: activeCategory===c ? 'none' : '1px solid var(--border)',
+                          background: activeCategory===c ? 'linear-gradient(135deg,#7B61FF,#FB923C)' : 'var(--bg-card)',
+                          color: activeCategory===c ? 'white' : 'var(--text-muted)',
                           fontWeight: activeCategory===c ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem',
                           fontFamily:"'Satoshi',sans-serif"
@@ -727,7 +728,7 @@ export default function WorkoutPage() {
                   <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', alignItems:'center' }}>
                     <span style={{ color:'#4B5563', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', minWidth:'70px' }}>Level</span>
                     {DIFFICULTIES.map(d => {
-                      const dc = d==='Beginner' ? '#00FF87' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#FF6B35' : '#9CA3AF'
+                      const dc = d==='Beginner' ? '#F97316' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#FF6B35' : 'var(--text-muted)'
                       const active = activeDifficulty===d
                       return (
                         <motion.button
@@ -737,9 +738,9 @@ export default function WorkoutPage() {
                           onClick={() => setActiveDifficulty(d)}
                           style={{
                             padding:'5px 14px', borderRadius:'99px',
-                            border: active ? `1px solid ${dc}50` : '1px solid rgba(255,255,255,0.07)',
-                            background: active ? `${dc}15` : 'rgba(22,22,31,0.8)',
-                            color: active ? dc : '#9CA3AF',
+                            border: active ? `1px solid ${dc}50` : '1px solid var(--border)',
+                            background: active ? `${dc}15` : 'var(--bg-card)',
+                            color: active ? dc : 'var(--text-muted)',
                             fontWeight: active ? 700 : 400,
                             cursor:'pointer', fontSize:'0.78rem'
                           }}>{d}</motion.button>
@@ -758,9 +759,9 @@ export default function WorkoutPage() {
                         onClick={() => setActiveEquipment(eq)}
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
-                          border: activeEquipment===eq ? '1px solid rgba(0,212,255,0.4)' : '1px solid rgba(255,255,255,0.07)',
-                          background: activeEquipment===eq ? 'rgba(0,212,255,0.12)' : 'rgba(22,22,31,0.8)',
-                          color: activeEquipment===eq ? '#00D4FF' : '#9CA3AF',
+                          border: activeEquipment===eq ? '1px solid rgba(251,146,60,0.4)' : '1px solid var(--border)',
+                          background: activeEquipment===eq ? 'rgba(251,146,60,0.12)' : 'var(--bg-card)',
+                          color: activeEquipment===eq ? '#FB923C' : 'var(--text-muted)',
                           fontWeight: activeEquipment===eq ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem'
                         }}>{eq}</motion.button>
@@ -769,8 +770,8 @@ export default function WorkoutPage() {
                 </div>
 
                 {/* Results count */}
-                <div style={{ color:'#6B7280', fontSize:'0.82rem', marginBottom:'16px' }}>
-                  Showing <span style={{ color:'#00FF87', fontWeight:700 }}>{filtered.length}</span> of {WORKOUTS.length} workouts
+                <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'16px' }}>
+                  Showing <span style={{ color:'#F97316', fontWeight:700 }}>{filtered.length}</span> of {WORKOUTS.length} workouts
                 </div>
 
                 {/* Grid */}
@@ -789,7 +790,7 @@ export default function WorkoutPage() {
                         ...card, cursor:'pointer',
                         boxShadow: hoveredId===w.id
                           ? `0 24px 80px ${w.glow}, 0 0 0 1px ${w.color}40` 
-                          : '0 8px 32px rgba(0,0,0,0.4)',
+                          : '0 8px 32px var(--shadow-color)',
                         transition:'box-shadow 0.3s'
                       }}
                     >
@@ -808,15 +809,15 @@ export default function WorkoutPage() {
                             }}
                           >{w.emoji}</motion.div>
                           <div style={{
-                            background: w.difficulty==='Beginner'   ? 'rgba(0,255,135,0.12)'
+                            background: w.difficulty==='Beginner'   ? 'rgba(249,115,22,0.12)'
                               : w.difficulty==='Intermediate' ? 'rgba(255,215,0,0.12)'
                               : 'rgba(255,107,53,0.12)',
                             border:`1px solid ${
-                              w.difficulty==='Beginner'   ? 'rgba(0,255,135,0.3)'
+                              w.difficulty==='Beginner'   ? 'rgba(249,115,22,0.3)'
                               : w.difficulty==='Intermediate' ? 'rgba(255,215,0,0.3)'
                               : 'rgba(255,107,53,0.3)'}`,
                             borderRadius:'99px', padding:'3px 12px',
-                            color: w.difficulty==='Beginner'   ? '#00FF87'
+                            color: w.difficulty==='Beginner'   ? '#F97316'
                               : w.difficulty==='Intermediate' ? '#FFD700'
                               : '#FF6B35',
                             fontSize:'0.7rem', fontWeight:700
@@ -825,21 +826,21 @@ export default function WorkoutPage() {
 
                         <h3 style={{
                           fontFamily:"'Clash Display',sans-serif",
-                          fontSize:'1rem', color:'white',
+                          fontSize:'1rem', color: 'var(--text-primary)',
                           margin:0, marginBottom:'6px', fontWeight:700
                         }}>{w.name}</h3>
 
-                        <p style={{ color:'#6B7280', fontSize:'0.78rem', margin:0, marginBottom:'14px', lineHeight:1.5 }}>
+                        <p style={{ color:'var(--text-muted)', fontSize:'0.78rem', margin:0, marginBottom:'14px', lineHeight:1.5 }}>
                           {w.description}
                         </p>
 
                         {/* Equipment badge */}
                         <div style={{ marginBottom:'14px' }}>
                           <span style={{
-                            background:'rgba(255,255,255,0.04)',
-                            border:'1px solid rgba(255,255,255,0.08)',
+                            background:'var(--border)',
+                            border:'1px solid var(--border)',
                             borderRadius:'6px', padding:'3px 10px',
-                            color:'#9CA3AF', fontSize:'0.72rem'
+                            color:'var(--text-muted)', fontSize:'0.72rem'
                           }}>🏃 {w.equipment}</span>
                         </div>
 
@@ -858,15 +859,15 @@ export default function WorkoutPage() {
                         {/* Stats grid */}
                         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:'8px', marginBottom:'16px' }}>
                           {[
-                            { label:'Duration', val:`${w.duration}m`, color:'#00D4FF' },
+                            { label:'Duration', val:`${w.duration}m`, color:'#FB923C' },
                             { label:'Calories',  val:w.calories,       color:'#FF6B35' },
                             { label:'Exercises', val:w.exercises.length,color:w.color },
                           ].map(s => (
                             <div key={s.label} style={{
-                              background:'rgba(255,255,255,0.03)',
+                              background:'var(--border)',
                               borderRadius:'10px', padding:'8px 4px',
                               textAlign:'center',
-                              border:'1px solid rgba(255,255,255,0.05)'
+                              border:'1px solid var(--border)'
                             }}>
                               <div style={{ color:s.color, fontWeight:700, fontSize:'0.85rem' }}>{s.val}</div>
                               <div style={{ color:'#374151', fontSize:'0.65rem', marginTop:'1px' }}>{s.label}</div>
@@ -900,14 +901,14 @@ export default function WorkoutPage() {
               >
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:'12px', marginBottom:'24px' }}>
                   {WEEKLY_PLAN.map((day, i) => {
-                    const statusColor = day.status==='done' ? '#00FF87'
+                    const statusColor = day.status==='done' ? '#F97316'
                       : day.status==='active' ? '#7B61FF'
                       : day.status==='rest' ? '#4B5563'
-                      : '#6B7280'
-                    const statusBg = day.status==='done' ? 'rgba(0,255,135,0.08)'
+                      : 'var(--text-muted)'
+                    const statusBg = day.status==='done' ? 'rgba(249,115,22,0.08)'
                       : day.status==='active' ? 'rgba(123,97,255,0.15)'
-                      : day.status==='rest' ? 'rgba(255,255,255,0.03)'
-                      : 'rgba(255,255,255,0.02)'
+                      : day.status==='rest' ? 'var(--border)'
+                      : 'var(--border)'
                     return (
                       <motion.div
                         key={day.day}
@@ -923,7 +924,7 @@ export default function WorkoutPage() {
                           cursor:'pointer'
                         }}
                       >
-                        <div style={{ height:'3px', background: day.status==='rest' ? 'rgba(255,255,255,0.06)' : `linear-gradient(90deg,${statusColor},transparent)` }}/>
+                        <div style={{ height:'3px', background: day.status==='rest' ? 'var(--border)' : `linear-gradient(90deg,${statusColor},transparent)` }}/>
                         <div style={{ padding:'16px', textAlign:'center' }}>
                           <div style={{ color: statusColor, fontFamily:"'Clash Display',sans-serif", fontSize:'1.1rem', fontWeight:800, marginBottom:'8px' }}>
                             {day.day}
@@ -934,7 +935,7 @@ export default function WorkoutPage() {
                             : day.status==='rest'    ? '😴'
                             : '⏳'}
                           </div>
-                          <div style={{ color:'#D1D5DB', fontSize:'0.72rem', fontWeight:600, marginBottom:'6px', lineHeight:1.3 }}>
+                          <div style={{ color:'var(--text-faint)', fontSize:'0.72rem', fontWeight:600, marginBottom:'6px', lineHeight:1.3 }}>
                             {day.workout}
                           </div>
                           {day.calories > 0 && (
@@ -959,9 +960,9 @@ export default function WorkoutPage() {
                 {/* Weekly summary */}
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'16px' }}>
                   {[
-                    { label:'Sessions Completed', val:'3/5',       icon:'✅', color:'#00FF87', desc:'On track!' },
+                    { label:'Sessions Completed', val:'3/5',       icon:'✅', color:'#F97316', desc:'On track!' },
                     { label:'Total Calories',      val:'1,220',     icon:'🔥', color:'#FF6B35', desc:'kcal burned' },
-                    { label:'Total Duration',      val:'2h 30m',    icon:'⏱', color:'#00D4FF', desc:'active time' },
+                    { label:'Total Duration',      val:'2h 30m',    icon:'⏱', color:'#FB923C', desc:'active time' },
                     { label:'Weekly Volume',       val:'18,500kg',  icon:'💪', color:'#7B61FF', desc:'total lifted' },
                   ].map(s => (
                     <motion.div
@@ -978,8 +979,8 @@ export default function WorkoutPage() {
                         fontFamily:"'Clash Display',sans-serif",
                         fontSize:'1.8rem', color: s.color, fontWeight:800
                       }}>{s.val}</div>
-                      <div style={{ color:'white', fontSize:'0.85rem', fontWeight:600, marginTop:'4px' }}>{s.label}</div>
-                      <div style={{ color:'#6B7280', fontSize:'0.75rem', marginTop:'2px' }}>{s.desc}</div>
+                      <div style={{ color: 'var(--text-primary)', fontSize:'0.85rem', fontWeight:600, marginTop:'4px' }}>{s.label}</div>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', marginTop:'2px' }}>{s.desc}</div>
                     </motion.div>
                   ))}
                 </div>
@@ -1030,7 +1031,7 @@ export default function WorkoutPage() {
 
                         {/* Key exercises */}
                         <div style={{ marginBottom:'16px' }}>
-                          <div style={{ color:'#6B7280', fontSize:'0.72rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'8px' }}>
+                          <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'8px' }}>
                             KEY EXERCISES
                           </div>
                           {data.exercises.map(ex => (
@@ -1039,7 +1040,7 @@ export default function WorkoutPage() {
                               marginBottom:'5px'
                             }}>
                               <span style={{ color:data.color, fontSize:'0.6rem' }}>▶</span>
-                              <span style={{ color:'#D1D5DB', fontSize:'0.8rem' }}>{ex}</span>
+                              <span style={{ color:'var(--text-faint)', fontSize:'0.8rem' }}>{ex}</span>
                             </div>
                           ))}
                         </div>
@@ -1047,12 +1048,12 @@ export default function WorkoutPage() {
                         {/* Volume this week */}
                         <div>
                           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'5px' }}>
-                            <span style={{ color:'#6B7280', fontSize:'0.75rem' }}>Weekly Volume</span>
+                            <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Weekly Volume</span>
                             <span style={{ color:data.color, fontSize:'0.75rem', fontWeight:700 }}>
                               {Math.round(Math.random()*60+40)}%
                             </span>
                           </div>
-                          <div style={{ height:'6px', background:'rgba(255,255,255,0.05)', borderRadius:'99px', overflow:'hidden' }}>
+                          <div style={{ height:'6px', background:'var(--border)', borderRadius:'99px', overflow:'hidden' }}>
                             <motion.div
                               initial={{ width:0 }}
                               animate={{ width:`${Math.round(Math.random()*60+40)}%` }}
@@ -1100,8 +1101,8 @@ export default function WorkoutPage() {
                       <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:'2.2rem', fontWeight:900, color:pr.color, marginBottom:'4px',
                         textShadow:`0 0 20px ${pr.color}60` 
                       }}>{pr.weight}</div>
-                      <div style={{ color:'white', fontSize:'0.95rem', fontWeight:600, marginBottom:'6px' }}>{pr.lift}</div>
-                      <div style={{ color:'#6B7280', fontSize:'0.75rem' }}>Set on {pr.date}</div>
+                      <div style={{ color: 'var(--text-primary)', fontSize:'0.95rem', fontWeight:600, marginBottom:'6px' }}>{pr.lift}</div>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Set on {pr.date}</div>
                       <div style={{
                         marginTop:'12px', display:'inline-block',
                         background:`${pr.color}15`,
@@ -1115,7 +1116,7 @@ export default function WorkoutPage() {
 
                 {/* PR History table */}
                 <div style={{ ...card, padding:'28px', overflow:'visible' }}>
-                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px', fontWeight:700 }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'20px', fontWeight:700 }}>
                     📊 Strength Progress History
                   </h3>
                   {['Bench Press','Squat','Deadlift','OHP'].map((lift, li) => {
@@ -1124,8 +1125,8 @@ export default function WorkoutPage() {
                     return (
                       <div key={lift} style={{ marginBottom:'24px' }}>
                         <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'10px' }}>
-                          <span style={{ color:'#F0F0FF', fontWeight:600, fontSize:'0.9rem' }}>{lift}</span>
-                          <span style={{ color:PRS[li]?.color || '#00FF87', fontWeight:700, fontSize:'0.9rem' }}>
+                          <span style={{ color:'var(--text-primary)', fontWeight:600, fontSize:'0.9rem' }}>{lift}</span>
+                          <span style={{ color:PRS[li]?.color || '#F97316', fontWeight:700, fontSize:'0.9rem' }}>
                             {PRS[li]?.weight || '80kg'} 1RM
                           </span>
                         </div>
@@ -1139,11 +1140,11 @@ export default function WorkoutPage() {
                               style={{
                                 flex:1, borderRadius:'4px 4px 0 0',
                                 background: di===data.length-1
-                                  ? `linear-gradient(180deg,${PRS[li]?.color||'#00FF87'},${PRS[li]?.color||'#00FF87'}60)` 
-                                  : 'rgba(255,255,255,0.08)',
+                                  ? `linear-gradient(180deg,${PRS[li]?.color||'#F97316'},${PRS[li]?.color||'#F97316'}60)` 
+                                  : 'var(--border)',
                                 position:'relative',
                                 cursor:'pointer',
-                                boxShadow: di===data.length-1 ? `0 0 12px ${PRS[li]?.color||'#00FF87'}40` : 'none'
+                                boxShadow: di===data.length-1 ? `0 0 12px ${PRS[li]?.color||'#F97316'}40` : 'none'
                               }}
                               title={`${d.week}: ${d.val}kg`}
                             />
@@ -1169,11 +1170,22 @@ export default function WorkoutPage() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
+                {/* Muscle map */}
+                <div style={{ ...card, padding:'28px', marginBottom:'20px' }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'6px' }}>
+                    🗺️ Muscle Map
+                  </h3>
+                  <p style={{ color:'var(--text-muted)', fontSize:'0.85rem', margin:'0 0 18px' }}>
+                    Explore each muscle — its drive axis, movement pattern, best exercises and form cues.
+                  </p>
+                  <MuscleBodyMap />
+                </div>
+
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px', marginBottom:'20px' }}>
 
                   {/* Volume chart */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'20px' }}>
                       📈 Weekly Volume (kg)
                     </h3>
                     <div style={{ display:'flex', alignItems:'flex-end', gap:'12px', height:'120px' }}>
@@ -1191,7 +1203,7 @@ export default function WorkoutPage() {
                         const h = (d.vol/max)*100
                         return (
                           <div key={d.week} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', height:'100%', justifyContent:'flex-end' }}>
-                            <div style={{ color:'#6B7280', fontSize:'0.68rem', marginBottom:'4px' }}>
+                            <div style={{ color:'var(--text-muted)', fontSize:'0.68rem', marginBottom:'4px' }}>
                               {(d.vol/1000).toFixed(1)}k
                             </div>
                             <motion.div
@@ -1201,9 +1213,9 @@ export default function WorkoutPage() {
                               style={{
                                 width:'100%', borderRadius:'6px 6px 0 0',
                                 background: i===7
-                                  ? 'linear-gradient(180deg,#00FF87,#00D4FF)'
-                                  : 'rgba(0,255,135,0.25)',
-                                boxShadow: i===7 ? '0 0 20px rgba(0,255,135,0.4)' : 'none'
+                                  ? 'linear-gradient(180deg,#F97316,#FB923C)'
+                                  : 'rgba(249,115,22,0.25)',
+                                boxShadow: i===7 ? '0 0 20px rgba(249,115,22,0.4)' : 'none'
                               }}
                             />
                             <div style={{ color:'#4B5563', fontSize:'0.65rem', marginTop:'4px' }}>{d.week}</div>
@@ -1215,12 +1227,12 @@ export default function WorkoutPage() {
 
                   {/* Body stats */}
                   <div style={{ ...card, padding:'24px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1rem', marginBottom:'16px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1rem', marginBottom:'16px' }}>
                       📊 Body Composition
                     </h3>
                     {[
-                      { label:'Body Weight',   val:'72.4 kg',  change:'-1.2kg',   good:true,  color:'#00FF87' },
-                      { label:'Body Fat',      val:'14.2%',    change:'-0.8%',    good:true,  color:'#00D4FF' },
+                      { label:'Body Weight',   val:'72.4 kg',  change:'-1.2kg',   good:true,  color:'#F97316' },
+                      { label:'Body Fat',      val:'14.2%',    change:'-0.8%',    good:true,  color:'#FB923C' },
                       { label:'Muscle Mass',   val:'58.8 kg',  change:'+0.6kg',   good:true,  color:'#7B61FF' },
                       { label:'Visceral Fat',  val:'Level 5',  change:'-1 level', good:true,  color:'#FFD700' },
                       { label:'BMR',           val:'1,842 kcal',change:'+24',     good:true,  color:'#FF6B35' },
@@ -1228,17 +1240,17 @@ export default function WorkoutPage() {
                       <div key={s.label} style={{
                         display:'flex', justifyContent:'space-between',
                         alignItems:'center', padding:'10px 0',
-                        borderBottom:'1px solid rgba(255,255,255,0.05)'
+                        borderBottom:'1px solid var(--border)'
                       }}>
                         <div>
-                          <div style={{ color:'#D1D5DB', fontSize:'0.82rem' }}>{s.label}</div>
+                          <div style={{ color:'var(--text-faint)', fontSize:'0.82rem' }}>{s.label}</div>
                           <div style={{ color: s.color, fontWeight:700, fontSize:'0.95rem' }}>{s.val}</div>
                         </div>
                         <div style={{
-                          background: s.good ? 'rgba(0,255,135,0.1)' : 'rgba(255,59,48,0.1)',
-                          border:`1px solid ${s.good ? 'rgba(0,255,135,0.2)' : 'rgba(255,59,48,0.2)'}`,
+                          background: s.good ? 'rgba(249,115,22,0.1)' : 'rgba(255,59,48,0.1)',
+                          border:`1px solid ${s.good ? 'rgba(249,115,22,0.2)' : 'rgba(255,59,48,0.2)'}`,
                           borderRadius:'99px', padding:'3px 10px',
-                          color: s.good ? '#00FF87' : '#FF3B30',
+                          color: s.good ? '#F97316' : '#FF3B30',
                           fontSize:'0.72rem', fontWeight:700
                         }}>{s.change}</div>
                       </div>
@@ -1248,7 +1260,7 @@ export default function WorkoutPage() {
 
                 {/* Workout frequency heatmap */}
                 <div style={{ ...card, padding:'28px' }}>
-                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'20px' }}>
                     📅 Training Frequency — Last 12 Weeks
                   </h3>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(12,1fr)', gap:'8px' }}>
@@ -1269,12 +1281,12 @@ export default function WorkoutPage() {
                                 style={{
                                   width:'100%', aspectRatio:'1',
                                   borderRadius:'4px',
-                                  background: !trained ? 'rgba(255,255,255,0.04)'
-                                    : intensity > 0.7 ? 'rgba(0,255,135,0.8)'
-                                    : intensity > 0.4 ? 'rgba(0,255,135,0.45)'
-                                    : 'rgba(0,255,135,0.2)',
+                                  background: !trained ? 'var(--border)'
+                                    : intensity > 0.7 ? 'rgba(249,115,22,0.8)'
+                                    : intensity > 0.4 ? 'rgba(249,115,22,0.45)'
+                                    : 'rgba(249,115,22,0.2)',
                                   cursor:'pointer',
-                                  boxShadow: intensity > 0.7 ? '0 0 6px rgba(0,255,135,0.4)' : 'none'
+                                  boxShadow: intensity > 0.7 ? '0 0 6px rgba(249,115,22,0.4)' : 'none'
                                 }}
                               />
                             )
@@ -1284,11 +1296,11 @@ export default function WorkoutPage() {
                     ))}
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:'8px', marginTop:'14px' }}>
-                    <span style={{ color:'#6B7280', fontSize:'0.75rem' }}>Less</span>
-                    {['rgba(255,255,255,0.04)','rgba(0,255,135,0.2)','rgba(0,255,135,0.45)','rgba(0,255,135,0.8)'].map((bg,i) => (
+                    <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Less</span>
+                    {['var(--border)','rgba(249,115,22,0.2)','rgba(249,115,22,0.45)','rgba(249,115,22,0.8)'].map((bg,i) => (
                       <div key={i} style={{ width:'14px', height:'14px', borderRadius:'3px', background:bg }}/>
                     ))}
-                    <span style={{ color:'#6B7280', fontSize:'0.75rem' }}>More</span>
+                    <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>More</span>
                   </div>
                 </div>
               </motion.div>
@@ -1305,7 +1317,7 @@ export default function WorkoutPage() {
               exit={{ opacity:0 }}
               style={{
                 position:'fixed', inset:0, zIndex:200,
-                background:'rgba(0,0,0,0.85)',
+                background:'var(--shadow-color)',
                 backdropFilter:'blur(16px)',
                 display:'flex', alignItems:'center',
                 justifyContent:'center', padding:'20px'
@@ -1324,7 +1336,7 @@ export default function WorkoutPage() {
                   backdropFilter:'blur(60px)',
                   border:`1px solid ${selected.color}35`,
                   borderRadius:'32px',
-                  boxShadow:`0 60px 120px rgba(0,0,0,0.9), 0 0 100px ${selected.glow}`,
+                  boxShadow:`0 60px 120px var(--shadow-color), 0 0 100px ${selected.glow}`,
                 }}
               >
                 <div style={{ height:'4px', background:`linear-gradient(90deg,${selected.color},${selected.color}60,transparent)`, borderRadius:'32px 32px 0 0' }}/>
@@ -1341,10 +1353,10 @@ export default function WorkoutPage() {
                       <div>
                         <h2 style={{
                           fontFamily:"'Clash Display',sans-serif",
-                          fontSize:'1.8rem', color:'white',
+                          fontSize:'1.8rem', color: 'var(--text-primary)',
                           margin:0, marginBottom:'8px', fontWeight:800
                         }}>{selected.name}</h2>
-                        <p style={{ color:'#6B7280', margin:0, fontSize:'0.88rem', maxWidth:'400px' }}>
+                        <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.88rem', maxWidth:'400px' }}>
                           {selected.description}
                         </p>
                         <div style={{ display:'flex', gap:'8px', marginTop:'10px', flexWrap:'wrap' }}>
@@ -1354,12 +1366,12 @@ export default function WorkoutPage() {
                             color:selected.color, fontSize:'0.75rem', fontWeight:700
                           }}>{selected.category}</span>
                           <span style={{
-                            background:'rgba(255,255,255,0.06)', borderRadius:'99px', padding:'3px 12px',
-                            color:'#9CA3AF', fontSize:'0.75rem'
+                            background:'var(--border)', borderRadius:'99px', padding:'3px 12px',
+                            color:'var(--text-muted)', fontSize:'0.75rem'
                           }}>{selected.difficulty}</span>
                           <span style={{
-                            background:'rgba(255,255,255,0.06)', borderRadius:'99px', padding:'3px 12px',
-                            color:'#9CA3AF', fontSize:'0.75rem'
+                            background:'var(--border)', borderRadius:'99px', padding:'3px 12px',
+                            color:'var(--text-muted)', fontSize:'0.75rem'
                           }}>🏃 {selected.equipment}</span>
                         </div>
                       </div>
@@ -1367,10 +1379,10 @@ export default function WorkoutPage() {
                     <button
                       onClick={() => setSelected(null)}
                       style={{
-                        background:'rgba(255,255,255,0.06)',
-                        border:'1px solid rgba(255,255,255,0.1)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         borderRadius:'50%', width:'40px', height:'40px',
-                        color:'#9CA3AF', cursor:'pointer', fontSize:'1.1rem',
+                        color:'var(--text-muted)', cursor:'pointer', fontSize:'1.1rem',
                         display:'flex', alignItems:'center', justifyContent:'center',
                         flexShrink:0
                       }}>✕</button>
@@ -1382,7 +1394,7 @@ export default function WorkoutPage() {
                       { label:'Duration',  val:selected.duration,         unit:'min',     color:selected.color, icon:'⏱' },
                       { label:'Calories',  val:selected.calories,         unit:'kcal',    color:'#FF6B35',       icon:'🔥' },
                       { label:'Exercises', val:selected.exercises.length, unit:'moves',   color:'#7B61FF',       icon:'💪' },
-                      { label:'Sets',      val:selected.exercises.reduce((a,e)=>a+e.sets,0), unit:'total', color:'#00D4FF', icon:'🔄' },
+                      { label:'Sets',      val:selected.exercises.reduce((a,e)=>a+e.sets,0), unit:'total', color:'#FB923C', icon:'🔄' },
                       { label:'Muscles',   val:selected.muscles.length,   unit:'groups',  color:'#FFD700',       icon:'🎯' },
                     ].map(s => (
                       <div key={s.label} style={{
@@ -1396,14 +1408,14 @@ export default function WorkoutPage() {
                           color:s.color, fontFamily:"'Clash Display',sans-serif",
                           fontSize:'1.4rem', fontWeight:800
                         }}>{s.val}<span style={{ fontSize:'0.7rem', fontWeight:400 }}> {s.unit}</span></div>
-                        <div style={{ color:'#6B7280', fontSize:'0.68rem', marginTop:'2px' }}>{s.label}</div>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.68rem', marginTop:'2px' }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
 
                   {/* Muscles targeted */}
                   <div style={{ marginBottom:'24px' }}>
-                    <div style={{ color:'#6B7280', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:'10px' }}>
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:'10px' }}>
                       MUSCLES TARGETED
                     </div>
                     <div style={{ display:'flex', flexWrap:'wrap', gap:'8px' }}>
@@ -1419,7 +1431,7 @@ export default function WorkoutPage() {
                   </div>
 
                   {/* Exercise plan */}
-                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'16px', fontWeight:700 }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'16px', fontWeight:700 }}>
                     📋 Complete Exercise Plan
                   </h3>
                   {selected.exercises.map((ex, i) => (
@@ -1431,14 +1443,14 @@ export default function WorkoutPage() {
                       style={{
                         display:'flex', alignItems:'center',
                         gap:'14px', padding:'14px 18px', marginBottom:'8px',
-                        background:'rgba(255,255,255,0.03)',
+                        background:'var(--border)',
                         borderRadius:'14px',
-                        border:'1px solid rgba(255,255,255,0.05)',
+                        border:'1px solid var(--border)',
                         cursor:'pointer',
                         transition:'all 0.2s'
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.06)'}
-                      onMouseLeave={e => e.currentTarget.style.background='rgba(255,255,255,0.03)'}
+                      onMouseEnter={e => e.currentTarget.style.background='var(--border)'}
+                      onMouseLeave={e => e.currentTarget.style.background='var(--border)'}
                     >
                       <div style={{
                         width:'32px', height:'32px', borderRadius:'50%',
@@ -1450,14 +1462,14 @@ export default function WorkoutPage() {
                       }}>{i+1}</div>
                       <span style={{ fontSize:'1.4rem', flexShrink:0 }}>{ex.emoji}</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ color:'#F0F0FF', fontSize:'0.9rem', fontWeight:600 }}>{ex.name}</div>
-                        <div style={{ color:'#6B7280', fontSize:'0.75rem' }}>{ex.muscle} · 💡 {ex.tip}</div>
+                        <div style={{ color:'var(--text-primary)', fontSize:'0.9rem', fontWeight:600 }}>{ex.name}</div>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>{ex.muscle} · 💡 {ex.tip}</div>
                       </div>
                       <div style={{ display:'flex', gap:'20px', textAlign:'center', flexShrink:0 }}>
                         {[
                           { label:'Sets', val:ex.sets, color:selected.color },
-                          { label:'Reps', val:ex.reps, color:'white' },
-                          { label:'Rest', val:`${ex.rest}s`, color:'#00D4FF' },
+                          { label:'Reps', val:ex.reps, color: 'var(--text-primary)' },
+                          { label:'Rest', val:`${ex.rest}s`, color:'#FB923C' },
                           { label:'kcal', val:ex.calories, color:'#FF6B35' },
                         ].map(s => (
                           <div key={s.label}>
@@ -1489,9 +1501,9 @@ export default function WorkoutPage() {
                       whileTap={{ scale:0.97 }}
                       style={{
                         padding:'16px 24px',
-                        background:'rgba(255,255,255,0.05)',
-                        border:'1px solid rgba(255,255,255,0.1)',
-                        borderRadius:'16px', color:'#9CA3AF',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
+                        borderRadius:'16px', color:'var(--text-muted)',
                         cursor:'pointer', fontSize:'0.9rem',
                         fontFamily:"'Satoshi',sans-serif"
                       }}>📅 Schedule</motion.button>
@@ -1500,9 +1512,9 @@ export default function WorkoutPage() {
                       whileTap={{ scale:0.97 }}
                       style={{
                         padding:'16px 24px',
-                        background:'rgba(255,255,255,0.05)',
-                        border:'1px solid rgba(255,255,255,0.1)',
-                        borderRadius:'16px', color:'#9CA3AF',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
+                        borderRadius:'16px', color:'var(--text-muted)',
                         cursor:'pointer', fontSize:'0.9rem'
                       }}>🔖 Save</motion.button>
                   </div>

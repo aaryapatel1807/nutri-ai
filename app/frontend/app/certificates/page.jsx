@@ -78,11 +78,11 @@ export default function CertificatesPage() {
   const filtered = filter === 'all' ? certificates : certificates.filter((c) => c.category === filter)
 
   return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] to-[#1A1A2E] p-6">
+      <div className="min-h-screen bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-primary)] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-5xl font-bold text-white mb-2">🏆 Certificates & Achievements</h1>
+            <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">🏆 Certificates & Achievements</h1>
             <p className="text-gray-400">Showcase your expertise and dedication to your health journey</p>
           </div>
 
@@ -94,7 +94,7 @@ export default function CertificatesPage() {
                 onClick={() => setFilter(cat)}
                 className={`px-4 py-2 rounded-lg border transition-all whitespace-nowrap capitalize ${
                   filter === cat
-                    ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-transparent'
+                    ? 'bg-gradient-to-r from-[#FB923C] to-[#EA580C] text-white border-transparent'
                     : 'border-white/20 text-gray-300 hover:border-white/40'
                 }`}
               >
@@ -131,7 +131,7 @@ export default function CertificatesPage() {
                   <div className="text-5xl mb-3">{cert.emoji}</div>
 
                   {/* Title & Description */}
-                  <h3 className="text-xl font-bold text-white mb-2">{cert.title}</h3>
+                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">{cert.title}</h3>
                   <p className="text-gray-400 text-sm mb-4">{cert.description}</p>
 
                   {/* Criteria */}
@@ -147,10 +147,10 @@ export default function CertificatesPage() {
                       <span
                         className={`font-semibold ${
                           cert.difficulty === 'Beginner'
-                            ? 'text-green-400'
+                            ? 'text-[#FDBA74]'
                             : cert.difficulty === 'Intermediate'
-                              ? 'text-blue-400'
-                              : 'text-red-400'
+                              ? 'text-[#7B61FF]'
+                              : 'text-[#FF6B35]'
                         }`}
                       >
                         {cert.difficulty}
@@ -167,7 +167,7 @@ export default function CertificatesPage() {
                     className={`w-full py-2 rounded-lg font-semibold transition-all ${
                       cert.earnedAt
                         ? 'bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30'
-                        : 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white hover:opacity-90'
+                        : 'bg-gradient-to-r from-[#FB923C] to-[#EA580C] text-white hover:opacity-90'
                     }`}
                   >
                     {cert.earnedAt ? '📜 View Certificate' : 'Start Earning'}
@@ -184,7 +184,7 @@ export default function CertificatesPage() {
             transition={{ delay: 0.4 }}
             className="p-8 rounded-xl border border-purple-500/30 bg-purple-500/10 backdrop-blur-sm"
           >
-            <h2 className="text-2xl font-bold text-white mb-6">👑 Top Certificate Earners</h2>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">👑 Top Certificate Earners</h2>
             <div className="space-y-3">
               {[
                 { rank: 1, name: 'Alex Johnson', certificates: 12, level: '🥇 Expert' },
@@ -193,11 +193,11 @@ export default function CertificatesPage() {
               ].map((user) => (
                 <div key={user.rank} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FB923C] to-[#EA580C] flex items-center justify-center text-white font-bold">
                       {user.rank}
                     </div>
                     <div>
-                      <p className="font-semibold text-white">{user.name}</p>
+                      <p className="font-semibold text-[var(--text-primary)]">{user.name}</p>
                       <p className="text-sm text-gray-400">{user.level}</p>
                     </div>
                   </div>

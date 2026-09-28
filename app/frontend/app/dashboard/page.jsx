@@ -101,20 +101,20 @@ export default function Dashboard() {
   }, [])
 
   const cardBaseStyle = {
-    background: 'rgba(22,22,31,0.8)',
+    background: 'var(--bg-card)',
     backdropFilter: 'blur(20px)',
     WebkitBackdropFilter: 'blur(20px)',
-    border: '1px solid rgba(255,255,255,0.07)',
+    border: '1px solid var(--border)',
     borderRadius: '20px',
     padding: '24px',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+    boxShadow: '0 8px 32px var(--shadow-color)',
     transition: 'transform 0.1s ease, box-shadow 0.1s ease'
   }
 
   const gradientBorderStyle = {
     padding: '1px',
     borderRadius: '21px',
-    background: 'linear-gradient(135deg, rgba(0,255,135,0.3), rgba(123,97,255,0.1), rgba(0,212,255,0.2))',
+    background: 'linear-gradient(135deg, rgba(249,115,22,0.3), rgba(123,97,255,0.1), rgba(251,146,60,0.2))',
     backgroundSize: '200% 200%',
     animation: 'gradientShift 4s ease infinite',
   }
@@ -123,25 +123,25 @@ export default function Dashboard() {
     fontFamily: "'Clash Display',sans-serif",
     fontSize: '3.5rem',
     fontWeight: 700,
-    color: '#00FF87',
-    textShadow: '0 0 20px rgba(0,255,135,0.8), 0 0 40px rgba(0,255,135,0.4)',
+    color: '#F97316',
+    textShadow: '0 0 20px rgba(249,115,22,0.8), 0 0 40px rgba(249,115,22,0.4)',
     display: 'block',
     letterSpacing: '-0.02em'
   }
 
   const heatColor = (cal, goal) => {
-    if (!cal) return 'rgba(255,255,255,0.04)'
+    if (!cal) return 'var(--border)'
     if (cal > goal) return 'rgba(255,107,53,0.6)'
-    if (cal >= goal * 0.9) return 'rgba(0,255,135,0.7)'
-    if (cal >= goal * 0.6) return 'rgba(0,255,135,0.4)'
-    return 'rgba(0,255,135,0.2)'
+    if (cal >= goal * 0.9) return 'rgba(249,115,22,0.7)'
+    if (cal >= goal * 0.6) return 'rgba(249,115,22,0.4)'
+    return 'rgba(249,115,22,0.2)'
   }
 
   if (loading) {
     return (
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0A0A0F' }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '1.2rem', color: '#6B7280', marginBottom: '16px' }}>Loading Dashboard...</div>
+          <div style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '16px' }}>Loading Dashboard...</div>
         </div>
       </div>
     )
@@ -149,10 +149,10 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#0A0A0F' }}>
+      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '1.2rem', color: '#FF6B35', marginBottom: '16px' }}>⚠️ Error</div>
-          <div style={{ color: '#6B7280', fontSize: '0.9rem' }}>{error}</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{error}</div>
         </div>
       </div>
     )
@@ -183,16 +183,16 @@ export default function Dashboard() {
             fontFamily: "'Clash Display',sans-serif",
             fontSize: isMobile ? '1.7rem' : '2.5rem',
             fontWeight: 700,
-            color: 'white',
+            color: 'var(--text-primary)',
             margin: 0,
-            background: 'linear-gradient(135deg, #ffffff, #00FF87)',
+            background: 'linear-gradient(135deg, var(--text-primary), #F97316)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}>
             {getGreeting()}, {user.name} 👋
           </h1>
           <p style={{
-            color: '#6B7280',
+            color: 'var(--text-muted)',
             fontSize: '0.95rem',
             marginTop: '4px',
             fontFamily: "'Satoshi',sans-serif"
@@ -203,12 +203,12 @@ export default function Dashboard() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(0,255,135,0.08)',
-            border: '1px solid rgba(0,255,135,0.2)',
+            background: 'rgba(249,115,22,0.08)',
+            border: '1px solid rgba(249,115,22,0.2)',
             borderRadius: '99px',
             padding: '6px 16px',
             marginTop: '12px',
-            color: '#00FF87',
+            color: '#F97316',
             fontSize: '0.82rem',
             fontFamily: "'Satoshi',sans-serif"
           }}>
@@ -244,7 +244,7 @@ export default function Dashboard() {
                 transition={{ duration: 0.5 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                  <div style={{ color: '#6B7280', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                     Calories Today
                   </div>
                   {stats?.streak > 0 && (
@@ -265,31 +265,31 @@ export default function Dashboard() {
                   <svg width="160" height="160" viewBox="0 0 160 160">
                     <defs>
                       <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#00FF87" />
-                        <stop offset="100%" stopColor="#00D4FF" />
+                        <stop offset="0%" stopColor="#F97316" />
+                        <stop offset="100%" stopColor="#FB923C" />
                       </linearGradient>
                     </defs>
-                    <circle cx="80" cy="80" r="65" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
+                    <circle cx="80" cy="80" r="65" fill="none" stroke="var(--border)" strokeWidth="10" />
                     <motion.circle cx="80" cy="80" r="65" fill="none"
                       stroke="url(#ringGrad)" strokeWidth="10"
                       strokeLinecap="round"
                       style={{
-                        filter: 'drop-shadow(0 0 8px rgba(0,255,135,0.6))'
+                        filter: 'drop-shadow(0 0 8px rgba(249,115,22,0.6))'
                       }}
                       strokeDashoffset="102"
                       initial={{ strokeDasharray: '0 408.4' }}
                       animate={{ strokeDasharray: `${Math.min(todayNutrition?.calories || 0, todayNutrition?.goalCalories || 1800) / (todayNutrition?.goalCalories || 1800) * 408.4} 408.4` }}
                       transition={{ duration: 2, ease: "easeOut" }}
                     />
-                    <text x="80" y="72" textAnchor="middle" fill="white" fontSize="28" fontFamily="'Clash Display',sans-serif" fontWeight="700">{todayNutrition?.calories || 0}</text>
-                    <text x="80" y="92" textAnchor="middle" fill="#6B7280" fontSize="11" fontFamily="'Satoshi',sans-serif">of {todayNutrition?.goalCalories || 1800} kcal</text>
+                    <text x="80" y="72" textAnchor="middle" fill="var(--text-primary)" fontSize="28" fontFamily="'Clash Display',sans-serif" fontWeight="700">{todayNutrition?.calories || 0}</text>
+                    <text x="80" y="92" textAnchor="middle" fill="var(--text-muted)" fontSize="11" fontFamily="'Satoshi',sans-serif">of {todayNutrition?.goalCalories || 1800} kcal</text>
                   </svg>
                   <div style={{
-                    background: 'rgba(0,255,135,0.15)',
-                    border: '1px solid rgba(0,255,135,0.3)',
+                    background: 'rgba(249,115,22,0.15)',
+                    border: '1px solid rgba(249,115,22,0.3)',
                     borderRadius: '99px',
                     padding: '4px 16px',
-                    color: '#00FF87',
+                    color: '#F97316',
                     fontSize: '0.8rem',
                     fontWeight: 700,
                     marginTop: '8px'
@@ -307,20 +307,20 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Today's Macros
                 </div>
                 {[
-                  { label: 'Protein', val: todayNutrition?.protein || 0, goal: 150, color: '#00FF87' },
+                  { label: 'Protein', val: todayNutrition?.protein || 0, goal: 150, color: '#F97316' },
                   { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: 230, color: '#7B61FF' },
                   { label: 'Fat', val: todayNutrition?.fat || 0, goal: 70, color: '#FF6B35' },
                 ].map(m => (
                   <div key={m.label} style={{ marginBottom: '18px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <span style={{ color: '#F0F0FF', fontSize: '0.85rem' }}>{m.label}</span>
+                      <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{m.label}</span>
                       <span style={{ color: m.color, fontSize: '0.85rem', fontWeight: 700 }}>{m.val}g</span>
                     </div>
-                    <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '99px', overflow: 'hidden' }}>
+                    <div style={{ height: '8px', background: 'var(--border)', borderRadius: '99px', overflow: 'hidden' }}>
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${(m.val / m.goal) * 100}%` }}
@@ -331,7 +331,7 @@ export default function Dashboard() {
                         }}
                       />
                     </div>
-                    <div style={{ color: '#6B7280', fontSize: '0.72rem', marginTop: '3px' }}>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', marginTop: '3px' }}>
                       {Math.round((m.val / m.goal) * 100)}% of {m.goal}g
                     </div>
                   </div>
@@ -348,7 +348,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Hydration 💧
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' }}>
@@ -363,18 +363,18 @@ export default function Dashboard() {
                   ))}
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <span style={{ ...bigNumberStyle, color: '#00D4FF', textShadow: '0 0 20px rgba(0,212,255,0.8), 0 0 40px rgba(0,212,255,0.4)' }}>
+                  <span style={{ ...bigNumberStyle, color: '#FB923C', textShadow: '0 0 20px rgba(251,146,60,0.8), 0 0 40px rgba(251,146,60,0.4)' }}>
                     {Math.floor(water)}
                   </span>
-                  <span style={{ color: '#6B7280', fontSize: '1rem' }}> / 8 glasses</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '1rem' }}> / 8 glasses</span>
                 </div>
                 <button
                   onClick={handleAddWater}
                   style={{
                     width: '100%', marginTop: '12px', padding: '8px',
                     background: 'transparent',
-                    border: '1px solid rgba(0,212,255,0.3)',
-                    borderRadius: '10px', color: '#00D4FF',
+                    border: '1px solid rgba(251,146,60,0.3)',
+                    borderRadius: '10px', color: '#FB923C',
                     fontSize: '0.85rem', cursor: 'pointer',
                     transition: 'all 0.2s'
                   }}>+ Add Glass</button>
@@ -399,7 +399,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '20px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '20px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   This Week 📅
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -408,7 +408,7 @@ export default function Dashboard() {
                       width: '100%',
                       textAlign: 'center',
                       padding: '24px 12px',
-                      color: '#6B7280',
+                      color: 'var(--text-muted)',
                       fontSize: '0.85rem',
                       fontFamily: "'Satoshi',sans-serif"
                     }}>
@@ -429,15 +429,15 @@ export default function Dashboard() {
                           margin: '0 auto 8px',
                           display: 'flex', alignItems: 'center',
                           justifyContent: 'center',
-                          boxShadow: d.cal >= d.goal * 0.9 ? '0 0 12px rgba(0,255,135,0.4)' : 'none',
-                          border: d.cal >= d.goal ? '1px solid rgba(0,255,135,0.4)' : '1px solid transparent'
+                          boxShadow: d.cal >= d.goal * 0.9 ? '0 0 12px rgba(249,115,22,0.4)' : 'none',
+                          border: d.cal >= d.goal ? '1px solid rgba(249,115,22,0.4)' : '1px solid transparent'
                         }}
                       >
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--text-primary)', fontWeight: 600 }}>
                           {d.cal ? (d.cal >= 1000 ? `${(d.cal / 1000).toFixed(1)}k` : d.cal) : ''}
                         </span>
                       </motion.div>
-                      <div style={{ fontSize: '0.72rem', color: '#6B7280', fontWeight: 500 }}>{d.day}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 500 }}>{d.day}</div>
                     </div>
                   )))}
                 </div>
@@ -448,45 +448,45 @@ export default function Dashboard() {
             <div style={gradientBorderStyle}>
               <motion.div
                 {...tilt2}
-                style={{ ...cardBaseStyle, background: 'linear-gradient(135deg, rgba(22,22,31,0.9), rgba(0,255,135,0.05))' }}
+                style={{ ...cardBaseStyle, background: 'linear-gradient(135deg, var(--bg-card), rgba(249,115,22,0.05))' }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '12px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Today's Mission 💪
                 </div>
-                <div style={{ fontFamily: "'Clash Display',sans-serif", fontSize: '1.1rem', color: 'white', marginBottom: '12px', fontWeight: 600 }}>
+                <div style={{ fontFamily: "'Clash Display',sans-serif", fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '12px', fontWeight: 600 }}>
                   Upper Body Strength
                 </div>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
                   {['⏱ 45 min', '🔥 320 kcal'].map(c => (
                     <span key={c} style={{
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'var(--border)',
+                      border: '1px solid var(--border)',
                       borderRadius: '99px', padding: '4px 12px',
-                      color: '#F0F0FF', fontSize: '0.78rem'
+                      color: 'var(--text-primary)', fontSize: '0.78rem'
                     }}>{c}</span>
                   ))}
                 </div>
                 {['Push Ups 4×12', 'Dumbbell Rows 3×10', 'Shoulder Press 3×10'].map(e => (
                   <div key={e} style={{
                     padding: '8px 0',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                    color: '#9CA3AF', fontSize: '0.82rem',
+                    borderBottom: '1px solid var(--border)',
+                    color: 'var(--text-muted)', fontSize: '0.82rem',
                     display: 'flex', alignItems: 'center', gap: '8px'
                   }}>
-                    <span style={{ color: '#00FF87', fontSize: '0.7rem' }}>▶</span>
+                    <span style={{ color: '#F97316', fontSize: '0.7rem' }}>▶</span>
                     {e}
                   </div>
                 ))}
                 <button style={{
                   width: '100%', marginTop: '16px', padding: '12px',
-                  background: 'linear-gradient(135deg,#00FF87,#00D4FF)',
+                  background: 'linear-gradient(135deg,#F97316,#FB923C)',
                   border: 'none', borderRadius: '12px',
                   color: '#000', fontWeight: 700, fontSize: '0.9rem',
                   cursor: 'pointer', fontFamily: "'Satoshi',sans-serif",
-                  boxShadow: '0 4px 20px rgba(0,255,135,0.3)'
+                  boxShadow: '0 4px 20px rgba(249,115,22,0.3)'
                 }}>Start Workout →</button>
               </motion.div>
             </div>
@@ -509,7 +509,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Risk Score 🛡️
                 </div>
                 <div style={{ textAlign: 'center' }}>
@@ -518,18 +518,18 @@ export default function Dashboard() {
                   </span>
                   <div style={{
                     display: 'inline-block',
-                    background: 'rgba(0,255,135,0.12)',
-                    border: '1px solid rgba(0,255,135,0.3)',
+                    background: 'rgba(249,115,22,0.12)',
+                    border: '1px solid rgba(249,115,22,0.3)',
                     borderRadius: '99px', padding: '4px 16px',
-                    color: '#00FF87', fontSize: '0.8rem', fontWeight: 700,
+                    color: '#F97316', fontSize: '0.8rem', fontWeight: 700,
                     marginBottom: '12px'
                   }}>Level {userXP?.level || 1} ✅</div>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
                     {['Diabetes', 'Obesity', 'Hypertension'].map(r => (
                       <span key={r} style={{
-                        background: 'rgba(255,255,255,0.05)',
+                        background: 'var(--border)',
                         borderRadius: '99px', padding: '3px 10px',
-                        color: '#6B7280', fontSize: '0.72rem'
+                        color: 'var(--text-muted)', fontSize: '0.72rem'
                       }}>{r}</span>
                     ))}
                   </div>
@@ -546,13 +546,13 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   30-Day Forecast 📈
                 </div>
                 <svg width="100%" height="100" viewBox="0 0 200 80">
                   <defs>
                     <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#00FF87" />
+                      <stop offset="0%" stopColor="#F97316" />
                       <stop offset="100%" stopColor="#7B61FF" />
                     </linearGradient>
                   </defs>
@@ -560,7 +560,7 @@ export default function Dashboard() {
                     points="0,60 25,55 50,58 75,50 100,45 125,35 150,30 175,22 200,15"
                     fill="none" stroke="url(#lineGrad)" strokeWidth="2.5"
                     strokeLinecap="round"
-                    style={{ filter: 'drop-shadow(0 0 6px rgba(0,255,135,0.5))' }}
+                    style={{ filter: 'drop-shadow(0 0 6px rgba(249,115,22,0.5))' }}
                   />
                   <polyline
                     points="100,45 125,38 150,32 175,25 200,18"
@@ -568,14 +568,14 @@ export default function Dashboard() {
                     strokeDasharray="5,4" opacity="0.7"
                   />
                   <line x1="100" y1="0" x2="100" y2="80"
-                    stroke="rgba(255,255,255,0.1)" strokeWidth="1" strokeDasharray="3,3" />
+                    stroke="var(--border)" strokeWidth="1" strokeDasharray="3,3" />
                 </svg>
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: '6px',
-                  background: 'rgba(0,255,135,0.1)',
-                  border: '1px solid rgba(0,255,135,0.25)',
+                  background: 'rgba(249,115,22,0.1)',
+                  border: '1px solid rgba(249,115,22,0.25)',
                   borderRadius: '99px', padding: '5px 14px',
-                  color: '#00FF87', fontSize: '0.82rem', fontWeight: 600,
+                  color: '#F97316', fontSize: '0.82rem', fontWeight: 600,
                   marginTop: '8px'
                 }}>
                   📉 -2.1kg predicted in 30 days
@@ -592,7 +592,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
               >
-                <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Latest Badges 🏆
                 </div>
                 {[
@@ -609,18 +609,18 @@ export default function Dashboard() {
                       display: 'flex', alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '10px 0',
-                      borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none'
+                      borderBottom: i < 2 ? '1px solid var(--border)' : 'none'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{ fontSize: '1.4rem' }}>{b.emoji}</span>
-                      <span style={{ color: '#F0F0FF', fontSize: '0.85rem' }}>{b.name}</span>
+                      <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{b.name}</span>
                     </div>
                     <span style={{
-                      background: 'rgba(0,255,135,0.12)',
-                      border: '1px solid rgba(0,255,135,0.25)',
+                      background: 'rgba(249,115,22,0.12)',
+                      border: '1px solid rgba(249,115,22,0.25)',
                       borderRadius: '99px', padding: '3px 10px',
-                      color: '#00FF87', fontSize: '0.75rem', fontWeight: 700
+                      color: '#F97316', fontSize: '0.75rem', fontWeight: 700
                     }}>+{b.xp} XP</span>
                   </motion.div>
                 ))}
@@ -640,14 +640,14 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
           >
-            <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
               Quick Actions
             </div>
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               {[
-                { icon: '📸', label: 'Log Meal', href: '/meal-logger', color: 'rgba(0,255,135,0.15)', border: 'rgba(0,255,135,0.3)', text: '#00FF87' },
+                { icon: '📸', label: 'Log Meal', href: '/meal-logger', color: 'rgba(249,115,22,0.15)', border: 'rgba(249,115,22,0.3)', text: '#F97316' },
                 { icon: '🥦', label: 'Find Recipe', href: '/recipe-maker', color: 'rgba(123,97,255,0.15)', border: 'rgba(123,97,255,0.3)', text: '#7B61FF' },
-                { icon: '💬', label: 'Ask AI', href: '/chatbot', color: 'rgba(0,212,255,0.15)', border: 'rgba(0,212,255,0.3)', text: '#00D4FF' },
+                { icon: '💬', label: 'Ask AI', href: '/chatbot', color: 'rgba(251,146,60,0.15)', border: 'rgba(251,146,60,0.3)', text: '#FB923C' },
                 { icon: '📅', label: 'Meal Plan', href: '/meal-plan', color: 'rgba(255,107,53,0.15)', border: 'rgba(255,107,53,0.3)', text: '#FF6B35' },
               ].map(a => (
                 <a key={a.label} href={a.href} style={{ textDecoration: 'none', flex: 1, minWidth: '120px' }}>

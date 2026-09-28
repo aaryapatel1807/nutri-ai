@@ -2,39 +2,40 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
+import { useTheme } from '../../components/shared/ThemeContext'
 
 /* ══════════ DATA ══════════ */
 const AVATAR_STYLES = [
   { id:'warrior', emoji:'⚔️', label:'Warrior',  gradient:'linear-gradient(135deg,#FF6B35,#FFD700)', ring:'#FFD700' },
   { id:'beast',   emoji:'🦁', label:'Beast',    gradient:'linear-gradient(135deg,#F97316,#EF4444)', ring:'#F97316' },
   { id:'ninja',   emoji:'🥷', label:'Ninja',    gradient:'linear-gradient(135deg,#1F2937,#7B61FF)', ring:'#7B61FF' },
-  { id:'robot',   emoji:'🤖', label:'Robot',    gradient:'linear-gradient(135deg,#00D4FF,#7B61FF)', ring:'#00D4FF' },
+  { id:'robot',   emoji:'🤖', label:'Robot',    gradient:'linear-gradient(135deg,#FB923C,#7B61FF)', ring:'#FB923C' },
   { id:'king',    emoji:'👑', label:'King',     gradient:'linear-gradient(135deg,#FFD700,#F97316)', ring:'#FFD700' },
   { id:'fire',    emoji:'🔥', label:'Fire',     gradient:'linear-gradient(135deg,#FF6B35,#EF4444)', ring:'#FF6B35' },
-  { id:'crystal', emoji:'💎', label:'Crystal',  gradient:'linear-gradient(135deg,#7B61FF,#00D4FF)', ring:'#A78BFA' },
-  { id:'galaxy',  emoji:'🌌', label:'Galaxy',   gradient:'linear-gradient(135deg,#0f0c29,#A78BFA)', ring:'#A78BFA' },
+  { id:'crystal', emoji:'💎', label:'Crystal',  gradient:'linear-gradient(135deg,#7B61FF,#FB923C)', ring:'#A78BFA' },
+  { id:'galaxy',  emoji:'🌌', label:'Galaxy',   gradient:'linear-gradient(135deg,var(--bg-primary),#A78BFA)', ring:'#A78BFA' },
   { id:'phoenix', emoji:'🦅', label:'Phoenix',  gradient:'linear-gradient(135deg,#FF6B35,#FFD700)', ring:'#F97316' },
-  { id:'alien',   emoji:'👽', label:'Alien',    gradient:'linear-gradient(135deg,#4ADE80,#00FF87)', ring:'#00FF87' },
+  { id:'alien',   emoji:'👽', label:'Alien',    gradient:'linear-gradient(135deg,#FDBA74,#F97316)', ring:'#F97316' },
   { id:'demon',   emoji:'😈', label:'Demon',    gradient:'linear-gradient(135deg,#EF4444,#7B61FF)', ring:'#EF4444' },
-  { id:'dragon',  emoji:'🐉', label:'Dragon',   gradient:'linear-gradient(135deg,#00FF87,#7B61FF)', ring:'#00FF87' },
+  { id:'dragon',  emoji:'🐉', label:'Dragon',   gradient:'linear-gradient(135deg,#F97316,#7B61FF)', ring:'#F97316' },
 ]
 
 const FRAME_STYLES = [
   { id:'none',    label:'None',     style:'' },
   { id:'gold',    label:'Gold',     style:'3px solid #FFD700' },
-  { id:'neon',    label:'Neon',     style:'3px solid #00FF87' },
+  { id:'neon',    label:'Ember',    style:'3px solid #F97316' },
   { id:'purple',  label:'Purple',   style:'3px solid #7B61FF' },
   { id:'fire',    label:'Fire',     style:'3px solid #FF6B35' },
   { id:'rainbow', label:'Rainbow',  style:'3px solid transparent' },
 ]
 
 const THEMES = [
-  { id:'neon-green',  label:'Neon Green',   primary:'#00FF87', secondary:'#00D4FF', accent:'#7B61FF' },
+  { id:'brand',  label:'Ember Orange', primary:'#F97316', secondary:'#FB923C', accent:'#7B61FF' },
   { id:'gold-rush',   label:'Gold Rush',    primary:'#FFD700', secondary:'#F97316', accent:'#FF6B35' },
   { id:'purple-fire', label:'Purple Fire',  primary:'#7B61FF', secondary:'#A78BFA', accent:'#FF6B35' },
-  { id:'cyber-blue',  label:'Cyber Blue',   primary:'#00D4FF', secondary:'#60A5FA', accent:'#7B61FF' },
+  { id:'cyber-blue',  label:'Cyber Blue',   primary:'#FB923C', secondary:'#60A5FA', accent:'#7B61FF' },
   { id:'blood-orange',label:'Blood Orange', primary:'#FF6B35', secondary:'#EF4444', accent:'#FFD700' },
-  { id:'matrix',      label:'Matrix',       primary:'#4ADE80', secondary:'#00FF87', accent:'#00D4FF' },
+  { id:'matrix',      label:'Matrix',       primary:'#FDBA74', secondary:'#F97316', accent:'#FB923C' },
 ]
 
 const FITNESS_GOALS  = ['Muscle Building','Fat Loss','Body Recomposition','Athletic Performance','Endurance','Powerlifting','Flexibility','Maintenance']
@@ -83,14 +84,14 @@ const WEIGHT_HISTORY = [
 ]
 
 /* ══════════ TOGGLE SWITCH ══════════ */
-function Toggle({ on, onChange, color='#00FF87' }) {
+function Toggle({ on, onChange, color='#F97316' }) {
   return (
     <motion.div
       onClick={onChange}
       style={{
         width:'44px', height:'24px', borderRadius:'99px',
-        background: on ? color : 'rgba(255,255,255,0.1)',
-        border:`1px solid ${on ? color+'60' : 'rgba(255,255,255,0.15)'}`,
+        background: on ? color : 'var(--border)',
+        border:`1px solid ${on ? color+'60' : 'var(--track)'}`,
         cursor:'pointer', position:'relative', flexShrink:0,
         boxShadow: on ? `0 0 12px ${color}50` : 'none',
         transition:'all 0.3s'
@@ -103,7 +104,7 @@ function Toggle({ on, onChange, color='#00FF87' }) {
         style={{
           width:'18px', height:'18px', borderRadius:'50%',
           background:'white', position:'absolute', top:'2px',
-          boxShadow:'0 2px 6px rgba(0,0,0,0.4)'
+          boxShadow:'0 2px 6px var(--shadow-color)'
         }}
       />
     </motion.div>
@@ -118,7 +119,7 @@ function StatRing({ value, max, color, size=80, label, unit }) {
   return (
     <div style={{ textAlign:'center', position:'relative' }}>
       <svg width={size} height={size} style={{ display:'block', margin:'0 auto' }}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={10}/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--border)" strokeWidth={10}/>
         <motion.circle
           cx={size/2} cy={size/2} r={r}
           fill="none" stroke={color} strokeWidth={10}
@@ -135,7 +136,7 @@ function StatRing({ value, max, color, size=80, label, unit }) {
         <div style={{ color, fontWeight:800, fontSize:'1rem', fontFamily:"'Clash Display',sans-serif" }}>{value}</div>
         <div style={{ color:'#4B5563', fontSize:'0.6rem' }}>{unit}</div>
       </div>
-      <div style={{ color:'#9CA3AF', fontSize:'0.72rem', marginTop:'6px' }}>{label}</div>
+      <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', marginTop:'6px' }}>{label}</div>
     </div>
   )
 }
@@ -143,11 +144,12 @@ function StatRing({ value, max, color, size=80, label, unit }) {
 /* ══════════ MAIN ══════════ */
 export default function ProfilePage() {
   const isMobile = useIsMobile()
+  const { theme: modeTheme, setTheme: setModeTheme } = useTheme()
   const [activeTab,      setActiveTab]       = useState('profile')
   const [selectedAvatar, setSelectedAvatar]  = useState('warrior')
   const [selectedFrame,  setSelectedFrame]   = useState('gold')
   const [showAvatarModal,setShowAvatarModal] = useState(false)
-  const [selectedTheme,  setSelectedTheme]   = useState('neon-green')
+  const [selectedTheme,  setSelectedTheme]   = useState('brand')
   const [editMode,       setEditMode]        = useState(false)
   const [saved,          setSaved]           = useState(false)
   const [apps,           setApps]            = useState(CONNECTED_APPS)
@@ -196,9 +198,9 @@ export default function ProfilePage() {
   const tdee   = Math.round(tdmr * (actOpt?.multi||1.55))
 
   const card = {
-    background:'rgba(18,18,26,0.88)',
+    background:'var(--bg-card)',
     backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)',
-    border:'1px solid rgba(255,255,255,0.07)',
+    border:'1px solid var(--border)',
     borderRadius:'24px', overflow:'hidden',
   }
 
@@ -209,17 +211,17 @@ export default function ProfilePage() {
         onChange={e=>setProfile(p=>({...p,[key]:e.target.value}))}
         style={{
           width:'100%', boxSizing:'border-box',
-          background:'rgba(255,255,255,0.06)',
+          background:'var(--border)',
           border:`1px solid ${theme.primary}35`,
           borderRadius:'10px', padding:'9px 13px',
-          color:'#F0F0FF', fontSize:'0.88rem', outline:'none',
+          color:'var(--text-primary)', fontSize:'0.88rem', outline:'none',
           fontFamily:"'Satoshi',sans-serif",
         }}
         onFocus={e=>e.target.style.borderColor=`${theme.primary}70`}
         onBlur={e=>e.target.style.borderColor=`${theme.primary}35`}
       />
     ) : (
-      <div style={{ color:'#D1D5DB', fontSize:'0.88rem', padding:'9px 0' }}>
+      <div style={{ color:'var(--text-faint)', fontSize:'0.88rem', padding:'9px 0' }}>
         {profile[key] || '—'}
       </div>
     )
@@ -232,7 +234,7 @@ export default function ProfilePage() {
         onChange={e=>setProfile(p=>({...p,[key]:parseFloat(e.target.value)||0}))}
         style={{
           width:'100%', boxSizing:'border-box',
-          background:'rgba(255,255,255,0.06)',
+          background:'var(--border)',
           border:`1px solid ${theme.primary}35`,
           borderRadius:'10px', padding:'9px 13px',
           color:theme.primary, fontSize:'1rem', outline:'none',
@@ -325,10 +327,10 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab('appearance')}
                 style={{
                   position:'absolute', top:'14px', right:'14px',
-                  background:'rgba(0,0,0,0.4)', backdropFilter:'blur(12px)',
-                  border:'1px solid rgba(255,255,255,0.12)',
+                  background:'var(--shadow-color)', backdropFilter:'blur(12px)',
+                  border:'1px solid var(--border)',
                   borderRadius:'10px', padding:'7px 14px',
-                  color:'#D1D5DB', cursor:'pointer', fontSize:'0.78rem',
+                  color:'var(--text-faint)', cursor:'pointer', fontSize:'0.78rem',
                   display:'flex', alignItems:'center', gap:'6px'
                 }}
               >🎨 Customize</motion.button>
@@ -367,7 +369,7 @@ export default function ProfilePage() {
                       : frame.id!=='none'
                         ? frame.style
                         : `3px solid ${avatar.ring}`,
-                    boxShadow:`0 0 30px ${avatar.ring}50, 0 8px 32px rgba(0,0,0,0.5)`,
+                    boxShadow:`0 0 30px ${avatar.ring}50, 0 8px 32px var(--shadow-color)`,
                   }}>
                     {avatar.emoji}
                   </div>
@@ -410,7 +412,7 @@ export default function ProfilePage() {
                     }}
                   >⚡ LV.7 Expert</motion.div>
                 </div>
-                <div style={{ color:'#6B7280', fontSize:'0.82rem', marginBottom:'8px' }}>
+                <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'8px' }}>
                   @{profile.username} · {profile.location}
                 </div>
                 {editMode ? (
@@ -418,16 +420,16 @@ export default function ProfilePage() {
                     value={profile.tagline}
                     onChange={e=>setProfile(p=>({...p,tagline:e.target.value}))}
                     style={{
-                      background:'rgba(255,255,255,0.05)',
+                      background:'var(--border)',
                       border:`1px solid ${theme.primary}30`,
                       borderRadius:'8px', padding:'6px 12px',
-                      color:'#D1D5DB', fontSize:'0.85rem', outline:'none',
+                      color:'var(--text-faint)', fontSize:'0.85rem', outline:'none',
                       width:'100%', maxWidth:'420px', boxSizing:'border-box',
                       fontFamily:"'Satoshi',sans-serif"
                     }}
                   />
                 ) : (
-                  <div style={{ color:'#9CA3AF', fontSize:'0.85rem', fontStyle:'italic' }}>
+                  <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', fontStyle:'italic' }}>
                     "{profile.tagline}"
                   </div>
                 )}
@@ -442,8 +444,8 @@ export default function ProfilePage() {
                   { val:'16',     label:'Badges',      color:'#FFD700'      },
                 ].map(s => (
                   <div key={s.label} style={{
-                    background:'rgba(255,255,255,0.04)',
-                    border:'1px solid rgba(255,255,255,0.07)',
+                    background:'var(--border)',
+                    border:'1px solid var(--border)',
                     borderRadius:'14px', padding:'10px 16px', textAlign:'center',
                     minWidth:'64px'
                   }}>
@@ -473,10 +475,10 @@ export default function ProfilePage() {
                       whileTap={{ scale:0.96 }}
                       onClick={()=>setEditMode(false)}
                       style={{
-                        background:'rgba(255,255,255,0.05)',
-                        border:'1px solid rgba(255,255,255,0.1)',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
                         borderRadius:'12px', padding:'10px 18px',
-                        color:'#9CA3AF', cursor:'pointer', fontSize:'0.88rem'
+                        color:'var(--text-muted)', cursor:'pointer', fontSize:'0.88rem'
                       }}
                     >Cancel</motion.button>
                   </>
@@ -486,7 +488,7 @@ export default function ProfilePage() {
                     whileTap={{ scale:0.96 }}
                     onClick={()=>setEditMode(true)}
                     style={{
-                      background:'rgba(255,255,255,0.06)',
+                      background:'var(--border)',
                       border:`1px solid ${theme.primary}30`,
                       borderRadius:'12px', padding:'10px 20px',
                       color:theme.primary, cursor:'pointer', fontSize:'0.88rem',
@@ -507,11 +509,11 @@ export default function ProfilePage() {
                   style={{
                     position:'absolute', bottom:'20px', left:'50%',
                     transform:'translateX(-50%)',
-                    background:'rgba(0,255,135,0.15)',
-                    border:'1px solid rgba(0,255,135,0.4)',
+                    background:'rgba(249,115,22,0.15)',
+                    border:'1px solid rgba(249,115,22,0.4)',
                     borderRadius:'99px', padding:'8px 24px',
-                    color:'#00FF87', fontWeight:700, fontSize:'0.88rem',
-                    boxShadow:'0 0 20px rgba(0,255,135,0.3)',
+                    color:'#F97316', fontWeight:700, fontSize:'0.88rem',
+                    boxShadow:'0 0 20px rgba(249,115,22,0.3)',
                     display:'flex', alignItems:'center', gap:'8px', zIndex:10
                   }}
                 >✅ Profile saved!</motion.div>
@@ -536,11 +538,11 @@ export default function ProfilePage() {
                 onClick={()=>setActiveTab(tab.id)}
                 style={{
                   padding:'9px 20px', borderRadius:'12px', cursor:'pointer',
-                  border: activeTab===tab.id ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                  border: activeTab===tab.id ? 'none' : '1px solid var(--border)',
                   background: activeTab===tab.id
                     ? `linear-gradient(135deg,${theme.primary},${theme.secondary})` 
-                    : 'rgba(22,22,31,0.8)',
-                  color: activeTab===tab.id ? '#000' : '#9CA3AF',
+                    : 'var(--bg-card)',
+                  color: activeTab===tab.id ? '#000' : 'var(--text-muted)',
                   fontWeight: activeTab===tab.id ? 800 : 400,
                   fontSize:'0.84rem', fontFamily:"'Satoshi',sans-serif"
                 }}
@@ -559,7 +561,7 @@ export default function ProfilePage() {
 
                   {/* Personal Info */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
                       👤 Personal Information
                     </h3>
                     {[
@@ -587,9 +589,9 @@ export default function ProfilePage() {
                               onClick={()=>setProfile(p=>({...p,gender:g}))}
                               style={{
                                 flex:1, padding:'8px',
-                                background: profile.gender===g ? `${theme.primary}20` : 'rgba(255,255,255,0.04)',
-                                border:`1px solid ${profile.gender===g ? theme.primary+'50' : 'rgba(255,255,255,0.08)'}`,
-                                borderRadius:'10px', color: profile.gender===g ? theme.primary : '#9CA3AF',
+                                background: profile.gender===g ? `${theme.primary}20` : 'var(--border)',
+                                border:`1px solid ${profile.gender===g ? theme.primary+'50' : 'var(--border)'}`,
+                                borderRadius:'10px', color: profile.gender===g ? theme.primary : 'var(--text-muted)',
                                 fontWeight: profile.gender===g ? 700 : 400,
                                 cursor:'pointer', fontSize:'0.82rem'
                               }}
@@ -597,7 +599,7 @@ export default function ProfilePage() {
                           ))}
                         </div>
                       ) : (
-                        <div style={{ color:'#D1D5DB', fontSize:'0.88rem', padding:'9px 0' }}>{profile.gender}</div>
+                        <div style={{ color:'var(--text-faint)', fontSize:'0.88rem', padding:'9px 0' }}>{profile.gender}</div>
                       )}
                     </div>
                   </div>
@@ -607,21 +609,21 @@ export default function ProfilePage() {
 
                     {/* Account Info */}
                     <div style={{ ...card, padding:'28px' }}>
-                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
+                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
                         🔐 Account
                       </h3>
                       {[
                         { label:'Member Since', val:'January 15, 2025',  icon:'📅', color:theme.primary  },
                         { label:'Plan',          val:'NutriAI Pro 🌟',    icon:'⭐', color:'#FFD700'      },
                         { label:'Workouts',      val:'142 completed',     icon:'🏋️',color:theme.secondary},
-                        { label:'Meals Logged',  val:'867 meals',         icon:'🍽️',color:'#4ADE80'      },
+                        { label:'Meals Logged',  val:'867 meals',         icon:'🍽️',color:'#FDBA74'      },
                         { label:'AI Chats',      val:'58 conversations',  icon:'🤖', color:'#A78BFA'     },
                       ].map(s => (
                         <div key={s.label} style={{
                           display:'flex', justifyContent:'space-between', alignItems:'center',
-                          padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,0.04)'
+                          padding:'10px 0', borderBottom:'1px solid var(--border)'
                         }}>
-                          <span style={{ color:'#6B7280', fontSize:'0.82rem' }}>{s.icon} {s.label}</span>
+                          <span style={{ color:'var(--text-muted)', fontSize:'0.82rem' }}>{s.icon} {s.label}</span>
                           <span style={{ color:s.color, fontWeight:700, fontSize:'0.82rem' }}>{s.val}</span>
                         </div>
                       ))}
@@ -634,15 +636,15 @@ export default function ProfilePage() {
                       </h3>
                       {[
                         { label:'Reset All Data',   desc:'Wipe your logged meals & workouts', color:'#F97316' },
-                        { label:'Export Data',      desc:'Download all your data as CSV',     color:'#00D4FF' },
+                        { label:'Export Data',      desc:'Download all your data as CSV',     color:'#FB923C' },
                         { label:'Delete Account',   desc:'Permanently remove your account',  color:'#EF4444' },
                       ].map(a => (
                         <div key={a.label} style={{
                           display:'flex', justifyContent:'space-between', alignItems:'center',
-                          padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,0.04)'
+                          padding:'10px 0', borderBottom:'1px solid var(--border)'
                         }}>
                           <div>
-                            <div style={{ color:'#D1D5DB', fontSize:'0.82rem', fontWeight:600 }}>{a.label}</div>
+                            <div style={{ color:'var(--text-faint)', fontSize:'0.82rem', fontWeight:600 }}>{a.label}</div>
                             <div style={{ color:'#4B5563', fontSize:'0.72rem' }}>{a.desc}</div>
                           </div>
                           <motion.button
@@ -670,15 +672,15 @@ export default function ProfilePage() {
               >
                 {/* Rings row */}
                 <div style={{ ...card, padding:'32px', marginBottom:'20px', border:`1px solid ${theme.primary}15` }}>
-                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', fontWeight:700, margin:'0 0 24px' }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', fontWeight:700, margin:'0 0 24px' }}>
                     📊 Body Composition
                   </h3>
                   <div style={{ display:'flex', justifyContent:'space-around', flexWrap:'wrap', gap:'20px', marginBottom:'28px' }}>
                     <StatRing value={profile.weight}       max={120}  color={theme.primary}   label='Weight'     unit='kg'  />
                     <StatRing value={profile.bodyFat}      max={40}   color='#FF6B35'          label='Body Fat'   unit='%'   />
-                    <StatRing value={profile.muscle}       max={80}   color='#00FF87'          label='Muscle'     unit='kg'  />
+                    <StatRing value={profile.muscle}       max={80}   color='#F97316'          label='Muscle'     unit='kg'  />
                     <StatRing value={profile.bmi}          max={40}   color={theme.secondary}  label='BMI'        unit=''    />
-                    <StatRing value={profile.waterGoal}    max={5}    color='#00D4FF'          label='Water Goal' unit='L'   />
+                    <StatRing value={profile.waterGoal}    max={5}    color='#FB923C'          label='Water Goal' unit='L'   />
                     <StatRing value={profile.sleepGoal}    max={10}   color='#A78BFA'          label='Sleep Goal' unit='hrs' />
                   </div>
 
@@ -687,10 +689,10 @@ export default function ProfilePage() {
                     {[
                       { label:'Height (cm)',    key:'height',       color:theme.primary  },
                       { label:'Weight (kg)',    key:'weight',       color:theme.secondary },
-                      { label:'Target (kg)',    key:'targetWeight', color:'#00FF87'      },
+                      { label:'Target (kg)',    key:'targetWeight', color:'#F97316'      },
                       { label:'Body Fat (%)',   key:'bodyFat',      color:'#FF6B35'      },
-                      { label:'Muscle (kg)',    key:'muscle',       color:'#4ADE80'      },
-                      { label:'BMI',            key:'bmi',          color:'#00D4FF'      },
+                      { label:'Muscle (kg)',    key:'muscle',       color:'#FDBA74'      },
+                      { label:'BMI',            key:'bmi',          color:'#FB923C'      },
                       { label:'Water Goal (L)', key:'waterGoal',    color:'#60A5FA'      },
                       { label:'Sleep Goal (h)', key:'sleepGoal',    color:'#A78BFA'      },
                     ].map(f => (
@@ -708,15 +710,15 @@ export default function ProfilePage() {
 
                 {/* TDEE Calculator */}
                 <div style={{ ...card, padding:'28px', marginBottom:'20px', background:`${theme.primary}05`, border:`1px solid ${theme.primary}20` }}>
-                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>
                     🔥 Auto-Calculated TDEE
                   </h3>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:'14px' }}>
                     {[
-                      { label:'BMR',            val:Math.round(tdmr), color:'#9CA3AF',      unit:'kcal', icon:'💤' },
+                      { label:'BMR',            val:Math.round(tdmr), color:'var(--text-muted)',      unit:'kcal', icon:'💤' },
                       { label:'TDEE',           val:tdee,             color:theme.primary,  unit:'kcal', icon:'🔥' },
-                      { label:'Cut (-300)',      val:tdee-300,         color:'#00D4FF',      unit:'kcal', icon:'📉' },
-                      { label:'Bulk (+300)',     val:tdee+300,         color:'#00FF87',      unit:'kcal', icon:'📈' },
+                      { label:'Cut (-300)',      val:tdee-300,         color:'#FB923C',      unit:'kcal', icon:'📉' },
+                      { label:'Bulk (+300)',     val:tdee+300,         color:'#F97316',      unit:'kcal', icon:'📈' },
                     ].map(s => (
                       <motion.div key={s.label}
                         whileHover={{ y:-4, boxShadow:`0 8px 24px ${s.color}25` }}
@@ -736,7 +738,7 @@ export default function ProfilePage() {
 
                 {/* Weight progress chart */}
                 <div style={{ ...card, padding:'28px' }}>
-                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
+                  <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
                     📈 Weight Trend (10 Weeks)
                   </h3>
                   <div style={{ display:'flex', alignItems:'flex-end', gap:'14px', height:'100px', marginBottom:'10px' }}>
@@ -781,7 +783,7 @@ export default function ProfilePage() {
 
                   {/* Fitness Goal */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>🎯 Fitness Goal</h3>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>🎯 Fitness Goal</h3>
                     <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'8px' }}>
                       {FITNESS_GOALS.map(g => (
                         <motion.button key={g}
@@ -790,9 +792,9 @@ export default function ProfilePage() {
                           onClick={()=>setProfile(p=>({...p,goal:g}))}
                           style={{
                             padding:'10px 12px',
-                            background: profile.goal===g ? `${theme.primary}18` : 'rgba(255,255,255,0.03)',
-                            border:`1px solid ${profile.goal===g ? theme.primary+'50' : 'rgba(255,255,255,0.07)'}`,
-                            borderRadius:'12px', color: profile.goal===g ? theme.primary : '#9CA3AF',
+                            background: profile.goal===g ? `${theme.primary}18` : 'var(--border)',
+                            border:`1px solid ${profile.goal===g ? theme.primary+'50' : 'var(--border)'}`,
+                            borderRadius:'12px', color: profile.goal===g ? theme.primary : 'var(--text-muted)',
                             fontWeight: profile.goal===g ? 700 : 400,
                             cursor:'pointer', fontSize:'0.8rem',
                             boxShadow: profile.goal===g ? `0 0 12px ${theme.primary}25` : 'none',
@@ -807,7 +809,7 @@ export default function ProfilePage() {
 
                   {/* Diet Type */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>🥗 Diet Type</h3>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>🥗 Diet Type</h3>
                     <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'8px' }}>
                       {DIET_TYPES.map(d => (
                         <motion.button key={d}
@@ -816,9 +818,9 @@ export default function ProfilePage() {
                           onClick={()=>setProfile(p=>({...p,diet:d}))}
                           style={{
                             padding:'10px 12px',
-                            background: profile.diet===d ? 'rgba(0,212,255,0.12)' : 'rgba(255,255,255,0.03)',
-                            border:`1px solid ${profile.diet===d ? 'rgba(0,212,255,0.4)' : 'rgba(255,255,255,0.07)'}`,
-                            borderRadius:'12px', color: profile.diet===d ? '#00D4FF' : '#9CA3AF',
+                            background: profile.diet===d ? 'rgba(251,146,60,0.12)' : 'var(--border)',
+                            border:`1px solid ${profile.diet===d ? 'rgba(251,146,60,0.4)' : 'var(--border)'}`,
+                            borderRadius:'12px', color: profile.diet===d ? '#FB923C' : 'var(--text-muted)',
                             fontWeight: profile.diet===d ? 700 : 400,
                             cursor:'pointer', fontSize:'0.8rem', transition:'all 0.2s'
                           }}
@@ -829,7 +831,7 @@ export default function ProfilePage() {
 
                   {/* Activity Level */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>⚡ Activity Level</h3>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>⚡ Activity Level</h3>
                     <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
                       {ACTIVITY_OPTS.map(a => (
                         <motion.button key={a.id}
@@ -839,8 +841,8 @@ export default function ProfilePage() {
                           style={{
                             display:'flex', alignItems:'center', gap:'12px',
                             padding:'12px 16px',
-                            background: profile.activity===a.id ? `${theme.primary}12` : 'rgba(255,255,255,0.03)',
-                            border:`1px solid ${profile.activity===a.id ? theme.primary+'40' : 'rgba(255,255,255,0.06)'}`,
+                            background: profile.activity===a.id ? `${theme.primary}12` : 'var(--border)',
+                            border:`1px solid ${profile.activity===a.id ? theme.primary+'40' : 'var(--border)'}`,
                             borderRadius:'14px', cursor:'pointer',
                             boxShadow: profile.activity===a.id ? `0 0 16px ${theme.primary}20` : 'none',
                             transition:'all 0.2s'
@@ -848,7 +850,7 @@ export default function ProfilePage() {
                         >
                           <span style={{ fontSize:'1.3rem' }}>{a.emoji}</span>
                           <div style={{ flex:1, textAlign:'left' }}>
-                            <div style={{ color: profile.activity===a.id ? theme.primary : '#D1D5DB', fontWeight:600, fontSize:'0.88rem' }}>{a.label}</div>
+                            <div style={{ color: profile.activity===a.id ? theme.primary : 'var(--text-faint)', fontWeight:600, fontSize:'0.88rem' }}>{a.label}</div>
                             <div style={{ color:'#4B5563', fontSize:'0.72rem' }}>{a.desc}</div>
                           </div>
                           <div style={{ color: profile.activity===a.id ? theme.primary : '#374151', fontWeight:700, fontSize:'0.8rem' }}>×{a.multi}</div>
@@ -862,23 +864,23 @@ export default function ProfilePage() {
 
                     {/* Macro Goals */}
                     <div style={{ ...card, padding:'24px' }}>
-                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>📊 Daily Macro Goals</h3>
+                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>📊 Daily Macro Goals</h3>
                       {[
                         { label:'🔥 Calories (kcal)', key:'calorieGoal', color:theme.primary  },
-                        { label:'💪 Protein (g)',      key:'proteinGoal', color:'#00FF87'      },
+                        { label:'💪 Protein (g)',      key:'proteinGoal', color:'#F97316'      },
                         { label:'⚡ Carbs (g)',         key:'carbGoal',    color:'#7B61FF'      },
                         { label:'🥑 Fat (g)',           key:'fatGoal',     color:'#FFD700'      },
                       ].map(m => (
                         <div key={m.key} style={{ marginBottom:'12px' }}>
                           <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'5px' }}>
-                            <span style={{ color:'#9CA3AF', fontSize:'0.8rem' }}>{m.label}</span>
+                            <span style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>{m.label}</span>
                             {editMode ? (
                               <input
                                 type="number"
                                 value={profile[m.key]}
                                 onChange={e=>setProfile(p=>({...p,[m.key]:parseInt(e.target.value)||0}))}
                                 style={{
-                                  background:'rgba(255,255,255,0.06)',
+                                  background:'var(--border)',
                                   border:`1px solid ${m.color}30`,
                                   borderRadius:'6px', padding:'2px 8px',
                                   color:m.color, fontSize:'0.8rem',
@@ -890,7 +892,7 @@ export default function ProfilePage() {
                               <span style={{ color:m.color, fontWeight:700, fontSize:'0.85rem' }}>{profile[m.key]}</span>
                             )}
                           </div>
-                          <div style={{ height:'6px', background:'rgba(255,255,255,0.05)', borderRadius:'99px', overflow:'hidden' }}>
+                          <div style={{ height:'6px', background:'var(--border)', borderRadius:'99px', overflow:'hidden' }}>
                             <motion.div
                               initial={{ width:0 }}
                               animate={{ width:`${Math.min((profile[m.key]/3500)*100,100)}%` }}
@@ -904,7 +906,7 @@ export default function ProfilePage() {
 
                     {/* Workout days */}
                     <div style={{ ...card, padding:'24px' }}>
-                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 14px' }}>📅 Workout Days</h3>
+                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 14px' }}>📅 Workout Days</h3>
                       <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
                         {WORKOUT_DAYS.map(d => {
                           const active = profile.workoutDays.includes(d)
@@ -920,8 +922,8 @@ export default function ProfilePage() {
                               }))}
                               style={{
                                 width:'44px', height:'44px', borderRadius:'12px',
-                                background: active ? `${theme.primary}20` : 'rgba(255,255,255,0.04)',
-                                border:`2px solid ${active ? theme.primary : 'rgba(255,255,255,0.08)'}`,
+                                background: active ? `${theme.primary}20` : 'var(--border)',
+                                border:`2px solid ${active ? theme.primary : 'var(--border)'}`,
                                 color: active ? theme.primary : '#4B5563',
                                 fontWeight: active ? 800 : 400,
                                 cursor:'pointer', fontSize:'0.8rem',
@@ -950,33 +952,40 @@ export default function ProfilePage() {
 
                   {/* Theme */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 18px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 18px' }}>
                       🎨 App Theme
                     </h3>
                     <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'12px' }}>
-                      {THEMES.map(t => (
+                      {[
+                        { id:'light', label:'Light', desc:'Warm paper · frosted glass', sw:['#F5F1E8','#FFFFFF','#F97316'] },
+                        { id:'dark',  label:'Dark',  desc:'Warm charcoal · amber glow',  sw:['#141110','#221C17','#FB923C'] },
+                      ].map(t => (
                         <motion.div key={t.id}
                           whileHover={{ scale:1.04, y:-3 }}
                           whileTap={{ scale:0.97 }}
-                          onClick={()=>setSelectedTheme(t.id)}
+                          onClick={()=>setModeTheme(t.id)}
                           style={{
-                            background: selectedTheme===t.id ? `${t.primary}12` : 'rgba(255,255,255,0.03)',
-                            border:`2px solid ${selectedTheme===t.id ? t.primary : 'rgba(255,255,255,0.07)'}`,
+                            background: modeTheme===t.id ? 'rgba(249,115,22,0.08)' : 'var(--border)',
+                            border:`2px solid ${modeTheme===t.id ? '#F97316' : 'var(--border)'}`,
                             borderRadius:'16px', padding:'16px', cursor:'pointer',
-                            boxShadow: selectedTheme===t.id ? `0 0 20px ${t.primary}30` : 'none',
+                            boxShadow: modeTheme===t.id ? '0 0 20px rgba(249,115,22,0.25)' : 'none',
                             transition:'all 0.2s'
                           }}
                         >
                           <div style={{ display:'flex', gap:'6px', marginBottom:'8px' }}>
-                            {[t.primary,t.secondary,t.accent].map((c,i) => (
+                            {t.sw.map((c,i) => (
                               <div key={i} style={{
                                 width:'20px', height:'20px', borderRadius:'50%',
-                                background:c, boxShadow:`0 0 6px ${c}60` 
+                                background:c, boxShadow:`0 0 6px ${c}60`,
+                                border:'1px solid var(--border)'
                               }}/>
                             ))}
                           </div>
-                          <div style={{ color: selectedTheme===t.id ? t.primary : '#D1D5DB', fontWeight:600, fontSize:'0.85rem' }}>
-                            {selectedTheme===t.id ? '● ' : ''}{t.label}
+                          <div style={{ color: modeTheme===t.id ? '#F97316' : 'var(--text-faint)', fontWeight:600, fontSize:'0.85rem' }}>
+                            {modeTheme===t.id ? '● ' : ''}{t.label}
+                          </div>
+                          <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', marginTop:'2px' }}>
+                            {t.desc}
                           </div>
                         </motion.div>
                       ))}
@@ -986,7 +995,7 @@ export default function ProfilePage() {
                   {/* Avatar picker & Frame */}
                   <div style={{ display:'flex', flexDirection:'column', gap:'20px' }}>
                     <div style={{ ...card, padding:'28px' }}>
-                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>
+                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>
                         🧬 Avatar Style
                       </h3>
                       <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'10px', marginBottom:'16px' }}>
@@ -1017,8 +1026,8 @@ export default function ProfilePage() {
                       </div>
 
                       {/* Frame style */}
-                      <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:'16px' }}>
-                        <div style={{ color:'#6B7280', fontSize:'0.78rem', fontWeight:600, marginBottom:'10px', textTransform:'uppercase', letterSpacing:'0.05em' }}>
+                      <div style={{ borderTop:'1px solid var(--border)', paddingTop:'16px' }}>
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.78rem', fontWeight:600, marginBottom:'10px', textTransform:'uppercase', letterSpacing:'0.05em' }}>
                           Avatar Frame
                         </div>
                         <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
@@ -1031,9 +1040,9 @@ export default function ProfilePage() {
                                 onClick={()=>setSelectedFrame(f.id)}
                                 style={{
                                   padding:'6px 14px', borderRadius:'99px',
-                                  background: active ? `${theme.primary}18` : 'rgba(255,255,255,0.04)',
-                                  border:`1px solid ${active ? theme.primary+'50' : 'rgba(255,255,255,0.08)'}`,
-                                  color: active ? theme.primary : '#6B7280',
+                                  background: active ? `${theme.primary}18` : 'var(--border)',
+                                  border:`1px solid ${active ? theme.primary+'50' : 'var(--border)'}`,
+                                  color: active ? theme.primary : 'var(--text-muted)',
                                   fontWeight: active ? 700 : 400,
                                   cursor:'pointer', fontSize:'0.78rem'
                                 }}
@@ -1050,7 +1059,7 @@ export default function ProfilePage() {
                       background:`${avatar.gradient.replace('linear-gradient','radial-gradient')}06`,
                       border:`1px solid ${avatar.ring}20` 
                     }}>
-                      <div style={{ color:'#6B7280', fontSize:'0.78rem', marginBottom:'16px', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em' }}>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.78rem', marginBottom:'16px', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em' }}>
                         Preview
                       </div>
                       <div style={{ position:'relative', display:'inline-block', marginBottom:'14px' }}>
@@ -1072,9 +1081,9 @@ export default function ProfilePage() {
                           boxShadow:`0 0 30px ${avatar.ring}50` 
                         }}>{avatar.emoji}</div>
                       </div>
-                      <div style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontWeight:700 }}>{profile.name}</div>
+                      <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontWeight:700 }}>{profile.name}</div>
                       <div style={{ color:theme.primary, fontSize:'0.78rem' }}>@{profile.username}</div>
-                      <div style={{ color:'#6B7280', fontSize:'0.72rem', marginTop:'4px' }}>{avatar.label} · {frame.label} Frame</div>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', marginTop:'4px' }}>{avatar.label} · {frame.label} Frame</div>
                     </div>
                   </div>
                 </div>
@@ -1088,7 +1097,7 @@ export default function ProfilePage() {
               >
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px' }}>
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 6px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 6px' }}>
                       🔔 Notification Preferences
                     </h3>
                     <p style={{ color:'#4B5563', fontSize:'0.8rem', margin:'0 0 20px' }}>Control what NutriAI notifies you about</p>
@@ -1100,15 +1109,15 @@ export default function ProfilePage() {
                         style={{
                           display:'flex', justifyContent:'space-between', alignItems:'center',
                           padding:'16px 18px', marginBottom:'8px',
-                          background: notifs[n.id] ? `${theme.primary}06` : 'rgba(255,255,255,0.02)',
-                          border:`1px solid ${notifs[n.id] ? theme.primary+'20' : 'rgba(255,255,255,0.05)'}`,
+                          background: notifs[n.id] ? `${theme.primary}06` : 'var(--border)',
+                          border:`1px solid ${notifs[n.id] ? theme.primary+'20' : 'var(--border)'}`,
                           borderRadius:'14px', transition:'all 0.2s'
                         }}
                       >
                         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                           <span style={{ fontSize:'1.3rem' }}>{n.icon}</span>
                           <div>
-                            <div style={{ color: notifs[n.id] ? '#D1D5DB' : '#6B7280', fontWeight:600, fontSize:'0.88rem', transition:'color 0.2s' }}>{n.label}</div>
+                            <div style={{ color: notifs[n.id] ? 'var(--text-faint)' : 'var(--text-muted)', fontWeight:600, fontSize:'0.88rem', transition:'color 0.2s' }}>{n.label}</div>
                             <div style={{ color:'#374151', fontSize:'0.72rem' }}>{n.desc}</div>
                           </div>
                         </div>
@@ -1120,11 +1129,11 @@ export default function ProfilePage() {
                   <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
                     {/* Quick presets */}
                     <div style={{ ...card, padding:'24px' }}>
-                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'0.95rem', fontWeight:700, margin:'0 0 14px' }}>
+                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'0.95rem', fontWeight:700, margin:'0 0 14px' }}>
                         ⚡ Quick Presets
                       </h3>
                       {[
-                        { label:'All On',    fn:()=>setNotifs(Object.fromEntries(NOTIF_OPTS.map(n=>[n.id,true]))),  color:'#00FF87' },
+                        { label:'All On',    fn:()=>setNotifs(Object.fromEntries(NOTIF_OPTS.map(n=>[n.id,true]))),  color:'#F97316' },
                         { label:'All Off',   fn:()=>setNotifs(Object.fromEntries(NOTIF_OPTS.map(n=>[n.id,false]))), color:'#EF4444' },
                         { label:'Essential', fn:()=>setNotifs({meal:true,workout:true,water:false,streak:true,badge:false,report:true,ai:false,challenge:false}), color:theme.primary },
                       ].map(p => (
@@ -1150,7 +1159,7 @@ export default function ProfilePage() {
                       <div style={{ color:theme.primary, fontFamily:"'Clash Display',sans-serif", fontSize:'2rem', fontWeight:900 }}>
                         {Object.values(notifs).filter(Boolean).length}
                       </div>
-                      <div style={{ color:'#6B7280', fontSize:'0.8rem' }}>Active notifications</div>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>Active notifications</div>
                       <div style={{ color:'#374151', fontSize:'0.72rem', marginTop:'4px' }}>of {NOTIF_OPTS.length} total</div>
                     </div>
                   </div>
@@ -1165,7 +1174,7 @@ export default function ProfilePage() {
               >
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px' }}>
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 6px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 6px' }}>
                       🔒 Privacy Settings
                     </h3>
                     <p style={{ color:'#4B5563', fontSize:'0.8rem', margin:'0 0 20px' }}>Manage what others can see about you</p>
@@ -1177,35 +1186,35 @@ export default function ProfilePage() {
                         style={{
                           display:'flex', justifyContent:'space-between', alignItems:'center',
                           padding:'16px 18px', marginBottom:'8px',
-                          background: privacyS[p.id] ? 'rgba(0,212,255,0.05)' : 'rgba(255,255,255,0.02)',
-                          border:`1px solid ${privacyS[p.id] ? 'rgba(0,212,255,0.18)' : 'rgba(255,255,255,0.05)'}`,
+                          background: privacyS[p.id] ? 'rgba(251,146,60,0.05)' : 'var(--border)',
+                          border:`1px solid ${privacyS[p.id] ? 'rgba(251,146,60,0.18)' : 'var(--border)'}`,
                           borderRadius:'14px', transition:'all 0.2s'
                         }}
                       >
                         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                           <span style={{ fontSize:'1.3rem' }}>{p.icon}</span>
                           <div>
-                            <div style={{ color: privacyS[p.id] ? '#D1D5DB' : '#6B7280', fontWeight:600, fontSize:'0.88rem' }}>{p.label}</div>
+                            <div style={{ color: privacyS[p.id] ? 'var(--text-faint)' : 'var(--text-muted)', fontWeight:600, fontSize:'0.88rem' }}>{p.label}</div>
                             <div style={{ color:'#374151', fontSize:'0.72rem' }}>{p.desc}</div>
                           </div>
                         </div>
-                        <Toggle on={privacyS[p.id]} onChange={()=>setPrivacyS(pp=>({...pp,[p.id]:!pp[p.id]}))} color='#00D4FF'/>
+                        <Toggle on={privacyS[p.id]} onChange={()=>setPrivacyS(pp=>({...pp,[p.id]:!pp[p.id]}))} color='#FB923C'/>
                       </motion.div>
                     ))}
                   </div>
 
                   <div style={{ ...card, padding:'24px', height:'fit-content' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'0.95rem', fontWeight:700, margin:'0 0 14px' }}>
+                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'0.95rem', fontWeight:700, margin:'0 0 14px' }}>
                       🛡️ Privacy Score
                     </h3>
                     {(() => {
                       const score = Math.round((Object.values(privacyS).filter(Boolean).length / PRIVACY_OPTS.length)*100)
-                      const color = score > 70 ? '#00FF87' : score > 40 ? '#FFD700' : '#FF6B35'
+                      const color = score > 70 ? '#F97316' : score > 40 ? '#FFD700' : '#FF6B35'
                       return (
                         <>
                           <div style={{ position:'relative', width:'100px', margin:'0 auto 16px' }}>
                             <svg width="100" height="100" viewBox="0 0 100 100">
-                              <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10"/>
+                              <circle cx="50" cy="50" r="38" fill="none" stroke="var(--border)" strokeWidth="10"/>
                               <motion.circle
                                 cx="50" cy="50" r="38"
                                 fill="none" stroke={color} strokeWidth="10"
@@ -1251,8 +1260,8 @@ export default function ProfilePage() {
                       whileHover={{ y:-6, boxShadow:`0 16px 40px ${app.color}20` }}
                       style={{
                         ...card, padding:'24px',
-                        background: app.connected ? `${app.color}06` : 'rgba(18,18,26,0.8)',
-                        border:`1px solid ${app.connected ? app.color+'25' : 'rgba(255,255,255,0.07)'}`,
+                        background: app.connected ? `${app.color}06` : 'var(--bg-card)',
+                        border:`1px solid ${app.connected ? app.color+'25' : 'var(--border)'}`,
                         cursor:'pointer'
                       }}
                     >
@@ -1263,17 +1272,17 @@ export default function ProfilePage() {
                           style={{ fontSize:'2.2rem', filter: app.connected ? `drop-shadow(0 0 8px ${app.color})` : 'grayscale(0.8)' }}
                         >{app.icon}</motion.span>
                         <div style={{
-                          background: app.connected ? `${app.color}15` : 'rgba(255,255,255,0.06)',
-                          border:`1px solid ${app.connected ? app.color+'30' : 'rgba(255,255,255,0.1)'}`,
+                          background: app.connected ? `${app.color}15` : 'var(--border)',
+                          border:`1px solid ${app.connected ? app.color+'30' : 'var(--border)'}`,
                           borderRadius:'99px', padding:'3px 10px',
                           color: app.connected ? app.color : '#4B5563',
                           fontSize:'0.68rem', fontWeight:700
                         }}>{app.connected ? '● Connected' : 'Disconnected'}</div>
                       </div>
-                      <div style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontWeight:700, fontSize:'0.95rem', marginBottom:'4px' }}>
+                      <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontWeight:700, fontSize:'0.95rem', marginBottom:'4px' }}>
                         {app.name}
                       </div>
-                      <div style={{ color:'#6B7280', fontSize:'0.75rem', marginBottom:'14px', lineHeight:1.4 }}>
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', marginBottom:'14px', lineHeight:1.4 }}>
                         {app.desc}
                       </div>
                       <motion.button
@@ -1294,14 +1303,14 @@ export default function ProfilePage() {
                 </div>
 
                 <div style={{ ...card, padding:'24px', marginTop:'20px', textAlign:'center' }}>
-                  <div style={{ color:'#6B7280', fontSize:'0.82rem', marginBottom:'8px' }}>
+                  <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'8px' }}>
                     Connected: <span style={{ color:theme.primary, fontWeight:700 }}>{apps.filter(a=>a.connected).length}</span> of {apps.length} apps
                   </div>
                   <div style={{ display:'flex', justifyContent:'center', gap:'8px' }}>
                     {apps.map(a => (
                       <div key={a.name} style={{
                         width:'10px', height:'10px', borderRadius:'50%',
-                        background: a.connected ? a.color : 'rgba(255,255,255,0.1)',
+                        background: a.connected ? a.color : 'var(--border)',
                         boxShadow: a.connected ? `0 0 8px ${a.color}` : 'none'
                       }}/>
                     ))}
@@ -1320,7 +1329,7 @@ export default function ProfilePage() {
               initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
               style={{
                 position:'fixed', inset:0, zIndex:300,
-                background:'rgba(0,0,0,0.85)', backdropFilter:'blur(16px)',
+                background:'var(--shadow-color)', backdropFilter:'blur(16px)',
                 display:'flex', alignItems:'center', justifyContent:'center', padding:'20px'
               }}
               onClick={e=>e.target===e.currentTarget&&setShowAvatarModal(false)}
@@ -1335,20 +1344,20 @@ export default function ProfilePage() {
                   background:'rgba(10,10,18,0.99)',
                   border:`1px solid ${theme.primary}30`,
                   borderRadius:'32px',
-                  boxShadow:`0 60px 120px rgba(0,0,0,0.9), 0 0 80px ${theme.primary}15`,
+                  boxShadow:`0 60px 120px var(--shadow-color), 0 0 80px ${theme.primary}15`,
                   overflow:'hidden'
                 }}
               >
                 <div style={{ height:'3px', background:`linear-gradient(90deg,${theme.primary},${theme.secondary},transparent)` }}/>
                 <div style={{ padding:'32px' }}>
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'24px' }}>
-                    <h2 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.4rem', fontWeight:800, margin:0 }}>
+                    <h2 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.4rem', fontWeight:800, margin:0 }}>
                       ✨ Choose Your Avatar
                     </h2>
                     <button onClick={()=>setShowAvatarModal(false)} style={{
-                      background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)',
+                      background:'var(--border)', border:'1px solid var(--border)',
                       borderRadius:'50%', width:'36px', height:'36px',
-                      color:'#9CA3AF', cursor:'pointer', fontSize:'1rem'
+                      color:'var(--text-muted)', cursor:'pointer', fontSize:'1rem'
                     }}>✕</button>
                   </div>
 
@@ -1380,7 +1389,7 @@ export default function ProfilePage() {
                         }}
                       >{avatar.emoji}</motion.div>
                     </div>
-                    <div style={{ color:'white', fontWeight:700, marginTop:'10px', fontSize:'0.95rem' }}>{avatar.label}</div>
+                    <div style={{ color: 'var(--text-primary)', fontWeight:700, marginTop:'10px', fontSize:'0.95rem' }}>{avatar.label}</div>
                     <div style={{ color:avatar.ring, fontSize:'0.78rem' }}>Selected</div>
                   </div>
 
@@ -1428,9 +1437,9 @@ export default function ProfilePage() {
                           onClick={()=>setSelectedFrame(f.id)}
                           style={{
                             padding:'7px 16px', borderRadius:'99px',
-                            background: selectedFrame===f.id ? `${theme.primary}18` : 'rgba(255,255,255,0.04)',
-                            border:`1px solid ${selectedFrame===f.id ? theme.primary+'50' : 'rgba(255,255,255,0.08)'}`,
-                            color: selectedFrame===f.id ? theme.primary : '#6B7280',
+                            background: selectedFrame===f.id ? `${theme.primary}18` : 'var(--border)',
+                            border:`1px solid ${selectedFrame===f.id ? theme.primary+'50' : 'var(--border)'}`,
+                            color: selectedFrame===f.id ? theme.primary : 'var(--text-muted)',
                             fontWeight: selectedFrame===f.id ? 700 : 400,
                             cursor:'pointer', fontSize:'0.8rem'
                           }}

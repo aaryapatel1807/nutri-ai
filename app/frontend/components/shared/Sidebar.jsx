@@ -77,9 +77,9 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
               gap: '12px',
               padding: '10px 16px',
               borderRadius: '12px',
-              color: isActive ? '#00FF87' : '#6B7280',
-              background: isActive ? 'rgba(0,255,135,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #00FF87' : '3px solid transparent',
+              color: isActive ? '#F97316' : 'var(--text-muted)',
+              background: isActive ? 'rgba(249,115,22,0.1)' : 'transparent',
+              borderLeft: isActive ? '3px solid #F97316' : '3px solid transparent',
               fontSize: '0.9rem',
               fontFamily: "'Satoshi', sans-serif",
               cursor: 'pointer',
@@ -89,15 +89,15 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
             className="nav-item"
             onMouseEnter={(e) => {
               if (!isActive) {
-                e.currentTarget.style.background = 'rgba(0,255,135,0.08)'
-                e.currentTarget.style.color = '#00FF87'
+                e.currentTarget.style.background = 'rgba(249,115,22,0.08)'
+                e.currentTarget.style.color = '#F97316'
                 e.currentTarget.style.transform = 'translateX(2px)'
               }
             }}
             onMouseLeave={(e) => {
               if (!isActive) {
                 e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#6B7280'
+                e.currentTarget.style.color = 'var(--text-muted)'
                 e.currentTarget.style.transform = 'translateX(0)'
               }
             }}
@@ -119,7 +119,7 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.6)',
+            background: 'rgba(0,0,0,0.55)',
             zIndex: 90,
           }}
         />
@@ -130,9 +130,9 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
       top: 0,
       width: '260px',
       height: '100vh',
-      background: 'rgba(10,10,15,0.98)',
+      background: 'var(--bg-primary)',
       backdropFilter: 'blur(20px)',
-      borderRight: '1px solid rgba(255,255,255,0.06)',
+      borderRight: '1px solid var(--border)',
       zIndex: 100,
       display: 'flex',
       flexDirection: 'column',
@@ -145,7 +145,7 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
       <div style={{
         fontFamily: "'Clash Display', sans-serif",
         fontSize: '1.4rem',
-        color: 'white',
+        color: 'var(--text-primary)',
         marginBottom: '32px',
         display: 'flex',
         alignItems: 'center',
@@ -159,7 +159,7 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
       <nav>{navItemsRendered}</nav>
 
       {/* Bottom Section */}
-      <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
         {/* XP Bar */}
         <div style={{ marginBottom: '16px' }}>
           <div style={{
@@ -172,19 +172,19 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
           </div>
           <div style={{
             height: '6px',
-            background: 'rgba(255,255,255,0.1)',
+            background: 'var(--border)',
             borderRadius: '99px',
             overflow: 'hidden'
           }}>
             <div style={{
               height: '100%',
               width: `${Math.min(100, xpProgress)}%`,
-              background: 'linear-gradient(90deg, #00FF87, #00D4FF)',
+              background: 'linear-gradient(90deg, #F97316, #FB923C)',
               borderRadius: '99px',
               transition: 'width 0.5s ease'
             }} />
           </div>
-          <div style={{ marginTop: '4px', fontSize: '0.7rem', color: '#6B7280' }}>
+          <div style={{ marginTop: '4px', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
             {xpData.totalXP?.toLocaleString() || 0} / {nextLevelData.minXP.toLocaleString()} XP
           </div>
         </div>
@@ -195,21 +195,21 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
             width: '40px',
             height: '40px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #00FF87, #7B61FF)',
+            background: 'linear-gradient(135deg, #F97316, #7B61FF)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'white',
+            color: 'var(--text-primary)',
             fontWeight: 700,
             fontSize: '0.85rem',
-            border: '2px solid rgba(0,255,135,0.4)',
+            border: '2px solid rgba(249,115,22,0.4)',
             flexShrink: 0
           }}>
             {userInitials}
           </div>
           <div>
-            <div style={{ color: 'white', fontSize: '0.85rem', fontWeight: 500 }}>{userName}</div>
-            <div style={{ color: '#6B7280', fontSize: '0.75rem' }}>{xpData.levelName || 'Health Hero'}</div>
+            <div style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 500 }}>{userName}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{xpData.levelName || 'Health Hero'}</div>
           </div>
         </div>
       </div>

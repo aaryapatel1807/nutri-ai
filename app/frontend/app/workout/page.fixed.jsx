@@ -314,10 +314,10 @@ export default function WorkoutPlanner() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis 
                   dataKey="day" 
-                  stroke="#9ca3af" 
-                  tick={{ fill: '#9ca3af' }}
+                  stroke="var(--text-muted)" 
+                  tick={{ fill: 'var(--text-muted)' }}
                 />
-                <YAxis stroke="#9ca3af" tick={{ fill: '#9ca3af' }} />
+                <YAxis stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)' }} />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: '#1f2937', 
@@ -325,7 +325,7 @@ export default function WorkoutPlanner() {
                     borderRadius: '8px'
                   }}
                 />
-                <Bar dataKey="workouts" fill="#22c55e" />
+                <Bar dataKey="workouts" fill="#F97316" />
                 <Bar dataKey="calories" fill="#f97316" />
               </BarChart>
             </ResponsiveContainer>

@@ -13,22 +13,22 @@ export default function WeeklyHeatmap({ data }) {
             aspectRatio: '1/1',
             borderRadius: '10px',
             background: !item.calories
-              ? 'rgba(255,255,255,0.04)'
+              ? 'var(--border)'
               : item.calories >= item.goal
-                ? 'rgba(0,255,135,0.65)'
+                ? 'rgba(249,115,22,0.65)'
                 : item.calories >= item.goal * 0.7
-                  ? 'rgba(0,255,135,0.35)'
-                  : 'rgba(0,255,135,0.15)',
+                  ? 'rgba(249,115,22,0.35)'
+                  : 'rgba(249,115,22,0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 4px'
           }}>
-            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)' }}>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-primary)' }}>
               {item.calories || ''}
             </span>
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#6B7280' }}>{item.day}</div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{item.day}</div>
         </div>
       ))}
     </div>

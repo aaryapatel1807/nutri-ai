@@ -18,11 +18,11 @@ export default function GlassCard({
   return (
     <motion.div
       style={{
-        background: 'rgba(22,22,31,0.7)',
+        background: 'var(--bg-card)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid var(--border)',
         borderRadius: '24px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        boxShadow: '0 8px 32px var(--shadow-color)',
         padding: '24px',
         cursor: hover ? 'pointer' : 'default',
         ...style

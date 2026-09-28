@@ -24,7 +24,7 @@ export default function ChatWindow() {
             <div
               className={`max-w-xs px-4 py-2 rounded-lg ${
                 message.sender === 'user'
-                  ? 'bg-green-500 text-white'
+                  ? 'bg-[#F97316] text-white'
                   : 'bg-gray-100 text-gray-800'
               }`}
             >
@@ -42,11 +42,11 @@ export default function ChatWindow() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Ask about nutrition..."
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F97316]"
           />
           <button
             onClick={sendMessage}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors"
+            className="bg-[#F97316] hover:bg-[#EA580C] text-white px-4 py-2 rounded-lg transition-colors"
           >
             Send
           </button>

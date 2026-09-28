@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet" 
           href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600&f[]=satoshi@400,500,700&display=swap"
         />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('nutriai_theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})()` }} />
       </head>
       <body className={inter.className}>
         <div style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh' }}>
@@ -29,7 +30,7 @@ export default function RootLayout({ children }) {
               left: 0,
               width: '500px',
               height: '500px',
-              background: 'radial-gradient(rgba(0,255,135,0.04) 0%, transparent 70%)',
+              background: 'radial-gradient(rgba(249,115,22,0.04) 0%, transparent 70%)',
               animation: 'float 8s ease-in-out infinite',
               zIndex: -1,
               pointerEvents: 'none'

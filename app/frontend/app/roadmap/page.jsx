@@ -7,7 +7,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q2 2026',
       status: 'In Progress',
-      color: 'from-cyan-400 to-blue-500',
+      color: 'from-[#FB923C] to-[#EA580C]',
       items: [
         '✓ User authentication & profiles',
         '✓ Meal logging and tracking',
@@ -29,7 +29,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q4 2026',
       status: 'Planned',
-      color: 'from-green-400 to-cyan-400',
+      color: 'from-[#FDBA74] to-[#F97316]',
       items: [
         'AI meal plan generator',
         'Personalized supplement recommendations',
@@ -65,11 +65,11 @@ export default function RoadmapPage() {
   ]
 
   return (
-      <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] to-[#1A1A2E] p-6">
+      <div className="min-h-screen bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-primary)] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12 text-center">
-            <h1 className="text-5xl font-bold text-white mb-2">🗺️ Our Roadmap</h1>
+            <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">🗺️ Our Roadmap</h1>
             <p className="text-gray-400">Here's what we're building for NutriAI in 2026 and beyond</p>
           </div>
 
@@ -96,7 +96,7 @@ export default function RoadmapPage() {
                     </div>
 
                     {/* Quarter */}
-                    <h3 className="text-2xl font-bold text-white mb-4">{quarter.quarter}</h3>
+                    <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">{quarter.quarter}</h3>
 
                     {/* Items */}
                     <ul className="space-y-2">
@@ -120,15 +120,15 @@ export default function RoadmapPage() {
             transition={{ delay: 0.4 }}
             className="mb-16"
           >
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">✨ Upcoming Features</h2>
+            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-8 text-center">✨ Upcoming Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {features.map((feature, idx) => (
                 <div
                   key={idx}
-                  className="p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all backdrop-blur-sm text-center"
+                  className="p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-[var(--track)] transition-all backdrop-blur-sm text-center"
                 >
                   <div className="text-4xl mb-3">{feature.emoji}</div>
-                  <h3 className="text-lg font-bold text-white mb-2">{feature.name}</h3>
+                  <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">{feature.name}</h3>
                   <p className="text-gray-400 text-sm">{feature.description}</p>
                 </div>
               ))}
@@ -140,17 +140,17 @@ export default function RoadmapPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="p-8 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-sm text-center"
+            className="p-8 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 backdrop-blur-sm text-center"
           >
-            <h3 className="text-2xl font-bold text-white mb-2">📬 Stay Updated</h3>
+            <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">📬 Stay Updated</h3>
             <p className="text-gray-300 mb-6">Subscribe to get notified when new features launch</p>
             <div className="flex gap-2 max-w-md mx-auto">
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-[var(--border)] text-[var(--text-primary)] placeholder-gray-500 focus:outline-none focus:border-[#F97316]"
               />
-              <button className="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-all">
+              <button className="px-6 py-3 bg-[#F97316] text-[var(--text-primary)] rounded-lg font-semibold hover:bg-green-600 transition-all">
                 Subscribe
               </button>
             </div>

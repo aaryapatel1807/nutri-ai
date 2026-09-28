@@ -28,8 +28,8 @@ export default function OnboardingPage() {
   }
 
   const getBMIStatus = (bmi) => {
-    if (bmi < 18.5) return { label: 'Underweight', color: '#00D4FF' }
-    if (bmi < 25) return { label: 'Normal', color: '#00FF87' }
+    if (bmi < 18.5) return { label: 'Underweight', color: '#FB923C' }
+    if (bmi < 25) return { label: 'Normal', color: '#F97316' }
     if (bmi < 30) return { label: 'Overweight', color: '#FFD700' }
     return { label: 'Obese', color: '#FF6B35' }
   }
@@ -48,12 +48,12 @@ export default function OnboardingPage() {
   }
 
   return (
-      <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-4">
       {/* Progress Bar */}
       <div className="absolute top-0 left-0 right-0">
         <div className="h-1 bg-white/10">
           <div
-            className="h-full bg-[#00FF87] transition-all duration-500"
+            className="h-full bg-[#F97316] transition-all duration-500"
             style={{ width: `${(currentStep / 5) * 100}%` }}
           />
         </div>
@@ -62,9 +62,9 @@ export default function OnboardingPage() {
             <div
               key={step}
               className={`w-2.5 h-2.5 rounded-full transition-all ${step < currentStep
-                ? 'bg-[#00FF87]'
+                ? 'bg-[#F97316]'
                 : step === currentStep
-                  ? 'border-2 border-[#00FF87] bg-transparent'
+                  ? 'border-2 border-[#F97316] bg-transparent'
                   : 'bg-white/15'
                 }`}
             >
@@ -91,7 +91,7 @@ export default function OnboardingPage() {
                 exit={{ x: -50, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="font-display text-2xl text-white mb-8">
+                <h2 className="font-display text-2xl text-[var(--text-primary)] mb-8">
                   Let's get to know you 👋
                 </h2>
                 <div className="space-y-4">
@@ -115,8 +115,8 @@ export default function OnboardingPage() {
                         key={gender}
                         onClick={() => updateFormData('gender', gender)}
                         className={`px-4 py-2 rounded-lg transition-all ${formData.gender === gender
-                          ? 'bg-[#00FF87] text-black'
-                          : 'glass text-white'
+                          ? 'bg-[#F97316] text-black'
+                          : 'glass text-[var(--text-primary)]'
                           }`}
                       >
                         {gender}
@@ -136,7 +136,7 @@ export default function OnboardingPage() {
                 exit={{ x: -50, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="font-display text-2xl text-white mb-8">
+                <h2 className="font-display text-2xl text-[var(--text-primary)] mb-8">
                   Your body metrics 📏
                 </h2>
                 <div className="space-y-4">
@@ -166,7 +166,7 @@ export default function OnboardingPage() {
                       >
                         {calculateBMI()}
                       </div>
-                      <div className="text-white mt-2">
+                      <div className="text-[var(--text-primary)] mt-2">
                         {getBMIStatus(calculateBMI()).label}
                       </div>
                     </div>
@@ -184,7 +184,7 @@ export default function OnboardingPage() {
                 exit={{ x: -50, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="font-display text-2xl text-white mb-8">
+                <h2 className="font-display text-2xl text-[var(--text-primary)] mb-8">
                   What's your mission? 🎯
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -198,7 +198,7 @@ export default function OnboardingPage() {
                       key={goal.id}
                       onClick={() => updateFormData('goal', goal.id)}
                       className={`glass p-4 text-left transition-all ${formData.goal === goal.id
-                        ? 'border-2 border-[#00FF87] shadow-[0_0_20px_rgba(0,255,135,0.3)]'
+                        ? 'border-2 border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.3)]'
                         : 'border border-white/10'
                         }`}
                     >
@@ -206,7 +206,7 @@ export default function OnboardingPage() {
                         }`}>
                         {goal.emoji}
                       </div>
-                      <div className="font-display text-white">{goal.title}</div>
+                      <div className="font-display text-[var(--text-primary)]">{goal.title}</div>
                       <div className="text-[var(--text-muted)] text-sm">{goal.desc}</div>
                     </button>
                   ))}
@@ -223,7 +223,7 @@ export default function OnboardingPage() {
                 exit={{ x: -50, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="font-display text-2xl text-white mb-8">
+                <h2 className="font-display text-2xl text-[var(--text-primary)] mb-8">
                   How do you eat? 🌿
                 </h2>
                 <div className="flex flex-wrap gap-3">
@@ -238,8 +238,8 @@ export default function OnboardingPage() {
                       key={diet.id}
                       onClick={() => updateFormData('diet', diet.id)}
                       className={`px-4 py-2 rounded-full transition-all ${formData.diet === diet.id
-                        ? 'bg-[#00FF87] text-black'
-                        : 'glass text-white'
+                        ? 'bg-[#F97316] text-black'
+                        : 'glass text-[var(--text-primary)]'
                         }`}
                     >
                       <span className="mr-2">{diet.emoji}</span>
@@ -259,7 +259,7 @@ export default function OnboardingPage() {
                 exit={{ x: -50, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="font-display text-2xl text-white mb-8">
+                <h2 className="font-display text-2xl text-[var(--text-primary)] mb-8">
                   How active are you? ⚡
                 </h2>
                 <div className="space-y-4">
@@ -272,12 +272,12 @@ export default function OnboardingPage() {
                       key={level.id}
                       onClick={() => updateFormData('activity', level.id)}
                       className={`w-full glass p-4 text-left transition-all flex items-center gap-4 ${formData.activity === level.id
-                        ? 'border-2 border-[#00FF87] shadow-[0_0_20px_rgba(0,255,135,0.3)]'
+                        ? 'border-2 border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.3)]'
                         : 'border border-white/10'
                         }`}
                     >
                       <span className="text-2xl">{level.emoji}</span>
-                      <span className="font-display text-white">{level.label}</span>
+                      <span className="font-display text-[var(--text-primary)]">{level.label}</span>
                     </button>
                   ))}
                 </div>
