@@ -70,6 +70,9 @@ app.use('/api/posts', safeRoute('./routes/posts'))
 app.use('/api/water', safeRoute('./routes/water'))
 app.use('/api/weight', safeRoute('./routes/weight'))
 app.use('/api/recipes', safeRoute('./routes/recipes'))
+app.use('/api/barcode', safeRoute('./routes/barcode'))
+app.use('/api/sleep', safeRoute('./routes/sleep'))
+app.use('/api/coaching', safeRoute('./routes/coaching'))
 
 // Root Route
 app.get('/', (req, res) => {

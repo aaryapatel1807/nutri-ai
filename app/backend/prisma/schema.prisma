@@ -39,6 +39,7 @@ model User {
   posts         Post[]
   waterLogs     WaterLog[]
   weightLogs    WeightLog[]
+  sleepLogs     SleepLog[]
   savedRecipes  Recipe[]
   chatMessages  ChatMessage[]
 }
@@ -128,6 +129,18 @@ model WeightLog {
   weight    Float
   date      DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SleepLog {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime
+  hours     Float
+  quality   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
 }
 
 model Recipe {
