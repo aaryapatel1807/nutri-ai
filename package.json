@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "NutriAI - Complete nutrition and fitness tracking application",
   "scripts": {
-    "dev": "concurrently \"cd app/frontend && npm run dev\" \"cd app/backend && node server.js\" \"cd app/ml-service && venv\\Scripts\\python -m uvicorn main:app --reload --port 8000\"",
-    "install:all": "cd app/frontend && npm install && cd ../backend && npm install && cd ../ml-service && python -m venv venv && venv\\Scripts\\pip install -r requirements.txt",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\" \"npm run ml\"",
+    "install:all": "npm run install:frontend && npm run install:backend && node scripts/setup-ml.js",
+    "install:frontend": "cd app/frontend && npm install",
+    "install:backend": "cd app/backend && npm install",
     "frontend": "cd app/frontend && npm run dev",
     "backend": "cd app/backend && node server.js",
-    "ml": "cd app/ml-service && venv\\Scripts\\python -m uvicorn main:app --reload --port 8000",
+    "ml": "node scripts/run-ml.js",
     "start": "npm run dev"
   },
   "devDependencies": {
