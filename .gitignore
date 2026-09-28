@@ -32,3 +32,6 @@ generated/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local UI audit screenshots (not part of the app)
+.screenshots/

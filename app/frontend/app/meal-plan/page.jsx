@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import useIsMobile from '../../lib/useIsMobile'
 
 const MEAL_PLANS = [
   {
@@ -196,6 +197,7 @@ const MACRO_TARGETS = {
 }
 
 export default function MealPlanPage() {
+  const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState('plans')
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [activeDay, setActiveDay] = useState('Monday')
@@ -384,16 +386,15 @@ export default function MealPlanPage() {
                   <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', alignItems:'center' }}>
                     <span style={{ color:'#4B5563', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', minWidth:'70px' }}>Level</span>
                     {DIFFICULTIES.map(d => {
-                      const dc = d==='Beginner' ? '#00FF87' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#FF6B35' : '#9CA3AF'
                       const active = activeDifficulty===d
                       return (
                         <motion.button key={d} whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}
                           onClick={() => setActiveDifficulty(d)}
                           style={{
                             padding:'5px 14px', borderRadius:'99px',
-                            border: active ? `1px solid ${dc}50` : '1px solid rgba(255,255,255,0.07)',
-                            background: active ? `${dc}15` : 'rgba(22,22,31,0.8)',
-                            color: active ? dc : '#9CA3AF',
+                            border: active ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                            background: active ? 'linear-gradient(135deg,#F97316,#FFD700)' : 'rgba(22,22,31,0.8)',
+                            color: active ? '#000' : '#9CA3AF',
                             fontWeight: active ? 700 : 400,
                             cursor:'pointer', fontSize:'0.78rem'
                           }}>{d}</motion.button>
@@ -407,9 +408,9 @@ export default function MealPlanPage() {
                         onClick={() => setActiveDiet(dt)}
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
-                          border: activeDiet===dt ? '1px solid rgba(0,212,255,0.4)' : '1px solid rgba(255,255,255,0.07)',
-                          background: activeDiet===dt ? 'rgba(0,212,255,0.12)' : 'rgba(22,22,31,0.8)',
-                          color: activeDiet===dt ? '#00D4FF' : '#9CA3AF',
+                          border: activeDiet===dt ? 'none' : '1px solid rgba(255,255,255,0.07)',
+                          background: activeDiet===dt ? 'linear-gradient(135deg,#F97316,#FFD700)' : 'rgba(22,22,31,0.8)',
+                          color: activeDiet===dt ? '#000' : '#9CA3AF',
                           fontWeight: activeDiet===dt ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem'
                         }}>{dt}</motion.button>
@@ -720,7 +721,7 @@ export default function MealPlanPage() {
               <motion.div key="nutrition"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'20px', marginBottom:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px', marginBottom:'20px' }}>
                   {/* Weekly chart */}
                   <div style={{ ...card, padding:'28px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
@@ -863,7 +864,7 @@ export default function MealPlanPage() {
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
                 {/* Summary */}
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'28px', marginBottom:'20px', width:'100%' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'28px', marginBottom:'20px', width:'100%' }}>
                   {[
                     { label:'Total Items',    val:Object.values(GROCERY_LIST).flat().length, icon:'🛒', color:'#00FF87' },
                     { label:'Est. Cost',      val:'₹2,840',  icon:'💰', color:'#FFD700' },
@@ -976,7 +977,7 @@ export default function MealPlanPage() {
                   ))}
                 </div>
 
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', marginBottom:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px', marginBottom:'20px' }}>
 
                   {/* Big macro display */}
                   <div style={{ ...card, padding:'32px' }}>
@@ -1088,7 +1089,7 @@ export default function MealPlanPage() {
                   <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
                     ⏰ Optimal Meal Timing Guide
                   </h3>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'16px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'16px' }}>
                     {[
                       { time:'6-8 AM',     label:'Wake Up Window',    cal:'20-25%',  focus:'Complex carbs + protein',    icon:'🌅', color:'#FFD700', tip:'Fuel morning metabolism' },
                       { time:'10-11 AM',   label:'Mid Morning',       cal:'10-15%',  focus:'Protein + light carbs',       icon:'☀️', color:'#00FF87', tip:'Prevent muscle catabolism' },
@@ -1134,7 +1135,7 @@ export default function MealPlanPage() {
               <motion.div key="water"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 2fr', gap:'20px', marginBottom:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 2fr', gap:'20px', marginBottom:'20px' }}>
 
                   {/* Big water tracker */}
                   <div style={{ ...card, padding:'32px', textAlign:'center',
@@ -1144,7 +1145,7 @@ export default function MealPlanPage() {
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
                       💧 Today's Hydration
                     </h3>
-                    <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'12px', marginBottom:'24px' }}>
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'12px', marginBottom:'24px' }}>
                       {[...Array(8)].map((_,i) => (
                         <motion.div
                           key={i}
@@ -1218,7 +1219,7 @@ export default function MealPlanPage() {
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
                       🧬 Hydration Science
                     </h3>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'16px' }}>
                       {[
                         { title:'Performance',  text:'Even 2% dehydration reduces strength by 10-15% and aerobic performance by 20%', icon:'💪', color:'#00FF87' },
                         { title:'Fat Loss',      text:'Drinking 500ml before meals reduces calorie intake by 13% and boosts metabolism', icon:'🔥', color:'#FF6B35' },
@@ -1255,7 +1256,7 @@ export default function MealPlanPage() {
                   <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.1rem', marginBottom:'20px' }}>
                     📅 Daily Hydration Schedule
                   </h3>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'14px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'14px' }}>
                     {[
                       { time:'6:30 AM', amount:'500ml', reason:'Kickstart metabolism after overnight fast', icon:'🌅', done:true },
                       { time:'9:00 AM', amount:'250ml', reason:'Mid-morning energy and focus', icon:'☀️', done:true },
@@ -1368,7 +1369,7 @@ export default function MealPlanPage() {
                   </div>
 
                   {/* Stats */}
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:'12px', marginBottom:'28px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(5,1fr)', gap:'12px', marginBottom:'28px' }}>
                     {[
                       { label:'Calories', val:selectedPlan.calories, unit:'kcal',   color:selectedPlan.color, icon:'🔥' },
                       { label:'Protein',  val:selectedPlan.protein,  unit:'g/day',  color:'#00FF87',           icon:'💪' },

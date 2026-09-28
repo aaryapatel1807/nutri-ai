@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
 
@@ -21,6 +22,7 @@ const SAMPLE_FOODS = [
 ]
 
 export default function MealLogger() {
+  const isMobile = useIsMobile()
   const [activeMeal, setActiveMeal] = useState('Breakfast')
   const [search, setSearch] = useState('')
   const [logged, setLogged] = useState([])
@@ -301,7 +303,7 @@ export default function MealLogger() {
         </div>
 
         {/* MEAL GROUPS */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px' }}>
           {mealGroups.map((group, gi) => (
             <motion.div
               key={group.type}

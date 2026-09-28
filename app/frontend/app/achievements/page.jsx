@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import api from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
 
 
 const BADGES_MOCK = [
@@ -301,6 +302,7 @@ function BadgeCard({ badge, onClick, index }) {
 }
 
 export default function Achievements() {
+  const isMobile = useIsMobile()
   const [selectedBadge, setSelectedBadge] = useState(null)
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeFilter, setActiveFilter] = useState('All')
@@ -558,7 +560,7 @@ export default function Achievements() {
           </motion.div>
 
           {/* MAIN GRID */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 320px', gap:'20px' }}>
+          <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 320px', gap:'20px' }}>
 
             {/* BADGES GRID */}
             <div>

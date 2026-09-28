@@ -3,8 +3,17 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import CountUp from 'react-countup'
 import api, { getCurrentUser, getTodayNutrition, getWeeklyNutrition, getUserXP } from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
+
+function getGreeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good Morning'
+  if (hour < 17) return 'Good Afternoon'
+  return 'Good Evening'
+}
 
 export default function Dashboard() {
+  const isMobile = useIsMobile()
   const [user, setUser] = useState({ name: 'Loading...' })
   const [water, setWater] = useState(0)
   const [waterLogs, setWaterLogs] = useState([])
@@ -172,7 +181,7 @@ export default function Dashboard() {
         >
           <h1 style={{
             fontFamily: "'Clash Display',sans-serif",
-            fontSize: '2.5rem',
+            fontSize: isMobile ? '1.7rem' : '2.5rem',
             fontWeight: 700,
             color: 'white',
             margin: 0,
@@ -180,7 +189,7 @@ export default function Dashboard() {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}>
-            Good Morning, {user.name} 👋
+            {getGreeting()}, {user.name} 👋
           </h1>
           <p style={{
             color: '#6B7280',
@@ -219,7 +228,7 @@ export default function Dashboard() {
           {/* ROW 1 */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
             width: '100%',
             gap: '20px',
             marginBottom: '20px'
@@ -342,7 +351,7 @@ export default function Dashboard() {
                 <div style={{ color: '#6B7280', fontSize: '0.8rem', marginBottom: '16px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   Hydration 💧
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' }}>
                   {[...Array(8)].map((_, i) => (
                     <div key={i}
                       style={{
@@ -376,7 +385,7 @@ export default function Dashboard() {
           {/* ROW 2 */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '3fr 2fr',
+            gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr',
             gap: '20px',
             marginBottom: '20px',
             width: '100%'
@@ -394,7 +403,20 @@ export default function Dashboard() {
                   This Week 📅
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  {weeklyData.map((d, i) => (
+                  {weeklyData.length === 0 ? (
+                    <div style={{
+                      width: '100%',
+                      textAlign: 'center',
+                      padding: '24px 12px',
+                      color: '#6B7280',
+                      fontSize: '0.85rem',
+                      fontFamily: "'Satoshi',sans-serif"
+                    }}>
+                      No activity logged this week yet.<br />
+                      Log your first meal to start your heatmap 🔥
+                    </div>
+                  ) : (
+                  weeklyData.map((d, i) => (
                     <div key={i} style={{ textAlign: 'center', flex: 1 }}>
                       <motion.div
                         initial={{ scale: 0 }}
@@ -417,7 +439,7 @@ export default function Dashboard() {
                       </motion.div>
                       <div style={{ fontSize: '0.72rem', color: '#6B7280', fontWeight: 500 }}>{d.day}</div>
                     </div>
-                  ))}
+                  )))}
                 </div>
               </motion.div>
             </div>
@@ -473,7 +495,7 @@ export default function Dashboard() {
           {/* ROW 3 */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
             width: '100%',
             gap: '20px',
             marginBottom: '20px'

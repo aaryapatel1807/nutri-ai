@@ -50,6 +50,11 @@ export default function RoadmapPage() {
     },
   ]
 
+  const statusPillStyle = {
+    'In Progress': 'bg-amber-400/15 text-amber-200 border-amber-400/40',
+    'Planned': 'bg-white/10 text-gray-100 border-white/30',
+  }
+
   const features = [
     { emoji: '🤖', name: 'AI Coaching', description: 'Personalized guidance powered by AI' },
     { emoji: '📸', name: 'Food Detection', description: 'Scan meals for instant nutrition data' },
@@ -86,8 +91,8 @@ export default function RoadmapPage() {
 
                   <div className={`p-6 rounded-xl border border-white/10 bg-gradient-to-br ${quarter.color} bg-opacity-10 backdrop-blur-sm`}>
                     {/* Status Badge */}
-                    <div className="inline-block px-3 py-1 bg-white/10 rounded-full text-sm font-semibold mb-3">
-                      <span className={`text-transparent bg-clip-text bg-gradient-to-r ${quarter.color}`}>{quarter.status}</span>
+                    <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-3 border ${statusPillStyle[quarter.status] || 'bg-white/10 text-gray-100 border-white/30'}`}>
+                      {quarter.status}
                     </div>
 
                     {/* Quarter */}

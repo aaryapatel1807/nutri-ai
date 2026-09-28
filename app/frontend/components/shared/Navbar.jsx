@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Bell } from 'lucide-react'
+import { Bell, Menu } from 'lucide-react'
 import { glowPulse } from '../../lib/animations'
 import api from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -12,7 +13,8 @@ function getGreeting() {
   return 'Good Evening'
 }
 
-export default function Navbar() {
+export default function Navbar({ onMenuClick = () => {} }) {
+  const isMobile = useIsMobile()
   const [userName, setUserName]     = useState('User')
   const [userInitials, setUserInitials] = useState('U')
   const [streak, setStreak]         = useState(0)
@@ -60,9 +62,9 @@ export default function Navbar() {
     <div style={{
       position: 'fixed',
       top: 0,
-      left: '260px',
+      left: isMobile ? 0 : '260px',
       right: 0,
-      height: '80px',
+      height: isMobile ? '64px' : '80px',
       background: 'rgba(10,10,15,0.95)',
       backdropFilter: 'blur(20px)',
       borderBottom: '1px solid rgba(255,255,255,0.06)',
@@ -70,15 +72,34 @@ export default function Navbar() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 32px'
+      padding: isMobile ? '0 12px' : '0 32px'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         {/* Left Side */}
-        <div>
-          <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: '1.2rem', color: 'white', margin: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          {isMobile && (
+            <button
+              onClick={onMenuClick}
+              aria-label="Open menu"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0
+              }}
+            >
+              <Menu size={22} />
+            </button>
+          )}
+          <div style={{ minWidth: 0 }}>
+          <h1 style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? '0.95rem' : '1.2rem', color: 'white', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {getGreeting()}, {userName.split(' ')[0]} 👋
           </h1>
-          {tip && (
+          {tip && !isMobile && (
             <div style={{ marginTop: '4px' }}>
               <div style={{
                 display: 'inline-flex',
@@ -96,6 +117,7 @@ export default function Navbar() {
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Right Side */}

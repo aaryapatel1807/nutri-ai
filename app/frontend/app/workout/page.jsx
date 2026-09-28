@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import useIsMobile from '../../lib/useIsMobile'
 // PageWrapper removed to fix double-wrap bug
 
 const WORKOUTS = [
@@ -265,6 +266,7 @@ const PRS = [
 ]
 
 export default function WorkoutPage() {
+  const isMobile = useIsMobile()
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeDifficulty, setActiveDifficulty] = useState('All')
   const [activeEquipment, setActiveEquipment] = useState('All')
@@ -955,7 +957,7 @@ export default function WorkoutPage() {
                 </div>
 
                 {/* Weekly summary */}
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'16px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'16px' }}>
                   {[
                     { label:'Sessions Completed', val:'3/5',       icon:'✅', color:'#00FF87', desc:'On track!' },
                     { label:'Total Calories',      val:'1,220',     icon:'🔥', color:'#FF6B35', desc:'kcal burned' },
@@ -992,7 +994,7 @@ export default function WorkoutPage() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'20px' }}>
                   {Object.entries(MUSCLE_GROUPS).map(([muscle, data], i) => {
                     const relatedWorkouts = WORKOUTS.filter(w => w.muscles.some(m => m.toLowerCase().includes(muscle.toLowerCase())))
                     return (
@@ -1074,7 +1076,7 @@ export default function WorkoutPage() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'20px', marginBottom:'24px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'20px', marginBottom:'24px' }}>
                   {PRS.map((pr, i) => (
                     <motion.div
                       key={pr.lift}
@@ -1167,7 +1169,7 @@ export default function WorkoutPage() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'20px', marginBottom:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px', marginBottom:'20px' }}>
 
                   {/* Volume chart */}
                   <div style={{ ...card, padding:'28px' }}>
@@ -1375,7 +1377,7 @@ export default function WorkoutPage() {
                   </div>
 
                   {/* Stats */}
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:'12px', marginBottom:'32px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(5,1fr)', gap:'12px', marginBottom:'32px' }}>
                     {[
                       { label:'Duration',  val:selected.duration,         unit:'min',     color:selected.color, icon:'⏱' },
                       { label:'Calories',  val:selected.calories,         unit:'kcal',    color:'#FF6B35',       icon:'🔥' },

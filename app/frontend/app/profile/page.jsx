@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import useIsMobile from '../../lib/useIsMobile'
 
 /* ══════════ DATA ══════════ */
 const AVATAR_STYLES = [
@@ -141,6 +142,7 @@ function StatRing({ value, max, color, size=80, label, unit }) {
 
 /* ══════════ MAIN ══════════ */
 export default function ProfilePage() {
+  const isMobile = useIsMobile()
   const [activeTab,      setActiveTab]       = useState('profile')
   const [selectedAvatar, setSelectedAvatar]  = useState('warrior')
   const [selectedFrame,  setSelectedFrame]   = useState('gold')
@@ -153,9 +155,9 @@ export default function ProfilePage() {
   const [privacyS,       setPrivacyS]        = useState({ public:true, streak:true, weight:false, board:true, ailearn:true })
   const [hovAvatar,      setHovAvatar]       = useState(null)
   const [profile, setProfile] = useState({
-    name:'Aarya Patel', username:'aarya_fit', tagline:'Fitness nerd 🔥 · 14-day streak · Chasing 10% BF',
-    email:'aarya.patel@gmail.com', phone:'+91 98765 43210',
-    dob:'2002-03-15', gender:'Male', location:'Vadodara, Gujarat',
+    name:'User', username:'', tagline:'Getting stronger every day 💪',
+    email:'', phone:'',
+    dob:'2000-01-01', gender:'Male', location:'',
     height:175, weight:74.8, targetWeight:70,
     bodyFat:19.2, muscle:60.1, bmi:24.4,
     goal:'Muscle Building', diet:'No Restriction', activity:'very',
@@ -163,6 +165,24 @@ export default function ProfilePage() {
     calorieGoal:2800, proteinGoal:210, carbGoal:320, fatGoal:85,
     waterGoal:3, sleepGoal:8,
   })
+
+  // Hydrate identity from the logged-in user instead of hardcoded demo data
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('nutriai_user')
+      if (raw && raw !== 'undefined') {
+        const u = JSON.parse(raw)
+        const name = u.name || 'User'
+        const derivedUsername = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+        setProfile(p => ({
+          ...p,
+          name,
+          username: p.username || derivedUsername,
+          email: u.email || p.email,
+        }))
+      }
+    } catch (e) {}
+  }, [])
 
   const theme  = THEMES.find(t=>t.id===selectedTheme) || THEMES[0]
   const avatar = AVATAR_STYLES.find(a=>a.id===selectedAvatar) || AVATAR_STYLES[0]
@@ -535,7 +555,7 @@ export default function ProfilePage() {
               <motion.div key="profile"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px' }}>
 
                   {/* Personal Info */}
                   <div style={{ ...card, padding:'28px' }}>
@@ -757,12 +777,12 @@ export default function ProfilePage() {
               <motion.div key="goals"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px' }}>
 
                   {/* Fitness Goal */}
                   <div style={{ ...card, padding:'28px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>🎯 Fitness Goal</h3>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'8px' }}>
                       {FITNESS_GOALS.map(g => (
                         <motion.button key={g}
                           whileHover={{ scale:1.03 }}
@@ -788,7 +808,7 @@ export default function ProfilePage() {
                   {/* Diet Type */}
                   <div style={{ ...card, padding:'28px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>🥗 Diet Type</h3>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'8px' }}>
                       {DIET_TYPES.map(d => (
                         <motion.button key={d}
                           whileHover={{ scale:1.03 }}
@@ -926,14 +946,14 @@ export default function ProfilePage() {
               <motion.div key="appearance"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px' }}>
 
                   {/* Theme */}
                   <div style={{ ...card, padding:'28px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 18px' }}>
                       🎨 App Theme
                     </h3>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'12px' }}>
                       {THEMES.map(t => (
                         <motion.div key={t.id}
                           whileHover={{ scale:1.04, y:-3 }}
@@ -969,7 +989,7 @@ export default function ProfilePage() {
                       <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>
                         🧬 Avatar Style
                       </h3>
-                      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'10px', marginBottom:'16px' }}>
+                      <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'10px', marginBottom:'16px' }}>
                         {AVATAR_STYLES.map(a => (
                           <motion.div key={a.id}
                             whileHover={{ scale:1.1, y:-4 }}
@@ -1066,7 +1086,7 @@ export default function ProfilePage() {
               <motion.div key="notifs"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px' }}>
                   <div style={{ ...card, padding:'28px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 6px' }}>
                       🔔 Notification Preferences
@@ -1143,7 +1163,7 @@ export default function ProfilePage() {
               <motion.div key="privacy"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'20px' }}>
+                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap:'20px' }}>
                   <div style={{ ...card, padding:'28px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'white', fontSize:'1.05rem', fontWeight:700, margin:'0 0 6px' }}>
                       🔒 Privacy Settings
@@ -1365,7 +1385,7 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Grid */}
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'10px', marginBottom:'20px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'10px', marginBottom:'20px' }}>
                     {AVATAR_STYLES.map(a => (
                       <motion.div key={a.id}
                         whileHover={{ scale:1.1, y:-4 }}

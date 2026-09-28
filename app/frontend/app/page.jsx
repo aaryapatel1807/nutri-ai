@@ -98,10 +98,10 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0A0A0F] overflow-hidden relative">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-[#0A0A0F] overflow-hidden relative">
 
       {/* LEFT PANEL - HERO SECTION */}
-      <div className="w-[60%] flex flex-col justify-center p-[80px_60px] relative">
+      <div className="w-full lg:w-[60%] flex flex-col justify-center px-6 py-14 sm:p-12 lg:p-[80px_60px] relative">
 
         {/* Background Orbs */}
         <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,255,135,0.06)_0%,transparent_70%)] rounded-full animate-[float_8s_ease-in-out_infinite] pointer-events-none z-0" />
@@ -113,7 +113,7 @@ export default function LandingPage() {
             variants={fadeInUp}
             initial="initial"
             animate="animate"
-            className="font-['Clash_Display'] text-[5rem] font-bold text-[#F0F0FF] leading-[1.1] m-0"
+            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#F0F0FF] leading-[1.1] m-0"
           >
             YOUR BODY.
           </motion.h1>
@@ -122,7 +122,7 @@ export default function LandingPage() {
             initial="initial"
             animate="animate"
             transition={{ delay: 0.2 }}
-            className="font-['Clash_Display'] text-[5rem] font-bold text-[#F0F0FF] leading-[1.1] m-0"
+            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#F0F0FF] leading-[1.1] m-0"
           >
             YOUR DATA.
           </motion.h1>
@@ -131,7 +131,8 @@ export default function LandingPage() {
             initial="initial"
             animate="animate"
             transition={{ delay: 0.4 }}
-            className="font-['Clash_Display'] text-[5rem] font-bold text-[#00FF87] leading-[1.1] m-0 shadow-[0_0_40px_rgba(0,255,135,0.6)]"
+            style={{ textShadow: '0 0 40px rgba(0,255,135,0.6)' }}
+            className="font-['Clash_Display'] text-[2.8rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[5rem] font-bold text-[#00FF87] leading-[1.1] m-0"
           >
             YOUR AI.
           </motion.h1>
@@ -166,7 +167,7 @@ export default function LandingPage() {
       </div>
 
       {/* RIGHT PANEL - AUTH SECTION */}
-      <div className="w-[40%] flex items-center justify-center p-10">
+      <div className="w-full lg:w-[40%] flex items-center justify-center p-6 lg:p-10 pb-12 lg:pb-10">
 
         {/* Auth Glass Card */}
         <div className="bg-[rgba(22,22,31,0.8)] backdrop-blur-[20px] border border-[rgba(255,255,255,0.08)] rounded-[24px] p-10 w-full max-w-[420px]">

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { ml } from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
 
 const RECIPES = [
   {
@@ -57,6 +58,7 @@ const RECIPES = [
 const FILTERS = ['All','Indian','Western','Japanese','Healthy','Vegan','High Protein','Quick']
 
 export default function RecipeMaker() {
+  const isMobile = useIsMobile()
   const [search, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState('All')
   const [selected, setSelected] = useState(null)
@@ -441,7 +443,7 @@ export default function RecipeMaker() {
                 {/* RECIPE GRID */}
                 <div style={{
                   display:'grid',
-                  gridTemplateColumns:'repeat(3,1fr)',
+                  gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)',
                   gap:'20px'
                 }}>
                   {filtered.map((recipe, i) => (
@@ -628,7 +630,7 @@ export default function RecipeMaker() {
 
                   {/* Stats row */}
                   <div style={{
-                    display:'grid', gridTemplateColumns:'repeat(4,1fr)',
+                    display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)',
                     gap:'12px', marginBottom:'28px'
                   }}>
                     {[
@@ -655,7 +657,7 @@ export default function RecipeMaker() {
                   </div>
 
                   {/* Two column */}
-                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px' }}>
                     {/* Ingredients */}
                     <div>
                       <h3 style={{

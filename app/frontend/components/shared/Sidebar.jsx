@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import api from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
 
 const navItems = [
   { icon: '⊞', label: 'Dashboard',    href: '/dashboard'    },
@@ -32,8 +33,9 @@ const LEVELS = [
   { level:10, name:'Legend',       minXP:30000 },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
   const pathname = usePathname()
+  const isMobile = useIsMobile()
   const [userName, setUserName]       = useState('User')
   const [userInitials, setUserInitials] = useState('U')
   const [xpData, setXpData]           = useState({ totalXP: 0, level: 1, levelName: 'Rookie', nextLevelXP: 500 })
@@ -67,7 +69,7 @@ export default function Sidebar() {
     return navItems.map((item) => {
       const isActive = pathname === item.href
       return (
-        <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
+        <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }} onClick={onNavigate}>
           <div
             style={{
               display: 'flex',
@@ -109,6 +111,19 @@ export default function Sidebar() {
   }, [pathname])
 
   return (
+    <>
+      {/* Backdrop on mobile when the sidebar is open */}
+      {isMobile && mobileOpen && (
+        <div
+          onClick={onNavigate}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            zIndex: 90,
+          }}
+        />
+      )}
     <div style={{
       position: 'fixed',
       left: 0,
@@ -122,7 +137,9 @@ export default function Sidebar() {
       display: 'flex',
       flexDirection: 'column',
       padding: '24px 16px',
-      overflowY: 'auto'
+      overflowY: 'auto',
+      transform: isMobile && !mobileOpen ? 'translateX(-100%)' : 'translateX(0)',
+      transition: 'transform 0.25s ease-in-out',
     }}>
       {/* Logo */}
       <div style={{
@@ -197,5 +214,6 @@ export default function Sidebar() {
         </div>
       </div>
     </div>
+    </>
   )
 }

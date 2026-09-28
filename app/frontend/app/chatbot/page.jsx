@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ml, auth } from '../../lib/api'
+import useIsMobile from '../../lib/useIsMobile'
 // PageWrapper removed to fix double-wrap bug
 
 const COACH_PERSONAS = [
@@ -140,6 +141,7 @@ const QUICK_ACTIONS = [
 ]
 
 export default function AICoach() {
+  const isMobile = useIsMobile()
   const [activePersona, setActivePersona] = useState(COACH_PERSONAS[0])
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
@@ -147,7 +149,7 @@ export default function AICoach() {
   const [conversationHistory, setConversationHistory] = useState([])
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showQuickActions, setShowQuickActions] = useState(true)
-  const messagesEndRef = useRef(null)
+  const chatContainerRef = useRef(null)
   const inputRef = useRef(null)
   const [streamedText, setStreamedText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -166,7 +168,9 @@ export default function AICoach() {
   }, [])
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior:'smooth' })
+    // Scroll only the chat container, never the whole page —
+    // scrollIntoView on the anchor dragged the entire window down on initial load.
+    chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior:'smooth' })
   }, [messages, streamedText])
 
   useEffect(() => {
@@ -373,7 +377,7 @@ export default function AICoach() {
           </motion.div>
 
           {/* PERSONA SELECTOR */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'12px', marginBottom:'24px' }}>
+          <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'12px', marginBottom:'24px' }}>
             {COACH_PERSONAS.map((persona, i) => (
               <motion.div
                 key={persona.id}
@@ -438,7 +442,7 @@ export default function AICoach() {
           </div>
 
           {/* MAIN CHAT AREA */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 300px', gap:'20px' }}>
+          <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 300px', gap:'20px' }}>
 
             {/* CHAT */}
             <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
@@ -480,7 +484,7 @@ export default function AICoach() {
                 </div>
 
                 {/* Messages container */}
-                <div style={{
+                <div ref={chatContainerRef} style={{
                   flex:1, overflowY:'auto', padding:'20px',
                   display:'flex', flexDirection:'column', gap:'16px',
                   scrollbarWidth:'thin',
@@ -622,7 +626,6 @@ export default function AICoach() {
                     </div>
                   )}
 
-                  <div ref={messagesEndRef}/>
                 </div>
 
                 {/* Input area */}
