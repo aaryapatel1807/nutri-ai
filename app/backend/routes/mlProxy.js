@@ -6,7 +6,7 @@ const multer = require('multer')
 const upload = multer()
 const FormData = require('form-data')
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 const GEMINI_MODEL = 'gemini-2.5-flash'
 
 // Helper — call Gemini directly

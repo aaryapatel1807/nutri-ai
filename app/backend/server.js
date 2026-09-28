@@ -85,15 +85,19 @@ app.use((err, req, res, next) => {
   })
 })
 
-// Start Server
-const PORT = process.env.PORT || 10000
-const server = app.listen(PORT, () => {
-  console.log(`✅ NutriAI backend running on port ${PORT}`)
-  console.log(`🌐 Allowed origins: ${allowedOrigins.join(', ')}`)
-})
+// Start Server (only when run directly — Vercel serverless imports the app instead)
+let server
+if (require.main === module) {
+  const PORT = process.env.PORT || 10000
+  server = app.listen(PORT, () => {
+    console.log(`✅ NutriAI backend running on port ${PORT}`)
+    console.log(`🌐 Allowed origins: ${allowedOrigins.join(', ')}`)
+  })
+}
 
 // Graceful Shutdown
 process.on('SIGTERM', async () => {
+  if (!server) return
   server.close(async () => {
     try {
       const { prisma } = require('./prisma.config')
