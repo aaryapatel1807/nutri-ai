@@ -8,7 +8,7 @@ const MEAL_PLANS = [
     id:1, name:'Muscle Building', emoji:'💪', duration:'8 weeks',
     calories:2800, protein:210, carbs:320, fat:85,
     difficulty:'Intermediate', goal:'Hypertrophy',
-    color:'#1F6BFF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
     tags:['High Protein','Calorie Surplus','Bulking'],
     description:'Optimized macros for maximum muscle growth with clean calorie surplus',
     meals:{
@@ -68,7 +68,7 @@ const MEAL_PLANS = [
     id:3, name:'Vegetarian Power', emoji:'🥦', duration:'6 weeks',
     calories:2200, protein:140, carbs:280, fat:65,
     difficulty:'Beginner', goal:'Maintenance + Health',
-    color:'#A9C6FF', glow:'rgba(253,186,116,0.3)',
+    color:'#B5E5F2', glow:'rgba(253,186,116,0.3)',
     tags:['Vegetarian','Plant Based','High Fiber'],
     description:'Complete plant-based nutrition with all essential amino acids',
     meals:{
@@ -103,7 +103,7 @@ const MEAL_PLANS = [
     id:5, name:'Indian Fusion', emoji:'🇮🇳', duration:'4 weeks',
     calories:2100, protein:120, carbs:260, fat:68,
     difficulty:'Beginner', goal:'Balanced Health',
-    color:'#1F6BFF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
     tags:['Indian','Balanced','Cultural'],
     description:'Traditional Indian meals optimized for complete nutrition and fitness',
     meals:{
@@ -281,7 +281,7 @@ export default function MealPlanPage() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.4rem', fontWeight:800,
                   margin:0, marginBottom:'6px',
-                  background:'linear-gradient(135deg,var(--text-primary) 0%,#1F6BFF 60%,#1F6BFF 100%)',
+                  background:'linear-gradient(135deg,var(--text-primary) 0%,#15B2CF 60%,#15B2CF 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>Meal Plan Intelligence 🍽️</h1>
                 <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
@@ -293,9 +293,9 @@ export default function MealPlanPage() {
               <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' }}>
                 {[
                   { icon:'🔥', label:'Calories',  val:'1,840 / 2,800', color:'#2E7DFF' },
-                  { icon:'💪', label:'Protein',   val:'142 / 210g',    color:'#1F6BFF' },
+                  { icon:'💪', label:'Protein',   val:'142 / 210g',    color:'#15B2CF' },
                   { icon:'⚡', label:'Streak',    val:'14 days',       color:'#FFD700' },
-                  { icon:'💧', label:'Hydration', val:'6 / 8 glasses', color:'#5B96FF' },
+                  { icon:'💧', label:'Hydration', val:'6 / 8 glasses', color:'#4FD3ED' },
                 ].map(s => (
                   <div key={s.label} style={{
                     background:'var(--bg-card)',
@@ -331,7 +331,7 @@ export default function MealPlanPage() {
                     padding:'9px 20px', borderRadius:'12px',
                     border: activeTab===tab.id ? 'none' : '1px solid var(--border)',
                     background: activeTab===tab.id
-                      ? 'linear-gradient(135deg,#1F6BFF,#FFD700)'
+                      ? 'linear-gradient(135deg,#15B2CF,#FFD700)'
                       : 'var(--bg-card)',
                     color: activeTab===tab.id ? '#000' : 'var(--text-muted)',
                     fontWeight: activeTab===tab.id ? 700 : 400,
@@ -390,7 +390,7 @@ export default function MealPlanPage() {
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
                           border: activeGoal===g ? 'none' : '1px solid var(--border)',
-                          background: activeGoal===g ? 'linear-gradient(135deg,#1F6BFF,#FFD700)' : 'var(--bg-card)',
+                          background: activeGoal===g ? 'linear-gradient(135deg,#15B2CF,#FFD700)' : 'var(--bg-card)',
                           color: activeGoal===g ? '#000' : 'var(--text-muted)',
                           fontWeight: activeGoal===g ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem'
@@ -407,7 +407,7 @@ export default function MealPlanPage() {
                           style={{
                             padding:'5px 14px', borderRadius:'99px',
                             border: active ? 'none' : '1px solid var(--border)',
-                            background: active ? 'linear-gradient(135deg,#1F6BFF,#FFD700)' : 'var(--bg-card)',
+                            background: active ? 'linear-gradient(135deg,#15B2CF,#FFD700)' : 'var(--bg-card)',
                             color: active ? '#000' : 'var(--text-muted)',
                             fontWeight: active ? 700 : 400,
                             cursor:'pointer', fontSize:'0.78rem'
@@ -423,7 +423,7 @@ export default function MealPlanPage() {
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
                           border: activeDiet===dt ? 'none' : '1px solid var(--border)',
-                          background: activeDiet===dt ? 'linear-gradient(135deg,#1F6BFF,#FFD700)' : 'var(--bg-card)',
+                          background: activeDiet===dt ? 'linear-gradient(135deg,#15B2CF,#FFD700)' : 'var(--bg-card)',
                           color: activeDiet===dt ? '#000' : 'var(--text-muted)',
                           fontWeight: activeDiet===dt ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem'
@@ -433,7 +433,7 @@ export default function MealPlanPage() {
                 </div>
 
                 <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'16px' }}>
-                  Showing <span style={{ color:'#1F6BFF', fontWeight:700 }}>{filtered.length}</span> of {MEAL_PLANS.length} plans
+                  Showing <span style={{ color:'#15B2CF', fontWeight:700 }}>{filtered.length}</span> of {MEAL_PLANS.length} plans
                 </div>
 
                 {/* Plans Grid */}
@@ -473,7 +473,7 @@ export default function MealPlanPage() {
                               : 'rgba(46,125,255,0.12)',
                             border:`1px solid ${plan.difficulty==='Beginner' ? 'rgba(31,107,255,0.3)' : plan.difficulty==='Intermediate' ? 'rgba(255,215,0,0.3)' : 'rgba(46,125,255,0.3)'}`,
                             borderRadius:'99px', padding:'6px 16px',
-                            color: plan.difficulty==='Beginner' ? '#1F6BFF' : plan.difficulty==='Intermediate' ? '#FFD700' : '#2E7DFF',
+                            color: plan.difficulty==='Beginner' ? '#15B2CF' : plan.difficulty==='Intermediate' ? '#FFD700' : '#2E7DFF',
                             fontSize:'0.8rem', fontWeight:700
                           }}>{plan.difficulty}</div>
                         </div>
@@ -497,7 +497,7 @@ export default function MealPlanPage() {
 
                         {/* Macro bars */}
                         {[
-                          { label:'Protein', val:plan.protein, max:220, color:'#1F6BFF' },
+                          { label:'Protein', val:plan.protein, max:220, color:'#15B2CF' },
                           { label:'Carbs',   val:plan.carbs,   max:360, color:'#7B61FF' },
                           { label:'Fat',     val:plan.fat,     max:160, color:'#2E7DFF' },
                         ].map(m => (
@@ -520,7 +520,7 @@ export default function MealPlanPage() {
                         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px', marginTop:'14px' }}>
                           {[
                             { label:'Calories', val:`${plan.calories} kcal`, color:plan.color },
-                            { label:'Duration', val:plan.duration,           color:'#5B96FF' },
+                            { label:'Duration', val:plan.duration,           color:'#4FD3ED' },
                           ].map(s => (
                             <div key={s.label} style={{
                               background:'var(--border)',
@@ -579,7 +579,7 @@ export default function MealPlanPage() {
                         style={{
                           padding:'10px 16px', borderRadius:'14px',
                           border: active ? 'none' : '1px solid var(--border)',
-                          background: active ? 'linear-gradient(135deg,#1F6BFF,#FFD700)' : 'var(--bg-card)',
+                          background: active ? 'linear-gradient(135deg,#15B2CF,#FFD700)' : 'var(--bg-card)',
                           color: active ? '#000' : 'var(--text-muted)',
                           fontWeight: active ? 700 : 400, cursor:'pointer',
                           fontSize:'0.82rem', textAlign:'center', minWidth:'80px'
@@ -621,10 +621,10 @@ export default function MealPlanPage() {
                         </div>
                         <div style={{ display:'flex', gap:'20px' }}>
                           {[
-                            { label:'Protein', val:currentPlanMeals.reduce((a,m)=>a+m.p,0), color:'#1F6BFF', unit:'g' },
+                            { label:'Protein', val:currentPlanMeals.reduce((a,m)=>a+m.p,0), color:'#15B2CF', unit:'g' },
                             { label:'Carbs',   val:currentPlanMeals.reduce((a,m)=>a+m.c,0), color:'#7B61FF', unit:'g' },
                             { label:'Fat',     val:currentPlanMeals.reduce((a,m)=>a+m.f,0), color:'#2E7DFF', unit:'g' },
-                            { label:'Meals',   val:currentPlanMeals.length,                  color:'#5B96FF', unit:'' },
+                            { label:'Meals',   val:currentPlanMeals.length,                  color:'#4FD3ED', unit:'' },
                           ].map(m => (
                             <div key={m.label} style={{ textAlign:'center' }}>
                               <div style={{ color:m.color, fontFamily:"'Clash Display',sans-serif", fontSize:'1.4rem', fontWeight:700 }}>{m.val}{m.unit}</div>
@@ -697,10 +697,10 @@ export default function MealPlanPage() {
                             {/* Macros */}
                             <div style={{ display:'flex', gap:'12px', marginBottom:'12px', flexWrap:'wrap' }}>
                               {[
-                                { label:'P', val:`${meal.p}g`, color:'#1F6BFF' },
+                                { label:'P', val:`${meal.p}g`, color:'#15B2CF' },
                                 { label:'C', val:`${meal.c}g`, color:'#7B61FF' },
                                 { label:'F', val:`${meal.f}g`, color:'#2E7DFF' },
-                                { label:'Prep', val:`${meal.prep}m`, color:'#5B96FF' },
+                                { label:'Prep', val:`${meal.prep}m`, color:'#4FD3ED' },
                               ].map(m => (
                                 <span key={m.label} style={{
                                   background:'var(--border)',
@@ -763,7 +763,7 @@ export default function MealPlanPage() {
                                 width:'100%', borderRadius:'6px 6px 0 0',
                                 background: d.cal > 2800
                                   ? 'linear-gradient(180deg,#2E7DFF,#2E7DFF80)'
-                                  : 'linear-gradient(180deg,#1F6BFF,#1F6BFF40)',
+                                  : 'linear-gradient(180deg,#15B2CF,#15B2CF40)',
                                 boxShadow: d.cal >= 2700 ? '0 0 16px rgba(31,107,255,0.4)' : 'none'
                               }}
                             />
@@ -774,7 +774,7 @@ export default function MealPlanPage() {
                     </div>
                     <div style={{ display:'flex', gap:'16px' }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-                        <div style={{ width:'12px', height:'12px', borderRadius:'2px', background:'#1F6BFF' }}/>
+                        <div style={{ width:'12px', height:'12px', borderRadius:'2px', background:'#15B2CF' }}/>
                         <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Under goal</span>
                       </div>
                       <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
@@ -790,13 +790,13 @@ export default function MealPlanPage() {
                       Today's Nutrients
                     </h3>
                     {[
-                      { label:'Calories',  current:1840, goal:2800, color:'#1F6BFF',  unit:'kcal' },
-                      { label:'Protein',   current:142,  goal:210,  color:'#1F6BFF',  unit:'g' },
+                      { label:'Calories',  current:1840, goal:2800, color:'#15B2CF',  unit:'kcal' },
+                      { label:'Protein',   current:142,  goal:210,  color:'#15B2CF',  unit:'g' },
                       { label:'Carbs',     current:210,  goal:320,  color:'#7B61FF',  unit:'g' },
                       { label:'Fat',       current:58,   goal:85,   color:'#2E7DFF',  unit:'g' },
-                      { label:'Fiber',     current:18,   goal:35,   color:'#A9C6FF',  unit:'g' },
+                      { label:'Fiber',     current:18,   goal:35,   color:'#B5E5F2',  unit:'g' },
                       { label:'Sugar',     current:42,   goal:60,   color:'#FBBF24',  unit:'g' },
-                      { label:'Sodium',    current:1800, goal:2300, color:'#5B96FF',  unit:'mg' },
+                      { label:'Sodium',    current:1800, goal:2300, color:'#4FD3ED',  unit:'mg' },
                       { label:'Water',     current:1.8,  goal:3,    color:'#60A5FA',  unit:'L' },
                     ].map((n,i) => (
                       <div key={n.label} style={{ marginBottom:'12px' }}>
@@ -834,10 +834,10 @@ export default function MealPlanPage() {
                       </thead>
                       <tbody>
                         {[
-                          { label:'Protein', key:'pro', max:210, color:'#1F6BFF' },
+                          { label:'Protein', key:'pro', max:210, color:'#15B2CF' },
                           { label:'Carbs',   key:'carb',max:320, color:'#7B61FF' },
                           { label:'Fat',     key:'fat', max:85,  color:'#2E7DFF' },
-                          { label:'Calories',key:'cal', max:2800,color:'#1F6BFF' },
+                          { label:'Calories',key:'cal', max:2800,color:'#15B2CF' },
                         ].map(row => (
                           <tr key={row.label}>
                             <td style={{ color:'var(--text-faint)', fontSize:'0.8rem', padding:'4px 8px', whiteSpace:'nowrap' }}>{row.label}</td>
@@ -880,10 +880,10 @@ export default function MealPlanPage() {
                 {/* Summary */}
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'28px', marginBottom:'20px', width:'100%' }}>
                   {[
-                    { label:'Total Items',    val:Object.values(GROCERY_LIST).flat().length, icon:'🛒', color:'#1F6BFF' },
+                    { label:'Total Items',    val:Object.values(GROCERY_LIST).flat().length, icon:'🛒', color:'#15B2CF' },
                     { label:'Est. Cost',      val:`₹${Object.values(GROCERY_LIST).flat().reduce((s,i)=>s+parseInt(i.price.replace(/[₹,]/g,'')),0).toLocaleString('en-IN')}`, icon:'💰', color:'#FFD700' },
-                    { label:'Checked',        val:`${checkedGrocery.length}/${Object.values(GROCERY_LIST).flat().length}`, icon:'✅', color:'#5B96FF' },
-                    { label:'Categories',     val:Object.keys(GROCERY_LIST).length, icon:'📦', color:'#1F6BFF' },
+                    { label:'Checked',        val:`${checkedGrocery.length}/${Object.values(GROCERY_LIST).flat().length}`, icon:'✅', color:'#4FD3ED' },
+                    { label:'Categories',     val:Object.keys(GROCERY_LIST).length, icon:'📦', color:'#15B2CF' },
                   ].map(s => (
                     <motion.div key={s.label} whileHover={{ y:-4 }} style={{
                       ...card, padding:'20px',
@@ -899,8 +899,8 @@ export default function MealPlanPage() {
                 {/* Grocery sections */}
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'20px' }}>
                   {Object.entries(GROCERY_LIST).map(([category, items], ci) => {
-                    const catColors = { Proteins:'#1F6BFF', Carbs:'#7B61FF', Vegetables:'#A9C6FF', Fats:'#FFD700' }
-                    const catColor = catColors[category] || '#1F6BFF'
+                    const catColors = { Proteins:'#15B2CF', Carbs:'#7B61FF', Vegetables:'#B5E5F2', Fats:'#FFD700' }
+                    const catColor = catColors[category] || '#15B2CF'
                     const catIcons = { Proteins:'🍗', Carbs:'🍚', Vegetables:'🥦', Fats:'🥑' }
                     return (
                       <motion.div
@@ -983,7 +983,7 @@ export default function MealPlanPage() {
                       style={{
                         padding:'9px 18px', borderRadius:'12px',
                         border: activeMacroGoal===goal ? 'none' : '1px solid var(--border)',
-                        background: activeMacroGoal===goal ? 'linear-gradient(135deg,#1F6BFF,#FFD700)' : 'var(--bg-card)',
+                        background: activeMacroGoal===goal ? 'linear-gradient(135deg,#15B2CF,#FFD700)' : 'var(--bg-card)',
                         color: activeMacroGoal===goal ? '#000' : 'var(--text-muted)',
                         fontWeight: activeMacroGoal===goal ? 700 : 400,
                         cursor:'pointer', fontSize:'0.85rem'
@@ -999,8 +999,8 @@ export default function MealPlanPage() {
                       🎯 Daily Targets — {activeMacroGoal}
                     </h3>
                     {[
-                      { label:'Calories', val:macroTarget.cal, unit:'kcal', color:'#1F6BFF', icon:'🔥', pct:100, desc:'Total energy target' },
-                      { label:'Protein',  val:macroTarget.p,   unit:'g',    color:'#1F6BFF', icon:'💪', pct:Math.round((macroTarget.p*4/macroTarget.cal)*100), desc:'Muscle building & repair' },
+                      { label:'Calories', val:macroTarget.cal, unit:'kcal', color:'#15B2CF', icon:'🔥', pct:100, desc:'Total energy target' },
+                      { label:'Protein',  val:macroTarget.p,   unit:'g',    color:'#15B2CF', icon:'💪', pct:Math.round((macroTarget.p*4/macroTarget.cal)*100), desc:'Muscle building & repair' },
                       { label:'Carbs',    val:macroTarget.c,   unit:'g',    color:'#7B61FF', icon:'⚡', pct:Math.round((macroTarget.c*4/macroTarget.cal)*100), desc:'Energy & performance' },
                       { label:'Fat',      val:macroTarget.f,   unit:'g',    color:'#FFD700', icon:'🥑', pct:Math.round((macroTarget.f*9/macroTarget.cal)*100), desc:'Hormones & cell health' },
                     ].map((m,i) => (
@@ -1039,7 +1039,7 @@ export default function MealPlanPage() {
                     </h3>
                     <svg width="200" height="200" viewBox="0 0 200 200">
                       <defs>
-                        {['#1F6BFF','#7B61FF','#FFD700'].map((c,i) => (
+                        {['#15B2CF','#7B61FF','#FFD700'].map((c,i) => (
                           <radialGradient key={i} id={`grad${i}`}>
                             <stop offset="0%" stopColor={c} stopOpacity="0.9"/>
                             <stop offset="100%" stopColor={c} stopOpacity="0.5"/>
@@ -1052,7 +1052,7 @@ export default function MealPlanPage() {
                         const fCal = macroTarget.f * 9
                         const total = pCal + cCal + fCal
                         const segments = [
-                          { val:pCal/total, color:'#1F6BFF', label:'Protein' },
+                          { val:pCal/total, color:'#15B2CF', label:'Protein' },
                           { val:cCal/total, color:'#7B61FF', label:'Carbs' },
                           { val:fCal/total, color:'#FFD700', label:'Fat' },
                         ]
@@ -1085,7 +1085,7 @@ export default function MealPlanPage() {
                     </svg>
                     <div style={{ display:'flex', gap:'20px', marginTop:'16px' }}>
                       {[
-                        { label:'Protein', color:'#1F6BFF', pct:Math.round((macroTarget.p*4/(macroTarget.p*4+macroTarget.c*4+macroTarget.f*9))*100) },
+                        { label:'Protein', color:'#15B2CF', pct:Math.round((macroTarget.p*4/(macroTarget.p*4+macroTarget.c*4+macroTarget.f*9))*100) },
                         { label:'Carbs',   color:'#7B61FF', pct:Math.round((macroTarget.c*4/(macroTarget.p*4+macroTarget.c*4+macroTarget.f*9))*100) },
                         { label:'Fat',     color:'#FFD700', pct:Math.round((macroTarget.f*9/(macroTarget.p*4+macroTarget.c*4+macroTarget.f*9))*100) },
                       ].map(l => (
@@ -1106,10 +1106,10 @@ export default function MealPlanPage() {
                   <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'16px' }}>
                     {[
                       { time:'6-8 AM',     label:'Wake Up Window',    cal:'20-25%',  focus:'Complex carbs + protein',    icon:'🌅', color:'#FFD700', tip:'Fuel morning metabolism' },
-                      { time:'10-11 AM',   label:'Mid Morning',       cal:'10-15%',  focus:'Protein + light carbs',       icon:'☀️', color:'#1F6BFF', tip:'Prevent muscle catabolism' },
-                      { time:'12-2 PM',    label:'Lunch Window',      cal:'25-30%',  focus:'Complete balanced meal',      icon:'🍽️', color:'#1F6BFF', tip:'Biggest meal of the day' },
+                      { time:'10-11 AM',   label:'Mid Morning',       cal:'10-15%',  focus:'Protein + light carbs',       icon:'☀️', color:'#15B2CF', tip:'Prevent muscle catabolism' },
+                      { time:'12-2 PM',    label:'Lunch Window',      cal:'25-30%',  focus:'Complete balanced meal',      icon:'🍽️', color:'#15B2CF', tip:'Biggest meal of the day' },
                       { time:'3-4 PM',     label:'Pre-Workout',       cal:'10-15%',  focus:'Fast carbs + small protein',  icon:'💪', color:'#7B61FF', tip:'30-60 min before training' },
-                      { time:'6-8 PM',     label:'Post-Workout',      cal:'20-25%',  focus:'Protein + simple carbs',      icon:'🔥', color:'#1F6BFF', tip:'Within 30 min post workout' },
+                      { time:'6-8 PM',     label:'Post-Workout',      cal:'20-25%',  focus:'Protein + simple carbs',      icon:'🔥', color:'#15B2CF', tip:'Within 30 min post workout' },
                       { time:'9-10 PM',    label:'Night Snack',       cal:'5-10%',   focus:'Slow protein + healthy fat',  icon:'🌙', color:'#A78BFA', tip:'Casein or cottage cheese' },
                     ].map((t,i) => (
                       <motion.div
@@ -1185,13 +1185,13 @@ export default function MealPlanPage() {
                               textShadow: i < waterGlasses ? '0 0 16px rgba(91,150,255,0.8)' : 'none'
                             }}
                           >💧</motion.div>
-                          <div style={{ color: i < waterGlasses ? '#5B96FF' : '#374151', fontSize:'0.65rem', marginTop:'4px', fontWeight:600 }}>
+                          <div style={{ color: i < waterGlasses ? '#4FD3ED' : '#374151', fontSize:'0.65rem', marginTop:'4px', fontWeight:600 }}>
                             {i+1}
                           </div>
                         </motion.div>
                       ))}
                     </div>
-                    <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:'3rem', fontWeight:900, color:'#5B96FF', marginBottom:'4px',
+                    <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:'3rem', fontWeight:900, color:'#4FD3ED', marginBottom:'4px',
                       textShadow:'0 0 30px rgba(91,150,255,0.5)'
                     }}>{waterGlasses}<span style={{ fontSize:'1.5rem', color:'var(--text-muted)' }}>/8</span></div>
                     <div style={{ color:'var(--text-muted)', marginBottom:'20px' }}>{waterGlasses * 250}ml / 2000ml</div>
@@ -1201,7 +1201,7 @@ export default function MealPlanPage() {
                         transition={{ duration:0.5, type:'spring' }}
                         style={{
                           height:'100%',
-                          background:'linear-gradient(90deg,#5B96FF,#60A5FA)',
+                          background:'linear-gradient(90deg,#4FD3ED,#60A5FA)',
                           borderRadius:'99px',
                           boxShadow:'0 0 12px rgba(91,150,255,0.5)'
                         }}
@@ -1212,7 +1212,7 @@ export default function MealPlanPage() {
                         onClick={() => setWaterGlasses(w => Math.min(w+1,8))}
                         style={{
                           flex:1, padding:'12px',
-                          background:'linear-gradient(135deg,#5B96FF,#60A5FA)',
+                          background:'linear-gradient(135deg,#4FD3ED,#60A5FA)',
                           border:'none', borderRadius:'12px',
                           color:'#000', fontWeight:700, cursor:'pointer', fontSize:'0.9rem'
                         }}>+ Add Glass 💧</motion.button>
@@ -1235,12 +1235,12 @@ export default function MealPlanPage() {
                     </h3>
                     <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'16px' }}>
                       {[
-                        { title:'Performance',  text:'Even 2% dehydration reduces strength by 10-15% and aerobic performance by 20%', icon:'💪', color:'#1F6BFF' },
+                        { title:'Performance',  text:'Even 2% dehydration reduces strength by 10-15% and aerobic performance by 20%', icon:'💪', color:'#15B2CF' },
                         { title:'Fat Loss',      text:'Drinking 500ml before meals reduces calorie intake by 13% and boosts metabolism', icon:'🔥', color:'#2E7DFF' },
                         { title:'Muscle Growth', text:'Muscles are 75% water. Protein synthesis requires optimal hydration for efficiency', icon:'🏋️', color:'#7B61FF' },
                         { title:'Recovery',      text:'Water transports nutrients to cells and removes waste products post-workout', icon:'⚡', color:'#FFD700' },
-                        { title:'Brain Power',   text:'3% dehydration impairs cognitive function and reaction time significantly', icon:'🧠', color:'#5B96FF' },
-                        { title:'Digestion',     text:'Adequate hydration improves nutrient absorption and gut health by 40%', icon:'🫁', color:'#1F6BFF' },
+                        { title:'Brain Power',   text:'3% dehydration impairs cognitive function and reaction time significantly', icon:'🧠', color:'#4FD3ED' },
+                        { title:'Digestion',     text:'Adequate hydration improves nutrient absorption and gut health by 40%', icon:'🫁', color:'#15B2CF' },
                       ].map((info,i) => (
                         <motion.div
                           key={info.title}
@@ -1295,7 +1295,7 @@ export default function MealPlanPage() {
                         }}
                       >
                         <div style={{ fontSize:'1.5rem', marginBottom:'8px' }}>{s.icon}</div>
-                        <div style={{ color: s.done ? '#5B96FF' : '#1F6BFF', fontWeight:700, fontSize:'0.85rem', marginBottom:'2px' }}>{s.time}</div>
+                        <div style={{ color: s.done ? '#4FD3ED' : '#15B2CF', fontWeight:700, fontSize:'0.85rem', marginBottom:'2px' }}>{s.time}</div>
                         <div style={{ color: 'var(--text-primary)', fontWeight:700, fontSize:'0.9rem', marginBottom:'6px' }}>{s.amount}</div>
                         <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', lineHeight:1.4 }}>{s.reason}</div>
                         <div style={{
@@ -1303,7 +1303,7 @@ export default function MealPlanPage() {
                           background: s.done ? 'rgba(91,150,255,0.15)' : 'var(--border)',
                           border:`1px solid ${s.done ? 'rgba(91,150,255,0.3)' : 'var(--border)'}`,
                           borderRadius:'99px', padding:'3px 10px',
-                          color: s.done ? '#5B96FF' : 'var(--text-muted)',
+                          color: s.done ? '#4FD3ED' : 'var(--text-muted)',
                           fontSize:'0.68rem', fontWeight:700
                         }}>{s.done ? '✓ Done' : 'Upcoming'}</div>
                       </motion.div>
@@ -1386,10 +1386,10 @@ export default function MealPlanPage() {
                   <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(5,1fr)', gap:'12px', marginBottom:'28px' }}>
                     {[
                       { label:'Calories', val:selectedPlan.calories, unit:'kcal',   color:selectedPlan.color, icon:'🔥' },
-                      { label:'Protein',  val:selectedPlan.protein,  unit:'g/day',  color:'#1F6BFF',           icon:'💪' },
+                      { label:'Protein',  val:selectedPlan.protein,  unit:'g/day',  color:'#15B2CF',           icon:'💪' },
                       { label:'Carbs',    val:selectedPlan.carbs,    unit:'g/day',  color:'#7B61FF',           icon:'⚡' },
                       { label:'Fat',      val:selectedPlan.fat,      unit:'g/day',  color:'#FFD700',           icon:'🥑' },
-                      { label:'Duration', val:selectedPlan.duration, unit:'',       color:'#5B96FF',           icon:'📅' },
+                      { label:'Duration', val:selectedPlan.duration, unit:'',       color:'#4FD3ED',           icon:'📅' },
                     ].map(s => (
                       <div key={s.label} style={{
                         background:`${s.color}08`, border:`1px solid ${s.color}20`,
@@ -1430,7 +1430,7 @@ export default function MealPlanPage() {
                       <div style={{ display:'flex', gap:'16px', textAlign:'center' }}>
                         {[
                           { l:'kcal', v:meal.cal, c:selectedPlan.color },
-                          { l:'P',    v:`${meal.p}g`, c:'#1F6BFF' },
+                          { l:'P',    v:`${meal.p}g`, c:'#15B2CF' },
                           { l:'C',    v:`${meal.c}g`, c:'#7B61FF' },
                           { l:'F',    v:`${meal.f}g`, c:'#2E7DFF' },
                         ].map(m => (

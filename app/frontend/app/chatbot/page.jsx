@@ -8,7 +8,7 @@ import useIsMobile from '../../lib/useIsMobile'
 const COACH_PERSONAS = [
   {
     id:'nutrition', name:'NutriBot', emoji:'🥗',
-    color:'#1F6BFF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
     title:'Nutrition Expert',
     description:'Personalized meal plans, macro calculations, food analysis',
     systemPrompt:`You are NutriBot, an elite AI nutrition coach for NutriAI fitness app.
@@ -69,7 +69,7 @@ Format with clear structure and emojis.`,
   },
   {
     id:'health', name:'WellnessAI', emoji:'🧬',
-    color:'#5B96FF', glow:'rgba(91,150,255,0.3)',
+    color:'#4FD3ED', glow:'rgba(91,150,255,0.3)',
     title:'Health & Wellness Coach',
     description:'Sleep, recovery, stress management, longevity',
     systemPrompt:`You are WellnessAI, an elite health and wellness coach for NutriAI.
@@ -320,11 +320,11 @@ export default function AICoach() {
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong style="color:white;font-weight:700">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em style="color:var(--text-faint)">$1</em>')
-      .replace(/`(.*?)`/g, '<code style="background:var(--border);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;color:#1F6BFF">$1</code>')
+      .replace(/`(.*?)`/g, '<code style="background:var(--border);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;color:#15B2CF">$1</code>')
       .replace(/^### (.*)/gm, '<div style="color:white;font-weight:700;font-size:1rem;margin:12px 0 6px;font-family:Clash Display,sans-serif">$1</div>')
       .replace(/^## (.*)/gm, '<div style="color:white;font-weight:800;font-size:1.1rem;margin:14px 0 8px;font-family:Clash Display,sans-serif">$1</div>')
-      .replace(/^# (.*)/gm, '<div style="font-size:1.2rem;font-weight:800;margin:16px 0 10px;font-family:Clash Display,sans-serif;background:linear-gradient(135deg,#1F6BFF,#5B96FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$1</div>')
-      .replace(/^- (.*)/gm, '<div style="display:flex;gap:8px;margin:4px 0"><span style="color:#1F6BFF;margin-top:2px">▸</span><span>$1</span></div>')
+      .replace(/^# (.*)/gm, '<div style="font-size:1.2rem;font-weight:800;margin:16px 0 10px;font-family:Clash Display,sans-serif;background:linear-gradient(135deg,#15B2CF,#4FD3ED);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$1</div>')
+      .replace(/^- (.*)/gm, '<div style="display:flex;gap:8px;margin:4px 0"><span style="color:#15B2CF;margin-top:2px">▸</span><span>$1</span></div>')
       .replace(/^\d+\. (.*)/gm, '<div style="display:flex;gap:8px;margin:4px 0"><span style="color:#7B61FF;min-width:16px;margin-top:2px">•</span><span>$1</span></div>')
       .replace(/\n/g, '<br/>')
   }
@@ -381,9 +381,9 @@ export default function AICoach() {
                   <motion.div
                     animate={{ scale:[1,1.4,1], opacity:[1,0.5,1] }}
                     transition={{ duration:2, repeat:Infinity }}
-                    style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#1F6BFF' }}
+                    style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#15B2CF' }}
                   />
-                  <span style={{ color:'#1F6BFF', fontSize:'0.8rem', fontWeight:600 }}>Groq AI Live</span>
+                  <span style={{ color:'#15B2CF', fontSize:'0.8rem', fontWeight:600 }}>Groq AI Live</span>
                 </div>
                 <button onClick={clearChat} style={{
                   background:'var(--border)',
@@ -571,7 +571,7 @@ export default function AICoach() {
                       {msg.role === 'user' && (
                         <div style={{
                           width:'32px', height:'32px', borderRadius:'50%',
-                          background:'linear-gradient(135deg,#7B61FF,#5B96FF)',
+                          background:'linear-gradient(135deg,#7B61FF,#4FD3ED)',
                           display:'flex', alignItems:'center',
                           justifyContent:'center', fontSize:'0.85rem',
                           color: 'var(--text-primary)', fontWeight:700, flexShrink:0
@@ -799,7 +799,7 @@ export default function AICoach() {
                 {[
                   { label:'Messages',   val:messages.filter(m=>m.role==='user').length,     icon:'💬', color:activePersona.color },
                   { label:'AI Responses',val:messages.filter(m=>m.role==='assistant').length,icon:'🤖', color:'#7B61FF' },
-                  { label:'Coach',       val:activePersona.name,                              icon:'👤', color:'#5B96FF' },
+                  { label:'Coach',       val:activePersona.name,                              icon:'👤', color:'#4FD3ED' },
                   { label:'Model',       val:'GPT-OSS 120B',                              icon:'⚡', color:'#FFD700' },
                 ].map(s => (
                   <div key={s.label} style={{

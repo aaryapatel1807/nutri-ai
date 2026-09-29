@@ -8,10 +8,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'brand': '#1F6BFF',
-        'brand-deep': '#0B54CE',
-        'brand-soft': '#A9C6FF',
-        'brand-glow': '#5B96FF',
+        'brand': '#15B2CF',
+        'brand-deep': '#0D7F9B',
+        'brand-soft': '#B5E5F2',
+        'brand-glow': '#4FD3ED',
         'ink': '#1C1917',
         'paper': '#F5F1E8',
         'violet-pop': '#7B61FF',

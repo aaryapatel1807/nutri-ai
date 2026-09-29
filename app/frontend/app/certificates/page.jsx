@@ -94,7 +94,7 @@ export default function CertificatesPage() {
                 onClick={() => setFilter(cat)}
                 className={`px-4 py-2 rounded-lg border transition-all whitespace-nowrap capitalize ${
                   filter === cat
-                    ? 'bg-gradient-to-r from-[#5B96FF] to-[#0B54CE] text-white border-transparent'
+                    ? 'bg-gradient-to-r from-[#4FD3ED] to-[#0D7F9B] text-white border-transparent'
                     : 'border-white/20 text-gray-300 hover:border-white/40'
                 }`}
               >
@@ -147,7 +147,7 @@ export default function CertificatesPage() {
                       <span
                         className={`font-semibold ${
                           cert.difficulty === 'Beginner'
-                            ? 'text-[#A9C6FF]'
+                            ? 'text-[#B5E5F2]'
                             : cert.difficulty === 'Intermediate'
                               ? 'text-[#7B61FF]'
                               : 'text-[#2E7DFF]'
@@ -167,7 +167,7 @@ export default function CertificatesPage() {
                     className={`w-full py-2 rounded-lg font-semibold transition-all ${
                       cert.earnedAt
                         ? 'bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30'
-                        : 'bg-gradient-to-r from-[#5B96FF] to-[#0B54CE] text-white hover:opacity-90'
+                        : 'bg-gradient-to-r from-[#4FD3ED] to-[#0D7F9B] text-white hover:opacity-90'
                     }`}
                   >
                     {cert.earnedAt ? '📜 View Certificate' : 'Start Earning'}
@@ -193,7 +193,7 @@ export default function CertificatesPage() {
               ].map((user) => (
                 <div key={user.rank} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#5B96FF] to-[#0B54CE] flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4FD3ED] to-[#0D7F9B] flex items-center justify-center text-white font-bold">
                       {user.rank}
                     </div>
                     <div>

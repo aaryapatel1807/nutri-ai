@@ -218,7 +218,7 @@ export default function CommunityPage() {
             onClick={fetchPosts}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: 'linear-gradient(135deg, #2E7DFF, #1F6BFF)', color: '#1A1714',
+              background: 'linear-gradient(135deg, #2E7DFF, #15B2CF)', color: '#1A1714',
               border: 'none', borderRadius: 999, padding: '0.65rem 1.4rem',
               fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
             }}
@@ -310,7 +310,7 @@ export default function CommunityPage() {
             disabled={!draft.trim() || overLimit || posting}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: (!draft.trim() || overLimit || posting) ? 'var(--border)' : 'linear-gradient(135deg, #2E7DFF, #1F6BFF)',
+              background: (!draft.trim() || overLimit || posting) ? 'var(--border)' : 'linear-gradient(135deg, #2E7DFF, #15B2CF)',
               color: (!draft.trim() || overLimit || posting) ? 'var(--text-muted)' : '#1A1714',
               border: 'none', borderRadius: 999, padding: '0.6rem 1.3rem',
               fontWeight: 700, fontSize: '0.88rem',

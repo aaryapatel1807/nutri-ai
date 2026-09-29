@@ -109,8 +109,8 @@ function Muscle({ id, shape, active, onEnter, onLeave, onSelect }) {
     onClick: () => onSelect(id),
     style: { cursor: 'pointer', transition: 'all 0.2s' },
   }
-  const fill = active ? '#1F6BFF' : 'rgba(31,107,255,0.28)'
-  const stroke = active ? '#0B54CE' : '#1F6BFF'
+  const fill = active ? '#15B2CF' : 'rgba(31,107,255,0.28)'
+  const stroke = active ? '#0D7F9B' : '#15B2CF'
   const extra = active
     ? { filter: 'drop-shadow(0 0 6px rgba(31,107,255,0.8))' }
     : {}
@@ -206,7 +206,7 @@ export default function MuscleBodyMap() {
               style={{
                 border: 'none', cursor: 'pointer', borderRadius: '99px', padding: '6px 18px',
                 fontSize: '0.8rem', fontWeight: 700, textTransform: 'capitalize',
-                background: view === v ? 'linear-gradient(135deg,#5B96FF,#1F6BFF)' : 'transparent',
+                background: view === v ? 'linear-gradient(135deg,#4FD3ED,#15B2CF)' : 'transparent',
                 color: view === v ? '#fff' : 'var(--text-muted)',
                 boxShadow: view === v ? '0 2px 10px rgba(31,107,255,0.4)' : 'none',
               }}>
@@ -256,7 +256,7 @@ export default function MuscleBodyMap() {
               background: 'rgba(31,107,255,0.08)', border: '1px solid rgba(31,107,255,0.22)',
               borderRadius: '14px', padding: '12px 14px', fontSize: '0.85rem', color: 'var(--text-faint)', lineHeight: 1.55,
             }}>
-              <strong style={{ color: '#0B54CE' }}>💡 Form cue — </strong>{active.cue}
+              <strong style={{ color: '#0D7F9B' }}>💡 Form cue — </strong>{active.cue}
             </div>
           </motion.div>
         </AnimatePresence>

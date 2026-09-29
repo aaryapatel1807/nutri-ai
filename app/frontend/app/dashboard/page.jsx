@@ -33,7 +33,7 @@ const DESTINATIONS = [
 ]
 
 const MEAL_META = {
-  breakfast: { emoji: '🍳', bg: 'linear-gradient(135deg,#A9C6FF,#5B96FF)' },
+  breakfast: { emoji: '🍳', bg: 'linear-gradient(135deg,#B5E5F2,#4FD3ED)' },
   lunch:     { emoji: '🥗', bg: 'linear-gradient(135deg,#6EE7B7,#34D399)' },
   dinner:    { emoji: '🍗', bg: 'linear-gradient(135deg,#7B61FF,#A78BFA)' },
   snack:     { emoji: '🍎', bg: 'linear-gradient(135deg,#F9A8D4,#F472B6)' },
@@ -214,7 +214,7 @@ export default function Dashboard() {
         <div style={{ textAlign: 'center' }}>
           <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
             style={{ width: '44px', height: '44px', borderRadius: '50%', margin: '0 auto 16px',
-              border: '3px solid var(--border)', borderTopColor: '#1F6BFF' }} />
+              border: '3px solid var(--border)', borderTopColor: '#15B2CF' }} />
           <div style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Loading Dashboard...</div>
         </div>
       </div>
@@ -229,7 +229,7 @@ export default function Dashboard() {
           <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>{error}</div>
           <button onClick={() => window.location.reload()}
             style={{ padding: '12px 28px', borderRadius: '99px', border: 'none', cursor: 'pointer',
-              background: 'linear-gradient(135deg,#1F6BFF,#2E7DFF)', color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>
+              background: 'linear-gradient(135deg,#15B2CF,#2E7DFF)', color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>
             Try Again
           </button>
         </div>
@@ -310,14 +310,14 @@ export default function Dashboard() {
               alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', padding: 0 }}>
             <Bell size={18} style={{ color: 'var(--text-primary)' }} />
             {(stats?.streak > 0) && <span style={{ position: 'absolute', top: '9px', right: '11px', width: '8px', height: '8px',
-              borderRadius: '50%', background: '#1F6BFF', border: '2px solid var(--card-solid)' }} />}
+              borderRadius: '50%', background: '#15B2CF', border: '2px solid var(--card-solid)' }} />}
           </motion.button>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             onClick={() => window.location.href = '/profile'}
             style={{ ...glass, borderRadius: '99px', padding: '6px 14px 6px 6px', display: 'flex',
               alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
             <span style={{ width: '34px', height: '34px', borderRadius: '50%',
-              background: 'linear-gradient(135deg,#1F6BFF,#5B96FF)', color: '#fff',
+              background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)', color: '#fff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 700, fontSize: '0.95rem', fontFamily: "'Satoshi',sans-serif" }}>
               {(user.name || 'A')[0].toUpperCase()}
@@ -340,7 +340,7 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
           style={{ ...glass, padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-            <span style={iconTile('rgba(31,107,255,0.16)', '#1F6BFF')}><Flame size={19} /></span>
+            <span style={iconTile('rgba(31,107,255,0.16)', '#15B2CF')}><Flame size={19} /></span>
             <span style={cardTitle}>Calories</span>
           </div>
           <div style={{ height: '52px', marginBottom: '8px' }}>
@@ -348,13 +348,13 @@ export default function Dashboard() {
               <BarChart data={weekChart} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                 <Bar dataKey="cal" radius={[4, 4, 4, 4]}>
                   {weekChart.map((d, i) => (
-                    <Cell key={i} fill={i === weekChart.length - 1 ? '#1F6BFF' : 'rgba(31,107,255,0.35)'} />
+                    <Cell key={i} fill={i === weekChart.length - 1 ? '#15B2CF' : 'rgba(31,107,255,0.35)'} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#1F6BFF', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+          <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#15B2CF', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
             <CountUp end={cals} duration={1.2} separator="," /> <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', fontFamily: "'Satoshi',sans-serif" }}>Kcal</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>of {goalCals.toLocaleString('en-GB')} goal</div>
@@ -466,8 +466,8 @@ export default function Dashboard() {
                   <AreaChart data={weekChart} margin={{ top: 12, right: 8, bottom: 0, left: -18 }}>
                     <defs>
                       <linearGradient id="calFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#1F6BFF" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#1F6BFF" stopOpacity={0.02} />
+                        <stop offset="0%" stopColor="#15B2CF" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#15B2CF" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="day" tickLine={false} axisLine={false}
@@ -480,9 +480,9 @@ export default function Dashboard() {
                         borderRadius: '14px', boxShadow: 'var(--shadow)', fontSize: '0.8rem', color: 'var(--text-primary)' }}
                       formatter={(v) => [`${Number(v).toLocaleString('en-GB')} kcal`, 'Calories']}
                       labelStyle={{ color: 'var(--text-muted)', marginBottom: '4px' }} />
-                    <Area type="monotone" dataKey="cal" stroke="#1F6BFF" strokeWidth={3}
-                      fill="url(#calFill)" dot={{ r: 3, fill: '#1F6BFF', strokeWidth: 0 }}
-                      activeDot={{ r: 5, fill: '#1F6BFF', stroke: '#fff', strokeWidth: 2 }} />
+                    <Area type="monotone" dataKey="cal" stroke="#15B2CF" strokeWidth={3}
+                      fill="url(#calFill)" dot={{ r: 3, fill: '#15B2CF', strokeWidth: 0 }}
+                      activeDot={{ r: 5, fill: '#15B2CF', stroke: '#fff', strokeWidth: 2 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -512,13 +512,13 @@ export default function Dashboard() {
                   {['Push Ups 4×12', 'Dumbbell Rows 3×10', 'Shoulder Press 3×10'].map(e => (
                     <div key={e} style={{ padding: '7px 0', borderBottom: '1px solid var(--border)',
                       color: 'var(--text-muted)', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Zap size={12} style={{ color: '#1F6BFF' }} /> {e}
+                      <Zap size={12} style={{ color: '#15B2CF' }} /> {e}
                     </div>
                   ))}
                   <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                     onClick={() => window.location.href = '/workout'}
                     style={{ width: '100%', marginTop: '14px', padding: '12px', border: 'none', borderRadius: '14px',
-                      background: 'linear-gradient(135deg,#1F6BFF,#5B96FF)', color: '#fff', fontWeight: 700,
+                      background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)', color: '#fff', fontWeight: 700,
                       fontSize: '0.88rem', cursor: 'pointer', boxShadow: '0 6px 20px rgba(31,107,255,0.35)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     Start Workout <ArrowRight size={16} />
@@ -545,7 +545,7 @@ export default function Dashboard() {
                 <Dumbbell size={16} style={{ color: 'var(--text-muted)' }} />
               </div>
               {[
-                { label: 'Protein', val: protein, goal: proteinGoal, color: '#1F6BFF', unit: 'g' },
+                { label: 'Protein', val: protein, goal: proteinGoal, color: '#15B2CF', unit: 'g' },
                 { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: stats?.carbGoal || 250, color: '#7B61FF', unit: 'g' },
                 { label: 'Fat', val: todayNutrition?.fat || 0, goal: stats?.fatGoal || 65, color: '#2E7DFF', unit: 'g' },
               ].map(m => (
@@ -565,10 +565,10 @@ export default function Dashboard() {
               ))}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', padding: '10px 14px',
                 borderRadius: '14px', background: 'rgba(31,107,255,0.08)', border: '1px solid rgba(31,107,255,0.18)' }}>
-                <TrendingUp size={15} style={{ color: '#1F6BFF', flexShrink: 0 }} />
+                <TrendingUp size={15} style={{ color: '#15B2CF', flexShrink: 0 }} />
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
                   {cals < goalCals
-                    ? <><b style={{ color: '#1F6BFF' }}>{Math.round(goalCals - cals).toLocaleString('en-GB')} kcal</b> left — a healthy snack fits your goal.</>
+                    ? <><b style={{ color: '#15B2CF' }}>{Math.round(goalCals - cals).toLocaleString('en-GB')} kcal</b> left — a healthy snack fits your goal.</>
                     : <>Daily calorie goal reached — nice work.</>}
                 </span>
               </div>
@@ -580,7 +580,7 @@ export default function Dashboard() {
             style={{ ...glass, padding: '22px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ width: '4px', height: '20px', borderRadius: '99px', background: 'linear-gradient(180deg,#1F6BFF,#5B96FF)' }} />
+                <span style={{ width: '4px', height: '20px', borderRadius: '99px', background: 'linear-gradient(180deg,#15B2CF,#4FD3ED)' }} />
                 <span style={{ ...cardTitle, fontSize: '0.95rem', color: 'var(--text-primary)', textTransform: 'none', letterSpacing: 0 }}>Diet Plan</span>
               </div>
               <button onClick={() => window.location.href = '/meals'}
@@ -616,7 +616,7 @@ export default function Dashboard() {
                         </div>
                         <div style={{ marginTop: '8px' }}>
                           <span style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'capitalize',
-                            color: '#1F6BFF', background: 'rgba(31,107,255,0.12)', borderRadius: '99px', padding: '3px 10px' }}>
+                            color: '#15B2CF', background: 'rgba(31,107,255,0.12)', borderRadius: '99px', padding: '3px 10px' }}>
                             {meal.mealType || 'Meal'}
                           </span>
                         </div>
@@ -631,7 +631,7 @@ export default function Dashboard() {
                   cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
                 <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🍽️</div>
                 No meals logged today yet.<br />
-                <span style={{ color: '#1F6BFF', fontWeight: 700 }}>Tap to log your first meal →</span>
+                <span style={{ color: '#15B2CF', fontWeight: 700 }}>Tap to log your first meal →</span>
               </div>
             )}
           </motion.div>
@@ -680,13 +680,13 @@ export default function Dashboard() {
                     <span style={{ fontSize: '1.6rem' }}>{b.emoji}</span>
                     <span>
                       <span style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{b.name}</span>
-                      <span style={{ display: 'block', fontSize: '0.72rem', color: '#1F6BFF', fontWeight: 700 }}>+{b.xp} XP</span>
+                      <span style={{ display: 'block', fontSize: '0.72rem', color: '#15B2CF', fontWeight: 700 }}>+{b.xp} XP</span>
                     </span>
                   </div>
                 ))}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px',
                   borderRadius: '16px', background: 'rgba(31,107,255,0.08)', border: '1px solid rgba(31,107,255,0.2)' }}>
-                  <Zap size={15} style={{ color: '#1F6BFF' }} />
+                  <Zap size={15} style={{ color: '#15B2CF' }} />
                   <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
                     Lv {userXP?.level || 1} · {(userXP?.totalXP || 0).toLocaleString('en-GB')} XP
                   </span>
@@ -705,7 +705,7 @@ export default function Dashboard() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <span style={{ width: '46px', height: '46px', borderRadius: '50%',
-                  background: 'linear-gradient(135deg,#1F6BFF,#5B96FF)', color: '#fff',
+                  background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)', color: '#fff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem',
                   boxShadow: '0 6px 16px rgba(31,107,255,0.4)' }}>
                   {(user.name || 'A')[0].toUpperCase()}
@@ -736,7 +736,7 @@ export default function Dashboard() {
             {(stats?.streak > 0) && (
               <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                 background: 'rgba(31,107,255,0.1)', border: '1px solid rgba(31,107,255,0.25)', borderRadius: '99px',
-                padding: '8px', color: '#1F6BFF', fontSize: '0.82rem', fontWeight: 700 }}>
+                padding: '8px', color: '#15B2CF', fontSize: '0.82rem', fontWeight: 700 }}>
                 🔥 {stats.streak} day streak — keep it burning
               </div>
             )}
@@ -782,7 +782,7 @@ export default function Dashboard() {
                   cells.push(
                     <button key={d} onClick={() => setSelDay(ds)}
                       style={{ aspectRatio: '1', border: 'none', borderRadius: '50%', cursor: 'pointer',
-                        background: isSel ? '#2ECC71' : isToday ? '#1F6BFF' : 'transparent',
+                        background: isSel ? '#2ECC71' : isToday ? '#15B2CF' : 'transparent',
                         color: (isSel || isToday) ? '#fff' : 'var(--text-primary)',
                         fontSize: '0.76rem', fontWeight: isToday || isSel ? 700 : 400,
                         position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -809,7 +809,7 @@ export default function Dashboard() {
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.4 }}
             style={{ ...glass, padding: '22px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <span style={{ width: '4px', height: '20px', borderRadius: '99px', background: 'linear-gradient(180deg,#1F6BFF,#5B96FF)' }} />
+              <span style={{ width: '4px', height: '20px', borderRadius: '99px', background: 'linear-gradient(180deg,#15B2CF,#4FD3ED)' }} />
               <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Scheduled</span>
             </div>
             {[
@@ -827,7 +827,7 @@ export default function Dashboard() {
                     background: 'var(--track)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>{s.icon}</span>
                 )}
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'inline-block', fontSize: '0.62rem', fontWeight: 700, color: '#1F6BFF',
+                  <span style={{ display: 'inline-block', fontSize: '0.62rem', fontWeight: 700, color: '#15B2CF',
                     background: 'rgba(31,107,255,0.12)', borderRadius: '99px', padding: '2px 8px', marginBottom: '3px' }}>{s.tag}</span>
                   <span style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)',
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</span>

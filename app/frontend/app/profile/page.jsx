@@ -8,35 +8,35 @@ import { auth } from '../../lib/api'
 /* ══════════ DATA ══════════ */
 const AVATAR_STYLES = [
   { id:'warrior', emoji:'⚔️', label:'Warrior',  gradient:'linear-gradient(135deg,#2E7DFF,#FFD700)', ring:'#FFD700' },
-  { id:'beast',   emoji:'🦁', label:'Beast',    gradient:'linear-gradient(135deg,#1F6BFF,#EF4444)', ring:'#1F6BFF' },
+  { id:'beast',   emoji:'🦁', label:'Beast',    gradient:'linear-gradient(135deg,#15B2CF,#EF4444)', ring:'#15B2CF' },
   { id:'ninja',   emoji:'🥷', label:'Ninja',    gradient:'linear-gradient(135deg,#1F2937,#7B61FF)', ring:'#7B61FF' },
-  { id:'robot',   emoji:'🤖', label:'Robot',    gradient:'linear-gradient(135deg,#5B96FF,#7B61FF)', ring:'#5B96FF' },
-  { id:'king',    emoji:'👑', label:'King',     gradient:'linear-gradient(135deg,#FFD700,#1F6BFF)', ring:'#FFD700' },
+  { id:'robot',   emoji:'🤖', label:'Robot',    gradient:'linear-gradient(135deg,#4FD3ED,#7B61FF)', ring:'#4FD3ED' },
+  { id:'king',    emoji:'👑', label:'King',     gradient:'linear-gradient(135deg,#FFD700,#15B2CF)', ring:'#FFD700' },
   { id:'fire',    emoji:'🔥', label:'Fire',     gradient:'linear-gradient(135deg,#2E7DFF,#EF4444)', ring:'#2E7DFF' },
-  { id:'crystal', emoji:'💎', label:'Crystal',  gradient:'linear-gradient(135deg,#7B61FF,#5B96FF)', ring:'#A78BFA' },
+  { id:'crystal', emoji:'💎', label:'Crystal',  gradient:'linear-gradient(135deg,#7B61FF,#4FD3ED)', ring:'#A78BFA' },
   { id:'galaxy',  emoji:'🌌', label:'Galaxy',   gradient:'linear-gradient(135deg,var(--bg-primary),#A78BFA)', ring:'#A78BFA' },
-  { id:'phoenix', emoji:'🦅', label:'Phoenix',  gradient:'linear-gradient(135deg,#2E7DFF,#FFD700)', ring:'#1F6BFF' },
-  { id:'alien',   emoji:'👽', label:'Alien',    gradient:'linear-gradient(135deg,#A9C6FF,#1F6BFF)', ring:'#1F6BFF' },
+  { id:'phoenix', emoji:'🦅', label:'Phoenix',  gradient:'linear-gradient(135deg,#2E7DFF,#FFD700)', ring:'#15B2CF' },
+  { id:'alien',   emoji:'👽', label:'Alien',    gradient:'linear-gradient(135deg,#B5E5F2,#15B2CF)', ring:'#15B2CF' },
   { id:'demon',   emoji:'😈', label:'Demon',    gradient:'linear-gradient(135deg,#EF4444,#7B61FF)', ring:'#EF4444' },
-  { id:'dragon',  emoji:'🐉', label:'Dragon',   gradient:'linear-gradient(135deg,#1F6BFF,#7B61FF)', ring:'#1F6BFF' },
+  { id:'dragon',  emoji:'🐉', label:'Dragon',   gradient:'linear-gradient(135deg,#15B2CF,#7B61FF)', ring:'#15B2CF' },
 ]
 
 const FRAME_STYLES = [
   { id:'none',    label:'None',     style:'' },
   { id:'gold',    label:'Gold',     style:'3px solid #FFD700' },
-  { id:'neon',    label:'Volt',    style:'3px solid #1F6BFF' },
+  { id:'neon',    label:'Volt',    style:'3px solid #15B2CF' },
   { id:'purple',  label:'Purple',   style:'3px solid #7B61FF' },
   { id:'fire',    label:'Fire',     style:'3px solid #2E7DFF' },
   { id:'rainbow', label:'Rainbow',  style:'3px solid transparent' },
 ]
 
 const THEMES = [
-  { id:'brand',  label:'Electric Blue', primary:'#1F6BFF', secondary:'#5B96FF', accent:'#7B61FF' },
-  { id:'gold-rush',   label:'Gold Rush',    primary:'#FFD700', secondary:'#1F6BFF', accent:'#2E7DFF' },
+  { id:'brand',  label:'Sky Blue', primary:'#15B2CF', secondary:'#4FD3ED', accent:'#7B61FF' },
+  { id:'gold-rush',   label:'Gold Rush',    primary:'#FFD700', secondary:'#15B2CF', accent:'#2E7DFF' },
   { id:'purple-fire', label:'Purple Fire',  primary:'#7B61FF', secondary:'#A78BFA', accent:'#2E7DFF' },
-  { id:'cyber-blue',  label:'Cyber Blue',   primary:'#5B96FF', secondary:'#60A5FA', accent:'#7B61FF' },
+  { id:'cyber-blue',  label:'Cyber Blue',   primary:'#4FD3ED', secondary:'#60A5FA', accent:'#7B61FF' },
   { id:'blood-orange',label:'Blood Orange', primary:'#2E7DFF', secondary:'#EF4444', accent:'#FFD700' },
-  { id:'matrix',      label:'Matrix',       primary:'#A9C6FF', secondary:'#1F6BFF', accent:'#5B96FF' },
+  { id:'matrix',      label:'Matrix',       primary:'#B5E5F2', secondary:'#15B2CF', accent:'#4FD3ED' },
 ]
 
 const FITNESS_GOALS  = ['Muscle Building','Fat Loss','Body Recomposition','Athletic Performance','Endurance','Powerlifting','Flexibility','Maintenance']
@@ -85,7 +85,7 @@ const WEIGHT_HISTORY = [
 ]
 
 /* ══════════ TOGGLE SWITCH ══════════ */
-function Toggle({ on, onChange, color='#1F6BFF' }) {
+function Toggle({ on, onChange, color='#15B2CF' }) {
   return (
     <motion.div
       onClick={onChange}
@@ -564,7 +564,7 @@ export default function ProfilePage() {
                     background:'rgba(31,107,255,0.15)',
                     border:'1px solid rgba(31,107,255,0.4)',
                     borderRadius:'99px', padding:'8px 24px',
-                    color:'#1F6BFF', fontWeight:700, fontSize:'0.88rem',
+                    color:'#15B2CF', fontWeight:700, fontSize:'0.88rem',
                     boxShadow:'0 0 20px rgba(31,107,255,0.3)',
                     display:'flex', alignItems:'center', gap:'8px', zIndex:10
                   }}
@@ -668,7 +668,7 @@ export default function ProfilePage() {
                         { label:'Member Since', val:'January 15, 2025',  icon:'📅', color:theme.primary  },
                         { label:'Plan',          val:'NutriAI Pro 🌟',    icon:'⭐', color:'#FFD700'      },
                         { label:'Workouts',      val:'142 completed',     icon:'🏋️',color:theme.secondary},
-                        { label:'Meals Logged',  val:'867 meals',         icon:'🍽️',color:'#A9C6FF'      },
+                        { label:'Meals Logged',  val:'867 meals',         icon:'🍽️',color:'#B5E5F2'      },
                         { label:'AI Chats',      val:'58 conversations',  icon:'🤖', color:'#A78BFA'     },
                       ].map(s => (
                         <div key={s.label} style={{
@@ -687,8 +687,8 @@ export default function ProfilePage() {
                         ⚠️ Danger Zone
                       </h3>
                       {[
-                        { label:'Reset All Data',   desc:'Wipe your logged meals & workouts', color:'#1F6BFF' },
-                        { label:'Export Data',      desc:'Download all your data as CSV',     color:'#5B96FF' },
+                        { label:'Reset All Data',   desc:'Wipe your logged meals & workouts', color:'#15B2CF' },
+                        { label:'Export Data',      desc:'Download all your data as CSV',     color:'#4FD3ED' },
                         { label:'Delete Account',   desc:'Permanently remove your account',  color:'#EF4444' },
                       ].map(a => (
                         <div key={a.label} style={{
@@ -730,9 +730,9 @@ export default function ProfilePage() {
                   <div style={{ display:'flex', justifyContent:'space-around', flexWrap:'wrap', gap:'20px', marginBottom:'28px' }}>
                     <StatRing value={profile.weight}       max={120}  color={theme.primary}   label='Weight'     unit='kg'  />
                     <StatRing value={profile.bodyFat}      max={40}   color='#2E7DFF'          label='Body Fat'   unit='%'   />
-                    <StatRing value={profile.muscle}       max={80}   color='#1F6BFF'          label='Muscle'     unit='kg'  />
+                    <StatRing value={profile.muscle}       max={80}   color='#15B2CF'          label='Muscle'     unit='kg'  />
                     <StatRing value={profile.bmi}          max={40}   color={theme.secondary}  label='BMI'        unit=''    />
-                    <StatRing value={profile.waterGoal}    max={5}    color='#5B96FF'          label='Water Goal' unit='L'   />
+                    <StatRing value={profile.waterGoal}    max={5}    color='#4FD3ED'          label='Water Goal' unit='L'   />
                     <StatRing value={profile.sleepGoal}    max={10}   color='#A78BFA'          label='Sleep Goal' unit='hrs' />
                   </div>
 
@@ -741,10 +741,10 @@ export default function ProfilePage() {
                     {[
                       { label:'Height (cm)',    key:'height',       color:theme.primary  },
                       { label:'Weight (kg)',    key:'weight',       color:theme.secondary },
-                      { label:'Target (kg)',    key:'targetWeight', color:'#1F6BFF'      },
+                      { label:'Target (kg)',    key:'targetWeight', color:'#15B2CF'      },
                       { label:'Body Fat (%)',   key:'bodyFat',      color:'#2E7DFF'      },
-                      { label:'Muscle (kg)',    key:'muscle',       color:'#A9C6FF'      },
-                      { label:'BMI',            key:'bmi',          color:'#5B96FF'      },
+                      { label:'Muscle (kg)',    key:'muscle',       color:'#B5E5F2'      },
+                      { label:'BMI',            key:'bmi',          color:'#4FD3ED'      },
                       { label:'Water Goal (L)', key:'waterGoal',    color:'#60A5FA'      },
                       { label:'Sleep Goal (h)', key:'sleepGoal',    color:'#A78BFA'      },
                     ].map(f => (
@@ -769,8 +769,8 @@ export default function ProfilePage() {
                     {[
                       { label:'BMR',            val:Math.round(tdmr), color:'var(--text-muted)',      unit:'kcal', icon:'💤' },
                       { label:'TDEE',           val:tdee,             color:theme.primary,  unit:'kcal', icon:'🔥' },
-                      { label:'Cut (-300)',      val:tdee-300,         color:'#5B96FF',      unit:'kcal', icon:'📉' },
-                      { label:'Bulk (+300)',     val:tdee+300,         color:'#1F6BFF',      unit:'kcal', icon:'📈' },
+                      { label:'Cut (-300)',      val:tdee-300,         color:'#4FD3ED',      unit:'kcal', icon:'📉' },
+                      { label:'Bulk (+300)',     val:tdee+300,         color:'#15B2CF',      unit:'kcal', icon:'📈' },
                     ].map(s => (
                       <motion.div key={s.label}
                         whileHover={{ y:-4, boxShadow:`0 8px 24px ${s.color}25` }}
@@ -872,7 +872,7 @@ export default function ProfilePage() {
                             padding:'10px 12px',
                             background: profile.diet===d ? 'rgba(91,150,255,0.12)' : 'var(--border)',
                             border:`1px solid ${profile.diet===d ? 'rgba(91,150,255,0.4)' : 'var(--border)'}`,
-                            borderRadius:'12px', color: profile.diet===d ? '#5B96FF' : 'var(--text-muted)',
+                            borderRadius:'12px', color: profile.diet===d ? '#4FD3ED' : 'var(--text-muted)',
                             fontWeight: profile.diet===d ? 700 : 400,
                             cursor:'pointer', fontSize:'0.8rem', transition:'all 0.2s'
                           }}
@@ -919,7 +919,7 @@ export default function ProfilePage() {
                       <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 16px' }}>📊 Daily Macro Goals</h3>
                       {[
                         { label:'🔥 Calories (kcal)', key:'calorieGoal', color:theme.primary  },
-                        { label:'💪 Protein (g)',      key:'proteinGoal', color:'#1F6BFF'      },
+                        { label:'💪 Protein (g)',      key:'proteinGoal', color:'#15B2CF'      },
                         { label:'⚡ Carbs (g)',         key:'carbGoal',    color:'#7B61FF'      },
                         { label:'🥑 Fat (g)',           key:'fatGoal',     color:'#FFD700'      },
                       ].map(m => (
@@ -1009,8 +1009,8 @@ export default function ProfilePage() {
                     </h3>
                     <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'12px' }}>
                       {[
-                        { id:'light', label:'Light', desc:'Warm paper · frosted glass', sw:['#F5F1E8','#FFFFFF','#1F6BFF'] },
-                        { id:'dark',  label:'Dark',  desc:'Warm charcoal · amber glow',  sw:['#141110','#221C17','#5B96FF'] },
+                        { id:'light', label:'Light', desc:'Warm paper · frosted glass', sw:['#F5F1E8','#FFFFFF','#15B2CF'] },
+                        { id:'dark',  label:'Dark',  desc:'Warm charcoal · amber glow',  sw:['#141110','#221C17','#4FD3ED'] },
                       ].map(t => (
                         <motion.div key={t.id}
                           whileHover={{ scale:1.04, y:-3 }}
@@ -1018,7 +1018,7 @@ export default function ProfilePage() {
                           onClick={()=>setModeTheme(t.id)}
                           style={{
                             background: modeTheme===t.id ? 'rgba(31,107,255,0.08)' : 'var(--border)',
-                            border:`2px solid ${modeTheme===t.id ? '#1F6BFF' : 'var(--border)'}`,
+                            border:`2px solid ${modeTheme===t.id ? '#15B2CF' : 'var(--border)'}`,
                             borderRadius:'16px', padding:'16px', cursor:'pointer',
                             boxShadow: modeTheme===t.id ? '0 0 20px rgba(31,107,255,0.25)' : 'none',
                             transition:'all 0.2s'
@@ -1033,7 +1033,7 @@ export default function ProfilePage() {
                               }}/>
                             ))}
                           </div>
-                          <div style={{ color: modeTheme===t.id ? '#1F6BFF' : 'var(--text-faint)', fontWeight:600, fontSize:'0.85rem' }}>
+                          <div style={{ color: modeTheme===t.id ? '#15B2CF' : 'var(--text-faint)', fontWeight:600, fontSize:'0.85rem' }}>
                             {modeTheme===t.id ? '● ' : ''}{t.label}
                           </div>
                           <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', marginTop:'2px' }}>
@@ -1185,7 +1185,7 @@ export default function ProfilePage() {
                         ⚡ Quick Presets
                       </h3>
                       {[
-                        { label:'All On',    fn:()=>setNotifs(Object.fromEntries(NOTIF_OPTS.map(n=>[n.id,true]))),  color:'#1F6BFF' },
+                        { label:'All On',    fn:()=>setNotifs(Object.fromEntries(NOTIF_OPTS.map(n=>[n.id,true]))),  color:'#15B2CF' },
                         { label:'All Off',   fn:()=>setNotifs(Object.fromEntries(NOTIF_OPTS.map(n=>[n.id,false]))), color:'#EF4444' },
                         { label:'Essential', fn:()=>setNotifs({meal:true,workout:true,water:false,streak:true,badge:false,report:true,ai:false,challenge:false}), color:theme.primary },
                       ].map(p => (
@@ -1250,7 +1250,7 @@ export default function ProfilePage() {
                             <div style={{ color:'#374151', fontSize:'0.72rem' }}>{p.desc}</div>
                           </div>
                         </div>
-                        <Toggle on={privacyS[p.id]} onChange={()=>setPrivacyS(pp=>({...pp,[p.id]:!pp[p.id]}))} color='#5B96FF'/>
+                        <Toggle on={privacyS[p.id]} onChange={()=>setPrivacyS(pp=>({...pp,[p.id]:!pp[p.id]}))} color='#4FD3ED'/>
                       </motion.div>
                     ))}
                   </div>
@@ -1261,7 +1261,7 @@ export default function ProfilePage() {
                     </h3>
                     {(() => {
                       const score = Math.round((Object.values(privacyS).filter(Boolean).length / PRIVACY_OPTS.length)*100)
-                      const color = score > 70 ? '#1F6BFF' : score > 40 ? '#FFD700' : '#2E7DFF'
+                      const color = score > 70 ? '#15B2CF' : score > 40 ? '#FFD700' : '#2E7DFF'
                       return (
                         <>
                           <div style={{ position:'relative', width:'100px', margin:'0 auto 16px' }}>

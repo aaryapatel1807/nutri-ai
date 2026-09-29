@@ -2,7 +2,7 @@
 import { useRef } from 'react'
 
 const AMBER = '#2E7DFF'
-const AMBER_DEEP = '#1F6BFF'
+const AMBER_DEEP = '#15B2CF'
 const BG_TOP = '#1A1714'
 const BG_BOT = '#100E0C'
 const PAPER = '#FAF7F2'
@@ -182,7 +182,7 @@ export default function ShareCard({ data }) {
   const stats = [
     { label: 'SESSIONS', val: data.sessions ?? 0, color: AMBER },
     { label: 'KCAL BURNED', val: (data.kcal ?? 0).toLocaleString('en-GB'), color: '#2E7DFF' },
-    { label: 'ACTIVE MIN', val: data.minutes ?? 0, color: '#5B96FF' },
+    { label: 'ACTIVE MIN', val: data.minutes ?? 0, color: '#4FD3ED' },
     { label: 'VOLUME', val: data.volumeKg > 0 ? `${Math.round(data.volumeKg).toLocaleString('en-GB')} kg` : '—', color: '#FFD700' },
   ]
 
@@ -265,7 +265,7 @@ export default function ShareCard({ data }) {
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
         <button onClick={downloadPNG} style={{
           padding: '12px 28px', borderRadius: '14px', border: 'none',
-          background: 'linear-gradient(135deg, #2E7DFF, #1F6BFF)',
+          background: 'linear-gradient(135deg, #2E7DFF, #15B2CF)',
           color: '#000', fontWeight: 800, cursor: 'pointer', fontSize: '0.9rem',
           boxShadow: '0 8px 28px rgba(46,125,255,0.35)'
         }}>⬇️ Download PNG</button>

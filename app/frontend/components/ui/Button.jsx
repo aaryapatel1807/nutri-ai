@@ -16,7 +16,7 @@ const Button = forwardRef(({
   const baseClasses = 'relative inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
   
   const variants = {
-    primary: 'bg-gradient-to-r from-[#5B96FF] to-[#0B54CE] text-white hover:from-[#1F6BFF] hover:to-[#C2410C] focus:ring-[#1F6BFF] shadow-lg hover:shadow-xl hover:shadow-[#1F6BFF]/25',
+    primary: 'bg-gradient-to-r from-[#4FD3ED] to-[#0D7F9B] text-white hover:from-[#15B2CF] hover:to-[#C2410C] focus:ring-[#15B2CF] shadow-lg hover:shadow-xl hover:shadow-[#15B2CF]/25',
     secondary: 'bg-gradient-to-r from-[#7B61FF] to-[#A78BFA] text-white hover:from-[#6A4FFF] hover:to-[#8B7CFF] focus:ring-blue-500 shadow-lg hover:shadow-xl hover:shadow-blue-500/25',
     accent: 'bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 focus:ring-purple-500 shadow-lg hover:shadow-xl hover:shadow-purple-500/25',
     outline: 'border-2 border-purple-500 text-purple-500 bg-transparent hover:bg-purple-50 hover:text-purple-600 focus:ring-purple-500',

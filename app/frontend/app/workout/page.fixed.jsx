@@ -325,8 +325,8 @@ export default function WorkoutPlanner() {
                     borderRadius: '8px'
                   }}
                 />
-                <Bar dataKey="workouts" fill="#1F6BFF" />
-                <Bar dataKey="calories" fill="#1F6BFF" />
+                <Bar dataKey="workouts" fill="#15B2CF" />
+                <Bar dataKey="calories" fill="#15B2CF" />
               </BarChart>
             </ResponsiveContainer>
           </Card>

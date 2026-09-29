@@ -16,7 +16,7 @@ import { auth } from '../lib/api'
    ═══════════════════════════════════════════════════════════════════ */
 
 const AMBER = '#2E7DFF'
-const AMBER_DEEP = '#1F6BFF'
+const AMBER_DEEP = '#15B2CF'
 const CHARCOAL = '#141210'
 const CHARCOAL_2 = '#1A1714'
 const PAPER = '#F5F1E8'

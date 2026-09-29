@@ -85,7 +85,7 @@ export default function QuizzesPage() {
                   {/* Meta */}
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex gap-3">
-                      <span className="px-2 py-1 bg-[#1F6BFF]/15 text-[#0B54CE] rounded text-xs">
+                      <span className="px-2 py-1 bg-[#15B2CF]/15 text-[#0D7F9B] rounded text-xs">
                         {quiz.difficulty}
                       </span>
                       <span className="text-gray-500">{quiz.questions} Qs</span>
@@ -96,7 +96,7 @@ export default function QuizzesPage() {
                   {/* Progress bar */}
                   <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-[#5B96FF] to-[#0B54CE]"
+                      className="h-full bg-gradient-to-r from-[#4FD3ED] to-[#0D7F9B]"
                       style={{ width: quiz.completed ? '100%' : '0%' }}
                     ></div>
                   </div>
@@ -110,10 +110,10 @@ export default function QuizzesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mt-12 p-8 rounded-xl border border-[#1F6BFF]/30 bg-[#1F6BFF]/10 backdrop-blur-sm text-center"
+            className="mt-12 p-8 rounded-xl border border-[#15B2CF]/30 bg-[#15B2CF]/10 backdrop-blur-sm text-center"
           >
             <p className="text-gray-300 mb-4">🎯 Complete all quizzes to unlock the Expert badge!</p>
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#A9C6FF] to-[#1F6BFF] rounded-full opacity-20"></div>
+            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#B5E5F2] to-[#15B2CF] rounded-full opacity-20"></div>
           </motion.div>
         </motion.div>
       </div>

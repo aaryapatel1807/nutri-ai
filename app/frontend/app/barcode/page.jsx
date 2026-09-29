@@ -183,7 +183,7 @@ export default function BarcodeScanner() {
                 {/* Scan frame overlay */}
                 <div style={{
                   position: 'absolute', inset: '20%',
-                  border: '2px dashed #1F6BFF', borderRadius: '12px',
+                  border: '2px dashed #15B2CF', borderRadius: '12px',
                   pointerEvents: 'none',
                   boxShadow: '0 0 0 9999px rgba(0,0,0,0.35)'
                 }} />
@@ -224,7 +224,7 @@ export default function BarcodeScanner() {
                     onClick={startCamera}
                     style={{
                       padding: '12px 24px',
-                      background: 'linear-gradient(135deg,#1F6BFF,#5B96FF)',
+                      background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)',
                       border: 'none', borderRadius: '12px',
                       color: '#000', fontWeight: 700, cursor: 'pointer',
                       fontSize: '0.9rem', fontFamily: "'Satoshi',sans-serif"
@@ -251,7 +251,7 @@ export default function BarcodeScanner() {
                     padding: '12px 20px', flexShrink: 0,
                     background: 'rgba(31,107,255,0.12)',
                     border: '1px solid rgba(31,107,255,0.35)',
-                    borderRadius: '12px', color: '#1F6BFF',
+                    borderRadius: '12px', color: '#15B2CF',
                     fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
                     opacity: code ? 1 : 0.5
                   }}>
@@ -323,7 +323,7 @@ export default function BarcodeScanner() {
               <div style={{ flex: 1, minWidth: '200px' }}>
                 <div style={{
                   display: 'inline-block', fontSize: '0.72rem', fontWeight: 700,
-                  color: '#1F6BFF', background: 'rgba(31,107,255,0.1)',
+                  color: '#15B2CF', background: 'rgba(31,107,255,0.1)',
                   border: '1px solid rgba(31,107,255,0.3)',
                   borderRadius: '99px', padding: '3px 12px', marginBottom: '8px'
                 }}>
@@ -354,9 +354,9 @@ export default function BarcodeScanner() {
               gap: '12px', marginBottom: '20px'
             }}>
               {[
-                { label: 'Calories', val: product.calories, unit: 'kcal', color: '#1F6BFF' },
+                { label: 'Calories', val: product.calories, unit: 'kcal', color: '#15B2CF' },
                 { label: 'Protein', val: product.protein, unit: 'g', color: '#7B61FF' },
-                { label: 'Carbs', val: product.carbs, unit: 'g', color: '#5B96FF' },
+                { label: 'Carbs', val: product.carbs, unit: 'g', color: '#4FD3ED' },
                 { label: 'Fat', val: product.fat, unit: 'g', color: '#2E7DFF' },
               ].map(m => (
                 <div key={m.label} style={{
@@ -404,7 +404,7 @@ export default function BarcodeScanner() {
                     style={{
                       padding: '10px 20px', background: 'rgba(31,107,255,0.12)',
                       border: '1px solid rgba(31,107,255,0.35)', borderRadius: '10px',
-                      color: '#1F6BFF', fontSize: '0.85rem', fontWeight: 700,
+                      color: '#15B2CF', fontSize: '0.85rem', fontWeight: 700,
                       textDecoration: 'none'
                     }}>
                     View Meal Log →
@@ -424,7 +424,7 @@ export default function BarcodeScanner() {
                         padding: '8px 18px', borderRadius: '99px',
                         border: mealType === t ? 'none' : '1px solid var(--border)',
                         background: mealType === t
-                          ? 'linear-gradient(135deg,#1F6BFF,#5B96FF)'
+                          ? 'linear-gradient(135deg,#15B2CF,#4FD3ED)'
                           : 'var(--bg-card)',
                         color: mealType === t ? '#000' : 'var(--text-muted)',
                         fontWeight: mealType === t ? 700 : 400,
@@ -443,7 +443,7 @@ export default function BarcodeScanner() {
                     disabled={logging}
                     style={{
                       flex: 1, padding: '14px',
-                      background: 'linear-gradient(135deg,#1F6BFF,#5B96FF)',
+                      background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)',
                       border: 'none', borderRadius: '14px',
                       color: '#000', fontWeight: 800, cursor: 'pointer',
                       fontSize: '0.95rem', fontFamily: "'Clash Display',sans-serif",

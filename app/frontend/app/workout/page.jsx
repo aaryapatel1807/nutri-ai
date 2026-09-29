@@ -75,7 +75,7 @@ const WORKOUTS = [
   {
     id:1, name:'Upper Body Strength', emoji:'💪', duration:45, calories:320,
     difficulty:'Intermediate', category:'Strength', equipment:'Gym',
-    color:'#1F6BFF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
     muscles:['Chest','Shoulders','Triceps','Back'],
     description:'Build powerful upper body with compound movements',
     exercises:[
@@ -132,7 +132,7 @@ const WORKOUTS = [
   {
     id:4, name:'Core Destroyer', emoji:'🎯', duration:35, calories:220,
     difficulty:'Intermediate', category:'Core', equipment:'Minimal',
-    color:'#5B96FF', glow:'rgba(91,150,255,0.3)',
+    color:'#4FD3ED', glow:'rgba(91,150,255,0.3)',
     muscles:['Rectus Abdominis','Obliques','Transverse Abs','Lower Back'],
     description:'Build a rock-solid core from every angle',
     exercises:[
@@ -189,7 +189,7 @@ const WORKOUTS = [
   {
     id:7, name:'Full Body Functional', emoji:'⚡', duration:45, calories:380,
     difficulty:'Beginner', category:'Functional', equipment:'Minimal',
-    color:'#A9C6FF', glow:'rgba(253,186,116,0.3)',
+    color:'#B5E5F2', glow:'rgba(253,186,116,0.3)',
     muscles:['Full Body','Core','Stability'],
     description:'Movement patterns for real world strength',
     exercises:[
@@ -284,7 +284,7 @@ const WORKOUTS = [
   {
     id:12, name:'Boxing & MMA Conditioning', emoji:'🥊', duration:45, calories:540,
     difficulty:'Advanced', category:'Combat', equipment:'Bag/Gloves',
-    color:'#1F6BFF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
     muscles:['Full Body','Core','Cardiovascular'],
     description:'Fighter-level conditioning and striking power',
     exercises:[
@@ -304,9 +304,9 @@ const WORKOUTS = [
 
 const MUSCLE_GROUPS = {
   'Chest': { color:'#2E7DFF', exercises:['Bench Press','Push Up','Fly','Dip'] },
-  'Back':  { color:'#1F6BFF', exercises:['Pull Up','Row','Deadlift','Pulldown'] },
+  'Back':  { color:'#15B2CF', exercises:['Pull Up','Row','Deadlift','Pulldown'] },
   'Legs':  { color:'#7B61FF', exercises:['Squat','Lunge','Press','Curl'] },
-  'Shoulders':{ color:'#5B96FF', exercises:['Press','Raise','Upright Row','Shrug'] },
+  'Shoulders':{ color:'#4FD3ED', exercises:['Press','Raise','Upright Row','Shrug'] },
   'Arms':  { color:'#FFD700', exercises:['Curl','Pushdown','Extension','Dip'] },
   'Core':  { color:'#F472B6', exercises:['Plank','Crunch','Twist','Raise'] },
 }
@@ -328,8 +328,8 @@ const EQUIPMENT = ['All','None','Minimal','Bar','Gym','Mat','Open Space','Bag/Gl
 const PRS = [
   { lift:'Bench Press', weight:'80kg', date:'Feb 28', emoji:'🏋️', color:'#2E7DFF' },
   { lift:'Squat',       weight:'120kg',date:'Mar 2',  emoji:'🦵', color:'#7B61FF' },
-  { lift:'Deadlift',    weight:'140kg',date:'Mar 5',  emoji:'⚡', color:'#1F6BFF' },
-  { lift:'OHP',         weight:'55kg', date:'Feb 20', emoji:'⬆️', color:'#5B96FF' },
+  { lift:'Deadlift',    weight:'140kg',date:'Mar 5',  emoji:'⚡', color:'#15B2CF' },
+  { lift:'OHP',         weight:'55kg', date:'Feb 20', emoji:'⬆️', color:'#4FD3ED' },
 ]
 
 export default function WorkoutPage() {
@@ -496,7 +496,7 @@ export default function WorkoutPage() {
     if (newPRs.length > 0) {
       setPrCelebration(newPRs)
       setRealPRs(loadPRs())
-      confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#2E7DFF', '#1F6BFF', '#FFD700', '#ffffff'] })
+      confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#2E7DFF', '#15B2CF', '#FFD700', '#ffffff'] })
       setTimeout(() => confetti({ particleCount: 90, angle: 60, spread: 60, origin: { x: 0, y: 0.4 }, colors: ['#2E7DFF', '#FFD700'] }), 250)
       setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 60, origin: { x: 1, y: 0.4 }, colors: ['#2E7DFF', '#FFD700'] }), 400)
     }
@@ -595,7 +595,7 @@ export default function WorkoutPage() {
                       {[
                         { label:'TIME',     val:fmt(timer),        color:activeWorkout.color },
                         { label:'CALORIES', val:`${totalVolume} kcal`, color:'#2E7DFF' },
-                        { label:'DONE',     val:`${completedExercises.length}/${activeWorkout.exercises.length}`, color:'#5B96FF' },
+                        { label:'DONE',     val:`${completedExercises.length}/${activeWorkout.exercises.length}`, color:'#4FD3ED' },
                       ].map(s => (
                         <div key={s.label} style={{
                           background:'var(--shadow-color)',
@@ -616,7 +616,7 @@ export default function WorkoutPage() {
                         background: timerRunning ? 'rgba(46,125,255,0.15)' : 'rgba(31,107,255,0.15)',
                         border:`1px solid ${timerRunning ? 'rgba(46,125,255,0.4)' : 'rgba(31,107,255,0.4)'}`,
                         borderRadius:'12px', padding:'10px 18px',
-                        color: timerRunning ? '#2E7DFF' : '#1F6BFF',
+                        color: timerRunning ? '#2E7DFF' : '#15B2CF',
                         cursor:'pointer', fontSize:'0.85rem', fontWeight:600
                       }}>{timerRunning ? '⏸ Pause' : '▶ Resume'}</button>
 
@@ -673,7 +673,7 @@ export default function WorkoutPage() {
                             style={{ fontSize:'1.6rem' }}
                           >😮‍💨</motion.span>
                           <div>
-                            <div style={{ color:'#5B96FF', fontWeight:700, fontSize:'0.9rem' }}>Rest Time</div>
+                            <div style={{ color:'#4FD3ED', fontWeight:700, fontSize:'0.9rem' }}>Rest Time</div>
                             <div style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>
                               Next: {activeWorkout.exercises[currentIdx]?.name}
                             </div>
@@ -682,7 +682,7 @@ export default function WorkoutPage() {
                         <motion.div
                           key={restTimer}
                           initial={{ scale:1.3, color:'#2E7DFF' }}
-                          animate={{ scale:1, color:'#5B96FF' }}
+                          animate={{ scale:1, color:'#4FD3ED' }}
                           style={{
                             fontFamily:"'Clash Display',sans-serif",
                             fontSize:'2.5rem', fontWeight:900,
@@ -692,7 +692,7 @@ export default function WorkoutPage() {
                           background:'rgba(91,150,255,0.15)',
                           border:'1px solid rgba(91,150,255,0.3)',
                           borderRadius:'10px', padding:'8px 16px',
-                          color:'#5B96FF', cursor:'pointer',
+                          color:'#4FD3ED', cursor:'pointer',
                           fontSize:'0.82rem', fontWeight:700
                         }}>Skip Rest →</button>
                       </motion.div>
@@ -732,7 +732,7 @@ export default function WorkoutPage() {
                             >{done ? '✅' : ex.emoji}</motion.span>
                             <div style={{ flex:1 }}>
                               <div style={{
-                                color: done ? '#1F6BFF' : current ? activeWorkout.color : 'var(--text-faint)',
+                                color: done ? '#15B2CF' : current ? activeWorkout.color : 'var(--text-faint)',
                                 fontSize:'0.83rem', fontWeight: current ? 700 : 500
                               }}>{ex.name}</div>
                               <div style={{ color:'var(--text-muted)', fontSize:'0.72rem' }}>
@@ -832,7 +832,7 @@ export default function WorkoutPage() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.4rem', fontWeight:800,
                   margin:0, marginBottom:'6px',
-                  background:'linear-gradient(135deg,var(--text-primary) 0%,#7B61FF 60%,#1F6BFF 100%)',
+                  background:'linear-gradient(135deg,var(--text-primary) 0%,#7B61FF 60%,#15B2CF 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>Workout Intelligence 💪</h1>
                 <p style={{ color:'var(--text-muted)', margin:0, fontSize:'0.9rem' }}>
@@ -845,7 +845,7 @@ export default function WorkoutPage() {
                 {[
                   { icon:'🔥', label:'Streak',    val:`${workoutStats.streak} day${workoutStats.streak === 1 ? '' : 's'}`, color:'#2E7DFF' },
                   { icon:'💪', label:'This Week',  val:`${workoutStats.weekSessions} session${workoutStats.weekSessions === 1 ? '' : 's'}`, color:'#7B61FF' },
-                  { icon:'⚡', label:'Burned',     val:`${workoutStats.totalKcal.toLocaleString()} kcal`, color:'#1F6BFF' },
+                  { icon:'⚡', label:'Burned',     val:`${workoutStats.totalKcal.toLocaleString()} kcal`, color:'#15B2CF' },
                   { icon:'🏆', label:'Logged',     val:`${workoutStats.total} workout${workoutStats.total === 1 ? '' : 's'}`, color:'#FFD700' },
                 ].map(s => (
                   <div key={s.label} style={{
@@ -881,7 +881,7 @@ export default function WorkoutPage() {
                     padding:'9px 20px', borderRadius:'12px',
                     border: activeTab===tab.id ? 'none' : '1px solid var(--border)',
                     background: activeTab===tab.id
-                      ? 'linear-gradient(135deg,#7B61FF,#5B96FF)'
+                      ? 'linear-gradient(135deg,#7B61FF,#4FD3ED)'
                       : 'var(--bg-card)',
                     color: activeTab===tab.id ? 'white' : 'var(--text-muted)',
                     fontWeight: activeTab===tab.id ? 700 : 400,
@@ -975,7 +975,7 @@ export default function WorkoutPage() {
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
                           border: activeCategory===c ? 'none' : '1px solid var(--border)',
-                          background: activeCategory===c ? 'linear-gradient(135deg,#7B61FF,#5B96FF)' : 'var(--bg-card)',
+                          background: activeCategory===c ? 'linear-gradient(135deg,#7B61FF,#4FD3ED)' : 'var(--bg-card)',
                           color: activeCategory===c ? 'white' : 'var(--text-muted)',
                           fontWeight: activeCategory===c ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem',
@@ -988,7 +988,7 @@ export default function WorkoutPage() {
                   <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', alignItems:'center' }}>
                     <span style={{ color:'#4B5563', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', minWidth:'70px' }}>Level</span>
                     {DIFFICULTIES.map(d => {
-                      const dc = d==='Beginner' ? '#1F6BFF' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#2E7DFF' : 'var(--text-muted)'
+                      const dc = d==='Beginner' ? '#15B2CF' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#2E7DFF' : 'var(--text-muted)'
                       const active = activeDifficulty===d
                       return (
                         <motion.button
@@ -1021,7 +1021,7 @@ export default function WorkoutPage() {
                           padding:'5px 14px', borderRadius:'99px',
                           border: activeEquipment===eq ? '1px solid rgba(91,150,255,0.4)' : '1px solid var(--border)',
                           background: activeEquipment===eq ? 'rgba(91,150,255,0.12)' : 'var(--bg-card)',
-                          color: activeEquipment===eq ? '#5B96FF' : 'var(--text-muted)',
+                          color: activeEquipment===eq ? '#4FD3ED' : 'var(--text-muted)',
                           fontWeight: activeEquipment===eq ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem'
                         }}>{eq}</motion.button>
@@ -1031,7 +1031,7 @@ export default function WorkoutPage() {
 
                 {/* Results count */}
                 <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'16px' }}>
-                  Showing <span style={{ color:'#1F6BFF', fontWeight:700 }}>{filtered.length}</span> of {WORKOUTS.length} workouts
+                  Showing <span style={{ color:'#15B2CF', fontWeight:700 }}>{filtered.length}</span> of {WORKOUTS.length} workouts
                 </div>
 
                 {/* Grid */}
@@ -1077,7 +1077,7 @@ export default function WorkoutPage() {
                               : w.difficulty==='Intermediate' ? 'rgba(255,215,0,0.3)'
                               : 'rgba(46,125,255,0.3)'}`,
                             borderRadius:'99px', padding:'3px 12px',
-                            color: w.difficulty==='Beginner'   ? '#1F6BFF'
+                            color: w.difficulty==='Beginner'   ? '#15B2CF'
                               : w.difficulty==='Intermediate' ? '#FFD700'
                               : '#2E7DFF',
                             fontSize:'0.7rem', fontWeight:700
@@ -1119,7 +1119,7 @@ export default function WorkoutPage() {
                         {/* Stats grid */}
                         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:'8px', marginBottom:'16px' }}>
                           {[
-                            { label:'Duration', val:`${w.duration}m`, color:'#5B96FF' },
+                            { label:'Duration', val:`${w.duration}m`, color:'#4FD3ED' },
                             { label:'Calories',  val:w.calories,       color:'#2E7DFF' },
                             { label:'Exercises', val:w.exercises.length,color:w.color },
                           ].map(s => (
@@ -1161,7 +1161,7 @@ export default function WorkoutPage() {
               >
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:'12px', marginBottom:'24px' }}>
                   {WEEKLY_PLAN.map((day, i) => {
-                    const statusColor = day.status==='done' ? '#1F6BFF'
+                    const statusColor = day.status==='done' ? '#15B2CF'
                       : day.status==='active' ? '#7B61FF'
                       : day.status==='rest' ? '#4B5563'
                       : 'var(--text-muted)'
@@ -1220,9 +1220,9 @@ export default function WorkoutPage() {
                 {/* Weekly summary */}
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'16px' }}>
                   {[
-                    { label:'Sessions Completed', val:'3/5',       icon:'✅', color:'#1F6BFF', desc:'On track!' },
+                    { label:'Sessions Completed', val:'3/5',       icon:'✅', color:'#15B2CF', desc:'On track!' },
                     { label:'Total Calories',      val:'1,220',     icon:'🔥', color:'#2E7DFF', desc:'kcal burned' },
-                    { label:'Total Duration',      val:'2h 30m',    icon:'⏱', color:'#5B96FF', desc:'active time' },
+                    { label:'Total Duration',      val:'2h 30m',    icon:'⏱', color:'#4FD3ED', desc:'active time' },
                     { label:'Weekly Volume',       val:'18,500kg',  icon:'💪', color:'#7B61FF', desc:'total lifted' },
                   ].map(s => (
                     <motion.div
@@ -1421,7 +1421,7 @@ export default function WorkoutPage() {
                       <div key={lift} style={{ marginBottom:'24px' }}>
                         <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'10px' }}>
                           <span style={{ color:'var(--text-primary)', fontWeight:600, fontSize:'0.9rem' }}>{lift}</span>
-                          <span style={{ color:PRS[li]?.color || '#1F6BFF', fontWeight:700, fontSize:'0.9rem' }}>
+                          <span style={{ color:PRS[li]?.color || '#15B2CF', fontWeight:700, fontSize:'0.9rem' }}>
                             {PRS[li]?.weight || '80kg'} 1RM
                           </span>
                         </div>
@@ -1435,11 +1435,11 @@ export default function WorkoutPage() {
                               style={{
                                 flex:1, borderRadius:'4px 4px 0 0',
                                 background: di===data.length-1
-                                  ? `linear-gradient(180deg,${PRS[li]?.color||'#1F6BFF'},${PRS[li]?.color||'#1F6BFF'}60)` 
+                                  ? `linear-gradient(180deg,${PRS[li]?.color||'#15B2CF'},${PRS[li]?.color||'#15B2CF'}60)` 
                                   : 'var(--border)',
                                 position:'relative',
                                 cursor:'pointer',
-                                boxShadow: di===data.length-1 ? `0 0 12px ${PRS[li]?.color||'#1F6BFF'}40` : 'none'
+                                boxShadow: di===data.length-1 ? `0 0 12px ${PRS[li]?.color||'#15B2CF'}40` : 'none'
                               }}
                               title={`${d.week}: ${d.val}kg`}
                             />
@@ -1508,7 +1508,7 @@ export default function WorkoutPage() {
                               style={{
                                 width:'100%', borderRadius:'6px 6px 0 0',
                                 background: i===7
-                                  ? 'linear-gradient(180deg,#1F6BFF,#5B96FF)'
+                                  ? 'linear-gradient(180deg,#15B2CF,#4FD3ED)'
                                   : 'rgba(31,107,255,0.25)',
                                 boxShadow: i===7 ? '0 0 20px rgba(31,107,255,0.4)' : 'none'
                               }}
@@ -1526,8 +1526,8 @@ export default function WorkoutPage() {
                       📊 Body Composition
                     </h3>
                     {[
-                      { label:'Body Weight',   val:'72.4 kg',  change:'-1.2kg',   good:true,  color:'#1F6BFF' },
-                      { label:'Body Fat',      val:'14.2%',    change:'-0.8%',    good:true,  color:'#5B96FF' },
+                      { label:'Body Weight',   val:'72.4 kg',  change:'-1.2kg',   good:true,  color:'#15B2CF' },
+                      { label:'Body Fat',      val:'14.2%',    change:'-0.8%',    good:true,  color:'#4FD3ED' },
                       { label:'Muscle Mass',   val:'58.8 kg',  change:'+0.6kg',   good:true,  color:'#7B61FF' },
                       { label:'Visceral Fat',  val:'Level 5',  change:'-1 level', good:true,  color:'#FFD700' },
                       { label:'BMR',           val:'1,842 kcal',change:'+24',     good:true,  color:'#2E7DFF' },
@@ -1545,7 +1545,7 @@ export default function WorkoutPage() {
                           background: s.good ? 'rgba(31,107,255,0.1)' : 'rgba(255,59,48,0.1)',
                           border:`1px solid ${s.good ? 'rgba(31,107,255,0.2)' : 'rgba(255,59,48,0.2)'}`,
                           borderRadius:'99px', padding:'3px 10px',
-                          color: s.good ? '#1F6BFF' : '#FF3B30',
+                          color: s.good ? '#15B2CF' : '#FF3B30',
                           fontSize:'0.72rem', fontWeight:700
                         }}>{s.change}</div>
                       </div>
@@ -1695,7 +1695,7 @@ export default function WorkoutPage() {
                       { label:'Duration',  val:selected.duration,         unit:'min',     color:selected.color, icon:'⏱' },
                       { label:'Calories',  val:selected.calories,         unit:'kcal',    color:'#2E7DFF',       icon:'🔥' },
                       { label:'Exercises', val:selected.exercises.length, unit:'moves',   color:'#7B61FF',       icon:'💪' },
-                      { label:'Sets',      val:selected.exercises.reduce((a,e)=>a+e.sets,0), unit:'total', color:'#5B96FF', icon:'🔄' },
+                      { label:'Sets',      val:selected.exercises.reduce((a,e)=>a+e.sets,0), unit:'total', color:'#4FD3ED', icon:'🔄' },
                       { label:'Muscles',   val:selected.muscles.length,   unit:'groups',  color:'#FFD700',       icon:'🎯' },
                     ].map(s => (
                       <div key={s.label} style={{
@@ -1794,7 +1794,7 @@ export default function WorkoutPage() {
                         {[
                           { label:'Sets', val:ex.sets, color:selected.color },
                           { label:'Reps', val:ex.reps, color: 'var(--text-primary)' },
-                          { label:'Rest', val:`${ex.rest}s`, color:'#5B96FF' },
+                          { label:'Rest', val:`${ex.rest}s`, color:'#4FD3ED' },
                           { label:'kcal', val:ex.calories, color:'#2E7DFF' },
                         ].map(s => (
                           <div key={s.label}>

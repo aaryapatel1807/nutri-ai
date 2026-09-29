@@ -7,69 +7,69 @@ import useIsMobile from '../../lib/useIsMobile'
 
 const BADGES_MOCK = [
   // NUTRITION BADGES
-  { id:1,  name:'First Bite',        emoji:'🍽️', category:'Nutrition',  rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Log your very first meal',                 color:'#1F6BFF', unlockDate:'Jan 15' },
-  { id:2,  name:'Protein King',      emoji:'💪', category:'Nutrition',  rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Hit 200g+ protein for 7 days straight',    color:'#1F6BFF', unlockDate:'Feb 2' },
-  { id:3,  name:'Hydration Hero',    emoji:'💧', category:'Nutrition',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Drink 8 glasses of water for 14 days',     color:'#5B96FF', unlockDate:'Feb 10' },
-  { id:4,  name:'Clean Eater',       emoji:'🥗', category:'Nutrition',  rarity:'Epic',      xp:800,  unlocked:true,  progress:100, desc:'30 days of hitting all macro targets',     color:'#A9C6FF', unlockDate:'Feb 28' },
+  { id:1,  name:'First Bite',        emoji:'🍽️', category:'Nutrition',  rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Log your very first meal',                 color:'#15B2CF', unlockDate:'Jan 15' },
+  { id:2,  name:'Protein King',      emoji:'💪', category:'Nutrition',  rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Hit 200g+ protein for 7 days straight',    color:'#15B2CF', unlockDate:'Feb 2' },
+  { id:3,  name:'Hydration Hero',    emoji:'💧', category:'Nutrition',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Drink 8 glasses of water for 14 days',     color:'#4FD3ED', unlockDate:'Feb 10' },
+  { id:4,  name:'Clean Eater',       emoji:'🥗', category:'Nutrition',  rarity:'Epic',      xp:800,  unlocked:true,  progress:100, desc:'30 days of hitting all macro targets',     color:'#B5E5F2', unlockDate:'Feb 28' },
   { id:5,  name:'Macro Master',      emoji:'⚖️', category:'Nutrition',  rarity:'Legendary', xp:2000, unlocked:false, progress:68,  desc:'Perfect macros 60 days in a row',          color:'#FFD700' },
-  { id:6,  name:'Veggie Warrior',    emoji:'🥦', category:'Nutrition',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Eat 5 servings of vegetables daily for 21 days', color:'#A9C6FF', unlockDate:'Mar 1' },
-  { id:7,  name:'Sugar Slayer',      emoji:'🚫', category:'Nutrition',  rarity:'Epic',      xp:750,  unlocked:false, progress:45,  desc:'Zero added sugar for 30 consecutive days', color:'#2E7DFF' },
-  { id:8,  name:'Meal Prep God',     emoji:'🍱', category:'Nutrition',  rarity:'Legendary', xp:1500, unlocked:false, progress:30,  desc:'Prep 52 weeks of meals in advance',        color:'#1F6BFF' },
+  { id:6,  name:'Veggie Warrior',    emoji:'🥦', category:'Nutrition',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Eat 5 servings of vegetables daily for 21 days', color:'#B5E5F2', unlockDate:'Mar 1' },
+  { id:7,  name:'Sugar Slayer',      emoji:'🚫', category:'Nutrition',  rarity:'Epic',      xp:750,  unlocked:false, progress:45,  desc:'Zero added sugar for 30 consecutive days', color:'#1FA8C9' },
+  { id:8,  name:'Meal Prep God',     emoji:'🍱', category:'Nutrition',  rarity:'Legendary', xp:1500, unlocked:false, progress:30,  desc:'Prep 52 weeks of meals in advance',        color:'#15B2CF' },
 
   // FITNESS BADGES
   { id:9,  name:'First Rep',         emoji:'🏋️', category:'Fitness',   rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Complete your first workout',              color:'#7B61FF', unlockDate:'Jan 15' },
   { id:10, name:'Iron Will',         emoji:'🔩', category:'Fitness',   rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Work out 4 times per week for a month',    color:'#7B61FF', unlockDate:'Feb 5' },
   { id:11, name:'Century Club',      emoji:'💯', category:'Fitness',   rarity:'Epic',      xp:1000, unlocked:true,  progress:100, desc:'Complete 100 total workouts',              color:'#A78BFA', unlockDate:'Feb 25' },
-  { id:12, name:'Beast Mode',        emoji:'🦁', category:'Fitness',   rarity:'Legendary', xp:2500, unlocked:false, progress:72,  desc:'500 total workouts completed',             color:'#2E7DFF' },
+  { id:12, name:'Beast Mode',        emoji:'🦁', category:'Fitness',   rarity:'Legendary', xp:2500, unlocked:false, progress:72,  desc:'500 total workouts completed',             color:'#1FA8C9' },
   { id:13, name:'Early Bird',        emoji:'🌅', category:'Fitness',   rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Work out before 7am for 10 days',          color:'#FFD700', unlockDate:'Jan 28' },
   { id:14, name:'Night Owl',         emoji:'🦉', category:'Fitness',   rarity:'Rare',      xp:300,  unlocked:false, progress:60,  desc:'Work out after 9pm for 15 days',           color:'#A78BFA' },
-  { id:15, name:'Cardio King',       emoji:'🏃', category:'Fitness',   rarity:'Epic',      xp:800,  unlocked:false, progress:55,  desc:'Run 100km total distance',                 color:'#5B96FF' },
+  { id:15, name:'Cardio King',       emoji:'🏃', category:'Fitness',   rarity:'Epic',      xp:800,  unlocked:false, progress:55,  desc:'Run 100km total distance',                 color:'#4FD3ED' },
   { id:16, name:'Strength Legend',   emoji:'⚡', category:'Fitness',   rarity:'Legendary', xp:3000, unlocked:false, progress:25,  desc:'Lift 1000 total tons (volume)',             color:'#FFD700' },
 
   // STREAK BADGES
-  { id:17, name:'Week Warrior',      emoji:'📅', category:'Streak',    rarity:'Common',    xp:150,  unlocked:true,  progress:100, desc:'7-day streak achieved',                    color:'#1F6BFF', unlockDate:'Jan 22' },
-  { id:18, name:'Two Week Titan',    emoji:'🔥', category:'Streak',    rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'14-day streak achieved',                   color:'#2E7DFF', unlockDate:'Feb 1' },
-  { id:19, name:'Monthly Monster',   emoji:'📆', category:'Streak',    rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'30-day streak achieved',                   color:'#2E7DFF', unlockDate:'Feb 15' },
-  { id:20, name:'Quarter Legend',    emoji:'🗓️', category:'Streak',   rarity:'Epic',      xp:2000, unlocked:false, progress:40,  desc:'90-day streak — true dedication',          color:'#2E7DFF' },
+  { id:17, name:'Week Warrior',      emoji:'📅', category:'Streak',    rarity:'Common',    xp:150,  unlocked:true,  progress:100, desc:'7-day streak achieved',                    color:'#15B2CF', unlockDate:'Jan 22' },
+  { id:18, name:'Two Week Titan',    emoji:'🔥', category:'Streak',    rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'14-day streak achieved',                   color:'#1FA8C9', unlockDate:'Feb 1' },
+  { id:19, name:'Monthly Monster',   emoji:'📆', category:'Streak',    rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'30-day streak achieved',                   color:'#1FA8C9', unlockDate:'Feb 15' },
+  { id:20, name:'Quarter Legend',    emoji:'🗓️', category:'Streak',   rarity:'Epic',      xp:2000, unlocked:false, progress:40,  desc:'90-day streak — true dedication',          color:'#1FA8C9' },
   { id:21, name:'Year of Champions', emoji:'👑', category:'Streak',   rarity:'Mythic',    xp:10000,unlocked:false, progress:3,   desc:'365-day unbroken streak',                  color:'#FFD700' },
-  { id:22, name:'Comeback Kid',      emoji:'↩️', category:'Streak',   rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Return after a 7+ day break',              color:'#1F6BFF', unlockDate:'Feb 20' },
+  { id:22, name:'Comeback Kid',      emoji:'↩️', category:'Streak',   rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Return after a 7+ day break',              color:'#15B2CF', unlockDate:'Feb 20' },
 
   // WEIGHT/BODY BADGES
-  { id:23, name:'First Kilo',        emoji:'⚖️', category:'Body',     rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'Lose your first kilogram',                 color:'#5B96FF', unlockDate:'Jan 30' },
-  { id:24, name:'5kg Club',          emoji:'🏅', category:'Body',     rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'Lose 5 kilograms total',                   color:'#5B96FF', unlockDate:'Feb 28' },
+  { id:23, name:'First Kilo',        emoji:'⚖️', category:'Body',     rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'Lose your first kilogram',                 color:'#4FD3ED', unlockDate:'Jan 30' },
+  { id:24, name:'5kg Club',          emoji:'🏅', category:'Body',     rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'Lose 5 kilograms total',                   color:'#4FD3ED', unlockDate:'Feb 28' },
   { id:25, name:'10kg Champion',     emoji:'🥇', category:'Body',     rarity:'Epic',      xp:1500, unlocked:false, progress:48,  desc:'Lose 10 kilograms total',                  color:'#FFD700' },
   { id:26, name:'Body Recomp',       emoji:'🔄', category:'Body',     rarity:'Legendary', xp:3000, unlocked:false, progress:20,  desc:'Lose 5% body fat while gaining muscle',    color:'#7B61FF' },
-  { id:27, name:'Muscle Machine',    emoji:'💪', category:'Body',     rarity:'Epic',      xp:1200, unlocked:false, progress:62,  desc:'Gain 5kg of lean muscle mass',             color:'#1F6BFF' },
+  { id:27, name:'Muscle Machine',    emoji:'💪', category:'Body',     rarity:'Epic',      xp:1200, unlocked:false, progress:62,  desc:'Gain 5kg of lean muscle mass',             color:'#15B2CF' },
 
   // SOCIAL/SPECIAL
-  { id:28, name:'Profile Complete',  emoji:'✅', category:'Special',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Complete your NutriAI profile',            color:'#A9C6FF', unlockDate:'Jan 15' },
-  { id:29, name:'AI Apprentice',     emoji:'🤖', category:'Special',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Have 50 conversations with AI Coach',      color:'#5B96FF', unlockDate:'Mar 1' },
+  { id:28, name:'Profile Complete',  emoji:'✅', category:'Special',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Complete your NutriAI profile',            color:'#B5E5F2', unlockDate:'Jan 15' },
+  { id:29, name:'AI Apprentice',     emoji:'🤖', category:'Special',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Have 50 conversations with AI Coach',      color:'#4FD3ED', unlockDate:'Mar 1' },
   { id:30, name:'Data Nerd',         emoji:'📊', category:'Special',  rarity:'Epic',      xp:600,  unlocked:false, progress:78,  desc:'Log data every single day for 60 days',   color:'#7B61FF' },
-  { id:31, name:'Recipe Master',     emoji:'👨‍🍳',category:'Special',  rarity:'Rare',      xp:500,  unlocked:false, progress:40,  desc:'Save and cook 25 different recipes',      color:'#1F6BFF' },
+  { id:31, name:'Recipe Master',     emoji:'👨‍🍳',category:'Special',  rarity:'Rare',      xp:500,  unlocked:false, progress:40,  desc:'Save and cook 25 different recipes',      color:'#15B2CF' },
   { id:32, name:'NutriAI Legend',    emoji:'🌟', category:'Special',  rarity:'Mythic',    xp:50000,unlocked:false, progress:8,   desc:'The ultimate achievement — master of all', color:'#FFD700' },
 ]
 
 const LEVELS = [
   { level:1,  name:'Rookie',         minXP:0,     maxXP:500,   color:'var(--text-muted)', emoji:'🌱' },
-  { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#A9C6FF', emoji:'🌿' },
-  { level:3,  name:'Novice',         minXP:1200,  maxXP:2500,  color:'#1F6BFF', emoji:'⚡' },
-  { level:4,  name:'Apprentice',     minXP:2500,  maxXP:4500,  color:'#5B96FF', emoji:'💫' },
+  { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#B5E5F2', emoji:'🌿' },
+  { level:3,  name:'Novice',         minXP:1200,  maxXP:2500,  color:'#15B2CF', emoji:'⚡' },
+  { level:4,  name:'Apprentice',     minXP:2500,  maxXP:4500,  color:'#4FD3ED', emoji:'💫' },
   { level:5,  name:'Intermediate',   minXP:4500,  maxXP:7000,  color:'#7B61FF', emoji:'🔥' },
   { level:6,  name:'Advanced',       minXP:7000,  maxXP:10000, color:'#A78BFA', emoji:'💎' },
-  { level:7,  name:'Expert',         minXP:10000, maxXP:14000, color:'#1F6BFF', emoji:'🏆' },
-  { level:8,  name:'Elite',          minXP:14000, maxXP:20000, color:'#2E7DFF', emoji:'⭐' },
+  { level:7,  name:'Expert',         minXP:10000, maxXP:14000, color:'#15B2CF', emoji:'🏆' },
+  { level:8,  name:'Elite',          minXP:14000, maxXP:20000, color:'#1FA8C9', emoji:'⭐' },
   { level:9,  name:'Master',         minXP:20000, maxXP:30000, color:'#FFD700', emoji:'👑' },
-  { level:10, name:'Legend',         minXP:30000, maxXP:999999,color:'#2E7DFF', emoji:'🌟' },
+  { level:10, name:'Legend',         minXP:30000, maxXP:999999,color:'#1FA8C9', emoji:'🌟' },
 ]
 
 const CHALLENGES = [
-  { id:1, name:'7-Day Protein Sprint', emoji:'💪', desc:'Hit 180g+ protein every day this week', progress:5, total:7, reward:500, xp:300,  color:'#1F6BFF', deadline:'2 days left',  type:'Weekly' },
-  { id:2, name:'10k Steps Daily',      emoji:'👟', desc:'Walk 10,000 steps for 5 consecutive days', progress:3, total:5, reward:300, xp:200, color:'#5B96FF', deadline:'3 days left',  type:'Weekly' },
+  { id:1, name:'7-Day Protein Sprint', emoji:'💪', desc:'Hit 180g+ protein every day this week', progress:5, total:7, reward:500, xp:300,  color:'#15B2CF', deadline:'2 days left',  type:'Weekly' },
+  { id:2, name:'10k Steps Daily',      emoji:'👟', desc:'Walk 10,000 steps for 5 consecutive days', progress:3, total:5, reward:300, xp:200, color:'#4FD3ED', deadline:'3 days left',  type:'Weekly' },
   { id:3, name:'Hydration Master',     emoji:'💧', desc:'8 glasses of water for 7 days straight',  progress:4, total:7, reward:250, xp:150, color:'#60A5FA', deadline:'4 days left',  type:'Weekly' },
-  { id:4, name:'Zero Cheat Days',      emoji:'🥗', desc:'Stick to meal plan all 30 days this month',progress:14,total:30,reward:2000,xp:1000,color:'#A9C6FF', deadline:'16 days left', type:'Monthly' },
+  { id:4, name:'Zero Cheat Days',      emoji:'🥗', desc:'Stick to meal plan all 30 days this month',progress:14,total:30,reward:2000,xp:1000,color:'#B5E5F2', deadline:'16 days left', type:'Monthly' },
   { id:5, name:'Strength PR Week',     emoji:'🏋️', desc:'Set a new PR in any lift this week',      progress:0, total:1, reward:400, xp:250, color:'#7B61FF', deadline:'5 days left',  type:'Weekly' },
-  { id:6, name:'100 Push Ups Today',   emoji:'⬆️', desc:'Complete 100 push ups in a single day',  progress:67,total:100,reward:200,xp:100, color:'#2E7DFF', deadline:'Today',        type:'Daily' },
-  { id:7, name:'Meal Prep Sunday',     emoji:'🍱', desc:'Prep all meals for next 5 days today',    progress:0, total:1, reward:350, xp:200, color:'#1F6BFF', deadline:'Today',        type:'Daily' },
+  { id:6, name:'100 Push Ups Today',   emoji:'⬆️', desc:'Complete 100 push ups in a single day',  progress:67,total:100,reward:200,xp:100, color:'#1FA8C9', deadline:'Today',        type:'Daily' },
+  { id:7, name:'Meal Prep Sunday',     emoji:'🍱', desc:'Prep all meals for next 5 days today',    progress:0, total:1, reward:350, xp:200, color:'#15B2CF', deadline:'Today',        type:'Daily' },
   { id:8, name:'Sleep 8 Hours',        emoji:'😴', desc:'Get 8+ hours of sleep for 5 nights',      progress:2, total:5, reward:300, xp:200, color:'#A78BFA', deadline:'3 days left',  type:'Weekly' },
 ]
 
@@ -77,16 +77,16 @@ const LEADERBOARD = [
   { rank:1, name:'Priya S.',    xp:28450, level:9, avatar:'PS', color:'#FFD700', badge:'👑', change:'↑2' },
   { rank:2, name:'Rahul M.',    xp:24200, level:9, avatar:'RM', color:'#C0C0C0', badge:'🥈', change:'↓1' },
   { rank:3, name:'Arjun K.',    xp:19800, level:8, avatar:'AK', color:'#CD7F32', badge:'🥉', change:'↑1' },
-  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#1F6BFF', badge:'⭐', change:'↑3' },
+  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#15B2CF', badge:'⭐', change:'↑3' },
   { rank:5, name:'Vikram T.',   xp:14200, level:7, avatar:'VT', color:'#7B61FF', badge:'🏆', change:'↓2' },
-  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#5B96FF', badge:'💎', change:'↑4', isUser:true },
-  { rank:7, name:'Meera R.',    xp:11800, level:7, avatar:'MR', color:'#1F6BFF', badge:'🔥', change:'↓1' },
-  { rank:8, name:'Karan S.',    xp:9400,  level:6, avatar:'KS', color:'#A9C6FF', badge:'💫', change:'→0' },
+  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#4FD3ED', badge:'💎', change:'↑4', isUser:true },
+  { rank:7, name:'Meera R.',    xp:11800, level:7, avatar:'MR', color:'#15B2CF', badge:'🔥', change:'↓1' },
+  { rank:8, name:'Karan S.',    xp:9400,  level:6, avatar:'KS', color:'#B5E5F2', badge:'💫', change:'→0' },
 ]
 
 const RARITY_CONFIG = {
   Common:    { color:'var(--text-muted)', bg:'rgba(156,163,175,0.1)', border:'rgba(156,163,175,0.3)', glow:'rgba(156,163,175,0.2)', stars:1 },
-  Rare:      { color:'#5B96FF', bg:'rgba(91,150,255,0.1)',   border:'rgba(91,150,255,0.3)',   glow:'rgba(91,150,255,0.3)',   stars:2 },
+  Rare:      { color:'#4FD3ED', bg:'rgba(79,211,237,0.1)',   border:'rgba(79,211,237,0.3)',   glow:'rgba(79,211,237,0.3)',   stars:2 },
   Epic:      { color:'#7B61FF', bg:'rgba(123,97,255,0.1)',  border:'rgba(123,97,255,0.3)',  glow:'rgba(123,97,255,0.4)',  stars:3 },
   Legendary: { color:'#FFD700', bg:'rgba(255,215,0,0.1)',   border:'rgba(255,215,0,0.4)',   glow:'rgba(255,215,0,0.5)',   stars:4 },
   Mythic:    { color:'#EF4444', bg:'rgba(239,68,68,0.15)', border:'rgba(239,68,68,0.5)',  glow:'rgba(239,68,68,0.6)',  stars:5 },
@@ -116,7 +116,7 @@ function useTilt() {
 function Confetti({ active }) {
   if (!active) return null
   const pieces = Array.from({ length:60 }, (_,i) => ({
-    id:i, color:['#1F6BFF','#7B61FF','#FFD700','#2E7DFF','#5B96FF','#1F6BFF'][i%6],
+    id:i, color:['#15B2CF','#7B61FF','#FFD700','#1FA8C9','#4FD3ED','#15B2CF'][i%6],
     x: Math.random()*100, delay: Math.random()*0.5,
     size: Math.random()*8+4, rotation: Math.random()*360
   }))
@@ -143,7 +143,7 @@ function Confetti({ active }) {
           <button
             onClick={() => window.location.reload()}
             style={{ padding:'12px 28px', borderRadius:'99px', border:'none', cursor:'pointer',
-              background:'linear-gradient(135deg,#1F6BFF,#2E7DFF)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
+              background:'linear-gradient(135deg,#15B2CF,#1FA8C9)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
           >Try Again</button>
         </div>
       </div>
@@ -439,7 +439,7 @@ export default function Achievements() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.8rem', fontWeight:800,
                   margin:0, marginBottom:'8px',
-                  background:'linear-gradient(135deg,#FFD700 0%,#2E7DFF 50%,#7B61FF 100%)',
+                  background:'linear-gradient(135deg,#FFD700 0%,#1FA8C9 50%,#7B61FF 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>Achievements 🏆</h1>
                 <p style={{ color:'var(--text-muted)', margin:0, fontSize:'1rem' }}>
@@ -500,9 +500,9 @@ export default function Achievements() {
 
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'12px' }}>
                   {[
-                    { label:'Badges', val:stats.unlocked, total:stats.total, color:'#1F6BFF' },
+                    { label:'Badges', val:stats.unlocked, total:stats.total, color:'#15B2CF' },
                     { label:'Rare+', val:stats.rare, total:stats.unlocked, color:'#7B61FF' },
-                    { label:'Streak', val:streak, total:'days', color:'#2E7DFF' },
+                    { label:'Streak', val:streak, total:'days', color:'#1FA8C9' },
                     { label:'Rank', val:'#6', total:'global', color:'#FFD700' }
                   ].map((stat, i) => (
                     <div key={i} style={{ textAlign:'center' }}>
@@ -573,8 +573,8 @@ export default function Achievements() {
                     whileTap={{ scale:0.95 }}
                     onClick={() => setActiveFilter(filter)}
                     style={{
-                      background: activeFilter === filter ? '#1F6BFF' : 'var(--border)',
-                      border: activeFilter === filter ? '1px solid #1F6BFF' : '1px solid var(--border)',
+                      background: activeFilter === filter ? '#15B2CF' : 'var(--border)',
+                      border: activeFilter === filter ? '1px solid #15B2CF' : '1px solid var(--border)',
                       borderRadius:'20px', padding:'8px 16px',
                       color: activeFilter === filter ? '#000' : 'var(--text-muted)',
                       fontSize:'0.85rem', fontWeight:600, cursor:'pointer',
@@ -705,7 +705,7 @@ export default function Achievements() {
                       </div>
                       <div style={{
                         marginTop:'6px',
-                        color:challenge.type === 'Daily' ? '#2E7DFF' : '#5B96FF',
+                        color:challenge.type === 'Daily' ? '#1FA8C9' : '#4FD3ED',
                         fontSize:'0.65rem', fontWeight:600
                       }}>
                         {challenge.deadline}
@@ -740,8 +740,8 @@ export default function Achievements() {
                       style={{
                         display:'flex', alignItems:'center', gap:'10px',
                         padding:'10px', borderRadius:'10px',
-                        background: user.isUser ? 'rgba(91,150,255,0.1)' : 'var(--border)',
-                        border: user.isUser ? '1px solid rgba(91,150,255,0.3)' : '1px solid var(--border)',
+                        background: user.isUser ? 'rgba(79,211,237,0.1)' : 'var(--border)',
+                        border: user.isUser ? '1px solid rgba(79,211,237,0.3)' : '1px solid var(--border)',
                         cursor: user.isUser ? 'default' : 'pointer'
                       }}
                     >
@@ -763,7 +763,7 @@ export default function Achievements() {
                       </div>
                       <div style={{ flex:1 }}>
                         <div style={{
-                          color:user.isUser ? '#5B96FF' : 'white',
+                          color:user.isUser ? '#4FD3ED' : 'white',
                           fontSize:'0.85rem', fontWeight:600
                         }}>{user.name}</div>
                         <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>
@@ -774,8 +774,8 @@ export default function Achievements() {
                         <div style={{ fontSize:'1rem' }}>{user.badge}</div>
                         <div style={{
                           fontSize:'0.65rem', fontWeight:600,
-                          color: user.change.includes('↑') ? '#1F6BFF' : 
-                                 user.change.includes('↓') ? '#2E7DFF' : 'var(--text-muted)'
+                          color: user.change.includes('↑') ? '#15B2CF' : 
+                                 user.change.includes('↓') ? '#1FA8C9' : 'var(--text-muted)'
                         }}>{user.change}</div>
                       </div>
                     </motion.div>

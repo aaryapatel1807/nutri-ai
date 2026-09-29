@@ -46,7 +46,7 @@ const num = { fontVariantNumeric: 'tabular-nums' }
 function readinessColor(score) {
   if (score >= 85) return '#2ECC71'
   if (score >= 70) return '#2E7DFF'
-  if (score >= 50) return '#5B96FF'
+  if (score >= 50) return '#4FD3ED'
   return '#FF6B6B'
 }
 
@@ -324,7 +324,7 @@ export default function CoachPage() {
             <>
               <div style={{ display: 'flex', gap: 36, flexWrap: 'wrap', marginBottom: 8 }}>
                 <Stat label="LEARNED TDEE" value={tdee.learnedTDEE.toLocaleString('en-GB')} unit="kcal/day" accent />
-                <Stat label="WEIGHT TREND" value={trendTxt} tone={trend < -0.05 ? '#2ECC71' : trend > 0.05 ? '#5B96FF' : undefined} />
+                <Stat label="WEIGHT TREND" value={trendTxt} tone={trend < -0.05 ? '#2ECC71' : trend > 0.05 ? '#4FD3ED' : undefined} />
                 <Stat label="AVG INTAKE" value={(tdee.avgIntake || 0).toLocaleString('en-GB')} unit="kcal/day" />
                 <Stat label="CONFIDENCE" value={(tdee.confidence || 'low').toUpperCase()} small />
               </div>
