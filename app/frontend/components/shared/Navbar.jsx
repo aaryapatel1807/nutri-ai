@@ -66,7 +66,7 @@ export default function Navbar({ onMenuClick = () => {} }) {
       left: isMobile ? 0 : '260px',
       right: 0,
       height: isMobile ? '64px' : '80px',
-      borderBottom: '1px solid var(--border)',
+      borderBottom: '1px solid var(--glass-border)',
       zIndex: 40,
       display: 'flex',
       alignItems: 'center',

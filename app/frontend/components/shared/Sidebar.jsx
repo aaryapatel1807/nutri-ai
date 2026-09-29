@@ -133,7 +133,7 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
       top: 0,
       width: '260px',
       height: '100vh',
-      borderRight: '1px solid var(--border)',
+      borderRight: '1px solid var(--glass-border)',
       zIndex: 100,
       display: 'flex',
       flexDirection: 'column',
