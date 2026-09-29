@@ -198,10 +198,10 @@ html[data-theme="dark"] {
   -webkit-text-fill-color: transparent;
 }
 
-/* Primary accent button */
+/* Primary accent button — Aurora Pop gradient */
 .btn-neon {
-  background: linear-gradient(135deg, var(--accent-glow), var(--accent));
-  color: var(--on-accent);
+  background: linear-gradient(135deg, #FF6B5E, #FFB020 55%, #7B61FF);
+  color: #fff;
   font-weight: 700;
   border: none;
   border-radius: 12px;
@@ -209,11 +209,11 @@ html[data-theme="dark"] {
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'Satoshi', sans-serif;
-  box-shadow: 0 4px 16px rgba(21, 178, 207, 0.35);
+  box-shadow: 0 4px 16px rgba(255, 107, 94, 0.35);
 }
 .btn-neon:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 30px rgba(21, 178, 207, 0.45);
+  box-shadow: 0 8px 30px rgba(255, 107, 94, 0.45);
 }
 .btn-neon:active { transform: scale(0.97); }
 
