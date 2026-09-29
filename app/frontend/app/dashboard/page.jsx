@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [addingWater, setAddingWater] = useState(false)
 
   // Direct refs instead of dead tilt hook
   const tilt1 = useRef(null)
@@ -176,8 +177,6 @@ export default function Dashboard() {
       </div>
     )
   }
-
-  const [addingWater, setAddingWater] = useState(false)
 
   const handleAddWater = async () => {
     if (addingWater) return // prevent double-click double-logging
