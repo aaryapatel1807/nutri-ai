@@ -5,6 +5,8 @@ node_modules/
 .next/
 dist/
 build/
+# TypeScript incremental build info (regenerates locally, never commit)
+app/frontend/tsconfig.tsbuildinfo
 
 # Environment files (keep *.example files)
 .env
