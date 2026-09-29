@@ -606,9 +606,50 @@ export default function ProfilePage() {
 
                   {/* Personal Info */}
                   <div style={{ ...card, padding:'28px' }}>
-                    <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
-                      👤 Personal Information
-                    </h3>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', margin:'0 0 20px', gap:'10px' }}>
+                      <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:0 }}>
+                        👤 Personal Information
+                      </h3>
+                      {editMode ? (
+                        <div style={{ display:'flex', gap:'8px' }}>
+                          <motion.button
+                            whileHover={{ scale:1.04 }}
+                            whileTap={{ scale:0.96 }}
+                            onClick={handleSave}
+                            style={{
+                              background:`linear-gradient(135deg,${theme.primary},${theme.secondary})`,
+                              border:'none', borderRadius:'10px', padding:'7px 14px',
+                              color:'#000', fontWeight:800, cursor:'pointer', fontSize:'0.8rem',
+                              fontFamily:"'Satoshi',sans-serif"
+                            }}
+                          >{saving ? '⏳ Saving...' : '💾 Save'}</motion.button>
+                          <motion.button
+                            whileHover={{ scale:1.04 }}
+                            whileTap={{ scale:0.96 }}
+                            onClick={()=>setEditMode(false)}
+                            style={{
+                              background:'var(--border)',
+                              border:'1px solid var(--border)',
+                              borderRadius:'10px', padding:'7px 12px',
+                              color:'var(--text-muted)', cursor:'pointer', fontSize:'0.8rem'
+                            }}
+                          >Cancel</motion.button>
+                        </div>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale:1.04 }}
+                          whileTap={{ scale:0.96 }}
+                          onClick={()=>setEditMode(true)}
+                          style={{
+                            background:'var(--border)',
+                            border:`1px solid ${theme.primary}30`,
+                            borderRadius:'10px', padding:'7px 14px',
+                            color:theme.primary, cursor:'pointer', fontSize:'0.8rem',
+                            fontWeight:600, display:'flex', alignItems:'center', gap:'6px'
+                          }}
+                        >✏️ Edit</motion.button>
+                      )}
+                    </div>
                     {[
                       { label:'Full Name',       key:'name'     },
                       { label:'Username',        key:'username' },
