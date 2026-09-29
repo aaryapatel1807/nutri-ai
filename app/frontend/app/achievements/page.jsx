@@ -51,15 +51,15 @@ const BADGES_MOCK = [
 
 const LEVELS = [
   { level:1,  name:'Rookie',         minXP:0,     maxXP:500,   color:'var(--text-muted)', emoji:'🌱' },
-  { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#B5E5F2', emoji:'🌿' },
-  { level:3,  name:'Novice',         minXP:1200,  maxXP:2500,  color:'#15B2CF', emoji:'⚡' },
-  { level:4,  name:'Apprentice',     minXP:2500,  maxXP:4500,  color:'#4FD3ED', emoji:'💫' },
+  { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#9DCE2C', emoji:'🌿' },
+  { level:3,  name:'Novice',         minXP:1200,  maxXP:2500,  color:'#22D3EE', emoji:'⚡' },
+  { level:4,  name:'Apprentice',     minXP:2500,  maxXP:4500,  color:'#15B2CF', emoji:'💫' },
   { level:5,  name:'Intermediate',   minXP:4500,  maxXP:7000,  color:'#7B61FF', emoji:'🔥' },
   { level:6,  name:'Advanced',       minXP:7000,  maxXP:10000, color:'#A78BFA', emoji:'💎' },
-  { level:7,  name:'Expert',         minXP:10000, maxXP:14000, color:'#15B2CF', emoji:'🏆' },
-  { level:8,  name:'Elite',          minXP:14000, maxXP:20000, color:'#1FA8C9', emoji:'⭐' },
+  { level:7,  name:'Expert',         minXP:10000, maxXP:14000, color:'#FFB020', emoji:'🏆' },
+  { level:8,  name:'Elite',          minXP:14000, maxXP:20000, color:'#FF6B5E', emoji:'⭐' },
   { level:9,  name:'Master',         minXP:20000, maxXP:30000, color:'#FFD700', emoji:'👑' },
-  { level:10, name:'Legend',         minXP:30000, maxXP:999999,color:'#1FA8C9', emoji:'🌟' },
+  { level:10, name:'Legend',         minXP:30000, maxXP:999999,color:'#FF6B5E', emoji:'🌟' },
 ]
 
 const CHALLENGES = [
@@ -77,10 +77,10 @@ const LEADERBOARD = [
   { rank:1, name:'Priya S.',    xp:28450, level:9, avatar:'PS', color:'#FFD700', badge:'👑', change:'↑2' },
   { rank:2, name:'Rahul M.',    xp:24200, level:9, avatar:'RM', color:'#C0C0C0', badge:'🥈', change:'↓1' },
   { rank:3, name:'Arjun K.',    xp:19800, level:8, avatar:'AK', color:'#CD7F32', badge:'🥉', change:'↑1' },
-  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#15B2CF', badge:'⭐', change:'↑3' },
+  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#FF6B5E', badge:'⭐', change:'↑3' },
   { rank:5, name:'Vikram T.',   xp:14200, level:7, avatar:'VT', color:'#7B61FF', badge:'🏆', change:'↓2' },
-  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#4FD3ED', badge:'💎', change:'↑4', isUser:true },
-  { rank:7, name:'Meera R.',    xp:11800, level:7, avatar:'MR', color:'#15B2CF', badge:'🔥', change:'↓1' },
+  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#FFB020', badge:'💎', change:'↑4', isUser:true },
+  { rank:7, name:'Meera R.',    xp:11800, level:7, avatar:'MR', color:'#7B61FF', badge:'🔥', change:'↓1' },
   { rank:8, name:'Karan S.',    xp:9400,  level:6, avatar:'KS', color:'#B5E5F2', badge:'💫', change:'→0' },
 ]
 
@@ -116,7 +116,7 @@ function useTilt() {
 function Confetti({ active }) {
   if (!active) return null
   const pieces = Array.from({ length:60 }, (_,i) => ({
-    id:i, color:['#15B2CF','#7B61FF','#FFD700','#1FA8C9','#4FD3ED','#15B2CF'][i%6],
+    id:i, color:['#FF6B5E','#FFB020','#7B61FF','#9DCE2C','#22D3EE','#FF6B5E'][i%6],
     x: Math.random()*100, delay: Math.random()*0.5,
     size: Math.random()*8+4, rotation: Math.random()*360
   }))
@@ -143,7 +143,7 @@ function Confetti({ active }) {
           <button
             onClick={() => window.location.reload()}
             style={{ padding:'12px 28px', borderRadius:'99px', border:'none', cursor:'pointer',
-              background:'linear-gradient(135deg,#15B2CF,#1FA8C9)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
+              background:'linear-gradient(135deg,#FF6B5E,#FFB020)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
           >Try Again</button>
         </div>
       </div>
@@ -439,7 +439,7 @@ export default function Achievements() {
                   fontFamily:"'Clash Display',sans-serif",
                   fontSize:'2.8rem', fontWeight:800,
                   margin:0, marginBottom:'8px',
-                  background:'linear-gradient(135deg,#FFD700 0%,#1FA8C9 50%,#7B61FF 100%)',
+                  background:'linear-gradient(135deg,#FFD700 0%,#FF6B5E 50%,#7B61FF 100%)',
                   WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'
                 }}>Achievements 🏆</h1>
                 <p style={{ color:'var(--text-muted)', margin:0, fontSize:'1rem' }}>
@@ -500,9 +500,9 @@ export default function Achievements() {
 
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'12px' }}>
                   {[
-                    { label:'Badges', val:stats.unlocked, total:stats.total, color:'#15B2CF' },
+                    { label:'Badges', val:stats.unlocked, total:stats.total, color:'#FFB020' },
                     { label:'Rare+', val:stats.rare, total:stats.unlocked, color:'#7B61FF' },
-                    { label:'Streak', val:streak, total:'days', color:'#1FA8C9' },
+                    { label:'Streak', val:streak, total:'days', color:'#9DCE2C' },
                     { label:'Rank', val:'#6', total:'global', color:'#FFD700' }
                   ].map((stat, i) => (
                     <div key={i} style={{ textAlign:'center' }}>
@@ -573,8 +573,8 @@ export default function Achievements() {
                     whileTap={{ scale:0.95 }}
                     onClick={() => setActiveFilter(filter)}
                     style={{
-                      background: activeFilter === filter ? '#15B2CF' : 'var(--border)',
-                      border: activeFilter === filter ? '1px solid #15B2CF' : '1px solid var(--border)',
+                      background: activeFilter === filter ? 'linear-gradient(135deg,#FF6B5E,#FFB020)' : 'var(--border)',
+                      border: activeFilter === filter ? '1px solid #FF6B5E' : '1px solid var(--border)',
                       borderRadius:'20px', padding:'8px 16px',
                       color: activeFilter === filter ? '#000' : 'var(--text-muted)',
                       fontSize:'0.85rem', fontWeight:600, cursor:'pointer',
@@ -705,7 +705,7 @@ export default function Achievements() {
                       </div>
                       <div style={{
                         marginTop:'6px',
-                        color:challenge.type === 'Daily' ? '#1FA8C9' : '#4FD3ED',
+                        color:challenge.type === 'Daily' ? '#FFB020' : '#22D3EE',
                         fontSize:'0.65rem', fontWeight:600
                       }}>
                         {challenge.deadline}
@@ -763,7 +763,7 @@ export default function Achievements() {
                       </div>
                       <div style={{ flex:1 }}>
                         <div style={{
-                          color:user.isUser ? '#4FD3ED' : 'white',
+                          color:user.isUser ? '#FFB020' : 'white',
                           fontSize:'0.85rem', fontWeight:600
                         }}>{user.name}</div>
                         <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>
@@ -774,8 +774,8 @@ export default function Achievements() {
                         <div style={{ fontSize:'1rem' }}>{user.badge}</div>
                         <div style={{
                           fontSize:'0.65rem', fontWeight:600,
-                          color: user.change.includes('↑') ? '#15B2CF' : 
-                                 user.change.includes('↓') ? '#1FA8C9' : 'var(--text-muted)'
+                          color: user.change.includes('↑') ? '#9DCE2C' : 
+                                 user.change.includes('↓') ? '#FF6B5E' : 'var(--text-muted)'
                         }}>{user.change}</div>
                       </div>
                     </motion.div>

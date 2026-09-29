@@ -20,11 +20,11 @@ export default function IngredientInput() {
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && addIngredient()}
           placeholder="Add an ingredient..."
-          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#15B2CF]"
+          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B61FF]"
         />
         <button
           onClick={addIngredient}
-          className="bg-[#15B2CF] hover:bg-[#0D7F9B] text-white px-4 py-2 rounded-lg transition-colors"
+          className="bg-[#7B61FF] hover:bg-[#6A4FFF] text-white px-4 py-2 rounded-lg transition-colors"
         >
           Add
         </button>

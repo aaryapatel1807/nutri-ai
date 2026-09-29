@@ -112,9 +112,9 @@ export default function RecapPage() {
   }
 
   const statCards = [
-    { icon: '💪', label: 'Sessions', val: recap.sessions, color: '#1FA8C9' },
-    { icon: '🔥', label: 'Kcal burned', val: recap.kcal.toLocaleString('en-GB'), color: '#1FA8C9' },
-    { icon: '⏱️', label: 'Active minutes', val: recap.minutes, color: '#4FD3ED' },
+    { icon: '💪', label: 'Sessions', val: recap.sessions, color: '#9DCE2C' },
+    { icon: '🔥', label: 'Kcal burned', val: recap.kcal.toLocaleString('en-GB'), color: '#FF6B5E' },
+    { icon: '⏱️', label: 'Active minutes', val: recap.minutes, color: '#22D3EE' },
     { icon: '🏋️', label: 'Volume lifted', val: recap.volumeKg > 0 ? `${recap.volumeKg.toLocaleString('en-GB')} kg` : '—', color: '#FFD700' },
     { icon: '🍽️', label: 'Meals logged', val: recap.mealsLogged, color: '#7B61FF' },
   ]
@@ -143,7 +143,7 @@ export default function RecapPage() {
           <h1 style={{
             fontFamily: "'Clash Display',sans-serif",
             fontSize: '2.4rem', fontWeight: 800, margin: 0, marginBottom: '6px',
-            background: 'linear-gradient(135deg, var(--text-primary) 0%, #1FA8C9 70%, #15B2CF 100%)',
+            background: 'linear-gradient(135deg, var(--text-primary) 0%, #FF6B5E 60%, #7B61FF 100%)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
           }}>
             {range === 7 ? 'Your Week in Training 📊' : 'Your Month in Training 📊'}
@@ -161,7 +161,7 @@ export default function RecapPage() {
                 style={{
                   padding: '8px 22px', borderRadius: '99px', cursor: 'pointer',
                   border: range === r ? 'none' : '1px solid var(--border)',
-                  background: range === r ? 'linear-gradient(135deg,#1FA8C9,#15B2CF)' : 'var(--bg-card)',
+                  background: range === r ? 'linear-gradient(135deg,#FF6B5E,#FFB020 55%,#7B61FF)' : 'var(--bg-card)',
                   color: range === r ? '#000' : 'var(--text-muted)',
                   fontWeight: range === r ? 800 : 400, fontSize: '0.82rem'
                 }}

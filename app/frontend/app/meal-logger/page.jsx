@@ -233,10 +233,10 @@ export default function MealLogger() {
               onClick={startVoice}
               title={listening ? 'Listening…' : 'Log by voice'}
               style={{
-                background: listening ? 'rgba(21, 178, 207,0.25)' : 'rgba(21, 178, 207,0.1)',
-                border: listening ? '1px solid #15B2CF' : '1px solid rgba(21, 178, 207,0.3)',
+                background: listening ? 'rgba(255, 107, 94,0.25)' : 'rgba(255, 107, 94,0.1)',
+                border: listening ? '1px solid #FF6B5E' : '1px solid rgba(255, 107, 94,0.3)',
                 borderRadius: '12px', padding: '10px 18px',
-                color: '#15B2CF', cursor: 'pointer',
+                color: '#FF6B5E', cursor: 'pointer',
                 fontSize: '0.85rem', fontWeight: 600,
                 display: 'flex', alignItems: 'center', gap: '8px'
               }}>
@@ -251,10 +251,10 @@ export default function MealLogger() {
               whileTap={{ scale: 0.95 }}
               onClick={() => { setShowCamera(true) }}
               style={{
-                background: 'rgba(21, 178, 207,0.1)',
-                border: '1px solid rgba(21, 178, 207,0.3)',
+                background: 'rgba(255, 107, 94,0.1)',
+                border: '1px solid rgba(255, 107, 94,0.3)',
                 borderRadius: '12px', padding: '10px 18px',
-                color: '#15B2CF', cursor: 'pointer',
+                color: '#FF6B5E', cursor: 'pointer',
                 fontSize: '0.85rem', fontWeight: 600,
                 display: 'flex', alignItems: 'center', gap: '8px'
               }}>
@@ -265,7 +265,7 @@ export default function MealLogger() {
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowSearch(true)}
               style={{
-                background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)',
+                background: 'linear-gradient(135deg,#FF6B5E,#FFB020)',
                 border: 'none', borderRadius: '12px',
                 padding: '10px 18px', color: '#000',
                 cursor: 'pointer', fontSize: '0.85rem',
@@ -284,15 +284,15 @@ export default function MealLogger() {
             animate={{ opacity: 1, y: 0 }}
             style={{
               marginBottom: '16px', padding: '10px 16px',
-              background: 'rgba(46,125,255,0.08)',
-              border: '1px solid rgba(46,125,255,0.3)',
-              borderRadius: '12px', color: '#1FA8C9', fontSize: '0.85rem',
+              background: 'rgba(255,107,94,0.08)',
+              border: '1px solid rgba(255,107,94,0.3)',
+              borderRadius: '12px', color: '#E14E42', fontSize: '0.85rem',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
             <span>{voiceError}</span>
             <button
               onClick={() => setVoiceError('')}
-              style={{ background: 'none', border: 'none', color: '#1FA8C9', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
+              style={{ background: 'none', border: 'none', color: '#E14E42', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
           </motion.div>
         )}
 
@@ -302,8 +302,8 @@ export default function MealLogger() {
           animate={{ opacity: 1, y: 0 }}
           style={{
             ...card, marginBottom: '24px',
-            background: 'linear-gradient(135deg, rgba(21, 178, 207,0.08), rgba(79, 211, 237,0.05))',
-            border: '1px solid rgba(21, 178, 207,0.15)'
+            background: 'linear-gradient(135deg, rgba(255, 107, 94,0.08), rgba(255, 176, 32,0.05))',
+            border: '1px solid rgba(255, 107, 94,0.15)'
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
@@ -311,7 +311,7 @@ export default function MealLogger() {
               <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '4px' }}>
                 Total Today
               </div>
-              <div style={{ fontFamily: "'Clash Display',sans-serif", fontSize: '2.5rem', fontWeight: 700, color: '#15B2CF' }}>
+              <div style={{ fontFamily: "'Clash Display',sans-serif", fontSize: '2.5rem', fontWeight: 700, color: '#FF6B5E' }}>
                 {totals.calories}
                 <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}> / 1800 kcal</span>
               </div>
@@ -319,8 +319,8 @@ export default function MealLogger() {
             <div style={{ display: 'flex', gap: '24px' }}>
               {[
                 { label: 'Protein', val: totals.protein, color: '#15B2CF', unit: 'g' },
-                { label: 'Carbs', val: totals.carbs, color: '#7B61FF', unit: 'g' },
-                { label: 'Fat', val: totals.fat, color: '#1FA8C9', unit: 'g' },
+                { label: 'Carbs', val: totals.carbs, color: '#FFB020', unit: 'g' },
+                { label: 'Fat', val: totals.fat, color: '#7B61FF', unit: 'g' },
               ].map(m => (
                 <div key={m.label} style={{ textAlign: 'center' }}>
                   <div style={{ color: m.color, fontFamily: "'Clash Display',sans-serif", fontSize: '1.5rem', fontWeight: 700 }}>
@@ -334,7 +334,7 @@ export default function MealLogger() {
             <div style={{ flex: 1, minWidth: '200px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Daily Goal</span>
-                <span style={{ color: '#15B2CF', fontSize: '0.8rem', fontWeight: 600 }}>
+                <span style={{ color: '#FF6B5E', fontSize: '0.8rem', fontWeight: 600 }}>
                   {Math.round((totals.calories / 1800) * 100)}%
                 </span>
               </div>
@@ -345,9 +345,9 @@ export default function MealLogger() {
                   transition={{ duration: 1 }}
                   style={{
                     height: '100%',
-                    background: 'linear-gradient(90deg,#15B2CF,#4FD3ED)',
+                    background: 'linear-gradient(90deg,#FF6B5E,#FFB020)',
                     borderRadius: '99px',
-                    boxShadow: '0 0 10px rgba(21, 178, 207,0.4)'
+                    boxShadow: '0 0 10px rgba(255, 107, 94,0.4)'
                   }}
                 />
               </div>
@@ -371,7 +371,7 @@ export default function MealLogger() {
                   borderRadius: '99px',
                   border: active ? 'none' : '1px solid var(--border)',
                   background: active
-                    ? 'linear-gradient(135deg,#15B2CF,#4FD3ED)'
+                    ? 'linear-gradient(135deg,#FF6B5E,#FFB020)'
                     : 'var(--bg-card)',
                   color: active ? '#000' : 'var(--text-muted)',
                   fontWeight: active ? 700 : 400,
@@ -383,9 +383,9 @@ export default function MealLogger() {
                 {type}
                 {count > 0 && (
                   <span style={{
-                    background: active ? 'var(--shadow-color)' : 'rgba(21, 178, 207,0.2)',
+                    background: active ? 'var(--shadow-color)' : 'rgba(255, 107, 94,0.2)',
                     borderRadius: '99px', padding: '1px 8px',
-                    fontSize: '0.75rem', color: active ? '#000' : '#15B2CF'
+                    fontSize: '0.75rem', color: active ? '#000' : '#FF6B5E'
                   }}>{count}</span>
                 )}
               </motion.button>
@@ -418,10 +418,10 @@ export default function MealLogger() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => { setActiveMeal(group.type); setShowSearch(true) }}
                     style={{
-                      background: 'rgba(21, 178, 207,0.1)',
-                      border: '1px solid rgba(21, 178, 207,0.2)',
+                      background: 'rgba(255, 107, 94,0.1)',
+                      border: '1px solid rgba(255, 107, 94,0.2)',
                       borderRadius: '8px', padding: '4px 10px',
-                      color: '#15B2CF', cursor: 'pointer',
+                      color: '#FF6B5E', cursor: 'pointer',
                       fontSize: '0.78rem', fontWeight: 600
                     }}>+ Add</motion.button>
                 </div>
@@ -471,7 +471,7 @@ export default function MealLogger() {
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ color: '#15B2CF', fontWeight: 700, fontSize: '0.9rem' }}>
+                          <span style={{ color: '#FF6B5E', fontWeight: 700, fontSize: '0.9rem' }}>
                             {item.calories}
                           </span>
                           <button
@@ -553,7 +553,7 @@ export default function MealLogger() {
                 {filtered.map((food, i) => (
                   <motion.div
                     key={food.name}
-                    whileHover={{ backgroundColor: 'rgba(21, 178, 207,0.05)', x: 4 }}
+                    whileHover={{ backgroundColor: 'rgba(255, 107, 94,0.05)', x: 4 }}
                     onClick={() => addFood(food)}
                     style={{
                       display: 'flex', alignItems: 'center',
@@ -573,7 +573,7 @@ export default function MealLogger() {
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ color: '#15B2CF', fontWeight: 700 }}>{food.calories}</div>
+                      <div style={{ color: '#FF6B5E', fontWeight: 700 }}>{food.calories}</div>
                       <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>kcal</div>
                     </div>
                   </motion.div>
@@ -631,7 +631,7 @@ export default function MealLogger() {
                   onClick={addCustom}
                   style={{
                     width: '100%', padding: '12px', marginTop: '8px',
-                    background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)',
+                    background: 'linear-gradient(135deg,#FF6B5E,#FFB020)',
                     border: 'none', borderRadius: '12px',
                     color: '#000', fontWeight: 700, cursor: 'pointer',
                     fontSize: '0.95rem', fontFamily: "'Satoshi',sans-serif"
@@ -671,10 +671,10 @@ export default function MealLogger() {
                 <div 
                   onClick={() => !isScanning && document.getElementById('food-input').click()}
                   style={{
-                    border: isScanning ? '2px solid #15B2CF' : '2px dashed rgba(21, 178, 207,0.3)',
+                    border: isScanning ? '2px solid #FF6B5E' : '2px dashed rgba(255, 107, 94,0.3)',
                     borderRadius: '16px', padding: '40px',
                     marginBottom: '20px', cursor: isScanning ? 'wait' : 'pointer',
-                    background: 'rgba(21, 178, 207,0.03)',
+                    background: 'rgba(255, 107, 94,0.03)',
                     transition: 'all 0.3s'
                   }}
                 >
@@ -727,11 +727,11 @@ export default function MealLogger() {
                   <div style={{ fontSize: '2rem', marginBottom: '8px' }}>
                     {isScanning ? '🔍' : '🤖'}
                   </div>
-                  <div style={{ color: '#15B2CF', fontSize: '0.9rem', fontWeight: 600 }}>
+                  <div style={{ color: '#FF6B5E', fontSize: '0.9rem', fontWeight: 600 }}>
                     {isScanning ? 'AI is analyzing...' : 'Click to Upload Photo'}
                   </div>
                   {scanError && (
-                    <div style={{ color: '#1FA8C9', fontSize: '0.8rem', marginTop: '8px' }}>
+                    <div style={{ color: '#E14E42', fontSize: '0.8rem', marginTop: '8px' }}>
                       {scanError}
                     </div>
                   )}

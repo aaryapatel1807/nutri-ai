@@ -109,8 +109,8 @@ function Muscle({ id, shape, active, onEnter, onLeave, onSelect }) {
     onClick: () => onSelect(id),
     style: { cursor: 'pointer', transition: 'all 0.2s' },
   }
-  const fill = active ? '#15B2CF' : 'rgba(21, 178, 207,0.28)'
-  const stroke = active ? '#0D7F9B' : '#15B2CF'
+  const fill = active ? '#9DCE2C' : 'rgba(157, 206, 44,0.28)'
+  const stroke = active ? '#7AA81E' : '#9DCE2C'
   const extra = active
     ? { filter: 'drop-shadow(0 0 6px rgba(21, 178, 207,0.8))' }
     : {}
@@ -206,7 +206,7 @@ export default function MuscleBodyMap() {
               style={{
                 border: 'none', cursor: 'pointer', borderRadius: '99px', padding: '6px 18px',
                 fontSize: '0.8rem', fontWeight: 700, textTransform: 'capitalize',
-                background: view === v ? 'linear-gradient(135deg,#4FD3ED,#15B2CF)' : 'transparent',
+                background: view === v ? 'linear-gradient(135deg,#B5E04A,#9DCE2C)' : 'transparent',
                 color: view === v ? '#fff' : 'var(--text-muted)',
                 boxShadow: view === v ? '0 2px 10px rgba(21, 178, 207,0.4)' : 'none',
               }}>

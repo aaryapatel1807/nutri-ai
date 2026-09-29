@@ -30,9 +30,9 @@ export default function OnboardingPage() {
 
   const getBMIStatus = (bmi) => {
     if (bmi < 18.5) return { label: 'Underweight', color: '#4FD3ED' }
-    if (bmi < 25) return { label: 'Normal', color: '#15B2CF' }
+    if (bmi < 25) return { label: 'Normal', color: '#9DCE2C' }
     if (bmi < 30) return { label: 'Overweight', color: '#FFD700' }
-    return { label: 'Obese', color: '#1FA8C9' }
+    return { label: 'Obese', color: '#FF6B5E' }
   }
 
   const [stepError, setStepError] = useState('')
@@ -99,24 +99,27 @@ export default function OnboardingPage() {
       <div className="absolute top-0 left-0 right-0">
         <div className="h-1 bg-white/10">
           <div
-            className="h-full bg-[#15B2CF] transition-all duration-500"
+            className="h-full transition-all duration-500 bg-[linear-gradient(90deg,#FF6B5E,#FFB020,#9DCE2C,#22D3EE,#7B61FF)]"
             style={{ width: `${(currentStep / 5) * 100}%` }}
           />
         </div>
         <div className="flex justify-center gap-2 mt-4">
-          {[1, 2, 3, 4, 5].map((step) => (
+          {[1, 2, 3, 4, 5].map((step) => {
+            const sc = ['#FF6B5E', '#FFB020', '#9DCE2C', '#22D3EE', '#7B61FF'][step - 1]
+            return (
             <div
               key={step}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${step < currentStep
-                ? 'bg-[#15B2CF]'
+              className="w-2.5 h-2.5 rounded-full transition-all flex items-center justify-center"
+              style={step < currentStep
+                ? { background: sc }
                 : step === currentStep
-                  ? 'border-2 border-[#15B2CF] bg-transparent'
-                  : 'bg-white/15'
-                }`}
+                  ? { border: `2px solid ${sc}`, background: 'transparent' }
+                  : { background: 'rgba(255,255,255,0.15)' }}
             >
               {step < currentStep && <span className="text-xs">✓</span>}
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -161,7 +164,7 @@ export default function OnboardingPage() {
                         key={gender}
                         onClick={() => updateFormData('gender', gender)}
                         className={`px-4 py-2 rounded-lg transition-all ${formData.gender === gender
-                          ? 'bg-[#15B2CF] text-black'
+                          ? 'bg-gradient-to-r from-[#7B61FF] to-[#FF6B5E] text-white'
                           : 'glass text-[var(--text-primary)]'
                           }`}
                       >
@@ -244,7 +247,7 @@ export default function OnboardingPage() {
                       key={goal.id}
                       onClick={() => updateFormData('goal', goal.id)}
                       className={`glass p-4 text-left transition-all ${formData.goal === goal.id
-                        ? 'border-2 border-[#15B2CF] shadow-[0_0_20px_rgba(21, 178, 207,0.3)]'
+                        ? 'border-2 border-[#7B61FF] shadow-[0_0_20px_rgba(123,97,255,0.35)]'
                         : 'border border-white/10'
                         }`}
                     >
@@ -284,7 +287,7 @@ export default function OnboardingPage() {
                       key={diet.id}
                       onClick={() => updateFormData('diet', diet.id)}
                       className={`px-4 py-2 rounded-full transition-all ${formData.diet === diet.id
-                        ? 'bg-[#15B2CF] text-black'
+                        ? 'bg-gradient-to-r from-[#7B61FF] to-[#FF6B5E] text-white'
                         : 'glass text-[var(--text-primary)]'
                         }`}
                     >
@@ -318,7 +321,7 @@ export default function OnboardingPage() {
                       key={level.id}
                       onClick={() => updateFormData('activity', level.id)}
                       className={`w-full glass p-4 text-left transition-all flex items-center gap-4 ${formData.activity === level.id
-                        ? 'border-2 border-[#15B2CF] shadow-[0_0_20px_rgba(21, 178, 207,0.3)]'
+                        ? 'border-2 border-[#7B61FF] shadow-[0_0_20px_rgba(123,97,255,0.35)]'
                         : 'border border-white/10'
                         }`}
                     >

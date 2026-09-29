@@ -85,7 +85,7 @@ const WEIGHT_HISTORY = [
 ]
 
 /* ══════════ TOGGLE SWITCH ══════════ */
-function Toggle({ on, onChange, color='#15B2CF' }) {
+function Toggle({ on, onChange, color='#7B61FF' }) {
   return (
     <motion.div
       onClick={onChange}
@@ -488,7 +488,7 @@ export default function ProfilePage() {
               <div style={{ display:'flex', gap:'12px', paddingTop:'56px', flexWrap:'wrap' }}>
                 {[
                   { val:'12,340', label:'XP',         color:theme.primary  },
-                  { val:'14',     label:'Day Streak',  color:'#1FA8C9'      },
+                  { val:'14',     label:'Day Streak',  color:'#9DCE2C'      },
                   { val:'#6',     label:'Global Rank', color:theme.secondary},
                   { val:'16',     label:'Badges',      color:'#FFD700'      },
                 ].map(s => (
@@ -562,10 +562,10 @@ export default function ProfilePage() {
                     position:'absolute', bottom:'20px', left:'50%',
                     transform:'translateX(-50%)',
                     background:'rgba(21, 178, 207,0.15)',
-                    border:'1px solid rgba(21, 178, 207,0.4)',
+                    border:'1px solid rgba(255, 107, 94,0.4)',
                     borderRadius:'99px', padding:'8px 24px',
-                    color:'#15B2CF', fontWeight:700, fontSize:'0.88rem',
-                    boxShadow:'0 0 20px rgba(21, 178, 207,0.3)',
+                    color:'#FF6B5E', fontWeight:700, fontSize:'0.88rem',
+                    boxShadow:'0 0 20px rgba(255, 107, 94,0.3)',
                     display:'flex', alignItems:'center', gap:'8px', zIndex:10
                   }}
                 >✅ Profile saved!</motion.div>
@@ -687,7 +687,7 @@ export default function ProfilePage() {
                         ⚠️ Danger Zone
                       </h3>
                       {[
-                        { label:'Reset All Data',   desc:'Wipe your logged meals & workouts', color:'#15B2CF' },
+                        { label:'Reset All Data',   desc:'Wipe your logged meals & workouts', color:'#FF6B5E' },
                         { label:'Export Data',      desc:'Download all your data as CSV',     color:'#4FD3ED' },
                         { label:'Delete Account',   desc:'Permanently remove your account',  color:'#EF4444' },
                       ].map(a => (
@@ -729,8 +729,8 @@ export default function ProfilePage() {
                   </h3>
                   <div style={{ display:'flex', justifyContent:'space-around', flexWrap:'wrap', gap:'20px', marginBottom:'28px' }}>
                     <StatRing value={profile.weight}       max={120}  color={theme.primary}   label='Weight'     unit='kg'  />
-                    <StatRing value={profile.bodyFat}      max={40}   color='#1FA8C9'          label='Body Fat'   unit='%'   />
-                    <StatRing value={profile.muscle}       max={80}   color='#15B2CF'          label='Muscle'     unit='kg'  />
+                    <StatRing value={profile.bodyFat}      max={40}   color='#7B61FF'          label='Body Fat'   unit='%'   />
+                    <StatRing value={profile.muscle}       max={80}   color='#9DCE2C'          label='Muscle'     unit='kg'  />
                     <StatRing value={profile.bmi}          max={40}   color={theme.secondary}  label='BMI'        unit=''    />
                     <StatRing value={profile.waterGoal}    max={5}    color='#4FD3ED'          label='Water Goal' unit='L'   />
                     <StatRing value={profile.sleepGoal}    max={10}   color='#A78BFA'          label='Sleep Goal' unit='hrs' />
@@ -741,9 +741,9 @@ export default function ProfilePage() {
                     {[
                       { label:'Height (cm)',    key:'height',       color:theme.primary  },
                       { label:'Weight (kg)',    key:'weight',       color:theme.secondary },
-                      { label:'Target (kg)',    key:'targetWeight', color:'#15B2CF'      },
-                      { label:'Body Fat (%)',   key:'bodyFat',      color:'#1FA8C9'      },
-                      { label:'Muscle (kg)',    key:'muscle',       color:'#B5E5F2'      },
+                      { label:'Target (kg)',    key:'targetWeight', color:'#FFB020'      },
+                      { label:'Body Fat (%)',   key:'bodyFat',      color:'#7B61FF'      },
+                      { label:'Muscle (kg)',    key:'muscle',       color:'#9DCE2C'      },
                       { label:'BMI',            key:'bmi',          color:'#4FD3ED'      },
                       { label:'Water Goal (L)', key:'waterGoal',    color:'#60A5FA'      },
                       { label:'Sleep Goal (h)', key:'sleepGoal',    color:'#A78BFA'      },
@@ -770,7 +770,7 @@ export default function ProfilePage() {
                       { label:'BMR',            val:Math.round(tdmr), color:'var(--text-muted)',      unit:'kcal', icon:'💤' },
                       { label:'TDEE',           val:tdee,             color:theme.primary,  unit:'kcal', icon:'🔥' },
                       { label:'Cut (-300)',      val:tdee-300,         color:'#4FD3ED',      unit:'kcal', icon:'📉' },
-                      { label:'Bulk (+300)',     val:tdee+300,         color:'#15B2CF',      unit:'kcal', icon:'📈' },
+                      { label:'Bulk (+300)',     val:tdee+300,         color:'#FF6B5E',      unit:'kcal', icon:'📈' },
                     ].map(s => (
                       <motion.div key={s.label}
                         whileHover={{ y:-4, boxShadow:`0 8px 24px ${s.color}25` }}
@@ -872,7 +872,7 @@ export default function ProfilePage() {
                             padding:'10px 12px',
                             background: profile.diet===d ? 'rgba(79, 211, 237,0.12)' : 'var(--border)',
                             border:`1px solid ${profile.diet===d ? 'rgba(79, 211, 237,0.4)' : 'var(--border)'}`,
-                            borderRadius:'12px', color: profile.diet===d ? '#4FD3ED' : 'var(--text-muted)',
+                            borderRadius:'12px', color: profile.diet===d ? '#7B61FF' : 'var(--text-muted)',
                             fontWeight: profile.diet===d ? 700 : 400,
                             cursor:'pointer', fontSize:'0.8rem', transition:'all 0.2s'
                           }}
@@ -920,7 +920,7 @@ export default function ProfilePage() {
                       {[
                         { label:'🔥 Calories (kcal)', key:'calorieGoal', color:theme.primary  },
                         { label:'💪 Protein (g)',      key:'proteinGoal', color:'#15B2CF'      },
-                        { label:'⚡ Carbs (g)',         key:'carbGoal',    color:'#7B61FF'      },
+                        { label:'⚡ Carbs (g)',         key:'carbGoal',    color:'#FFB020'      },
                         { label:'🥑 Fat (g)',           key:'fatGoal',     color:'#FFD700'      },
                       ].map(m => (
                         <div key={m.key} style={{ marginBottom:'12px' }}>
@@ -1018,7 +1018,7 @@ export default function ProfilePage() {
                           onClick={()=>setModeTheme(t.id)}
                           style={{
                             background: modeTheme===t.id ? 'rgba(21, 178, 207,0.08)' : 'var(--border)',
-                            border:`2px solid ${modeTheme===t.id ? '#15B2CF' : 'var(--border)'}`,
+                            border:`2px solid ${modeTheme===t.id ? '#7B61FF' : 'var(--border)'}`,
                             borderRadius:'16px', padding:'16px', cursor:'pointer',
                             boxShadow: modeTheme===t.id ? '0 0 20px rgba(21, 178, 207,0.25)' : 'none',
                             transition:'all 0.2s'
@@ -1033,7 +1033,7 @@ export default function ProfilePage() {
                               }}/>
                             ))}
                           </div>
-                          <div style={{ color: modeTheme===t.id ? '#15B2CF' : 'var(--text-faint)', fontWeight:600, fontSize:'0.85rem' }}>
+                          <div style={{ color: modeTheme===t.id ? '#7B61FF' : 'var(--text-faint)', fontWeight:600, fontSize:'0.85rem' }}>
                             {modeTheme===t.id ? '● ' : ''}{t.label}
                           </div>
                           <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', marginTop:'2px' }}>
@@ -1261,7 +1261,7 @@ export default function ProfilePage() {
                     </h3>
                     {(() => {
                       const score = Math.round((Object.values(privacyS).filter(Boolean).length / PRIVACY_OPTS.length)*100)
-                      const color = score > 70 ? '#15B2CF' : score > 40 ? '#FFD700' : '#1FA8C9'
+                      const color = score > 70 ? '#9DCE2C' : score > 40 ? '#FFD700' : '#FF6B5E'
                       return (
                         <>
                           <div style={{ position:'relative', width:'100px', margin:'0 auto 16px' }}>

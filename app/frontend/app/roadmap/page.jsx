@@ -7,7 +7,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q2 2026',
       status: 'In Progress',
-      color: 'from-[#4FD3ED] to-[#0D7F9B]',
+      color: 'from-[#FF6B5E] to-[#FFB020]',
       items: [
         '✓ User authentication & profiles',
         '✓ Meal logging and tracking',
@@ -29,7 +29,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q4 2026',
       status: 'Planned',
-      color: 'from-[#B5E5F2] to-[#15B2CF]',
+      color: 'from-[#22D3EE] to-[#7B61FF]',
       items: [
         'AI meal plan generator',
         'Personalized supplement recommendations',
@@ -140,7 +140,7 @@ export default function RoadmapPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="p-8 rounded-xl border border-[#15B2CF]/30 bg-[#15B2CF]/10 backdrop-blur-sm text-center"
+            className="p-8 rounded-xl border border-[#FF6B5E]/30 bg-[#FF6B5E]/10 backdrop-blur-sm text-center"
           >
             <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">📬 Stay Updated</h3>
             <p className="text-gray-300 mb-6">Subscribe to get notified when new features launch</p>
@@ -150,7 +150,7 @@ export default function RoadmapPage() {
                 placeholder="your@email.com"
                 className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-[var(--border)] text-[var(--text-primary)] placeholder-gray-500 focus:outline-none focus:border-[#15B2CF]"
               />
-              <button className="px-6 py-3 bg-[#15B2CF] text-[var(--text-primary)] rounded-lg font-semibold hover:bg-green-600 transition-all">
+              <button className="px-6 py-3 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:bg-green-600 transition-all">
                 Subscribe
               </button>
             </div>

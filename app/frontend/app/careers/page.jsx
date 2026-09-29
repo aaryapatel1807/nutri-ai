@@ -107,7 +107,7 @@ export default function CareersPage() {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="text-3xl">{job.emoji}</div>
-                    <span className="text-xs px-2 py-1 bg-[#15B2CF]/15 text-[#0D7F9B] rounded-full">{job.type}</span>
+                    <span className="text-xs px-2 py-1 bg-[#FFB020]/15 text-[#D97706] rounded-full">{job.type}</span>
                   </div>
 
                   {/* Title & Department */}
@@ -128,7 +128,7 @@ export default function CareersPage() {
                   </div>
 
                   {/* CTA */}
-                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#4FD3ED] to-[#0D7F9B] text-white rounded-lg font-semibold hover:opacity-90 transition-all">
+                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:opacity-90 transition-all">
                     Apply Now
                   </button>
                 </div>
@@ -141,10 +141,10 @@ export default function CareersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="text-center p-8 rounded-xl border border-[#15B2CF]/30 bg-[#15B2CF]/10 backdrop-blur-sm"
+            className="text-center p-8 rounded-xl border border-[#FF6B5E]/30 bg-[#FF6B5E]/10 backdrop-blur-sm"
           >
             <p className="text-gray-300 mb-4">Don't see the right fit? We're always looking for talented people.</p>
-            <a href="mailto:careers@nutriai.com" className="inline-block px-8 py-3 bg-[#15B2CF] text-white rounded-lg font-semibold hover:bg-[#0D7F9B] transition-all">
+            <a href="mailto:careers@nutriai.com" className="inline-block px-8 py-3 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:bg-[#0D7F9B] transition-all">
               Send Your Resume
             </a>
           </motion.div>

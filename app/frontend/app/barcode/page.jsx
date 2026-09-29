@@ -354,10 +354,10 @@ export default function BarcodeScanner() {
               gap: '12px', marginBottom: '20px'
             }}>
               {[
-                { label: 'Calories', val: product.calories, unit: 'kcal', color: '#15B2CF' },
-                { label: 'Protein', val: product.protein, unit: 'g', color: '#7B61FF' },
-                { label: 'Carbs', val: product.carbs, unit: 'g', color: '#4FD3ED' },
-                { label: 'Fat', val: product.fat, unit: 'g', color: '#1FA8C9' },
+                { label: 'Calories', val: product.calories, unit: 'kcal', color: '#FF6B5E' },
+                { label: 'Protein', val: product.protein, unit: 'g', color: '#15B2CF' },
+                { label: 'Carbs', val: product.carbs, unit: 'g', color: '#FFB020' },
+                { label: 'Fat', val: product.fat, unit: 'g', color: '#7B61FF' },
               ].map(m => (
                 <div key={m.label} style={{
                   background: 'var(--border)', borderRadius: '12px',

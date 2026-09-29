@@ -381,9 +381,9 @@ export default function AICoach() {
                   <motion.div
                     animate={{ scale:[1,1.4,1], opacity:[1,0.5,1] }}
                     transition={{ duration:2, repeat:Infinity }}
-                    style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#15B2CF' }}
+                    style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#7B61FF' }}
                   />
-                  <span style={{ color:'#15B2CF', fontSize:'0.8rem', fontWeight:600 }}>Groq AI Live</span>
+                  <span style={{ color:'#7B61FF', fontSize:'0.8rem', fontWeight:600 }}>Groq AI Live</span>
                 </div>
                 <button onClick={clearChat} style={{
                   background:'var(--border)',
