@@ -177,12 +177,12 @@ export default function Dashboard() {
 
   // ── shared glass styles (theme-aware via CSS vars) ──
   const glass = {
-    background: 'var(--bg-card)',
-    backdropFilter: 'blur(22px) saturate(1.5)',
-    WebkitBackdropFilter: 'blur(22px) saturate(1.5)',
-    border: '1px solid var(--card-border)',
+    background: 'var(--glass-bg)',
+    backdropFilter: 'blur(26px) saturate(1.6)',
+    WebkitBackdropFilter: 'blur(26px) saturate(1.6)',
+    border: '1px solid var(--glass-border)',
     borderRadius: '26px',
-    boxShadow: 'var(--shadow), inset 0 1px 0 var(--card-highlight)',
+    boxShadow: 'var(--glass-shadow), inset 0 1px 0 var(--glass-highlight)',
   }
   const cardTitle = {
     color: 'var(--text-muted)', fontSize: '0.78rem', fontWeight: 700,
@@ -241,6 +241,23 @@ export default function Dashboard() {
 
   return (
     <div style={{ width: '100%', margin: 0, padding: isMobile ? '0 4px' : '0 8px', position: 'relative', zIndex: 1 }}>
+
+      {/* ═══ FROSTED SCENIC BACKDROP ═══ */}
+      <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <img src="/images/dash-bg.jpg" alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(46px) saturate(1.25)', transform: 'scale(1.12)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--dash-veil)' }} />
+        <motion.div
+          animate={{ x: [0, 46, 0], y: [0, -34, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ position: 'absolute', top: '-10%', left: '-8%', width: '44vw', height: '44vw',
+            borderRadius: '50%', background: 'var(--dash-orb-1)', filter: 'blur(70px)' }} />
+        <motion.div
+          animate={{ x: [0, -54, 0], y: [0, 40, 0] }}
+          transition={{ duration: 23, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ position: 'absolute', bottom: '-16%', right: '-10%', width: '50vw', height: '50vw',
+            borderRadius: '50%', background: 'var(--dash-orb-2)', filter: 'blur(80px)' }} />
+      </div>
 
       {/* ═══ HEADER ═══ */}
       <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}
@@ -632,8 +649,11 @@ export default function Dashboard() {
               ].map(a => (
                 <motion.button key={a.label} whileHover={{ y: -3 }} whileTap={{ scale: 0.96 }}
                   onClick={() => window.location.href = a.href}
-                  style={{ flex: '1 1 100px', border: '1px solid var(--border)', borderRadius: '16px',
-                    background: 'var(--card-solid)', padding: '12px 8px', cursor: 'pointer',
+                  style={{ flex: '1 1 100px', border: '1px solid var(--glass-border)', borderRadius: '16px',
+                    background: 'var(--glass-bg)', backdropFilter: 'blur(18px) saturate(1.5)',
+                    WebkitBackdropFilter: 'blur(18px) saturate(1.5)',
+                    boxShadow: 'var(--glass-shadow), inset 0 1px 0 var(--glass-highlight)',
+                    padding: '12px 8px', cursor: 'pointer',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                   <span style={{ fontSize: '1.5rem' }}>{a.icon}</span>
                   <span style={{ fontSize: '0.76rem', fontWeight: 600, color: 'var(--text-primary)' }}>{a.label}</span>
