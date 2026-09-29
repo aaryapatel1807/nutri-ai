@@ -128,14 +128,11 @@ export default function Sidebar({ mobileOpen = false, onNavigate = () => {} }) {
           }}
         />
       )}
-    <div style={{
-      position: 'fixed',
+    <div className="app-chrome" style={{
       left: 0,
       top: 0,
       width: '260px',
       height: '100vh',
-      background: 'var(--bg-primary)',
-      backdropFilter: 'blur(20px)',
       borderRight: '1px solid var(--border)',
       zIndex: 100,
       display: 'flex',

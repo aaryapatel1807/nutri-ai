@@ -61,14 +61,11 @@ export default function Navbar({ onMenuClick = () => {} }) {
   }, [])
 
   return (
-    <div style={{
-      position: 'fixed',
+    <div className="app-chrome" style={{
       top: 0,
       left: isMobile ? 0 : '260px',
       right: 0,
       height: isMobile ? '64px' : '80px',
-      background: 'var(--bg-primary)',
-      backdropFilter: 'blur(20px)',
       borderBottom: '1px solid var(--border)',
       zIndex: 40,
       display: 'flex',
