@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
 import { useTheme } from '../../components/shared/ThemeContext'
-import { auth } from '../../lib/api'
+import api, { auth } from '../../lib/api'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 /* ══════════ DATA ══════════ */
@@ -69,7 +69,7 @@ const PRIVACY_OPTS   = [
 ]
 const CONNECTED_APPS = [
   { name:'Apple Health',  icon:'🍎', connected:true,  color:'#FF3B30', desc:'Steps & heart rate syncing'    },
-  { name:'Google Fit',    icon:'🏃', connected:false, color:'#4285F4', desc:'Connect for fitness data'       },
+  { name:'Google Fit',    icon:'🏃', connected:false, color:'#4285F4', desc:'Real sync: workouts, sleep, steps, weight' },
   { name:'Fitbit',        icon:'⌚', connected:true,  color:'#00B0B9', desc:'Sleep & activity syncing'       },
   { name:'Strava',        icon:'🚴', connected:false, color:'#FC4C02', desc:'Connect for workout routes'     },
   { name:'MyFitnessPal',  icon:'📱', connected:false, color:'#00AEEF', desc:'Import food database'           },
@@ -155,6 +155,74 @@ export default function ProfilePage() {
   const [editMode,       setEditMode]        = useState(false)
   const [saved,          setSaved]           = useState(false)
   const [apps,           setApps]            = useState(CONNECTED_APPS)
+
+  // ── Google Fit — real OAuth integration (backend: /api/integrations) ──
+  const [gfit, setGfit] = useState({ connected:false, lastSyncAt:null, busy:false, msg:null })
+
+  const refreshGfitStatus = async () => {
+    try {
+      const { data } = await api.get('/integrations/google-fit/status')
+      if (data?.success) setGfit(g => ({ ...g, connected: !!data.connected, lastSyncAt: data.lastSyncAt || null }))
+    } catch { /* backend unreachable / not configured — card stays local */ }
+  }
+
+  const connectGfit = async () => {
+    setGfit(g => ({ ...g, busy:true, msg:null }))
+    try {
+      const { data } = await api.get('/integrations/google-fit/connect')
+      if (data?.url) { window.location.href = data.url; return }
+      throw new Error(data?.error || 'Could not start Google Fit connect')
+    } catch (e) {
+      setGfit(g => ({ ...g, busy:false, msg: `❌ ${e.response?.data?.error || e.message}` }))
+    }
+  }
+
+  const syncGfit = async () => {
+    setGfit(g => ({ ...g, busy:true, msg:null }))
+    try {
+      const { data } = await api.post('/integrations/google-fit/sync')
+      const s = data?.summary || {}
+      const bits = []
+      if (s.workoutsAdded) bits.push(`${s.workoutsAdded} workout${s.workoutsAdded>1?'s':''}`)
+      if (s.sleepNights)   bits.push(`${s.sleepNights} sleep night${s.sleepNights>1?'s':''}`)
+      if (s.weightKg)      bits.push(`${s.weightKg} kg`)
+      setGfit(g => ({ ...g, busy:false, lastSyncAt: data?.lastSyncAt || g.lastSyncAt,
+        msg: bits.length
+          ? `✅ Synced: ${bits.join(' · ')} · ${Number(s.steps||0).toLocaleString('en-IN')} steps / 7d`
+          : '✅ Sync complete — nothing new' }))
+    } catch (e) {
+      setGfit(g => ({ ...g, busy:false, msg: `❌ ${e.response?.data?.error || e.message}` }))
+    }
+  }
+
+  const disconnectGfit = async () => {
+    setGfit(g => ({ ...g, busy:true, msg:null }))
+    try {
+      await api.delete('/integrations/google-fit/disconnect')
+      setGfit(g => ({ ...g, connected:false, lastSyncAt:null, busy:false, msg:'Google Fit disconnected' }))
+    } catch (e) {
+      setGfit(g => ({ ...g, busy:false, msg: `❌ ${e.response?.data?.error || e.message}` }))
+    }
+  }
+
+  // Handle the OAuth return: /profile?tab=apps&gfit=connected|error
+  useEffect(() => {
+    refreshGfitStatus()
+    try {
+      const q = new URLSearchParams(window.location.search)
+      if (q.get('tab') === 'apps') setActiveTab('apps')
+      const gf = q.get('gfit')
+      if (gf === 'connected') {
+        setGfit(g => ({ ...g, connected:true, msg:'✅ Google Fit connected — syncing now…' }))
+        window.history.replaceState({}, '', `${window.location.pathname}?tab=apps`)
+        syncGfit()
+      } else if (gf === 'error') {
+        setGfit(g => ({ ...g, msg:`❌ Connection failed: ${q.get('msg') || 'unknown error'}` }))
+        window.history.replaceState({}, '', `${window.location.pathname}?tab=apps`)
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [notifs,         setNotifs]          = useState({ meal:true, workout:true, water:true, streak:true, badge:true, report:false, ai:true, challenge:false })
   const [privacyS,       setPrivacyS]        = useState({ public:true, streak:true, weight:false, board:true, ailearn:true })
   const [hovAvatar,      setHovAvatar]       = useState(null)
@@ -1338,7 +1406,10 @@ export default function ProfilePage() {
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'16px' }}>
-                  {apps.map((app,i) => (
+                  {apps.map((app,i) => {
+                    const isGFit = app.name === 'Google Fit'
+                    const connected = isGFit ? gfit.connected : connected
+                    return (
                     <motion.div key={app.name}
                       initial={{ opacity:0, scale:0.9 }}
                       animate={{ opacity:1, scale:1 }}
@@ -1346,24 +1417,24 @@ export default function ProfilePage() {
                       whileHover={{ y:-6, boxShadow:`0 16px 40px ${app.color}20` }}
                       style={{
                         ...card, padding:'24px',
-                        background: app.connected ? `${app.color}06` : 'var(--bg-card)',
-                        border:`1px solid ${app.connected ? app.color+'25' : 'var(--border)'}`,
+                        background: connected ? `${app.color}06` : 'var(--bg-card)',
+                        border:`1px solid ${connected ? app.color+'25' : 'var(--border)'}`,
                         cursor:'pointer'
                       }}
                     >
                       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'14px' }}>
                         <motion.span
-                          animate={app.connected ? { rotate:[0,10,-10,0] } : {}}
+                          animate={connected ? { rotate:[0,10,-10,0] } : {}}
                           transition={{ duration:3, repeat:Infinity, delay:i*0.3 }}
-                          style={{ fontSize:'2.2rem', filter: app.connected ? `drop-shadow(0 0 8px ${app.color})` : 'grayscale(0.8)' }}
+                          style={{ fontSize:'2.2rem', filter: connected ? `drop-shadow(0 0 8px ${app.color})` : 'grayscale(0.8)' }}
                         >{app.icon}</motion.span>
                         <div style={{
-                          background: app.connected ? `${app.color}15` : 'var(--border)',
-                          border:`1px solid ${app.connected ? app.color+'30' : 'var(--border)'}`,
+                          background: connected ? `${app.color}15` : 'var(--border)',
+                          border:`1px solid ${connected ? app.color+'30' : 'var(--border)'}`,
                           borderRadius:'99px', padding:'3px 10px',
-                          color: app.connected ? app.color : '#4B5563',
+                          color: connected ? app.color : '#4B5563',
                           fontSize:'0.68rem', fontWeight:700
-                        }}>{app.connected ? '● Connected' : 'Disconnected'}</div>
+                        }}>{connected ? '● Connected' : 'Disconnected'}</div>
                       </div>
                       <div style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontWeight:700, fontSize:'0.95rem', marginBottom:'4px' }}>
                         {app.name}
@@ -1371,35 +1442,67 @@ export default function ProfilePage() {
                       <div style={{ color:'var(--text-muted)', fontSize:'0.75rem', marginBottom:'14px', lineHeight:1.4 }}>
                         {app.desc}
                       </div>
+                      {isGFit && connected && gfit.lastSyncAt && (
+                        <div style={{ color:'var(--text-faint)', fontSize:'0.7rem', marginBottom:'10px' }}>
+                          Last synced: {new Date(gfit.lastSyncAt).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}
+                        </div>
+                      )}
+                      {isGFit && gfit.msg && (
+                        <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', marginBottom:'10px', lineHeight:1.4 }}>
+                          {gfit.msg}
+                        </div>
+                      )}
                       <motion.button
                         whileHover={{ scale:1.04 }}
                         whileTap={{ scale:0.96 }}
-                        onClick={()=>setApps(p=>p.map(a=>a.name===app.name?{...a,connected:!a.connected}:a))}
+                        disabled={isGFit && gfit.busy}
+                        onClick={isGFit ? (connected ? disconnectGfit : connectGfit) : ()=>setApps(p=>p.map(a=>a.name===app.name?{...a,connected:!a.connected}:a))}
                         style={{
                           width:'100%', padding:'9px',
-                          background: app.connected ? 'rgba(239,68,68,0.12)' : `${app.color}18`,
-                          border:`1px solid ${app.connected ? 'rgba(239,68,68,0.3)' : app.color+'35'}`,
+                          background: connected ? 'rgba(239,68,68,0.12)' : `${app.color}18`,
+                          border:`1px solid ${connected ? 'rgba(239,68,68,0.3)' : app.color+'35'}`,
                           borderRadius:'10px',
-                          color: app.connected ? '#EF4444' : app.color,
-                          cursor:'pointer', fontSize:'0.82rem', fontWeight:700
+                          color: connected ? '#EF4444' : app.color,
+                          cursor: (isGFit && gfit.busy) ? 'wait' : 'pointer', fontSize:'0.82rem', fontWeight:700,
+                          opacity: (isGFit && gfit.busy) ? 0.7 : 1
                         }}
-                      >{app.connected ? '🔌 Disconnect' : `🔗 Connect ${app.name}`}</motion.button>
+                      >{(isGFit && gfit.busy) ? '⏳ Working…' : connected ? '🔌 Disconnect' : `🔗 Connect ${app.name}`}</motion.button>
+                      {isGFit && connected && (
+                        <motion.button
+                          whileHover={{ scale:1.04 }}
+                          whileTap={{ scale:0.96 }}
+                          disabled={gfit.busy}
+                          onClick={syncGfit}
+                          style={{
+                            width:'100%', padding:'9px', marginTop:'8px',
+                            background:`${app.color}10`,
+                            border:`1px solid ${app.color}35`,
+                            borderRadius:'10px',
+                            color: app.color,
+                            cursor: gfit.busy ? 'wait' : 'pointer', fontSize:'0.82rem', fontWeight:700
+                          }}
+                        >🔄 Sync now</motion.button>
+                      )}
                     </motion.div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <div style={{ ...card, padding:'24px', marginTop:'20px', textAlign:'center' }}>
                   <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'8px' }}>
-                    Connected: <span style={{ color:theme.primary, fontWeight:700 }}>{apps.filter(a=>a.connected).length}</span> of {apps.length} apps
+                    Connected: <span style={{ color:theme.primary, fontWeight:700 }}>{apps.filter(a=>a.name==='Google Fit' ? gfit.connected : a.connected).length}</span> of {apps.length} apps
                   </div>
                   <div style={{ display:'flex', justifyContent:'center', gap:'8px' }}>
-                    {apps.map(a => (
+                    {apps.map(a => {
+                      const on = a.name==='Google Fit' ? gfit.connected : a.connected
+                      return (
                       <div key={a.name} style={{
                         width:'10px', height:'10px', borderRadius:'50%',
-                        background: a.connected ? a.color : 'var(--border)',
-                        boxShadow: a.connected ? `0 0 8px ${a.color}` : 'none'
+                        background: on ? a.color : 'var(--border)',
+                        boxShadow: on ? `0 0 8px ${a.color}` : 'none'
                       }}/>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               </motion.div>

@@ -59,6 +59,7 @@ app.use('/api/recipes', require('./routes/recipes'))
 app.use('/api/barcode', require('./routes/barcode'))
 app.use('/api/sleep', require('./routes/sleep'))
 app.use('/api/coaching', require('./routes/coaching'))
+app.use('/api/integrations', require('./routes/integrations'))
 
 // Root Route
 app.get('/', (req, res) => {
