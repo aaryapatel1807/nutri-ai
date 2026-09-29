@@ -121,35 +121,6 @@ function Confetti({ active }) {
     x: Math.random()*100, delay: Math.random()*0.5,
     size: Math.random()*8+4, rotation: Math.random()*360
   }))
-  if (loading) {
-    return (
-      <div style={{ width:'100%', minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <div style={{ textAlign:'center', color:'var(--text-muted)' }}>
-          <div style={{ fontSize:'2rem', marginBottom:'12px' }}>🏆</div>
-          <div>Loading your achievements...</div>
-        </div>
-      </div>
-    )
-  }
-
-  if (loadError) {
-    return (
-      <div style={{ width:'100%', minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <div style={{ textAlign:'center', maxWidth:'380px', padding:'0 20px' }}>
-          <div style={{ fontSize:'2rem', marginBottom:'12px' }}>😕</div>
-          <div style={{ color:'var(--text-primary)', fontWeight:700, marginBottom:'8px' }}>Couldn't load achievements</div>
-          <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', marginBottom:'20px' }}>
-            Check your connection and try again — your badges are safe.
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{ padding:'12px 28px', borderRadius:'99px', border:'none', cursor:'pointer',
-              background:'linear-gradient(135deg,#FF6B5E,#FFB020)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
-          >Try Again</button>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:999, overflow:'hidden' }}>
@@ -411,6 +382,36 @@ export default function Achievements() {
     border: '1px solid var(--glass-border)',
     borderRadius: '26px',
     overflow:'hidden',
+  }
+
+  if (loading) {
+    return (
+      <div style={{ width:'100%', minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <div style={{ textAlign:'center', color:'var(--text-muted)' }}>
+          <div style={{ fontSize:'2rem', marginBottom:'12px' }}>🏆</div>
+          <div>Loading your achievements...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ width:'100%', minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <div style={{ textAlign:'center', maxWidth:'380px', padding:'0 20px' }}>
+          <div style={{ fontSize:'2rem', marginBottom:'12px' }}>😕</div>
+          <div style={{ color:'var(--text-primary)', fontWeight:700, marginBottom:'8px' }}>Couldn't load achievements</div>
+          <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', marginBottom:'20px' }}>
+            Check your connection and try again — your badges are safe.
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ padding:'12px 28px', borderRadius:'99px', border:'none', cursor:'pointer',
+              background:'linear-gradient(135deg,#FF6B5E,#FFB020)', color:'#fff', fontWeight:700, fontSize:'0.9rem' }}
+          >Try Again</button>
+        </div>
+      </div>
+    )
   }
 
   return (
