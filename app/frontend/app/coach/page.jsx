@@ -383,9 +383,9 @@ export default function CoachPage() {
             <Stat label="ADJUSTMENT" value={targets?.adjustment > 0 ? `+${targets.adjustment}` : `${targets?.adjustment ?? 0}`} unit="kcal" />
           </div>
           <div style={{ maxWidth: 560 }}>
-            <MacroBar label="Protein" grams={targets?.proteinG || 0} pct={pct(targets?.proteinG || 0)} color="#1FA8C9" />
-            <MacroBar label="Carbs" grams={targets?.carbsG || 0} pct={pct(targets?.carbsG || 0)} color="#60A5FA" />
-            <MacroBar label="Fat" grams={targets?.fatG || 0} pct={fatPct} color="#A78BFA" />
+            <MacroBar label="Protein" grams={targets?.proteinG || 0} pct={pct(targets?.proteinG || 0)} color="#15B2CF" />
+            <MacroBar label="Carbs" grams={targets?.carbsG || 0} pct={pct(targets?.carbsG || 0)} color="#FFB020" />
+            <MacroBar label="Fat" grams={targets?.fatG || 0} pct={fatPct} color="#7B61FF" />
           </div>
           <p style={{ margin: '8px 0 0', fontSize: 12.5, color: 'var(--text-muted)', display: 'flex', gap: 6 }}>
             <Info size={14} style={{ flexShrink: 0, marginTop: 1 }} />

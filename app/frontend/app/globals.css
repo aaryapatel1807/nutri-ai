@@ -32,6 +32,13 @@
   --accent-glow: #4FD3ED;
   --accent-purple: #7B61FF;
   --on-accent: #FFFFFF;
+  /* ─── Aurora Pop multicolor system ─── */
+  --pop-coral: #FF6B5E;   --pop-coral-deep: #E14E42;   --pop-coral-soft: #FFD9D4;
+  --pop-amber: #FFB020;   --pop-amber-deep: #D98A06;   --pop-amber-soft: #FFE9C2;
+  --pop-violet: #7B61FF;  --pop-violet-deep: #5B3DF0;  --pop-violet-soft: #DDD3FF;
+  --pop-indigo: #5B5BD6;  --pop-indigo-deep: #4343B8; --pop-indigo-soft: #D5D5F5;
+  --pop-cyan: #22D3EE;    --pop-cyan-deep: #0E9DB8;    --pop-cyan-soft: #C8F3FA;
+  --pop-lime: #9DCE2C;    --pop-lime-deep: #7AA81E;    --pop-lime-soft: #E4F4C4;
   /* frosted glass system */
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-border: rgba(255, 255, 255, 0.75);
@@ -144,22 +151,22 @@ html[data-theme="dark"] {
 }
 .frost-orb-a {
   width: 58vmax; height: 58vmax; left: -14vmax; top: -16vmax;
-  background: radial-gradient(circle, rgba(21, 178, 207, 0.55), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 107, 94, 0.42), transparent 70%);
   animation: float 14s ease-in-out infinite;
 }
 .frost-orb-b {
   width: 50vmax; height: 50vmax; right: -12vmax; top: 24%;
-  background: radial-gradient(circle, rgba(123, 97, 255, 0.45), transparent 70%);
+  background: radial-gradient(circle, rgba(123, 97, 255, 0.40), transparent 70%);
   animation: float 18s ease-in-out infinite reverse;
 }
 .frost-orb-c {
   width: 46vmax; height: 46vmax; left: 26%; bottom: -18vmax;
-  background: radial-gradient(circle, rgba(79, 211, 237, 0.50), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 176, 32, 0.38), transparent 70%);
   animation: float 16s ease-in-out infinite 2s;
 }
 .frost-orb-d {
   width: 30vmax; height: 30vmax; left: 58%; top: -10vmax;
-  background: radial-gradient(circle, rgba(181, 229, 242, 0.55), transparent 70%);
+  background: radial-gradient(circle, rgba(21, 178, 207, 0.45), transparent 70%);
   animation: float 20s ease-in-out infinite 4s;
 }
 /* the "frost": translucent veil of the theme canvas over the color wash */
@@ -180,6 +187,15 @@ html[data-theme="dark"] {
 /* gentle edge falloff so the pane feels curved */
 .frost-vignette {
   background: radial-gradient(120% 90% at 50% 40%, transparent 55%, var(--frost-vignette) 100%);
+}
+
+/* Aurora Pop gradient text */
+.text-aurora {
+  background: linear-gradient(92deg, #FF6B5E 0%, #FFB020 28%, #9DCE2C 48%, #15B2CF 72%, #7B61FF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Primary accent button */

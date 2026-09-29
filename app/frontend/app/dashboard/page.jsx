@@ -152,7 +152,7 @@ export default function Dashboard() {
     20 * Math.min(water / 8, 1) +
     20 * Math.min((todayNutrition?.meals?.length || 0) / 3, 1)
   )
-  const scoreColor = dayScore < 40 ? '#FF6B6B' : dayScore < 70 ? '#1FA8C9' : '#2ECC71'
+  const scoreColor = dayScore < 40 ? '#FF6B5E' : dayScore < 70 ? '#FFB020' : '#7B61FF'
   const scoreZone = dayScore < 40 ? 'WARMING UP' : dayScore < 70 ? 'BUILDING' : dayScore < 90 ? 'STRONG' : 'ON FIRE'
 
   const sleepByDay = useMemo(() => {
@@ -317,7 +317,7 @@ export default function Dashboard() {
             style={{ ...glass, borderRadius: '99px', padding: '6px 14px 6px 6px', display: 'flex',
               alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
             <span style={{ width: '34px', height: '34px', borderRadius: '50%',
-              background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)', color: '#fff',
+              background: 'linear-gradient(135deg,#FF6B5E,#FFB020 50%,#7B61FF)', color: '#fff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontWeight: 700, fontSize: '0.95rem', fontFamily: "'Satoshi',sans-serif" }}>
               {(user.name || 'A')[0].toUpperCase()}
@@ -340,7 +340,7 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
           style={{ ...glass, padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-            <span style={iconTile('rgba(21, 178, 207,0.16)', '#15B2CF')}><Flame size={19} /></span>
+            <span style={iconTile('rgba(255, 107, 94,0.16)', '#FF6B5E')}><Flame size={19} /></span>
             <span style={cardTitle}>Calories</span>
           </div>
           <div style={{ height: '52px', marginBottom: '8px' }}>
@@ -348,13 +348,13 @@ export default function Dashboard() {
               <BarChart data={weekChart} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                 <Bar dataKey="cal" radius={[4, 4, 4, 4]}>
                   {weekChart.map((d, i) => (
-                    <Cell key={i} fill={i === weekChart.length - 1 ? '#15B2CF' : 'rgba(21, 178, 207,0.35)'} />
+                    <Cell key={i} fill={i === weekChart.length - 1 ? '#FF6B5E' : 'rgba(255, 107, 94,0.35)'} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#15B2CF', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+          <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#FF6B5E', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
             <CountUp end={cals} duration={1.2} separator="," /> <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', fontFamily: "'Satoshi',sans-serif" }}>Kcal</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>of {goalCals.toLocaleString('en-GB')} goal</div>
@@ -364,7 +364,7 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.07 }}
           style={{ ...glass, padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-            <span style={iconTile('rgba(46,204,113,0.15)', '#2ECC71')}><Target size={19} /></span>
+            <span style={iconTile('rgba(123, 97, 255,0.15)', '#7B61FF')}><Target size={19} /></span>
             <span style={cardTitle}>Day Score</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '52px', marginBottom: '8px' }}>
@@ -390,7 +390,7 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.14 }}
           style={{ ...glass, padding: '20px', cursor: 'pointer' }} onClick={() => window.location.href = '/coach'}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-            <span style={iconTile('rgba(59,130,246,0.15)', '#3B82F6')}><Moon size={19} /></span>
+            <span style={iconTile('rgba(91, 91, 214,0.15)', '#5B5BD6')}><Moon size={19} /></span>
             <span style={cardTitle}>Sleep</span>
           </div>
           <div style={{ height: '52px', marginBottom: '8px' }}>
@@ -399,7 +399,7 @@ export default function Dashboard() {
                 <BarChart data={last7Nights.map(l => ({ h: l.hours }))} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                   <Bar dataKey="h" radius={[4, 4, 4, 4]}>
                     {last7Nights.map((l, i) => (
-                      <Cell key={i} fill={i === last7Nights.length - 1 ? '#3B82F6' : 'rgba(59,130,246,0.35)'} />
+                      <Cell key={i} fill={i === last7Nights.length - 1 ? '#5B5BD6' : 'rgba(91, 91, 214,0.35)'} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -409,7 +409,7 @@ export default function Dashboard() {
                 color: 'var(--text-muted)', fontSize: '0.72rem' }}>No sleep logged</div>
             )}
           </div>
-          <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#3B82F6', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+          <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#5B5BD6', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
             {lastNight ? lastNight.hours.toFixed(1) : '–'} <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', fontFamily: "'Satoshi',sans-serif" }}>hrs/night</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -466,8 +466,8 @@ export default function Dashboard() {
                   <AreaChart data={weekChart} margin={{ top: 12, right: 8, bottom: 0, left: -18 }}>
                     <defs>
                       <linearGradient id="calFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#15B2CF" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#15B2CF" stopOpacity={0.02} />
+                        <stop offset="0%" stopColor="#FF6B5E" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#FF6B5E" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="day" tickLine={false} axisLine={false}
@@ -480,9 +480,9 @@ export default function Dashboard() {
                         borderRadius: '14px', boxShadow: 'var(--shadow)', fontSize: '0.8rem', color: 'var(--text-primary)' }}
                       formatter={(v) => [`${Number(v).toLocaleString('en-GB')} kcal`, 'Calories']}
                       labelStyle={{ color: 'var(--text-muted)', marginBottom: '4px' }} />
-                    <Area type="monotone" dataKey="cal" stroke="#15B2CF" strokeWidth={3}
-                      fill="url(#calFill)" dot={{ r: 3, fill: '#15B2CF', strokeWidth: 0 }}
-                      activeDot={{ r: 5, fill: '#15B2CF', stroke: '#fff', strokeWidth: 2 }} />
+                    <Area type="monotone" dataKey="cal" stroke="#FF6B5E" strokeWidth={3}
+                      fill="url(#calFill)" dot={{ r: 3, fill: '#FF6B5E', strokeWidth: 0 }}
+                      activeDot={{ r: 5, fill: '#FF6B5E', stroke: '#fff', strokeWidth: 2 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -546,8 +546,8 @@ export default function Dashboard() {
               </div>
               {[
                 { label: 'Protein', val: protein, goal: proteinGoal, color: '#15B2CF', unit: 'g' },
-                { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: stats?.carbGoal || 250, color: '#7B61FF', unit: 'g' },
-                { label: 'Fat', val: todayNutrition?.fat || 0, goal: stats?.fatGoal || 65, color: '#1FA8C9', unit: 'g' },
+                { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: stats?.carbGoal || 250, color: '#FFB020', unit: 'g' },
+                { label: 'Fat', val: todayNutrition?.fat || 0, goal: stats?.fatGoal || 65, color: '#7B61FF', unit: 'g' },
               ].map(m => (
                 <div key={m.label} style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -735,8 +735,8 @@ export default function Dashboard() {
             </div>
             {(stats?.streak > 0) && (
               <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                background: 'rgba(21, 178, 207,0.1)', border: '1px solid rgba(21, 178, 207,0.25)', borderRadius: '99px',
-                padding: '8px', color: '#15B2CF', fontSize: '0.82rem', fontWeight: 700 }}>
+                background: 'rgba(157, 206, 44,0.12)', border: '1px solid rgba(157, 206, 44,0.3)', borderRadius: '99px',
+                padding: '8px', color: '#7AA81E', fontSize: '0.82rem', fontWeight: 700 }}>
                 🔥 {stats.streak} day streak — keep it burning
               </div>
             )}
@@ -782,15 +782,15 @@ export default function Dashboard() {
                   cells.push(
                     <button key={d} onClick={() => setSelDay(ds)}
                       style={{ aspectRatio: '1', border: 'none', borderRadius: '50%', cursor: 'pointer',
-                        background: isSel ? '#2ECC71' : isToday ? '#15B2CF' : 'transparent',
+                        background: isSel ? '#9DCE2C' : isToday ? '#15B2CF' : 'transparent',
                         color: (isSel || isToday) ? '#fff' : 'var(--text-primary)',
                         fontSize: '0.76rem', fontWeight: isToday || isSel ? 700 : 400,
                         position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: isSel ? '0 0 10px rgba(46,204,113,0.5)' : isToday ? '0 0 10px rgba(21, 178, 207,0.5)' : 'none' }}>
+                        boxShadow: isSel ? '0 0 10px rgba(157,206,44,0.5)' : isToday ? '0 0 10px rgba(21, 178, 207,0.5)' : 'none' }}>
                       {d}
                       {hasSleep && !isSel && !isToday && (
                         <span style={{ position: 'absolute', bottom: '3px', width: '4px', height: '4px',
-                          borderRadius: '50%', background: '#3B82F6' }} />
+                          borderRadius: '50%', background: '#5B5BD6' }} />
                       )}
                     </button>
                   )
@@ -801,7 +801,7 @@ export default function Dashboard() {
             <div style={{ marginTop: '12px', fontSize: '0.76rem', color: 'var(--text-muted)', textAlign: 'center', minHeight: '20px' }}>
               {sleepByDay[selDay]
                 ? <>🌙 {new Date(selDay).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} — slept <b style={{ color: 'var(--text-primary)' }}>{sleepByDay[selDay].hours.toFixed(1)}h</b> · quality {sleepByDay[selDay].quality || '–'}/5</>
-                : <><span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#3B82F6', marginRight: '6px' }} />Blue dot = sleep logged</>}
+                : <><span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#5B5BD6', marginRight: '6px' }} />Indigo dot = sleep logged</>}
             </div>
           </motion.div>
 

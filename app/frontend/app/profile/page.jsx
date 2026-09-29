@@ -31,7 +31,7 @@ const FRAME_STYLES = [
 ]
 
 const THEMES = [
-  { id:'brand',  label:'Sky Blue', primary:'#15B2CF', secondary:'#4FD3ED', accent:'#7B61FF' },
+  { id:'brand',  label:'Aurora Pop', primary:'#FF6B5E', secondary:'#FFB020', accent:'#7B61FF' },
   { id:'gold-rush',   label:'Gold Rush',    primary:'#FFD700', secondary:'#15B2CF', accent:'#1FA8C9' },
   { id:'purple-fire', label:'Purple Fire',  primary:'#7B61FF', secondary:'#A78BFA', accent:'#1FA8C9' },
   { id:'cyber-blue',  label:'Cyber Blue',   primary:'#4FD3ED', secondary:'#60A5FA', accent:'#7B61FF' },

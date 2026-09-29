@@ -89,7 +89,7 @@ const RARITY_CONFIG = {
   Rare:      { color:'#4FD3ED', bg:'rgba(79,211,237,0.1)',   border:'rgba(79,211,237,0.3)',   glow:'rgba(79,211,237,0.3)',   stars:2 },
   Epic:      { color:'#7B61FF', bg:'rgba(123,97,255,0.1)',  border:'rgba(123,97,255,0.3)',  glow:'rgba(123,97,255,0.4)',  stars:3 },
   Legendary: { color:'#FFD700', bg:'rgba(255,215,0,0.1)',   border:'rgba(255,215,0,0.4)',   glow:'rgba(255,215,0,0.5)',   stars:4 },
-  Mythic:    { color:'#EF4444', bg:'rgba(239,68,68,0.15)', border:'rgba(239,68,68,0.5)',  glow:'rgba(239,68,68,0.6)',  stars:5 },
+  Mythic:    { color:'#FF6B5E', bg:'rgba(255,107,94,0.15)', border:'rgba(255,107,94,0.5)',  glow:'rgba(255,107,94,0.6)',  stars:5 },
 }
 
 const CATEGORIES = ['All','Nutrition','Fitness','Streak','Body','Special']

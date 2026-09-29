@@ -26,8 +26,8 @@ export default function ForecastChart({ actualData, forecastData }) {
         <AreaChart data={combinedData}>
           <defs>
             <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#15B2CF" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#15B2CF" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#FF6B5E" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#FF6B5E" stopOpacity={0}/>
             </linearGradient>
             <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#7B61FF" stopOpacity={0.8}/>
@@ -38,7 +38,7 @@ export default function ForecastChart({ actualData, forecastData }) {
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#15B2CF"
+            stroke="#FF6B5E"
             strokeWidth={2}
             fill="url(#greenGrad)"
             data={actualData}
