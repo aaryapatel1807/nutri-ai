@@ -41,8 +41,8 @@ function PostCard({ post, isOwn, onKudos, onDelete }) {
       exit={{ opacity: 0, scale: 0.97 }}
       transition={{ duration: 0.25 }}
       style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border)',
+        background: 'var(--glass-bg)', backdropFilter: 'blur(26px) saturate(1.6)', WebkitBackdropFilter: 'blur(26px) saturate(1.6)', 
+        border: '1px solid var(--glass-border)',
         borderRadius: 20,
         padding: '1.1rem 1.25rem',
       }}
@@ -194,7 +194,7 @@ export default function CommunityPage() {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
           {[0, 1, 2].map((i) => (
-            <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20, padding: '1.1rem 1.25rem' }}>
+            <div key={i} style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(26px) saturate(1.6)', WebkitBackdropFilter: 'blur(26px) saturate(1.6)',  border: '1px solid var(--glass-border)', borderRadius: 20, padding: '1.1rem 1.25rem' }}>
               <div style={{ display: 'flex', gap: '0.7rem', marginBottom: '0.7rem' }}>
                 <div className="skeleton" style={{ width: 40, height: 40, borderRadius: '50%' }} />
                 <div style={{ flex: 1 }}>
@@ -211,7 +211,7 @@ export default function CommunityPage() {
     }
     if (error) {
       return (
-        <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20 }}>
+        <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'var(--glass-bg)', backdropFilter: 'blur(26px) saturate(1.6)', WebkitBackdropFilter: 'blur(26px) saturate(1.6)',  border: '1px solid var(--glass-border)', borderRadius: 20 }}>
           <p style={{ color: 'var(--text-primary)', fontWeight: 600, marginBottom: '0.4rem' }}>The feed did not load</p>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.1rem' }}>{error}</p>
           <button
@@ -230,7 +230,7 @@ export default function CommunityPage() {
     }
     if (posts.length === 0) {
       return (
-        <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 20 }}>
+        <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem', background: 'var(--glass-bg)', backdropFilter: 'blur(26px) saturate(1.6)', WebkitBackdropFilter: 'blur(26px) saturate(1.6)',  border: '1px solid var(--glass-border)', borderRadius: 20 }}>
           <div style={{ fontSize: '2.4rem', marginBottom: '0.8rem' }}>👏</div>
           <p style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '1.05rem', marginBottom: '0.4rem' }}>No posts yet</p>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Share your first workout above — your crew is waiting.</p>
@@ -281,7 +281,7 @@ export default function CommunityPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          background: 'var(--bg-card)', border: '1px solid var(--border)',
+          background: 'var(--glass-bg)', backdropFilter: 'blur(26px) saturate(1.6)', WebkitBackdropFilter: 'blur(26px) saturate(1.6)',  border: '1px solid var(--glass-border)',
           borderRadius: 20, padding: '1.1rem 1.25rem', marginBottom: '1.2rem',
         }}
       >
@@ -292,7 +292,7 @@ export default function CommunityPage() {
           rows={3}
           style={{
             width: '100%', resize: 'vertical', boxSizing: 'border-box',
-            background: 'var(--bg-primary)', border: '1px solid var(--border)',
+            background: 'var(--bg-primary)', border: '1px solid var(--glass-border)',
             borderRadius: 12, padding: '0.7rem 0.9rem',
             color: 'var(--text-primary)', fontSize: '0.92rem', fontFamily: 'inherit',
             outline: 'none',

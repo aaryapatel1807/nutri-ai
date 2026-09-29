@@ -11,11 +11,13 @@ import { Moon, Zap, Target, Flame, Loader2, Info, BedDouble, Star, CheckCircle2 
 function Card({ children, style }) {
   return (
     <div style={{
-      background: 'var(--bg-card)',
-      border: '1px solid var(--card-border)',
-      borderRadius: 20,
+      background: 'var(--glass-bg)',
+      border: '1px solid var(--glass-border)',
+      borderRadius: 26,
       padding: 24,
-      backdropFilter: 'blur(12px)',
+      backdropFilter: 'blur(26px) saturate(1.6)',
+      WebkitBackdropFilter: 'blur(26px) saturate(1.6)',
+      boxShadow: 'var(--glass-shadow), inset 0 1px 0 var(--glass-highlight)',
       ...style
     }}>
       {children}

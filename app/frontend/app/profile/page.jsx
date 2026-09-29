@@ -220,10 +220,10 @@ export default function ProfilePage() {
   const tdee   = Math.round(tdmr * (actOpt?.multi||1.55))
 
   const card = {
-    background:'var(--bg-card)',
-    backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)',
-    border:'1px solid var(--border)',
-    borderRadius:'24px', overflow:'hidden',
+    background: 'var(--glass-bg)',
+    backdropFilter: 'blur(26px) saturate(1.6)', WebkitBackdropFilter: 'blur(26px) saturate(1.6)',
+    border: '1px solid var(--glass-border)',
+    borderRadius: '26px', overflow:'hidden',
   }
 
   const inp = (key, type='text', placeholder='') => (

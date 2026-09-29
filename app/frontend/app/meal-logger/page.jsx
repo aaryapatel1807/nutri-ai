@@ -67,13 +67,13 @@ export default function MealLogger() {
   }, [])
 
   const card = {
-    background: 'var(--bg-card)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    border: '1px solid var(--border)',
-    borderRadius: '20px',
+    background: 'var(--glass-bg)',
+    backdropFilter: 'blur(26px) saturate(1.6)',
+    WebkitBackdropFilter: 'blur(26px) saturate(1.6)',
+    border: '1px solid var(--glass-border)',
+    borderRadius: '26px',
     padding: '24px',
-    boxShadow: '0 8px 32px var(--shadow-color)',
+    boxShadow: 'var(--glass-shadow), inset 0 1px 0 var(--glass-highlight)',
   }
 
   const filtered = SAMPLE_FOODS.filter(f =>

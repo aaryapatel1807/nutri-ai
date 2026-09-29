@@ -524,12 +524,12 @@ export default function WorkoutPage() {
   }
 
   const card = {
-    background:'var(--bg-card)',
-    backdropFilter:'blur(24px)',
-    WebkitBackdropFilter:'blur(24px)',
-    border:'1px solid var(--border)',
-    borderRadius:'24px',
-    boxShadow:'0 8px 40px var(--shadow-color)',
+    background: 'var(--glass-bg)',
+    backdropFilter: 'blur(26px) saturate(1.6)',
+    WebkitBackdropFilter: 'blur(26px) saturate(1.6)',
+    border: '1px solid var(--glass-border)',
+    borderRadius: '26px',
+    boxShadow: 'var(--glass-shadow), inset 0 1px 0 var(--glass-highlight)',
     overflow:'hidden',
   }
 
