@@ -1,3 +1,5 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -248,4 +250,79 @@ h1, h2, h3, .font-display { font-family: 'Clash Display', sans-serif; }
 @keyframes ringFill {
   from { strokeDasharray: 0 408.4 }
   to { strokeDasharray: 281.8 408.4 }
+}
+
+@layer base {
+  .theme {
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-sans);
+  }
+  /* shadcn tokens, warm-tinted for NutriAI. Stored as oklch channels so
+     tailwind.config can apply opacity via <alpha-value>. NOTE: --border is
+     intentionally NOT defined here — the app's own unlayered --border
+     (warm, theme-aware) wins the cascade and tailwind maps `border` to it. */
+  :root {
+    --background: 1 0 0;
+    --foreground: 0.25 0.02 65;
+    --card: 1 0 0;
+    --card-foreground: 0.25 0.02 65;
+    --popover: 1 0 0;
+    --popover-foreground: 0.25 0.02 65;
+    --primary: 0.65 0.19 45;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.96 0.015 80;
+    --secondary-foreground: 0.25 0.02 65;
+    --muted: 0.96 0.015 80;
+    --muted-foreground: 0.55 0.02 70;
+    --accent: 0.93 0.05 70;
+    --accent-foreground: 0.55 0.17 45;
+    --destructive: 0.577 0.245 27.325;
+    --input: 0.9 0.015 80;
+    --ring: 0.65 0.19 45;
+    --chart-1: 0.87 0 0;
+    --chart-2: 0.556 0 0;
+    --chart-3: 0.439 0 0;
+    --chart-4: 0.371 0 0;
+    --chart-5: 0.269 0 0;
+    --radius: 0.625rem;
+    --sidebar: 0.985 0 0;
+    --sidebar-foreground: 0.25 0.02 65;
+    --sidebar-primary: 0.65 0.19 45;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.93 0.05 70;
+    --sidebar-accent-foreground: 0.55 0.17 45;
+    --sidebar-ring: 0.65 0.19 45;
+  }
+  /* This app themes via html[data-theme="dark"], not .dark */
+  html[data-theme="dark"] {
+    --background: 0.18 0.015 60;
+    --foreground: 0.95 0.01 80;
+    --card: 0.24 0.02 60;
+    --card-foreground: 0.95 0.01 80;
+    --popover: 0.24 0.02 60;
+    --popover-foreground: 0.95 0.01 80;
+    --primary: 0.65 0.19 45;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.28 0.02 60;
+    --secondary-foreground: 0.95 0.01 80;
+    --muted: 0.28 0.02 60;
+    --muted-foreground: 0.7 0.02 70;
+    --accent: 0.32 0.06 50;
+    --accent-foreground: 0.78 0.14 55;
+    --destructive: 0.704 0.191 22.216;
+    --input: 0.3 0.02 60;
+    --ring: 0.65 0.19 45;
+    --chart-1: 0.87 0 0;
+    --chart-2: 0.556 0 0;
+    --chart-3: 0.439 0 0;
+    --chart-4: 0.371 0 0;
+    --chart-5: 0.269 0 0;
+    --sidebar: 0.24 0.02 60;
+    --sidebar-foreground: 0.95 0.01 80;
+    --sidebar-primary: 0.65 0.19 45;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.32 0.06 50;
+    --sidebar-accent-foreground: 0.78 0.14 55;
+    --sidebar-ring: 0.65 0.19 45;
+  }
 }

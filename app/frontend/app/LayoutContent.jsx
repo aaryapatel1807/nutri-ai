@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import Sidebar from '../components/shared/Sidebar'
+import AppSidebar from '../components/shared/AppSidebar'
 import Navbar from '../components/shared/Navbar'
 import PageWrapper from '../components/shared/PageWrapper'
 import { ThemeProvider } from '../components/shared/ThemeContext'
@@ -17,7 +17,7 @@ export default function LayoutContent({ children }) {
 
   return (
     <ThemeProvider>
-      <Sidebar mobileOpen={sidebarOpen} onNavigate={() => setSidebarOpen(false)} />
+      <AppSidebar mobileOpen={sidebarOpen} onNavigate={() => setSidebarOpen(false)} />
       <Navbar onMenuClick={() => setSidebarOpen((open) => !open)} />
       <PageWrapper>
         {children}
