@@ -15,10 +15,10 @@ export default function WeeklyHeatmap({ data }) {
             background: !item.calories
               ? 'var(--border)'
               : item.calories >= item.goal
-                ? 'rgba(249,115,22,0.65)'
+                ? 'rgba(31,107,255,0.65)'
                 : item.calories >= item.goal * 0.7
-                  ? 'rgba(249,115,22,0.35)'
-                  : 'rgba(249,115,22,0.15)',
+                  ? 'rgba(31,107,255,0.35)'
+                  : 'rgba(31,107,255,0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

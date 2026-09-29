@@ -1,6 +1,6 @@
 'use client'
 
-export default function MacroBar({ label, current = 0, goal = 1, color = '#F97316' }) {
+export default function MacroBar({ label, current = 0, goal = 1, color = '#1F6BFF' }) {
   const safeGoal = goal > 0 ? goal : 1
   const percent = Math.min((current / safeGoal) * 100, 100)
   return (

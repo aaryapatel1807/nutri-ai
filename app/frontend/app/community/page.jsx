@@ -52,8 +52,8 @@ function PostCard({ post, isOwn, onKudos, onDelete }) {
           style={{
             width: 40, height: 40, borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'linear-gradient(135deg, rgba(245,165,36,0.25), rgba(249,115,22,0.12))',
-            border: '1px solid rgba(245,165,36,0.3)',
+            background: 'linear-gradient(135deg, rgba(46,125,255,0.25), rgba(31,107,255,0.12))',
+            border: '1px solid rgba(46,125,255,0.3)',
             color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.95rem',
           }}
         >
@@ -93,15 +93,15 @@ function PostCard({ post, isOwn, onKudos, onDelete }) {
           transition={popping ? { duration: 0.4, ease: 'easeOut' } : { type: 'spring', stiffness: 400 }}
           style={{
             display: 'flex', alignItems: 'center', gap: '0.45rem',
-            background: liked ? 'rgba(245,165,36,0.14)' : 'transparent',
-            border: liked ? '1px solid rgba(245,165,36,0.4)' : '1px solid var(--border)',
+            background: liked ? 'rgba(46,125,255,0.14)' : 'transparent',
+            border: liked ? '1px solid rgba(46,125,255,0.4)' : '1px solid var(--border)',
             borderRadius: 999, padding: '0.45rem 0.9rem', cursor: 'pointer',
-            color: liked ? '#F5A524' : 'var(--text-muted)',
+            color: liked ? '#2E7DFF' : 'var(--text-muted)',
             fontWeight: 700, fontSize: '0.85rem',
           }}
           aria-label="Give kudos"
         >
-          <Heart size={16} fill={liked ? '#F5A524' : 'none'} color={liked ? '#F5A524' : 'currentColor'} />
+          <Heart size={16} fill={liked ? '#2E7DFF' : 'none'} color={liked ? '#2E7DFF' : 'currentColor'} />
           <motion.span
             key={post.likes}
             initial={popping ? { scale: 1.6 } : false}
@@ -218,7 +218,7 @@ export default function CommunityPage() {
             onClick={fetchPosts}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: 'linear-gradient(135deg, #F5A524, #F97316)', color: '#1A1714',
+              background: 'linear-gradient(135deg, #2E7DFF, #1F6BFF)', color: '#1A1714',
               border: 'none', borderRadius: 999, padding: '0.65rem 1.4rem',
               fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
             }}
@@ -260,9 +260,9 @@ export default function CommunityPage() {
         <div
           style={{
             width: 46, height: 46, borderRadius: 14,
-            background: 'linear-gradient(135deg, rgba(245,165,36,0.25), rgba(249,115,22,0.12))',
-            border: '1px solid rgba(245,165,36,0.35)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F5A524',
+            background: 'linear-gradient(135deg, rgba(46,125,255,0.25), rgba(31,107,255,0.12))',
+            border: '1px solid rgba(46,125,255,0.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2E7DFF',
           }}
         >
           <Users size={22} />
@@ -297,7 +297,7 @@ export default function CommunityPage() {
             color: 'var(--text-primary)', fontSize: '0.92rem', fontFamily: 'inherit',
             outline: 'none',
           }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(245,165,36,0.5)')}
+          onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(46,125,255,0.5)')}
           onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
         />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.7rem' }}>
@@ -310,7 +310,7 @@ export default function CommunityPage() {
             disabled={!draft.trim() || overLimit || posting}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: (!draft.trim() || overLimit || posting) ? 'var(--border)' : 'linear-gradient(135deg, #F5A524, #F97316)',
+              background: (!draft.trim() || overLimit || posting) ? 'var(--border)' : 'linear-gradient(135deg, #2E7DFF, #1F6BFF)',
               color: (!draft.trim() || overLimit || posting) ? 'var(--text-muted)' : '#1A1714',
               border: 'none', borderRadius: 999, padding: '0.6rem 1.3rem',
               fontWeight: 700, fontSize: '0.88rem',

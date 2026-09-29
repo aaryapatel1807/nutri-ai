@@ -107,7 +107,7 @@ export default function CareersPage() {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="text-3xl">{job.emoji}</div>
-                    <span className="text-xs px-2 py-1 bg-[#F97316]/15 text-[#EA580C] rounded-full">{job.type}</span>
+                    <span className="text-xs px-2 py-1 bg-[#1F6BFF]/15 text-[#0B54CE] rounded-full">{job.type}</span>
                   </div>
 
                   {/* Title & Department */}
@@ -128,7 +128,7 @@ export default function CareersPage() {
                   </div>
 
                   {/* CTA */}
-                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#FB923C] to-[#EA580C] text-white rounded-lg font-semibold hover:opacity-90 transition-all">
+                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#5B96FF] to-[#0B54CE] text-white rounded-lg font-semibold hover:opacity-90 transition-all">
                     Apply Now
                   </button>
                 </div>
@@ -141,10 +141,10 @@ export default function CareersPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="text-center p-8 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 backdrop-blur-sm"
+            className="text-center p-8 rounded-xl border border-[#1F6BFF]/30 bg-[#1F6BFF]/10 backdrop-blur-sm"
           >
             <p className="text-gray-300 mb-4">Don't see the right fit? We're always looking for talented people.</p>
-            <a href="mailto:careers@nutriai.com" className="inline-block px-8 py-3 bg-[#F97316] text-white rounded-lg font-semibold hover:bg-[#EA580C] transition-all">
+            <a href="mailto:careers@nutriai.com" className="inline-block px-8 py-3 bg-[#1F6BFF] text-white rounded-lg font-semibold hover:bg-[#0B54CE] transition-all">
               Send Your Resume
             </a>
           </motion.div>

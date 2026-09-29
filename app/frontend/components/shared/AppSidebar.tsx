@@ -36,7 +36,7 @@ function initialsAvatar(name: string): string {
   const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'>` +
     `<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>` +
-    `<stop offset='0' stop-color='#F97316'/><stop offset='1' stop-color='#7B61FF'/>` +
+    `<stop offset='0' stop-color='#1F6BFF'/><stop offset='1' stop-color='#7B61FF'/>` +
     `</linearGradient></defs>` +
     `<rect width='96' height='96' rx='48' fill='url(#g)'/>` +
     `<text x='48' y='63' font-family='sans-serif' font-size='34' font-weight='bold' fill='white' text-anchor='middle'>${initials}</text></svg>`
@@ -183,7 +183,7 @@ export default function AppSidebar({ mobileOpen = false, onNavigate = () => {}, 
             <div style={{
               height: '100%',
               width: `${Math.min(100, xpProgress)}%`,
-              background: 'linear-gradient(90deg, #F97316, #FB923C)',
+              background: 'linear-gradient(90deg, #1F6BFF, #5B96FF)',
               borderRadius: '99px',
               transition: 'width 0.5s ease'
             }} />

@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
               left: 0,
               width: '500px',
               height: '500px',
-              background: 'radial-gradient(rgba(249,115,22,0.04) 0%, transparent 70%)',
+              background: 'radial-gradient(rgba(31,107,255,0.04) 0%, transparent 70%)',
               animation: 'float 8s ease-in-out infinite',
               zIndex: -1,
               pointerEvents: 'none'
@@ -57,7 +57,7 @@ export default function RootLayout({ children }) {
               transform: 'translate(-50%, -50%)',
               width: '350px',
               height: '350px',
-              background: 'radial-gradient(rgba(255,107,53,0.025) 0%, transparent 70%)',
+              background: 'radial-gradient(rgba(46,125,255,0.025) 0%, transparent 70%)',
               animation: 'float 10s ease-in-out infinite 2s',
               zIndex: -1,
               pointerEvents: 'none'

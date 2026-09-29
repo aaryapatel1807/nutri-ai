@@ -17,7 +17,7 @@ const Card = forwardRef(({
     glass: 'bg-white/5 backdrop-blur-xl border border-white/10',
     elevated: 'bg-gradient-to-br from-gray-800/70 to-gray-900/70 border border-gray-600/30 shadow-2xl',
     success: 'bg-gradient-to-br from-green-500/20 to-emerald-600/20 border border-green-500/30',
-    warning: 'bg-gradient-to-br from-orange-500/20 to-red-600/20 border border-orange-500/30',
+    warning: 'bg-gradient-to-br from-blue-500/20 to-indigo-600/20 border border-blue-500/30',
     danger: 'bg-gradient-to-br from-red-500/20 to-pink-600/20 border border-red-500/30',
   }
   

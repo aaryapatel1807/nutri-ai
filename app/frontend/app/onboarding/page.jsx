@@ -29,10 +29,10 @@ export default function OnboardingPage() {
   }
 
   const getBMIStatus = (bmi) => {
-    if (bmi < 18.5) return { label: 'Underweight', color: '#FB923C' }
-    if (bmi < 25) return { label: 'Normal', color: '#F97316' }
+    if (bmi < 18.5) return { label: 'Underweight', color: '#5B96FF' }
+    if (bmi < 25) return { label: 'Normal', color: '#1F6BFF' }
     if (bmi < 30) return { label: 'Overweight', color: '#FFD700' }
-    return { label: 'Obese', color: '#FF6B35' }
+    return { label: 'Obese', color: '#2E7DFF' }
   }
 
   const [stepError, setStepError] = useState('')
@@ -99,7 +99,7 @@ export default function OnboardingPage() {
       <div className="absolute top-0 left-0 right-0">
         <div className="h-1 bg-white/10">
           <div
-            className="h-full bg-[#F97316] transition-all duration-500"
+            className="h-full bg-[#1F6BFF] transition-all duration-500"
             style={{ width: `${(currentStep / 5) * 100}%` }}
           />
         </div>
@@ -108,9 +108,9 @@ export default function OnboardingPage() {
             <div
               key={step}
               className={`w-2.5 h-2.5 rounded-full transition-all ${step < currentStep
-                ? 'bg-[#F97316]'
+                ? 'bg-[#1F6BFF]'
                 : step === currentStep
-                  ? 'border-2 border-[#F97316] bg-transparent'
+                  ? 'border-2 border-[#1F6BFF] bg-transparent'
                   : 'bg-white/15'
                 }`}
             >
@@ -161,7 +161,7 @@ export default function OnboardingPage() {
                         key={gender}
                         onClick={() => updateFormData('gender', gender)}
                         className={`px-4 py-2 rounded-lg transition-all ${formData.gender === gender
-                          ? 'bg-[#F97316] text-black'
+                          ? 'bg-[#1F6BFF] text-black'
                           : 'glass text-[var(--text-primary)]'
                           }`}
                       >
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
                       key={goal.id}
                       onClick={() => updateFormData('goal', goal.id)}
                       className={`glass p-4 text-left transition-all ${formData.goal === goal.id
-                        ? 'border-2 border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                        ? 'border-2 border-[#1F6BFF] shadow-[0_0_20px_rgba(31,107,255,0.3)]'
                         : 'border border-white/10'
                         }`}
                     >
@@ -284,7 +284,7 @@ export default function OnboardingPage() {
                       key={diet.id}
                       onClick={() => updateFormData('diet', diet.id)}
                       className={`px-4 py-2 rounded-full transition-all ${formData.diet === diet.id
-                        ? 'bg-[#F97316] text-black'
+                        ? 'bg-[#1F6BFF] text-black'
                         : 'glass text-[var(--text-primary)]'
                         }`}
                     >
@@ -318,7 +318,7 @@ export default function OnboardingPage() {
                       key={level.id}
                       onClick={() => updateFormData('activity', level.id)}
                       className={`w-full glass p-4 text-left transition-all flex items-center gap-4 ${formData.activity === level.id
-                        ? 'border-2 border-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                        ? 'border-2 border-[#1F6BFF] shadow-[0_0_20px_rgba(31,107,255,0.3)]'
                         : 'border border-white/10'
                         }`}
                     >

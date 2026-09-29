@@ -11,23 +11,23 @@ import { auth } from '../lib/api'
 
 /* ═══════════════════════════════════════════════════════════════════
    NutriAI — cinematic 3D storytelling landing.
-   Dark-first. Amber rationed (CTAs, rings, key numerals only).
+   Dark-first. Electric blue rationed (CTAs, rings, key numerals only).
    Reduced-motion: static composed states, no scroll-driven animation.
    ═══════════════════════════════════════════════════════════════════ */
 
-const AMBER = '#F5A524'
-const AMBER_DEEP = '#F97316'
+const AMBER = '#2E7DFF'
+const AMBER_DEEP = '#1F6BFF'
 const CHARCOAL = '#141210'
 const CHARCOAL_2 = '#1A1714'
 const PAPER = '#F5F1E8'
 const INK = '#1C1917'
 const CREAM = '#F5EFE4'
 const MUTED = '#A8A29E'
-const HAIRLINE = 'rgba(245,165,36,0.12)'
+const HAIRLINE = 'rgba(46,125,255,0.12)'
 
 const LANDING_CSS = `
 .nl-root { background:${CHARCOAL}; color:${CREAM}; font-family:'Satoshi',sans-serif; overflow-x:clip; }
-.nl-root ::selection { background:rgba(245,165,36,.35); color:#141210; }
+.nl-root ::selection { background:rgba(46,125,255,.35); color:#141210; }
 .nl-campaign { font-family:'Clash Display',sans-serif; font-weight:700; text-transform:uppercase; line-height:.92; letter-spacing:-.015em; }
 .nl-squeeze { display:inline-block; transform:scaleX(.84); transform-origin:left center; }
 @media (max-width:768px){ .nl-squeeze { transform-origin:center; } }
@@ -35,13 +35,13 @@ const LANDING_CSS = `
 .nl-kicker { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.14em; }
 .nl-hairline { border:1px solid ${HAIRLINE}; }
 .nl-hairline-t { border-top:1px solid ${HAIRLINE}; }
-.nl-cta { background:linear-gradient(135deg,${AMBER},${AMBER_DEEP}); color:#141210; font-weight:800; border:none; border-radius:14px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 rgba(245,165,36,0); }
-.nl-cta:hover { box-shadow:0 0 32px rgba(245,165,36,.35); }
+.nl-cta { background:linear-gradient(135deg,${AMBER},${AMBER_DEEP}); color:#FFFFFF; font-weight:800; border:none; border-radius:14px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 rgba(46,125,255,0); }
+.nl-cta:hover { box-shadow:0 0 32px rgba(46,125,255,.35); }
 .nl-cta:active { transform:scale(.97); }
 .nl-cta:disabled { opacity:.6; cursor:wait; }
 .nl-input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:13px 16px; color:${CREAM}; font-size:.95rem; outline:none; box-sizing:border-box; transition:border-color .15s ease; }
 .nl-input::placeholder { color:#6B6560; }
-.nl-input:focus { border-color:rgba(245,165,36,.55); }
+.nl-input:focus { border-color:rgba(46,125,255,.55); }
 .nl-input:disabled { opacity:.6; }
 .nl-glass { background:rgba(30,26,22,.62); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid ${HAIRLINE}; }
 @keyframes nl-scan { 0%{top:8%} 50%{top:88%} 100%{top:8%} }
@@ -84,7 +84,7 @@ function Nav() {
   )
 }
 
-/* ── Scroll-driven 3D amber ring (layered SVG torus illusion) ────── */
+/* ── Scroll-driven 3D blue ring (layered SVG torus illusion) ────── */
 function Ring3D({ spin, arc, size = 440 }) {
   const R = 80
   const C = 2 * Math.PI * R
@@ -92,10 +92,10 @@ function Ring3D({ spin, arc, size = 440 }) {
   const ringR = (R / 200) * size
   return (
     <div style={{ width: size, height: size, perspective: 1100, position: 'relative' }}>
-      {/* amber energy glow */}
+      {/* blue energy glow */}
       <div style={{
         position: 'absolute', inset: '12%', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(245,165,36,.22) 0%, transparent 65%)',
+        background: 'radial-gradient(circle, rgba(46,125,255,.22) 0%, transparent 65%)',
         filter: 'blur(10px)',
       }} className="nl-pulse-glow" />
       <motion.div style={{ width: '100%', height: '100%', rotate: spin, transformStyle: 'preserve-3d' }}>
@@ -111,7 +111,7 @@ function Ring3D({ spin, arc, size = 440 }) {
                 strokeDasharray={C}
                 style={{
                   strokeDashoffset: dashOffset, transform: 'rotate(-90deg)', transformOrigin: '100px 100px',
-                  filter: 'drop-shadow(0 0 9px rgba(245,165,36,.6))',
+                  filter: 'drop-shadow(0 0 9px rgba(46,125,255,.6))',
                 }}
               />
             </svg>
@@ -120,7 +120,7 @@ function Ring3D({ spin, arc, size = 440 }) {
           <motion.div style={{ position: 'absolute', left: '50%', top: '50%', width: 0, height: 0, rotate: spin }}>
             <div style={{
               position: 'absolute', left: -8, top: -ringR - 8, width: 16, height: 16, borderRadius: '50%',
-              background: AMBER, boxShadow: '0 0 22px rgba(245,165,36,.95)',
+              background: AMBER, boxShadow: '0 0 22px rgba(46,125,255,.95)',
             }} />
           </motion.div>
         </div>
@@ -248,7 +248,7 @@ function HeroCopy({ lines, onCta, accentLast, dark, style }) {
               style={{
                 fontSize: 'clamp(3rem, 9.5vw, 8.5rem)', margin: 0, whiteSpace: 'nowrap',
                 color: accentLast && i === lines.length - 1 ? AMBER_DEEP : ink,
-                textShadow: !dark && accentLast && i === lines.length - 1 ? '0 0 44px rgba(245,165,36,.45)' : 'none',
+                textShadow: !dark && accentLast && i === lines.length - 1 ? '0 0 44px rgba(46,125,255,.45)' : 'none',
               }}
             >
               <span className="nl-squeeze">{l}</span>
@@ -289,7 +289,7 @@ function FloatScanCard() {
         <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
           <span className="nl-tnum" style={{ fontSize: '.68rem', color: MUTED, width: 14 }}>{k}</span>
           <div style={{ flex: 1, height: 5, borderRadius: 99, background: 'rgba(255,255,255,.08)' }}>
-            <div style={{ width: `${w}%`, height: '100%', borderRadius: 99, background: k === 'P' ? AMBER : 'rgba(245,165,36,.45)' }} />
+            <div style={{ width: `${w}%`, height: '100%', borderRadius: 99, background: k === 'P' ? AMBER : 'rgba(46,125,255,.45)' }} />
           </div>
           <span className="nl-tnum" style={{ fontSize: '.68rem', color: CREAM }}>{g}g</span>
         </div>
@@ -311,7 +311,7 @@ function FloatWorkoutCard() {
         42:18 <span style={{ fontSize: '.75rem', color: MUTED, fontWeight: 500 }}>· <Flame size={12} color={AMBER} style={{ display: 'inline' }} /> 312 kcal</span>
       </div>
       <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}>
-        <div style={{ width: '68%', height: '100%', borderRadius: 99, background: `linear-gradient(90deg,${AMBER},${AMBER_DEEP})`, boxShadow: '0 0 12px rgba(245,165,36,.5)' }} />
+        <div style={{ width: '68%', height: '100%', borderRadius: 99, background: `linear-gradient(90deg,${AMBER},${AMBER_DEEP})`, boxShadow: '0 0 12px rgba(46,125,255,.5)' }} />
       </div>
       <div className="nl-tnum" style={{ marginTop: 8, fontSize: '.72rem', color: MUTED }}>7 / 10 sets done</div>
     </div>
@@ -330,7 +330,7 @@ function ChatVisual() {
       <div style={{ background: 'rgba(255,255,255,.06)', borderRadius: '14px 14px 14px 4px', padding: '12px 14px', fontSize: '.85rem', color: CREAM, marginBottom: 10, maxWidth: '88%' }}>
         What should I eat after leg day?
       </div>
-      <div style={{ background: 'rgba(245,165,36,.14)', border: '1px solid rgba(245,165,36,.3)', borderRadius: '14px 14px 4px 14px', padding: '12px 14px', fontSize: '.85rem', color: CREAM, marginLeft: '12%', lineHeight: 1.55 }}>
+      <div style={{ background: 'rgba(46,125,255,.14)', border: '1px solid rgba(46,125,255,.3)', borderRadius: '14px 14px 4px 14px', padding: '12px 14px', fontSize: '.85rem', color: CREAM, marginLeft: '12%', lineHeight: 1.55 }}>
         40g protein within 2 hours. Paneer bhurji + 2 rotis lands ≈38g — want me to log it?
       </div>
     </div>
@@ -346,8 +346,8 @@ function ScanVisual() {
       </div>
       <div style={{ position: 'relative', height: 150, borderRadius: 14, overflow: 'hidden', background: 'linear-gradient(135deg,#3A2C1E,#221A12 60%,#2E2118)' }}>
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>🍛</div>
-        <div className="nl-scanline" style={{ position: 'absolute', left: '6%', right: '6%', height: 2, background: AMBER, boxShadow: '0 0 16px rgba(245,165,36,.9)' }} />
-        <div style={{ position: 'absolute', inset: 10, border: '1px solid rgba(245,165,36,.4)', borderRadius: 10, pointerEvents: 'none' }} />
+        <div className="nl-scanline" style={{ position: 'absolute', left: '6%', right: '6%', height: 2, background: AMBER, boxShadow: '0 0 16px rgba(46,125,255,.9)' }} />
+        <div style={{ position: 'absolute', inset: 10, border: '1px solid rgba(46,125,255,.4)', borderRadius: 10, pointerEvents: 'none' }} />
       </div>
       <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
         {[['Butter Chicken', '410'], ['Naan ×2', '280'], ['Rice', '205']].map(([n, k]) => (
@@ -382,8 +382,8 @@ function HeatVisual() {
           return (
             <div key={i} style={{
               aspectRatio: 1, borderRadius: 3,
-              background: v === 0 ? 'rgba(255,255,255,.06)' : `rgba(245,165,36,${0.25 + v * 0.6})`,
-              boxShadow: v === 1 ? '0 0 8px rgba(245,165,36,.5)' : 'none',
+              background: v === 0 ? 'rgba(255,255,255,.06)' : `rgba(46,125,255,${0.25 + v * 0.6})`,
+              boxShadow: v === 1 ? '0 0 8px rgba(46,125,255,.5)' : 'none',
             }} />
           )
         })}
@@ -405,7 +405,7 @@ function RingsVisual() {
         <circle cx={size / 2} cy={size / 2} r={R} fill="none" stroke={AMBER} strokeWidth={sw} strokeLinecap="round"
           strokeDasharray={C} strokeDashoffset={C * (1 - pct)}
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ filter: 'drop-shadow(0 0 8px rgba(245,165,36,.55))', opacity: dim ? .55 : 1 }} />
+          style={{ filter: 'drop-shadow(0 0 8px rgba(46,125,255,.55))', opacity: dim ? .55 : 1 }} />
       </svg>
     )
   }
@@ -639,14 +639,14 @@ function AuthChapter() {
   return (
     <section id="auth" className="nl-hairline-t" style={{
       position: 'relative', padding: '130px 0', overflow: 'hidden',
-      background: `radial-gradient(700px 420px at 50% 0%, rgba(245,165,36,.12), transparent 65%), ${CHARCOAL_2}`,
+      background: `radial-gradient(700px 420px at 50% 0%, rgba(46,125,255,.12), transparent 65%), ${CHARCOAL_2}`,
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 64, alignItems: 'center' }}>
         <div>
           <h2 className="nl-campaign" style={{ fontSize: 'clamp(2.6rem,6vw,5rem)', margin: '0 0 8px', color: CREAM }}>
             <span className="nl-squeeze">STOP SCROLLING.</span>
           </h2>
-          <h2 className="nl-campaign" style={{ fontSize: 'clamp(2.6rem,6vw,5rem)', margin: 0, color: AMBER, textShadow: '0 0 44px rgba(245,165,36,.4)' }}>
+          <h2 className="nl-campaign" style={{ fontSize: 'clamp(2.6rem,6vw,5rem)', margin: 0, color: AMBER, textShadow: '0 0 44px rgba(46,125,255,.4)' }}>
             <span className="nl-squeeze">START TRAINING.</span>
           </h2>
           <p style={{ color: MUTED, fontSize: '1.05rem', lineHeight: 1.65, marginTop: 22, maxWidth: 420 }}>

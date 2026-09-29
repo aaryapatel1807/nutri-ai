@@ -1,13 +1,13 @@
 'use client'
 import { useRef } from 'react'
 
-const AMBER = '#F5A524'
-const AMBER_DEEP = '#F97316'
+const AMBER = '#2E7DFF'
+const AMBER_DEEP = '#1F6BFF'
 const BG_TOP = '#1A1714'
 const BG_BOT = '#100E0C'
 const PAPER = '#FAF7F2'
 const MUTED = '#A8A29E'
-const HAIRLINE = 'rgba(245,165,36,0.18)'
+const HAIRLINE = 'rgba(46,125,255,0.18)'
 
 const W = 1080
 const H = 1350
@@ -23,8 +23,8 @@ export function drawRecapCard(ctx, d) {
 
   // Amber glow top
   const glow = ctx.createRadialGradient(W / 2, -120, 40, W / 2, -120, 620)
-  glow.addColorStop(0, 'rgba(245,165,36,0.28)')
-  glow.addColorStop(1, 'rgba(245,165,36,0)')
+  glow.addColorStop(0, 'rgba(46,125,255,0.28)')
+  glow.addColorStop(1, 'rgba(46,125,255,0)')
   ctx.fillStyle = glow
   ctx.fillRect(0, 0, W, 560)
 
@@ -33,11 +33,11 @@ export function drawRecapCard(ctx, d) {
   ctx.translate(W - 150, 170)
   ctx.lineWidth = 26
   ctx.lineCap = 'round'
-  ctx.strokeStyle = 'rgba(245,165,36,0.16)'
+  ctx.strokeStyle = 'rgba(46,125,255,0.16)'
   ctx.beginPath(); ctx.arc(0, 0, 96, 0, Math.PI * 2); ctx.stroke()
   const frac = Math.min(1, (d.sessions || 0) / 12)
   ctx.strokeStyle = AMBER
-  ctx.shadowColor = 'rgba(245,165,36,0.7)'
+  ctx.shadowColor = 'rgba(46,125,255,0.7)'
   ctx.shadowBlur = 24
   ctx.beginPath(); ctx.arc(0, 0, 96, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac); ctx.stroke()
   ctx.restore()
@@ -181,8 +181,8 @@ export default function ShareCard({ data }) {
 
   const stats = [
     { label: 'SESSIONS', val: data.sessions ?? 0, color: AMBER },
-    { label: 'KCAL BURNED', val: (data.kcal ?? 0).toLocaleString('en-GB'), color: '#FF6B35' },
-    { label: 'ACTIVE MIN', val: data.minutes ?? 0, color: '#FB923C' },
+    { label: 'KCAL BURNED', val: (data.kcal ?? 0).toLocaleString('en-GB'), color: '#2E7DFF' },
+    { label: 'ACTIVE MIN', val: data.minutes ?? 0, color: '#5B96FF' },
     { label: 'VOLUME', val: data.volumeKg > 0 ? `${Math.round(data.volumeKg).toLocaleString('en-GB')} kg` : '—', color: '#FFD700' },
   ]
 
@@ -195,13 +195,13 @@ export default function ShareCard({ data }) {
         borderRadius: '24px', overflow: 'hidden',
         background: `linear-gradient(180deg, ${BG_TOP}, ${BG_BOT})`,
         border: `1px solid ${HAIRLINE}`,
-        boxShadow: '0 24px 80px rgba(0,0,0,0.45), 0 0 60px rgba(245,165,36,0.08)',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.45), 0 0 60px rgba(46,125,255,0.08)',
         position: 'relative', color: PAPER,
         fontFamily: "'Satoshi', sans-serif"
       }}>
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(420px circle at 50% -60px, rgba(245,165,36,0.25), transparent 70%)'
+          background: 'radial-gradient(420px circle at 50% -60px, rgba(46,125,255,0.25), transparent 70%)'
         }} />
         <div style={{ position: 'relative', padding: '8%', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
           <div style={{ color: AMBER, fontWeight: 700, fontSize: 'clamp(0.7rem, 2.6vw, 1rem)', letterSpacing: '0.06em' }}>🥗 NUTRIAI</div>
@@ -265,15 +265,15 @@ export default function ShareCard({ data }) {
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
         <button onClick={downloadPNG} style={{
           padding: '12px 28px', borderRadius: '14px', border: 'none',
-          background: 'linear-gradient(135deg, #F5A524, #F97316)',
+          background: 'linear-gradient(135deg, #2E7DFF, #1F6BFF)',
           color: '#000', fontWeight: 800, cursor: 'pointer', fontSize: '0.9rem',
-          boxShadow: '0 8px 28px rgba(245,165,36,0.35)'
+          boxShadow: '0 8px 28px rgba(46,125,255,0.35)'
         }}>⬇️ Download PNG</button>
         <button onClick={shareCard} style={{
           padding: '12px 28px', borderRadius: '14px',
-          border: '1px solid rgba(245,165,36,0.4)',
-          background: 'rgba(245,165,36,0.1)',
-          color: '#F5A524', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem'
+          border: '1px solid rgba(46,125,255,0.4)',
+          background: 'rgba(46,125,255,0.1)',
+          color: '#2E7DFF', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem'
         }}>📤 Share</button>
       </div>
     </div>

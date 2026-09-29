@@ -38,8 +38,8 @@ export default function CalorieRing({ current = 0, goal = 2000, size = 180 }) {
         {/* Gradient Definition */}
         <defs>
           <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#F97316" />
-            <stop offset="100%" stopColor="#FB923C" />
+            <stop offset="0%" stopColor="#1F6BFF" />
+            <stop offset="100%" stopColor="#5B96FF" />
           </linearGradient>
         </defs>
       </svg>

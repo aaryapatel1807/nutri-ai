@@ -7,7 +7,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q2 2026',
       status: 'In Progress',
-      color: 'from-[#FB923C] to-[#EA580C]',
+      color: 'from-[#5B96FF] to-[#0B54CE]',
       items: [
         '✓ User authentication & profiles',
         '✓ Meal logging and tracking',
@@ -29,7 +29,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q4 2026',
       status: 'Planned',
-      color: 'from-[#FDBA74] to-[#F97316]',
+      color: 'from-[#A9C6FF] to-[#1F6BFF]',
       items: [
         'AI meal plan generator',
         'Personalized supplement recommendations',
@@ -40,7 +40,7 @@ export default function RoadmapPage() {
     {
       quarter: 'Q1 2027',
       status: 'Planned',
-      color: 'from-orange-400 to-red-500',
+      color: 'from-blue-400 to-indigo-500',
       items: [
         'Community challenges & competitions',
         'Professional coach network',
@@ -51,7 +51,7 @@ export default function RoadmapPage() {
   ]
 
   const statusPillStyle = {
-    'In Progress': 'bg-amber-400/15 text-amber-200 border-amber-400/40',
+    'In Progress': 'bg-blue-400/15 text-blue-200 border-blue-400/40',
     'Planned': 'bg-white/10 text-gray-100 border-white/30',
   }
 
@@ -140,7 +140,7 @@ export default function RoadmapPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="p-8 rounded-xl border border-[#F97316]/30 bg-[#F97316]/10 backdrop-blur-sm text-center"
+            className="p-8 rounded-xl border border-[#1F6BFF]/30 bg-[#1F6BFF]/10 backdrop-blur-sm text-center"
           >
             <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">📬 Stay Updated</h3>
             <p className="text-gray-300 mb-6">Subscribe to get notified when new features launch</p>
@@ -148,9 +148,9 @@ export default function RoadmapPage() {
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-[var(--border)] text-[var(--text-primary)] placeholder-gray-500 focus:outline-none focus:border-[#F97316]"
+                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-[var(--border)] text-[var(--text-primary)] placeholder-gray-500 focus:outline-none focus:border-[#1F6BFF]"
               />
-              <button className="px-6 py-3 bg-[#F97316] text-[var(--text-primary)] rounded-lg font-semibold hover:bg-green-600 transition-all">
+              <button className="px-6 py-3 bg-[#1F6BFF] text-[var(--text-primary)] rounded-lg font-semibold hover:bg-green-600 transition-all">
                 Subscribe
               </button>
             </div>
