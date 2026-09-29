@@ -161,7 +161,7 @@ export default function ProfilePage() {
 
   const refreshGfitStatus = async () => {
     try {
-      const { data } = await api.get('/integrations/google-fit/status')
+      const { data } = await api.get('/api/integrations/google-fit/status')
       if (data?.success) setGfit(g => ({ ...g, connected: !!data.connected, lastSyncAt: data.lastSyncAt || null }))
     } catch { /* backend unreachable / not configured — card stays local */ }
   }
@@ -169,7 +169,7 @@ export default function ProfilePage() {
   const connectGfit = async () => {
     setGfit(g => ({ ...g, busy:true, msg:null }))
     try {
-      const { data } = await api.get('/integrations/google-fit/connect')
+      const { data } = await api.get('/api/integrations/google-fit/connect')
       if (data?.url) { window.location.href = data.url; return }
       throw new Error(data?.error || 'Could not start Google Fit connect')
     } catch (e) {
@@ -180,7 +180,7 @@ export default function ProfilePage() {
   const syncGfit = async () => {
     setGfit(g => ({ ...g, busy:true, msg:null }))
     try {
-      const { data } = await api.post('/integrations/google-fit/sync')
+      const { data } = await api.post('/api/integrations/google-fit/sync')
       const s = data?.summary || {}
       const bits = []
       if (s.workoutsAdded) bits.push(`${s.workoutsAdded} workout${s.workoutsAdded>1?'s':''}`)
@@ -198,7 +198,7 @@ export default function ProfilePage() {
   const disconnectGfit = async () => {
     setGfit(g => ({ ...g, busy:true, msg:null }))
     try {
-      await api.delete('/integrations/google-fit/disconnect')
+      await api.delete('/api/integrations/google-fit/disconnect')
       setGfit(g => ({ ...g, connected:false, lastSyncAt:null, busy:false, msg:'Google Fit disconnected' }))
     } catch (e) {
       setGfit(g => ({ ...g, busy:false, msg: `❌ ${e.response?.data?.error || e.message}` }))
@@ -1408,7 +1408,7 @@ export default function ProfilePage() {
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'16px' }}>
                   {apps.map((app,i) => {
                     const isGFit = app.name === 'Google Fit'
-                    const connected = isGFit ? gfit.connected : connected
+                    const connected = isGFit ? gfit.connected : app.connected
                     return (
                     <motion.div key={app.name}
                       initial={{ opacity:0, scale:0.9 }}
