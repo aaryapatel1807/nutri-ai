@@ -61,12 +61,11 @@ export default function Navbar({ onMenuClick = () => {} }) {
   }, [])
 
   return (
-    <div className="app-chrome" style={{
+    <div className="app-chrome app-chrome--merged" style={{
       top: 0,
       left: isMobile ? 0 : '260px',
       right: 0,
       height: isMobile ? '64px' : '80px',
-      borderBottom: '1px solid var(--glass-border)',
       zIndex: 40,
       display: 'flex',
       alignItems: 'center',
