@@ -317,6 +317,13 @@ export default function Achievements() {
   const [loadError, setLoadError] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
+  // Sidebar-aware modal: on desktop with the sidebar open (260px), the fixed
+  // badge modal must start after the sidebar instead of sliding underneath it.
+  const modalLeft = (() => {
+    if (isMobile) return 0
+    try { return localStorage.getItem('nutriai_sidebar_collapsed') === '1' ? 0 : 260 } catch (e) { return 0 }
+  })()
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -788,7 +795,7 @@ export default function Achievements() {
               exit={{ opacity:0 }}
               onClick={() => setSelectedBadge(null)}
               style={{
-                position:'fixed', inset:0, zIndex:999,
+                position:'fixed', top:0, right:0, bottom:0, left:modalLeft, zIndex:999,
                 background:'var(--shadow-color)', backdropFilter:'blur(8px)',
                 display:'flex', alignItems:'center', justifyContent:'center',
                 padding:'20px'
