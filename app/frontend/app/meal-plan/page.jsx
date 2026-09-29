@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MEAL_PLANS = [
   {
@@ -255,7 +256,8 @@ export default function MealPlanPage() {
 
   return (
 
-      <div style={{ width:'100%' }}>
+      <div style={{ width:'100%', position:'relative', zIndex:1 }}>
+      <ScenicBackdrop />
 
         {/* AMBIENT */}
         <div style={{

@@ -5,6 +5,7 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts'
 import { Moon, Zap, Target, Flame, Loader2, Info, BedDouble, Star, CheckCircle2 } from 'lucide-react'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 // ─── Small building blocks ──────────────────────────────────────────────────
 
@@ -189,7 +190,8 @@ export default function CoachPage() {
 
   if (error) {
     return (
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: 24 }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: 24, position: 'relative', zIndex: 1 }}>
+      <ScenicBackdrop />
         <Card>
           <p style={{ color: 'var(--text-primary)', margin: '0 0 12px' }}>{error}</p>
           <button onClick={fetchCore} style={btnPrimary}>Try again</button>

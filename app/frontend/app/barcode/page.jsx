@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
 
@@ -142,7 +143,8 @@ export default function BarcodeScanner() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '720px', margin: '0 auto' }}>
+    <div style={{ width: '100%', maxWidth: '720px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <ScenicBackdrop />
 
       {/* HEADER */}
       <motion.div

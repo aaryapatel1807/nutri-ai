@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import api, { ml } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const RECIPES = [
   {
@@ -206,7 +207,8 @@ export default function RecipeMaker() {
   })
 
   return (
-      <div style={{ width:'100%' }} onMouseMove={handleMouseMove}>
+      <div style={{ width:'100%', position:'relative', zIndex:1 }} onMouseMove={handleMouseMove}>
+      <ScenicBackdrop />
 
         {/* AMBIENT GLOW BG */}
         <div style={{

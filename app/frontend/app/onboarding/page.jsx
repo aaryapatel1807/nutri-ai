@@ -6,6 +6,7 @@ import NeonButton from '@/components/shared/NeonButton'
 import GlassCard from '@/components/shared/GlassCard'
 import { staggerContainer, fadeInUp } from '@/lib/animations'
 import { auth } from '@/lib/api'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1)
@@ -94,7 +95,8 @@ export default function OnboardingPage() {
   }
 
   return (
-      <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4 relative" style={{ zIndex: 1 }}>
+      <ScenicBackdrop />
       {/* Progress Bar */}
       <div className="absolute top-0 left-0 right-0">
         <div className="h-1 bg-white/10">

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import useIsMobile from '../../lib/useIsMobile'
 import MuscleBodyMap from '../../components/workout/MuscleBodyMap'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 // PageWrapper removed to fix double-wrap bug
 
 // ─── Gym utility helpers ──────────────────────────────────────────────────────
@@ -534,7 +535,8 @@ export default function WorkoutPage() {
   }
 
   return (
-      <div style={{ width:'100%' }}>
+      <div style={{ width:'100%', position:'relative', zIndex:1 }}>
+      <ScenicBackdrop />
 
         {/* AMBIENT BACKGROUND */}
         <div style={{

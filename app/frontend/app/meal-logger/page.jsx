@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
 
@@ -212,7 +213,8 @@ export default function MealLogger() {
   }
 
   return (
-      <div style={{ width: '100%' }}>
+      <div style={{ width: '100%', position: 'relative', zIndex: 1 }}>
+      <ScenicBackdrop />
 
         {/* HEADER */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>

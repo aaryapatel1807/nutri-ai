@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
 import { useTheme } from '../../components/shared/ThemeContext'
 import { auth } from '../../lib/api'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 /* ══════════ DATA ══════════ */
 const AVATAR_STYLES = [
@@ -312,16 +313,8 @@ export default function ProfilePage() {
   }
 
   return (
-      <div style={{ width:'100%' }}>
-
-        {/* AMBIENT */}
-        <div style={{
-          position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
-          background:`
-            radial-gradient(600px circle at 20% 25%, ${theme.primary}05 0%, transparent 60%),
-            radial-gradient(400px circle at 80% 75%, ${theme.secondary}04 0%, transparent 60%)
-          `
-        }}/>
+      <div style={{ width:'100%', position:'relative', zIndex:1 }}>
+        <ScenicBackdrop />
 
         <div style={{ position:'relative', zIndex:1 }}>
 

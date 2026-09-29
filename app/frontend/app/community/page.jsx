@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Send, Trash2, Users, RefreshCw, Megaphone } from 'lucide-react'
 import api from '../../lib/api'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MAX_LEN = 280
 
@@ -255,7 +256,8 @@ export default function CommunityPage() {
   }, [loading, error, posts, currentUserId, fetchPosts, handleKudos, handleDelete])
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', padding: '1.5rem 1rem 4rem' }}>
+    <div style={{ maxWidth: 680, margin: '0 auto', padding: '1.5rem 1rem 4rem', position: 'relative', zIndex: 1 }}>
+      <ScenicBackdrop />
       <header style={{ marginBottom: '1.4rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
         <div
           style={{

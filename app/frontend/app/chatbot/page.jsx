@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ml, auth } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 // PageWrapper removed to fix double-wrap bug
 
 const COACH_PERSONAS = [
@@ -339,7 +340,8 @@ export default function AICoach() {
   }
 
   return (
-      <div style={{ width:'100%' }}>
+      <div style={{ width:'100%', position:'relative', zIndex:1 }}>
+      <ScenicBackdrop />
 
         {/* AMBIENT */}
         <div style={{

@@ -33,7 +33,6 @@ export default function RootLayout({ children }) {
             <div className="frost-sheen" />
             <div className="frost-vignette" />
           </div>
-          
           <LayoutContent>
             {children}
           </LayoutContent>

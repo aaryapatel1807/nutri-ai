@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { workouts as workoutsApi, meals as mealsApi } from '../../lib/api'
 import ShareCard from '../../components/recap/ShareCard'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const SESSION_LOG_KEY = 'nutriai_session_log_v1'
 
@@ -120,7 +121,8 @@ export default function RecapPage() {
   ]
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', position: 'relative', zIndex: 1 }}>
+      <ScenicBackdrop />
       {/* Ambient background */}
       <div style={{
         position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,

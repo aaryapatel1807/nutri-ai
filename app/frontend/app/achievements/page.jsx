@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import api from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
+import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 
 const BADGES_MOCK = [
@@ -413,17 +414,8 @@ export default function Achievements() {
   }
 
   return (
-      <div style={{ width:'100%' }}>
-
-        {/* AMBIENT BACKGROUND */}
-        <div style={{
-          position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
-          background:`
-            radial-gradient(800px circle at 20% 40%, rgba(255,215,0,0.08) 0%, transparent 60%),
-            radial-gradient(600px circle at 80% 60%, rgba(123,97,255,0.06) 0%, transparent 60%),
-            radial-gradient(400px circle at 50% 20%, rgba(21, 178, 207,0.04) 0%, transparent 60%)
-          `
-        }}/>
+      <div style={{ width:'100%', position:'relative', zIndex:1 }}>
+        <ScenicBackdrop />
 
         <div style={{ position:'relative', zIndex:1 }}>
 
