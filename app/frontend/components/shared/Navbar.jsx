@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Bell, Menu, Sun, Moon } from 'lucide-react'
+import { Bell, Menu, Sun, Moon, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { glowPulse } from '../../lib/animations'
 import api from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
@@ -14,7 +14,7 @@ function getGreeting() {
   return 'Good Evening'
 }
 
-export default function Navbar({ onMenuClick = () => {} }) {
+export default function Navbar({ onMenuClick = () => {}, collapsed = false, onToggleCollapse = () => {} }) {
   const isMobile = useIsMobile()
   const { theme, toggleTheme } = useTheme()
   const [userName, setUserName]     = useState('User')
@@ -63,14 +63,15 @@ export default function Navbar({ onMenuClick = () => {} }) {
   return (
     <div className="app-chrome app-chrome--merged" style={{
       top: 0,
-      left: isMobile ? 0 : '260px',
+      left: isMobile ? 0 : (collapsed ? 0 : '260px'),
       right: 0,
       height: isMobile ? '64px' : '80px',
       zIndex: 40,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: isMobile ? '0 12px' : '0 32px'
+      padding: isMobile ? '0 12px' : '0 32px',
+      transition: 'left 0.3s ease'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         {/* Left Side */}
@@ -91,6 +92,27 @@ export default function Navbar({ onMenuClick = () => {} }) {
               }}
             >
               <Menu size={22} />
+            </button>
+          )}
+          {!isMobile && (
+            <button
+              onClick={onToggleCollapse}
+              aria-label={collapsed ? 'Expand sidebar' : 'Minimise sidebar'}
+              title={collapsed ? 'Expand sidebar' : 'Minimise sidebar'}
+              aria-expanded={!collapsed}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+                borderRadius: '10px'
+              }}
+            >
+              {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
             </button>
           )}
           <div style={{ minWidth: 0 }}>

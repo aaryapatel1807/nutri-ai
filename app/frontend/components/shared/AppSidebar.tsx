@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, UtensilsCrossed, ScanBarcode, ChefHat, CalendarDays,
   Dumbbell, Bot, Brain, Users, BarChart3, Trophy, ClipboardList, Award,
-  Map as MapIcon, Briefcase, User as UserIcon, LogOut,
+  Map as MapIcon, Briefcase, User as UserIcon, LogOut, ChevronsLeft,
 } from 'lucide-react'
 import { UserProfileSidebar } from '@/components/ui/menu'
 import api from '@/lib/api'
@@ -43,9 +43,11 @@ function initialsAvatar(name: string): string {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`
 }
 
-export default function AppSidebar({ mobileOpen = false, onNavigate = () => {} }: {
+export default function AppSidebar({ mobileOpen = false, onNavigate = () => {}, collapsed = false, onToggleCollapse = () => {} }: {
   mobileOpen?: boolean
   onNavigate?: () => void
+  collapsed?: boolean
+  onToggleCollapse?: () => void
 }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -100,6 +102,10 @@ export default function AppSidebar({ mobileOpen = false, onNavigate = () => {} }
     router.push('/login')
   }
 
+  // Desktop: collapsing slides the sidebar off to the left, freeing the full
+  // viewport for the dashboard. Mobile keeps its drawer behaviour.
+  const sidebarHidden = isMobile ? !mobileOpen : collapsed
+
   return (
     <>
       {isMobile && mobileOpen && (
@@ -110,6 +116,7 @@ export default function AppSidebar({ mobileOpen = false, onNavigate = () => {} }
       )}
       <div
         className="app-chrome"
+        aria-hidden={sidebarHidden}
         style={{
           left: 0,
           top: 0,
@@ -119,10 +126,43 @@ export default function AppSidebar({ mobileOpen = false, onNavigate = () => {} }
           display: 'flex',
           flexDirection: 'column',
           borderRight: '1px solid var(--glass-border)',
-          transform: isMobile ? (mobileOpen ? 'translateX(0)' : 'translateX(-100%)') : 'none',
-          transition: 'transform 0.3s ease',
+          transform: isMobile
+            ? (mobileOpen ? 'translateX(0)' : 'translateX(-100%)')
+            : (collapsed ? 'translateX(-105%)' : 'translateX(0)'),
+          transition: 'transform 0.3s ease, visibility 0s linear',
+          transitionDelay: sidebarHidden ? '0s, 0.3s' : '0s, 0s',
+          visibility: sidebarHidden ? 'hidden' : 'visible',
         }}
       >
+        {/* Collapse affordance straddling the sidebar edge (desktop only) */}
+        {!isMobile && (
+          <button
+            onClick={onToggleCollapse}
+            aria-label="Minimise sidebar"
+            title="Minimise sidebar"
+            tabIndex={sidebarHidden ? -1 : 0}
+            style={{
+              position: 'absolute',
+              top: '72px',
+              right: '-15px',
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--glass-border)',
+              color: 'var(--text-muted)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              zIndex: 101,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.10)',
+              padding: 0,
+            }}
+          >
+            <ChevronsLeft size={16} />
+          </button>
+        )}
         <UserProfileSidebar
           user={{ name: profile.name, email: profile.email, avatarUrl: initialsAvatar(profile.name) }}
           navItems={navItems}

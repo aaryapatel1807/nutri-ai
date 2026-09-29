@@ -1,11 +1,11 @@
 'use client'
 import useIsMobile from '../../lib/useIsMobile'
 
-export default function PageWrapper({ children }) {
+export default function PageWrapper({ children, collapsed = false }) {
   const isMobile = useIsMobile()
   return (
     <div style={{
-      paddingLeft: isMobile ? '0' : '260px', // Match Sidebar width
+      paddingLeft: isMobile ? '0' : (collapsed ? '0' : '260px'), // Match Sidebar width
       paddingTop: isMobile ? '64px' : '80px',  // Match Navbar height
       minHeight: '100vh',
       width: '100%',
@@ -15,6 +15,7 @@ export default function PageWrapper({ children }) {
       zIndex: 1,
       background: 'var(--bg-primary)',
       boxSizing: 'border-box',
+      transition: 'padding-left 0.3s ease',
     }}>
       <div style={{ padding: isMobile ? '16px' : '32px', flex: 1, width: '100%', maxWidth: '1600px', margin: '0 auto', boxSizing: 'border-box' }}>
         {children}
