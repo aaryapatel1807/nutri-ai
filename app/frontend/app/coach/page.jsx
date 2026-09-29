@@ -45,7 +45,7 @@ const num = { fontVariantNumeric: 'tabular-nums' }
 
 function readinessColor(score) {
   if (score >= 85) return '#2ECC71'
-  if (score >= 70) return '#2E7DFF'
+  if (score >= 70) return '#1FA8C9'
   if (score >= 50) return '#4FD3ED'
   return '#FF6B6B'
 }
@@ -383,7 +383,7 @@ export default function CoachPage() {
             <Stat label="ADJUSTMENT" value={targets?.adjustment > 0 ? `+${targets.adjustment}` : `${targets?.adjustment ?? 0}`} unit="kcal" />
           </div>
           <div style={{ maxWidth: 560 }}>
-            <MacroBar label="Protein" grams={targets?.proteinG || 0} pct={pct(targets?.proteinG || 0)} color="#2E7DFF" />
+            <MacroBar label="Protein" grams={targets?.proteinG || 0} pct={pct(targets?.proteinG || 0)} color="#1FA8C9" />
             <MacroBar label="Carbs" grams={targets?.carbsG || 0} pct={pct(targets?.carbsG || 0)} color="#60A5FA" />
             <MacroBar label="Fat" grams={targets?.fatG || 0} pct={fatPct} color="#A78BFA" />
           </div>

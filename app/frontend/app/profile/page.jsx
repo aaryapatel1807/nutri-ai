@@ -7,15 +7,15 @@ import { auth } from '../../lib/api'
 
 /* ══════════ DATA ══════════ */
 const AVATAR_STYLES = [
-  { id:'warrior', emoji:'⚔️', label:'Warrior',  gradient:'linear-gradient(135deg,#2E7DFF,#FFD700)', ring:'#FFD700' },
+  { id:'warrior', emoji:'⚔️', label:'Warrior',  gradient:'linear-gradient(135deg,#1FA8C9,#FFD700)', ring:'#FFD700' },
   { id:'beast',   emoji:'🦁', label:'Beast',    gradient:'linear-gradient(135deg,#15B2CF,#EF4444)', ring:'#15B2CF' },
   { id:'ninja',   emoji:'🥷', label:'Ninja',    gradient:'linear-gradient(135deg,#1F2937,#7B61FF)', ring:'#7B61FF' },
   { id:'robot',   emoji:'🤖', label:'Robot',    gradient:'linear-gradient(135deg,#4FD3ED,#7B61FF)', ring:'#4FD3ED' },
   { id:'king',    emoji:'👑', label:'King',     gradient:'linear-gradient(135deg,#FFD700,#15B2CF)', ring:'#FFD700' },
-  { id:'fire',    emoji:'🔥', label:'Fire',     gradient:'linear-gradient(135deg,#2E7DFF,#EF4444)', ring:'#2E7DFF' },
+  { id:'fire',    emoji:'🔥', label:'Fire',     gradient:'linear-gradient(135deg,#1FA8C9,#EF4444)', ring:'#1FA8C9' },
   { id:'crystal', emoji:'💎', label:'Crystal',  gradient:'linear-gradient(135deg,#7B61FF,#4FD3ED)', ring:'#A78BFA' },
   { id:'galaxy',  emoji:'🌌', label:'Galaxy',   gradient:'linear-gradient(135deg,var(--bg-primary),#A78BFA)', ring:'#A78BFA' },
-  { id:'phoenix', emoji:'🦅', label:'Phoenix',  gradient:'linear-gradient(135deg,#2E7DFF,#FFD700)', ring:'#15B2CF' },
+  { id:'phoenix', emoji:'🦅', label:'Phoenix',  gradient:'linear-gradient(135deg,#1FA8C9,#FFD700)', ring:'#15B2CF' },
   { id:'alien',   emoji:'👽', label:'Alien',    gradient:'linear-gradient(135deg,#B5E5F2,#15B2CF)', ring:'#15B2CF' },
   { id:'demon',   emoji:'😈', label:'Demon',    gradient:'linear-gradient(135deg,#EF4444,#7B61FF)', ring:'#EF4444' },
   { id:'dragon',  emoji:'🐉', label:'Dragon',   gradient:'linear-gradient(135deg,#15B2CF,#7B61FF)', ring:'#15B2CF' },
@@ -26,16 +26,16 @@ const FRAME_STYLES = [
   { id:'gold',    label:'Gold',     style:'3px solid #FFD700' },
   { id:'neon',    label:'Volt',    style:'3px solid #15B2CF' },
   { id:'purple',  label:'Purple',   style:'3px solid #7B61FF' },
-  { id:'fire',    label:'Fire',     style:'3px solid #2E7DFF' },
+  { id:'fire',    label:'Fire',     style:'3px solid #1FA8C9' },
   { id:'rainbow', label:'Rainbow',  style:'3px solid transparent' },
 ]
 
 const THEMES = [
   { id:'brand',  label:'Sky Blue', primary:'#15B2CF', secondary:'#4FD3ED', accent:'#7B61FF' },
-  { id:'gold-rush',   label:'Gold Rush',    primary:'#FFD700', secondary:'#15B2CF', accent:'#2E7DFF' },
-  { id:'purple-fire', label:'Purple Fire',  primary:'#7B61FF', secondary:'#A78BFA', accent:'#2E7DFF' },
+  { id:'gold-rush',   label:'Gold Rush',    primary:'#FFD700', secondary:'#15B2CF', accent:'#1FA8C9' },
+  { id:'purple-fire', label:'Purple Fire',  primary:'#7B61FF', secondary:'#A78BFA', accent:'#1FA8C9' },
   { id:'cyber-blue',  label:'Cyber Blue',   primary:'#4FD3ED', secondary:'#60A5FA', accent:'#7B61FF' },
-  { id:'blood-orange',label:'Blood Orange', primary:'#2E7DFF', secondary:'#EF4444', accent:'#FFD700' },
+  { id:'blood-orange',label:'Blood Orange', primary:'#1FA8C9', secondary:'#EF4444', accent:'#FFD700' },
   { id:'matrix',      label:'Matrix',       primary:'#B5E5F2', secondary:'#15B2CF', accent:'#4FD3ED' },
 ]
 
@@ -488,7 +488,7 @@ export default function ProfilePage() {
               <div style={{ display:'flex', gap:'12px', paddingTop:'56px', flexWrap:'wrap' }}>
                 {[
                   { val:'12,340', label:'XP',         color:theme.primary  },
-                  { val:'14',     label:'Day Streak',  color:'#2E7DFF'      },
+                  { val:'14',     label:'Day Streak',  color:'#1FA8C9'      },
                   { val:'#6',     label:'Global Rank', color:theme.secondary},
                   { val:'16',     label:'Badges',      color:'#FFD700'      },
                 ].map(s => (
@@ -561,11 +561,11 @@ export default function ProfilePage() {
                   style={{
                     position:'absolute', bottom:'20px', left:'50%',
                     transform:'translateX(-50%)',
-                    background:'rgba(31,107,255,0.15)',
-                    border:'1px solid rgba(31,107,255,0.4)',
+                    background:'rgba(21, 178, 207,0.15)',
+                    border:'1px solid rgba(21, 178, 207,0.4)',
                     borderRadius:'99px', padding:'8px 24px',
                     color:'#15B2CF', fontWeight:700, fontSize:'0.88rem',
-                    boxShadow:'0 0 20px rgba(31,107,255,0.3)',
+                    boxShadow:'0 0 20px rgba(21, 178, 207,0.3)',
                     display:'flex', alignItems:'center', gap:'8px', zIndex:10
                   }}
                 >✅ Profile saved!</motion.div>
@@ -729,7 +729,7 @@ export default function ProfilePage() {
                   </h3>
                   <div style={{ display:'flex', justifyContent:'space-around', flexWrap:'wrap', gap:'20px', marginBottom:'28px' }}>
                     <StatRing value={profile.weight}       max={120}  color={theme.primary}   label='Weight'     unit='kg'  />
-                    <StatRing value={profile.bodyFat}      max={40}   color='#2E7DFF'          label='Body Fat'   unit='%'   />
+                    <StatRing value={profile.bodyFat}      max={40}   color='#1FA8C9'          label='Body Fat'   unit='%'   />
                     <StatRing value={profile.muscle}       max={80}   color='#15B2CF'          label='Muscle'     unit='kg'  />
                     <StatRing value={profile.bmi}          max={40}   color={theme.secondary}  label='BMI'        unit=''    />
                     <StatRing value={profile.waterGoal}    max={5}    color='#4FD3ED'          label='Water Goal' unit='L'   />
@@ -742,7 +742,7 @@ export default function ProfilePage() {
                       { label:'Height (cm)',    key:'height',       color:theme.primary  },
                       { label:'Weight (kg)',    key:'weight',       color:theme.secondary },
                       { label:'Target (kg)',    key:'targetWeight', color:'#15B2CF'      },
-                      { label:'Body Fat (%)',   key:'bodyFat',      color:'#2E7DFF'      },
+                      { label:'Body Fat (%)',   key:'bodyFat',      color:'#1FA8C9'      },
                       { label:'Muscle (kg)',    key:'muscle',       color:'#B5E5F2'      },
                       { label:'BMI',            key:'bmi',          color:'#4FD3ED'      },
                       { label:'Water Goal (L)', key:'waterGoal',    color:'#60A5FA'      },
@@ -870,8 +870,8 @@ export default function ProfilePage() {
                           onClick={()=>setProfile(p=>({...p,diet:d}))}
                           style={{
                             padding:'10px 12px',
-                            background: profile.diet===d ? 'rgba(91,150,255,0.12)' : 'var(--border)',
-                            border:`1px solid ${profile.diet===d ? 'rgba(91,150,255,0.4)' : 'var(--border)'}`,
+                            background: profile.diet===d ? 'rgba(79, 211, 237,0.12)' : 'var(--border)',
+                            border:`1px solid ${profile.diet===d ? 'rgba(79, 211, 237,0.4)' : 'var(--border)'}`,
                             borderRadius:'12px', color: profile.diet===d ? '#4FD3ED' : 'var(--text-muted)',
                             fontWeight: profile.diet===d ? 700 : 400,
                             cursor:'pointer', fontSize:'0.8rem', transition:'all 0.2s'
@@ -1017,10 +1017,10 @@ export default function ProfilePage() {
                           whileTap={{ scale:0.97 }}
                           onClick={()=>setModeTheme(t.id)}
                           style={{
-                            background: modeTheme===t.id ? 'rgba(31,107,255,0.08)' : 'var(--border)',
+                            background: modeTheme===t.id ? 'rgba(21, 178, 207,0.08)' : 'var(--border)',
                             border:`2px solid ${modeTheme===t.id ? '#15B2CF' : 'var(--border)'}`,
                             borderRadius:'16px', padding:'16px', cursor:'pointer',
-                            boxShadow: modeTheme===t.id ? '0 0 20px rgba(31,107,255,0.25)' : 'none',
+                            boxShadow: modeTheme===t.id ? '0 0 20px rgba(21, 178, 207,0.25)' : 'none',
                             transition:'all 0.2s'
                           }}
                         >
@@ -1238,8 +1238,8 @@ export default function ProfilePage() {
                         style={{
                           display:'flex', justifyContent:'space-between', alignItems:'center',
                           padding:'16px 18px', marginBottom:'8px',
-                          background: privacyS[p.id] ? 'rgba(91,150,255,0.05)' : 'var(--border)',
-                          border:`1px solid ${privacyS[p.id] ? 'rgba(91,150,255,0.18)' : 'var(--border)'}`,
+                          background: privacyS[p.id] ? 'rgba(79, 211, 237,0.05)' : 'var(--border)',
+                          border:`1px solid ${privacyS[p.id] ? 'rgba(79, 211, 237,0.18)' : 'var(--border)'}`,
                           borderRadius:'14px', transition:'all 0.2s'
                         }}
                       >
@@ -1261,7 +1261,7 @@ export default function ProfilePage() {
                     </h3>
                     {(() => {
                       const score = Math.round((Object.values(privacyS).filter(Boolean).length / PRIVACY_OPTS.length)*100)
-                      const color = score > 70 ? '#15B2CF' : score > 40 ? '#FFD700' : '#2E7DFF'
+                      const color = score > 70 ? '#15B2CF' : score > 40 ? '#FFD700' : '#1FA8C9'
                       return (
                         <>
                           <div style={{ position:'relative', width:'100px', margin:'0 auto 16px' }}>

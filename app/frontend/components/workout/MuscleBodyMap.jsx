@@ -109,10 +109,10 @@ function Muscle({ id, shape, active, onEnter, onLeave, onSelect }) {
     onClick: () => onSelect(id),
     style: { cursor: 'pointer', transition: 'all 0.2s' },
   }
-  const fill = active ? '#15B2CF' : 'rgba(31,107,255,0.28)'
+  const fill = active ? '#15B2CF' : 'rgba(21, 178, 207,0.28)'
   const stroke = active ? '#0D7F9B' : '#15B2CF'
   const extra = active
-    ? { filter: 'drop-shadow(0 0 6px rgba(31,107,255,0.8))' }
+    ? { filter: 'drop-shadow(0 0 6px rgba(21, 178, 207,0.8))' }
     : {}
   if (shape.type === 'ellipse')
     return <ellipse cx={shape.cx} cy={shape.cy} rx={shape.rx} ry={shape.ry} fill={fill} stroke={stroke} strokeWidth={active ? 2 : 1.2} style={{ ...common.style, ...extra }} {...common} />
@@ -208,7 +208,7 @@ export default function MuscleBodyMap() {
                 fontSize: '0.8rem', fontWeight: 700, textTransform: 'capitalize',
                 background: view === v ? 'linear-gradient(135deg,#4FD3ED,#15B2CF)' : 'transparent',
                 color: view === v ? '#fff' : 'var(--text-muted)',
-                boxShadow: view === v ? '0 2px 10px rgba(31,107,255,0.4)' : 'none',
+                boxShadow: view === v ? '0 2px 10px rgba(21, 178, 207,0.4)' : 'none',
               }}>
               {v}
             </button>
@@ -253,7 +253,7 @@ export default function MuscleBodyMap() {
               ))}
             </div>
             <div style={{
-              background: 'rgba(31,107,255,0.08)', border: '1px solid rgba(31,107,255,0.22)',
+              background: 'rgba(21, 178, 207,0.08)', border: '1px solid rgba(21, 178, 207,0.22)',
               borderRadius: '14px', padding: '12px 14px', fontSize: '0.85rem', color: 'var(--text-faint)', lineHeight: 1.55,
             }}>
               <strong style={{ color: '#0D7F9B' }}>💡 Form cue — </strong>{active.cue}
@@ -266,7 +266,7 @@ export default function MuscleBodyMap() {
           {Object.entries(MUSCLES).map(([id, m]) => (
             <button key={id} onClick={() => pick(id)}
               className={`chip ${activeId === id ? 'chip-orange' : 'chip-muted'}`}
-              style={{ cursor: 'pointer', fontSize: '0.78rem', border: activeId === id ? '1px solid rgba(31,107,255,0.4)' : undefined }}>
+              style={{ cursor: 'pointer', fontSize: '0.78rem', border: activeId === id ? '1px solid rgba(21, 178, 207,0.4)' : undefined }}>
               {m.name}
             </button>
           ))}

@@ -9,7 +9,7 @@ const RECIPES = [
     id:1, name:'Paneer Butter Masala', emoji:'🧀', time:30, calories:420,
     protein:18, carbs:28, fat:28, difficulty:'Medium', cuisine:'Indian',
     tags:['Vegetarian','High Protein','Gluten Free'],
-    color:'#2E7DFF', glow:'rgba(46,125,255,0.3)',
+    color:'#1FA8C9', glow:'rgba(46,125,255,0.3)',
     ingredients:['200g Paneer','2 Tomatoes','1 Onion','50ml Cream','Butter','Spices'],
     steps:['Sauté onions until golden','Add tomato puree and spices','Add paneer cubes','Finish with cream']
   },
@@ -17,7 +17,7 @@ const RECIPES = [
     id:2, name:'Grilled Chicken Bowl', emoji:'🍗', time:25, calories:380,
     protein:42, carbs:22, fat:12, difficulty:'Easy', cuisine:'Western',
     tags:['High Protein','Low Carb','Keto'],
-    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(21, 178, 207,0.3)',
     ingredients:['200g Chicken','Brown Rice','Broccoli','Olive Oil','Garlic','Lemon'],
     steps:['Marinate chicken 30 mins','Grill 6 mins each side','Steam broccoli','Assemble bowl']
   },
@@ -41,7 +41,7 @@ const RECIPES = [
     id:5, name:'Salmon Teriyaki', emoji:'🐟', time:20, calories:310,
     protein:35, carbs:18, fat:10, difficulty:'Medium', cuisine:'Japanese',
     tags:['Omega-3','High Protein','Heart Healthy'],
-    color:'#4FD3ED', glow:'rgba(91,150,255,0.3)',
+    color:'#4FD3ED', glow:'rgba(79, 211, 237,0.3)',
     ingredients:['180g Salmon','Teriyaki Sauce','Sesame Seeds','Spring Onion','Ginger','Rice'],
     steps:['Marinate salmon','Pan sear 4 mins each side','Glaze with sauce','Serve with rice']
   },
@@ -135,7 +135,7 @@ export default function RecipeMaker() {
           cuisine: 'AI Personalized',
           tags: r.tags || ['AI Generated'],
           color: '#15B2CF',
-          glow: 'rgba(31,107,255,0.3)',
+          glow: 'rgba(21, 178, 207,0.3)',
           ingredients: r.ingredients || [],
           steps: r.instructions || [],
           _ai: true,
@@ -180,7 +180,7 @@ export default function RecipeMaker() {
         cuisine: 'Web Import',
         tags: ['Imported', 'From URL'],
         color: '#15B2CF',
-        glow: 'rgba(31,107,255,0.3)',
+        glow: 'rgba(21, 178, 207,0.3)',
         ingredients: r.ingredients || [],
         steps: r.instructions || [],
         _ai: false,
@@ -195,7 +195,7 @@ export default function RecipeMaker() {
     }
   }
 
-  const card = (glowColor = 'rgba(31,107,255,0.1)') => ({
+  const card = (glowColor = 'rgba(21, 178, 207,0.1)') => ({
     background: 'var(--bg-card)',
     backdropFilter: 'blur(24px)',
     WebkitBackdropFilter: 'blur(24px)',
@@ -212,7 +212,7 @@ export default function RecipeMaker() {
         <div style={{
           position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
           background:`
-            radial-gradient(600px circle at 20% 30%, rgba(31,107,255,0.04) 0%, transparent 60%),
+            radial-gradient(600px circle at 20% 30%, rgba(21, 178, 207,0.04) 0%, transparent 60%),
             radial-gradient(400px circle at 80% 70%, rgba(123,97,255,0.04) 0%, transparent 60%)
           `
         }}/>
@@ -241,15 +241,15 @@ export default function RecipeMaker() {
                 </p>
               </div>
               <motion.button
-                whileHover={{ scale:1.05, boxShadow:'0 0 30px rgba(31,107,255,0.4)' }}
+                whileHover={{ scale:1.05, boxShadow:'0 0 30px rgba(21, 178, 207,0.4)' }}
                 whileTap={{ scale:0.95 }}
                 onClick={() => setAiMode(!aiMode)}
                 style={{
                   padding:'12px 24px',
                   background: aiMode
                     ? 'linear-gradient(135deg,#15B2CF,#4FD3ED)'
-                    : 'rgba(31,107,255,0.1)',
-                  border:'1px solid rgba(31,107,255,0.4)',
+                    : 'rgba(21, 178, 207,0.1)',
+                  border:'1px solid rgba(21, 178, 207,0.4)',
                   borderRadius:'14px',
                   color: aiMode ? '#000' : '#15B2CF',
                   fontWeight:700, cursor:'pointer',
@@ -276,7 +276,7 @@ export default function RecipeMaker() {
                   ...card(),
                   padding:'24px',
                   marginBottom:'24px',
-                  border:'1px solid rgba(31,107,255,0.15)',
+                  border:'1px solid rgba(21, 178, 207,0.15)',
                 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'14px' }}>
                     <span style={{ fontSize:'1.6rem' }}>🔗</span>
@@ -326,7 +326,7 @@ export default function RecipeMaker() {
                       marginTop:'12px', padding:'10px 14px',
                       background:'rgba(46,125,255,0.08)',
                       border:'1px solid rgba(46,125,255,0.3)',
-                      borderRadius:'12px', color:'#2E7DFF', fontSize:'0.82rem'
+                      borderRadius:'12px', color:'#1FA8C9', fontSize:'0.82rem'
                     }}>{urlError}</div>
                   )}
                 </div>
@@ -335,15 +335,15 @@ export default function RecipeMaker() {
                   ...card(),
                   padding:'40px',
                   marginBottom:'24px',
-                  background:'linear-gradient(135deg, var(--bg-card), rgba(31,107,255,0.03))',
-                  border:'1px solid rgba(31,107,255,0.15)',
+                  background:'linear-gradient(135deg, var(--bg-card), rgba(21, 178, 207,0.03))',
+                  border:'1px solid rgba(21, 178, 207,0.15)',
                 }}>
                   {/* Animated orbs */}
                   <div style={{ position:'relative' }}>
                     <div style={{
                       position:'absolute', top:'-20px', right:'-20px',
                       width:'200px', height:'200px', borderRadius:'50%',
-                      background:'radial-gradient(circle, rgba(31,107,255,0.08) 0%, transparent 70%)',
+                      background:'radial-gradient(circle, rgba(21, 178, 207,0.08) 0%, transparent 70%)',
                       pointerEvents:'none'
                     }}/>
                     <div style={{
@@ -378,7 +378,7 @@ export default function RecipeMaker() {
                           style={{
                             width:'100%', boxSizing:'border-box',
                             background:'var(--border)',
-                            border:'1px solid rgba(31,107,255,0.2)',
+                            border:'1px solid rgba(21, 178, 207,0.2)',
                             borderRadius:'16px', padding:'16px 20px',
                             color:'var(--text-primary)', fontSize:'0.95rem',
                             outline:'none', resize:'none',
@@ -413,7 +413,7 @@ export default function RecipeMaker() {
                       </div>
 
                       <motion.button
-                        whileHover={{ scale:1.02, boxShadow:'0 8px 40px rgba(31,107,255,0.4)' }}
+                        whileHover={{ scale:1.02, boxShadow:'0 8px 40px rgba(21, 178, 207,0.4)' }}
                         whileTap={{ scale:0.98 }}
                         onClick={handleAIMatch}
                         disabled={aiLoading || !ingredients.trim()}
@@ -550,7 +550,7 @@ export default function RecipeMaker() {
                         fontFamily:"'Satoshi',sans-serif",
                         transition:'border-color 0.2s',
                       }}
-                      onFocus={e => e.target.style.borderColor='rgba(31,107,255,0.4)'}
+                      onFocus={e => e.target.style.borderColor='rgba(21, 178, 207,0.4)'}
                       onBlur={e => e.target.style.borderColor='var(--border)'}
                     />
                   </div>
@@ -652,7 +652,7 @@ export default function RecipeMaker() {
                           gap:'8px', marginBottom:'16px'
                         }}>
                           {[
-                            { label:'Cal',  val:recipe.calories, color:'#2E7DFF' },
+                            { label:'Cal',  val:recipe.calories, color:'#1FA8C9' },
                             { label:'Prot', val:`${recipe.protein}g`, color:'#15B2CF' },
                             { label:'Carb', val:`${recipe.carbs}g`,   color:'#7B61FF' },
                           ].map(m => (

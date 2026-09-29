@@ -152,7 +152,7 @@ export default function Dashboard() {
     20 * Math.min(water / 8, 1) +
     20 * Math.min((todayNutrition?.meals?.length || 0) / 3, 1)
   )
-  const scoreColor = dayScore < 40 ? '#FF6B6B' : dayScore < 70 ? '#2E7DFF' : '#2ECC71'
+  const scoreColor = dayScore < 40 ? '#FF6B6B' : dayScore < 70 ? '#1FA8C9' : '#2ECC71'
   const scoreZone = dayScore < 40 ? 'WARMING UP' : dayScore < 70 ? 'BUILDING' : dayScore < 90 ? 'STRONG' : 'ON FIRE'
 
   const sleepByDay = useMemo(() => {
@@ -225,11 +225,11 @@ export default function Dashboard() {
     return (
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--bg-primary)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '1.2rem', color: '#2E7DFF', marginBottom: '16px' }}>⚠️ Error</div>
+          <div style={{ fontSize: '1.2rem', color: '#1FA8C9', marginBottom: '16px' }}>⚠️ Error</div>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>{error}</div>
           <button onClick={() => window.location.reload()}
             style={{ padding: '12px 28px', borderRadius: '99px', border: 'none', cursor: 'pointer',
-              background: 'linear-gradient(135deg,#15B2CF,#2E7DFF)', color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>
+              background: 'linear-gradient(135deg,#15B2CF,#1FA8C9)', color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>
             Try Again
           </button>
         </div>
@@ -340,7 +340,7 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
           style={{ ...glass, padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-            <span style={iconTile('rgba(31,107,255,0.16)', '#15B2CF')}><Flame size={19} /></span>
+            <span style={iconTile('rgba(21, 178, 207,0.16)', '#15B2CF')}><Flame size={19} /></span>
             <span style={cardTitle}>Calories</span>
           </div>
           <div style={{ height: '52px', marginBottom: '8px' }}>
@@ -348,7 +348,7 @@ export default function Dashboard() {
               <BarChart data={weekChart} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                 <Bar dataKey="cal" radius={[4, 4, 4, 4]}>
                   {weekChart.map((d, i) => (
-                    <Cell key={i} fill={i === weekChart.length - 1 ? '#15B2CF' : 'rgba(31,107,255,0.35)'} />
+                    <Cell key={i} fill={i === weekChart.length - 1 ? '#15B2CF' : 'rgba(21, 178, 207,0.35)'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -519,7 +519,7 @@ export default function Dashboard() {
                     onClick={() => window.location.href = '/workout'}
                     style={{ width: '100%', marginTop: '14px', padding: '12px', border: 'none', borderRadius: '14px',
                       background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)', color: '#fff', fontWeight: 700,
-                      fontSize: '0.88rem', cursor: 'pointer', boxShadow: '0 6px 20px rgba(31,107,255,0.35)',
+                      fontSize: '0.88rem', cursor: 'pointer', boxShadow: '0 6px 20px rgba(21, 178, 207,0.35)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     Start Workout <ArrowRight size={16} />
                   </motion.button>
@@ -547,7 +547,7 @@ export default function Dashboard() {
               {[
                 { label: 'Protein', val: protein, goal: proteinGoal, color: '#15B2CF', unit: 'g' },
                 { label: 'Carbs', val: todayNutrition?.carbs || 0, goal: stats?.carbGoal || 250, color: '#7B61FF', unit: 'g' },
-                { label: 'Fat', val: todayNutrition?.fat || 0, goal: stats?.fatGoal || 65, color: '#2E7DFF', unit: 'g' },
+                { label: 'Fat', val: todayNutrition?.fat || 0, goal: stats?.fatGoal || 65, color: '#1FA8C9', unit: 'g' },
               ].map(m => (
                 <div key={m.label} style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -564,7 +564,7 @@ export default function Dashboard() {
                 </div>
               ))}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', padding: '10px 14px',
-                borderRadius: '14px', background: 'rgba(31,107,255,0.08)', border: '1px solid rgba(31,107,255,0.18)' }}>
+                borderRadius: '14px', background: 'rgba(21, 178, 207,0.08)', border: '1px solid rgba(21, 178, 207,0.18)' }}>
                 <TrendingUp size={15} style={{ color: '#15B2CF', flexShrink: 0 }} />
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
                   {cals < goalCals
@@ -616,7 +616,7 @@ export default function Dashboard() {
                         </div>
                         <div style={{ marginTop: '8px' }}>
                           <span style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'capitalize',
-                            color: '#15B2CF', background: 'rgba(31,107,255,0.12)', borderRadius: '99px', padding: '3px 10px' }}>
+                            color: '#15B2CF', background: 'rgba(21, 178, 207,0.12)', borderRadius: '99px', padding: '3px 10px' }}>
                             {meal.mealType || 'Meal'}
                           </span>
                         </div>
@@ -685,7 +685,7 @@ export default function Dashboard() {
                   </div>
                 ))}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px',
-                  borderRadius: '16px', background: 'rgba(31,107,255,0.08)', border: '1px solid rgba(31,107,255,0.2)' }}>
+                  borderRadius: '16px', background: 'rgba(21, 178, 207,0.08)', border: '1px solid rgba(21, 178, 207,0.2)' }}>
                   <Zap size={15} style={{ color: '#15B2CF' }} />
                   <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
                     Lv {userXP?.level || 1} · {(userXP?.totalXP || 0).toLocaleString('en-GB')} XP
@@ -707,7 +707,7 @@ export default function Dashboard() {
                 <span style={{ width: '46px', height: '46px', borderRadius: '50%',
                   background: 'linear-gradient(135deg,#15B2CF,#4FD3ED)', color: '#fff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem',
-                  boxShadow: '0 6px 16px rgba(31,107,255,0.4)' }}>
+                  boxShadow: '0 6px 16px rgba(21, 178, 207,0.4)' }}>
                   {(user.name || 'A')[0].toUpperCase()}
                 </span>
                 <span>
@@ -735,7 +735,7 @@ export default function Dashboard() {
             </div>
             {(stats?.streak > 0) && (
               <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                background: 'rgba(31,107,255,0.1)', border: '1px solid rgba(31,107,255,0.25)', borderRadius: '99px',
+                background: 'rgba(21, 178, 207,0.1)', border: '1px solid rgba(21, 178, 207,0.25)', borderRadius: '99px',
                 padding: '8px', color: '#15B2CF', fontSize: '0.82rem', fontWeight: 700 }}>
                 🔥 {stats.streak} day streak — keep it burning
               </div>
@@ -786,7 +786,7 @@ export default function Dashboard() {
                         color: (isSel || isToday) ? '#fff' : 'var(--text-primary)',
                         fontSize: '0.76rem', fontWeight: isToday || isSel ? 700 : 400,
                         position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: isSel ? '0 0 10px rgba(46,204,113,0.5)' : isToday ? '0 0 10px rgba(31,107,255,0.5)' : 'none' }}>
+                        boxShadow: isSel ? '0 0 10px rgba(46,204,113,0.5)' : isToday ? '0 0 10px rgba(21, 178, 207,0.5)' : 'none' }}>
                       {d}
                       {hasSleep && !isSel && !isToday && (
                         <span style={{ position: 'absolute', bottom: '3px', width: '4px', height: '4px',
@@ -828,7 +828,7 @@ export default function Dashboard() {
                 )}
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ display: 'inline-block', fontSize: '0.62rem', fontWeight: 700, color: '#15B2CF',
-                    background: 'rgba(31,107,255,0.12)', borderRadius: '99px', padding: '2px 8px', marginBottom: '3px' }}>{s.tag}</span>
+                    background: 'rgba(21, 178, 207,0.12)', borderRadius: '99px', padding: '2px 8px', marginBottom: '3px' }}>{s.tag}</span>
                   <span style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)',
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</span>
                   <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--text-muted)' }}>{s.sub} · {s.meta}</span>

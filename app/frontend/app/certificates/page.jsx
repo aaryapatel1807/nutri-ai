@@ -150,7 +150,7 @@ export default function CertificatesPage() {
                             ? 'text-[#B5E5F2]'
                             : cert.difficulty === 'Intermediate'
                               ? 'text-[#7B61FF]'
-                              : 'text-[#2E7DFF]'
+                              : 'text-[#1FA8C9]'
                         }`}
                       >
                         {cert.difficulty}

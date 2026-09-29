@@ -8,7 +8,7 @@ import useIsMobile from '../../lib/useIsMobile'
 const COACH_PERSONAS = [
   {
     id:'nutrition', name:'NutriBot', emoji:'🥗',
-    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(21, 178, 207,0.3)',
     title:'Nutrition Expert',
     description:'Personalized meal plans, macro calculations, food analysis',
     systemPrompt:`You are NutriBot, an elite AI nutrition coach for NutriAI fitness app.
@@ -69,7 +69,7 @@ Format with clear structure and emojis.`,
   },
   {
     id:'health', name:'WellnessAI', emoji:'🧬',
-    color:'#4FD3ED', glow:'rgba(91,150,255,0.3)',
+    color:'#4FD3ED', glow:'rgba(79, 211, 237,0.3)',
     title:'Health & Wellness Coach',
     description:'Sleep, recovery, stress management, longevity',
     systemPrompt:`You are WellnessAI, an elite health and wellness coach for NutriAI.
@@ -99,7 +99,7 @@ Use NutriAI context and frame advice for fitness-focused users.`,
   },
   {
     id:'transformation', name:'TransformAI', emoji:'🔥',
-    color:'#2E7DFF', glow:'rgba(46,125,255,0.3)',
+    color:'#1FA8C9', glow:'rgba(46,125,255,0.3)',
     title:'Body Transformation Expert',
     description:'Body recomposition, cutting, bulking strategies',
     systemPrompt:`You are TransformAI, an elite body transformation coach for NutriAI.
@@ -374,8 +374,8 @@ export default function AICoach() {
               <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
                 <div style={{
                   display:'flex', alignItems:'center', gap:'8px',
-                  background:'rgba(31,107,255,0.1)',
-                  border:'1px solid rgba(31,107,255,0.25)',
+                  background:'rgba(21, 178, 207,0.1)',
+                  border:'1px solid rgba(21, 178, 207,0.25)',
                   borderRadius:'99px', padding:'6px 14px'
                 }}>
                   <motion.div

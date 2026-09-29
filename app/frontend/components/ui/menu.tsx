@@ -101,7 +101,7 @@ export const UserProfileSidebar = React.forwardRef<HTMLDivElement, UserProfileSi
                   className={cn(
                     'group flex items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
                     item.isActive
-                      ? 'bg-[rgba(31,107,255,0.12)] text-[var(--accent)]'
+                      ? 'bg-[rgba(21, 178, 207,0.12)] text-[var(--accent)]'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   )}
                 >

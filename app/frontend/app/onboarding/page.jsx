@@ -32,7 +32,7 @@ export default function OnboardingPage() {
     if (bmi < 18.5) return { label: 'Underweight', color: '#4FD3ED' }
     if (bmi < 25) return { label: 'Normal', color: '#15B2CF' }
     if (bmi < 30) return { label: 'Overweight', color: '#FFD700' }
-    return { label: 'Obese', color: '#2E7DFF' }
+    return { label: 'Obese', color: '#1FA8C9' }
   }
 
   const [stepError, setStepError] = useState('')
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
                       key={goal.id}
                       onClick={() => updateFormData('goal', goal.id)}
                       className={`glass p-4 text-left transition-all ${formData.goal === goal.id
-                        ? 'border-2 border-[#15B2CF] shadow-[0_0_20px_rgba(31,107,255,0.3)]'
+                        ? 'border-2 border-[#15B2CF] shadow-[0_0_20px_rgba(21, 178, 207,0.3)]'
                         : 'border border-white/10'
                         }`}
                     >
@@ -318,7 +318,7 @@ export default function OnboardingPage() {
                       key={level.id}
                       onClick={() => updateFormData('activity', level.id)}
                       className={`w-full glass p-4 text-left transition-all flex items-center gap-4 ${formData.activity === level.id
-                        ? 'border-2 border-[#15B2CF] shadow-[0_0_20px_rgba(31,107,255,0.3)]'
+                        ? 'border-2 border-[#15B2CF] shadow-[0_0_20px_rgba(21, 178, 207,0.3)]'
                         : 'border border-white/10'
                         }`}
                     >

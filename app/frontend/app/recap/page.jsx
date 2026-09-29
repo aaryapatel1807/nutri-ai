@@ -112,8 +112,8 @@ export default function RecapPage() {
   }
 
   const statCards = [
-    { icon: '💪', label: 'Sessions', val: recap.sessions, color: '#2E7DFF' },
-    { icon: '🔥', label: 'Kcal burned', val: recap.kcal.toLocaleString('en-GB'), color: '#2E7DFF' },
+    { icon: '💪', label: 'Sessions', val: recap.sessions, color: '#1FA8C9' },
+    { icon: '🔥', label: 'Kcal burned', val: recap.kcal.toLocaleString('en-GB'), color: '#1FA8C9' },
     { icon: '⏱️', label: 'Active minutes', val: recap.minutes, color: '#4FD3ED' },
     { icon: '🏋️', label: 'Volume lifted', val: recap.volumeKg > 0 ? `${recap.volumeKg.toLocaleString('en-GB')} kg` : '—', color: '#FFD700' },
     { icon: '🍽️', label: 'Meals logged', val: recap.mealsLogged, color: '#7B61FF' },
@@ -126,7 +126,7 @@ export default function RecapPage() {
         position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
         background: `
           radial-gradient(600px circle at 20% 30%, rgba(46,125,255,0.05) 0%, transparent 60%),
-          radial-gradient(500px circle at 80% 70%, rgba(31,107,255,0.04) 0%, transparent 60%)
+          radial-gradient(500px circle at 80% 70%, rgba(21, 178, 207,0.04) 0%, transparent 60%)
         `
       }} />
 
@@ -143,7 +143,7 @@ export default function RecapPage() {
           <h1 style={{
             fontFamily: "'Clash Display',sans-serif",
             fontSize: '2.4rem', fontWeight: 800, margin: 0, marginBottom: '6px',
-            background: 'linear-gradient(135deg, var(--text-primary) 0%, #2E7DFF 70%, #15B2CF 100%)',
+            background: 'linear-gradient(135deg, var(--text-primary) 0%, #1FA8C9 70%, #15B2CF 100%)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
           }}>
             {range === 7 ? 'Your Week in Training 📊' : 'Your Month in Training 📊'}
@@ -161,7 +161,7 @@ export default function RecapPage() {
                 style={{
                   padding: '8px 22px', borderRadius: '99px', cursor: 'pointer',
                   border: range === r ? 'none' : '1px solid var(--border)',
-                  background: range === r ? 'linear-gradient(135deg,#2E7DFF,#15B2CF)' : 'var(--bg-card)',
+                  background: range === r ? 'linear-gradient(135deg,#1FA8C9,#15B2CF)' : 'var(--bg-card)',
                   color: range === r ? '#000' : 'var(--text-muted)',
                   fontWeight: range === r ? 800 : 400, fontSize: '0.82rem'
                 }}
@@ -179,8 +179,8 @@ export default function RecapPage() {
             {/* Streak flame cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '20px' }}>
               {[
-                { icon: '🔥', label: 'Training streak', val: `${recap.workoutStreak} day${recap.workoutStreak === 1 ? '' : 's'}`, color: '#2E7DFF', bg: 'rgba(46,125,255,0.07)' },
-                { icon: '🍽️', label: 'Logging streak', val: `${recap.mealStreak} day${recap.mealStreak === 1 ? '' : 's'}`, color: '#2E7DFF', bg: 'rgba(46,125,255,0.07)' },
+                { icon: '🔥', label: 'Training streak', val: `${recap.workoutStreak} day${recap.workoutStreak === 1 ? '' : 's'}`, color: '#1FA8C9', bg: 'rgba(46,125,255,0.07)' },
+                { icon: '🍽️', label: 'Logging streak', val: `${recap.mealStreak} day${recap.mealStreak === 1 ? '' : 's'}`, color: '#1FA8C9', bg: 'rgba(46,125,255,0.07)' },
               ].map((s, i) => (
                 <motion.div
                   key={s.label}

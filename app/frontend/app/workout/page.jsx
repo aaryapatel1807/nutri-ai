@@ -75,7 +75,7 @@ const WORKOUTS = [
   {
     id:1, name:'Upper Body Strength', emoji:'💪', duration:45, calories:320,
     difficulty:'Intermediate', category:'Strength', equipment:'Gym',
-    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(21, 178, 207,0.3)',
     muscles:['Chest','Shoulders','Triceps','Back'],
     description:'Build powerful upper body with compound movements',
     exercises:[
@@ -113,7 +113,7 @@ const WORKOUTS = [
   {
     id:3, name:'HIIT Cardio Blast', emoji:'🔥', duration:30, calories:480,
     difficulty:'Advanced', category:'Cardio', equipment:'None',
-    color:'#2E7DFF', glow:'rgba(46,125,255,0.3)',
+    color:'#1FA8C9', glow:'rgba(46,125,255,0.3)',
     muscles:['Full Body','Core','Cardiovascular'],
     description:'Maximum calorie burn in minimum time',
     exercises:[
@@ -132,7 +132,7 @@ const WORKOUTS = [
   {
     id:4, name:'Core Destroyer', emoji:'🎯', duration:35, calories:220,
     difficulty:'Intermediate', category:'Core', equipment:'Minimal',
-    color:'#4FD3ED', glow:'rgba(91,150,255,0.3)',
+    color:'#4FD3ED', glow:'rgba(79, 211, 237,0.3)',
     muscles:['Rectus Abdominis','Obliques','Transverse Abs','Lower Back'],
     description:'Build a rock-solid core from every angle',
     exercises:[
@@ -170,7 +170,7 @@ const WORKOUTS = [
   {
     id:6, name:'Push Day', emoji:'⬆️', duration:48, calories:340,
     difficulty:'Intermediate', category:'Strength', equipment:'Gym',
-    color:'#2E7DFF', glow:'rgba(46,125,255,0.3)',
+    color:'#1FA8C9', glow:'rgba(46,125,255,0.3)',
     muscles:['Chest','Shoulders','Triceps'],
     description:'Maximum push strength and hypertrophy',
     exercises:[
@@ -265,7 +265,7 @@ const WORKOUTS = [
   {
     id:11, name:'Athletic Speed & Agility', emoji:'⚡', duration:40, calories:420,
     difficulty:'Intermediate', category:'Athletic', equipment:'Open Space',
-    color:'#FBBF24', glow:'rgba(91,150,255,0.3)',
+    color:'#FBBF24', glow:'rgba(79, 211, 237,0.3)',
     muscles:['Fast Twitch','Explosive Power','Coordination'],
     description:'Train like a professional athlete',
     exercises:[
@@ -284,7 +284,7 @@ const WORKOUTS = [
   {
     id:12, name:'Boxing & MMA Conditioning', emoji:'🥊', duration:45, calories:540,
     difficulty:'Advanced', category:'Combat', equipment:'Bag/Gloves',
-    color:'#15B2CF', glow:'rgba(31,107,255,0.3)',
+    color:'#15B2CF', glow:'rgba(21, 178, 207,0.3)',
     muscles:['Full Body','Core','Cardiovascular'],
     description:'Fighter-level conditioning and striking power',
     exercises:[
@@ -303,7 +303,7 @@ const WORKOUTS = [
 ]
 
 const MUSCLE_GROUPS = {
-  'Chest': { color:'#2E7DFF', exercises:['Bench Press','Push Up','Fly','Dip'] },
+  'Chest': { color:'#1FA8C9', exercises:['Bench Press','Push Up','Fly','Dip'] },
   'Back':  { color:'#15B2CF', exercises:['Pull Up','Row','Deadlift','Pulldown'] },
   'Legs':  { color:'#7B61FF', exercises:['Squat','Lunge','Press','Curl'] },
   'Shoulders':{ color:'#4FD3ED', exercises:['Press','Raise','Upright Row','Shrug'] },
@@ -326,7 +326,7 @@ const DIFFICULTIES = ['All','Beginner','Intermediate','Advanced']
 const EQUIPMENT = ['All','None','Minimal','Bar','Gym','Mat','Open Space','Bag/Gloves']
 
 const PRS = [
-  { lift:'Bench Press', weight:'80kg', date:'Feb 28', emoji:'🏋️', color:'#2E7DFF' },
+  { lift:'Bench Press', weight:'80kg', date:'Feb 28', emoji:'🏋️', color:'#1FA8C9' },
   { lift:'Squat',       weight:'120kg',date:'Mar 2',  emoji:'🦵', color:'#7B61FF' },
   { lift:'Deadlift',    weight:'140kg',date:'Mar 5',  emoji:'⚡', color:'#15B2CF' },
   { lift:'OHP',         weight:'55kg', date:'Feb 20', emoji:'⬆️', color:'#4FD3ED' },
@@ -496,9 +496,9 @@ export default function WorkoutPage() {
     if (newPRs.length > 0) {
       setPrCelebration(newPRs)
       setRealPRs(loadPRs())
-      confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#2E7DFF', '#15B2CF', '#FFD700', '#ffffff'] })
-      setTimeout(() => confetti({ particleCount: 90, angle: 60, spread: 60, origin: { x: 0, y: 0.4 }, colors: ['#2E7DFF', '#FFD700'] }), 250)
-      setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 60, origin: { x: 1, y: 0.4 }, colors: ['#2E7DFF', '#FFD700'] }), 400)
+      confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#1FA8C9', '#15B2CF', '#FFD700', '#ffffff'] })
+      setTimeout(() => confetti({ particleCount: 90, angle: 60, spread: 60, origin: { x: 0, y: 0.4 }, colors: ['#1FA8C9', '#FFD700'] }), 250)
+      setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 60, origin: { x: 1, y: 0.4 }, colors: ['#1FA8C9', '#FFD700'] }), 400)
     }
     // Persist session for the recap page (volume, top exercises)
     appendSessionLog({
@@ -540,7 +540,7 @@ export default function WorkoutPage() {
         <div style={{
           position:'fixed', inset:0, pointerEvents:'none', zIndex:0,
           background:`
-            radial-gradient(600px circle at 15% 40%, rgba(31,107,255,0.04) 0%, transparent 60%),
+            radial-gradient(600px circle at 15% 40%, rgba(21, 178, 207,0.04) 0%, transparent 60%),
             radial-gradient(400px circle at 85% 60%, rgba(123,97,255,0.04) 0%, transparent 60%),
             radial-gradient(300px circle at 50% 80%, rgba(46,125,255,0.03) 0%, transparent 60%)
           `
@@ -594,7 +594,7 @@ export default function WorkoutPage() {
                       {/* Stats */}
                       {[
                         { label:'TIME',     val:fmt(timer),        color:activeWorkout.color },
-                        { label:'CALORIES', val:`${totalVolume} kcal`, color:'#2E7DFF' },
+                        { label:'CALORIES', val:`${totalVolume} kcal`, color:'#1FA8C9' },
                         { label:'DONE',     val:`${completedExercises.length}/${activeWorkout.exercises.length}`, color:'#4FD3ED' },
                       ].map(s => (
                         <div key={s.label} style={{
@@ -613,10 +613,10 @@ export default function WorkoutPage() {
                       ))}
 
                       <button onClick={() => setTimerRunning(p=>!p)} style={{
-                        background: timerRunning ? 'rgba(46,125,255,0.15)' : 'rgba(31,107,255,0.15)',
-                        border:`1px solid ${timerRunning ? 'rgba(46,125,255,0.4)' : 'rgba(31,107,255,0.4)'}`,
+                        background: timerRunning ? 'rgba(46,125,255,0.15)' : 'rgba(21, 178, 207,0.15)',
+                        border:`1px solid ${timerRunning ? 'rgba(46,125,255,0.4)' : 'rgba(21, 178, 207,0.4)'}`,
                         borderRadius:'12px', padding:'10px 18px',
-                        color: timerRunning ? '#2E7DFF' : '#15B2CF',
+                        color: timerRunning ? '#1FA8C9' : '#15B2CF',
                         cursor:'pointer', fontSize:'0.85rem', fontWeight:600
                       }}>{timerRunning ? '⏸ Pause' : '▶ Resume'}</button>
 
@@ -658,8 +658,8 @@ export default function WorkoutPage() {
                         animate={{ opacity:1, scale:1 }}
                         exit={{ opacity:0, scale:0.9 }}
                         style={{
-                          background:'rgba(91,150,255,0.08)',
-                          border:'1px solid rgba(91,150,255,0.25)',
+                          background:'rgba(79, 211, 237,0.08)',
+                          border:'1px solid rgba(79, 211, 237,0.25)',
                           borderRadius:'16px', padding:'14px 20px',
                           marginBottom:'16px',
                           display:'flex', alignItems:'center',
@@ -681,7 +681,7 @@ export default function WorkoutPage() {
                         </div>
                         <motion.div
                           key={restTimer}
-                          initial={{ scale:1.3, color:'#2E7DFF' }}
+                          initial={{ scale:1.3, color:'#1FA8C9' }}
                           animate={{ scale:1, color:'#4FD3ED' }}
                           style={{
                             fontFamily:"'Clash Display',sans-serif",
@@ -689,8 +689,8 @@ export default function WorkoutPage() {
                           }}
                         >{restTimer}s</motion.div>
                         <button onClick={() => setRestTimer(0)} style={{
-                          background:'rgba(91,150,255,0.15)',
-                          border:'1px solid rgba(91,150,255,0.3)',
+                          background:'rgba(79, 211, 237,0.15)',
+                          border:'1px solid rgba(79, 211, 237,0.3)',
                           borderRadius:'10px', padding:'8px 16px',
                           color:'#4FD3ED', cursor:'pointer',
                           fontSize:'0.82rem', fontWeight:700
@@ -712,10 +712,10 @@ export default function WorkoutPage() {
                           transition={{ delay:idx*0.04 }}
                           style={{
                             padding:'14px 16px', borderRadius:'14px',
-                            background: done    ? 'rgba(31,107,255,0.08)'
+                            background: done    ? 'rgba(21, 178, 207,0.08)'
                               : current ? `${activeWorkout.color}12` 
                               : 'var(--border)',
-                            border: done    ? '1px solid rgba(31,107,255,0.25)'
+                            border: done    ? '1px solid rgba(21, 178, 207,0.25)'
                               : current ? `2px solid ${activeWorkout.color}50` 
                               : '1px solid var(--border)',
                             display:'flex', alignItems:'center',
@@ -765,7 +765,7 @@ export default function WorkoutPage() {
                                       <span style={{
                                         background:'rgba(46,125,255,0.12)', border:'1px solid rgba(46,125,255,0.35)',
                                         borderRadius:'99px', padding:'3px 10px',
-                                        color:'#2E7DFF', fontSize:'0.7rem', fontWeight:700,
+                                        color:'#1FA8C9', fontSize:'0.7rem', fontWeight:700,
                                         fontVariantNumeric:'tabular-nums'
                                       }}>1RM ≈ {oneRM} kg</span>
                                     )}
@@ -843,7 +843,7 @@ export default function WorkoutPage() {
               {/* Stats row */}
               <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' }}>
                 {[
-                  { icon:'🔥', label:'Streak',    val:`${workoutStats.streak} day${workoutStats.streak === 1 ? '' : 's'}`, color:'#2E7DFF' },
+                  { icon:'🔥', label:'Streak',    val:`${workoutStats.streak} day${workoutStats.streak === 1 ? '' : 's'}`, color:'#1FA8C9' },
                   { icon:'💪', label:'This Week',  val:`${workoutStats.weekSessions} session${workoutStats.weekSessions === 1 ? '' : 's'}`, color:'#7B61FF' },
                   { icon:'⚡', label:'Burned',     val:`${workoutStats.totalKcal.toLocaleString()} kcal`, color:'#15B2CF' },
                   { icon:'🏆', label:'Logged',     val:`${workoutStats.total} workout${workoutStats.total === 1 ? '' : 's'}`, color:'#FFD700' },
@@ -912,7 +912,7 @@ export default function WorkoutPage() {
                   padding:'9px 20px', borderRadius:'12px',
                   border:'1px solid rgba(46,125,255,0.4)',
                   background:'rgba(46,125,255,0.1)',
-                  color:'#2E7DFF', fontWeight:700, cursor:'pointer',
+                  color:'#1FA8C9', fontWeight:700, cursor:'pointer',
                   fontSize:'0.85rem', fontFamily:"'Satoshi',sans-serif"
                 }}
               >🏋️ Plate Calc</motion.button>
@@ -988,7 +988,7 @@ export default function WorkoutPage() {
                   <div style={{ display:'flex', gap:'8px', flexWrap:'wrap', alignItems:'center' }}>
                     <span style={{ color:'#4B5563', fontSize:'0.75rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', minWidth:'70px' }}>Level</span>
                     {DIFFICULTIES.map(d => {
-                      const dc = d==='Beginner' ? '#15B2CF' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#2E7DFF' : 'var(--text-muted)'
+                      const dc = d==='Beginner' ? '#15B2CF' : d==='Intermediate' ? '#FFD700' : d==='Advanced' ? '#1FA8C9' : 'var(--text-muted)'
                       const active = activeDifficulty===d
                       return (
                         <motion.button
@@ -1019,8 +1019,8 @@ export default function WorkoutPage() {
                         onClick={() => setActiveEquipment(eq)}
                         style={{
                           padding:'5px 14px', borderRadius:'99px',
-                          border: activeEquipment===eq ? '1px solid rgba(91,150,255,0.4)' : '1px solid var(--border)',
-                          background: activeEquipment===eq ? 'rgba(91,150,255,0.12)' : 'var(--bg-card)',
+                          border: activeEquipment===eq ? '1px solid rgba(79, 211, 237,0.4)' : '1px solid var(--border)',
+                          background: activeEquipment===eq ? 'rgba(79, 211, 237,0.12)' : 'var(--bg-card)',
                           color: activeEquipment===eq ? '#4FD3ED' : 'var(--text-muted)',
                           fontWeight: activeEquipment===eq ? 700 : 400,
                           cursor:'pointer', fontSize:'0.78rem'
@@ -1069,17 +1069,17 @@ export default function WorkoutPage() {
                             }}
                           >{w.emoji}</motion.div>
                           <div style={{
-                            background: w.difficulty==='Beginner'   ? 'rgba(31,107,255,0.12)'
+                            background: w.difficulty==='Beginner'   ? 'rgba(21, 178, 207,0.12)'
                               : w.difficulty==='Intermediate' ? 'rgba(255,215,0,0.12)'
                               : 'rgba(46,125,255,0.12)',
                             border:`1px solid ${
-                              w.difficulty==='Beginner'   ? 'rgba(31,107,255,0.3)'
+                              w.difficulty==='Beginner'   ? 'rgba(21, 178, 207,0.3)'
                               : w.difficulty==='Intermediate' ? 'rgba(255,215,0,0.3)'
                               : 'rgba(46,125,255,0.3)'}`,
                             borderRadius:'99px', padding:'3px 12px',
                             color: w.difficulty==='Beginner'   ? '#15B2CF'
                               : w.difficulty==='Intermediate' ? '#FFD700'
-                              : '#2E7DFF',
+                              : '#1FA8C9',
                             fontSize:'0.7rem', fontWeight:700
                           }}>{w.difficulty}</div>
                         </div>
@@ -1120,7 +1120,7 @@ export default function WorkoutPage() {
                         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(120px, 1fr))', gap:'8px', marginBottom:'16px' }}>
                           {[
                             { label:'Duration', val:`${w.duration}m`, color:'#4FD3ED' },
-                            { label:'Calories',  val:w.calories,       color:'#2E7DFF' },
+                            { label:'Calories',  val:w.calories,       color:'#1FA8C9' },
                             { label:'Exercises', val:w.exercises.length,color:w.color },
                           ].map(s => (
                             <div key={s.label} style={{
@@ -1165,7 +1165,7 @@ export default function WorkoutPage() {
                       : day.status==='active' ? '#7B61FF'
                       : day.status==='rest' ? '#4B5563'
                       : 'var(--text-muted)'
-                    const statusBg = day.status==='done' ? 'rgba(31,107,255,0.08)'
+                    const statusBg = day.status==='done' ? 'rgba(21, 178, 207,0.08)'
                       : day.status==='active' ? 'rgba(123,97,255,0.15)'
                       : day.status==='rest' ? 'var(--border)'
                       : 'var(--border)'
@@ -1221,7 +1221,7 @@ export default function WorkoutPage() {
                 <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'16px' }}>
                   {[
                     { label:'Sessions Completed', val:'3/5',       icon:'✅', color:'#15B2CF', desc:'On track!' },
-                    { label:'Total Calories',      val:'1,220',     icon:'🔥', color:'#2E7DFF', desc:'kcal burned' },
+                    { label:'Total Calories',      val:'1,220',     icon:'🔥', color:'#1FA8C9', desc:'kcal burned' },
                     { label:'Total Duration',      val:'2h 30m',    icon:'⏱', color:'#4FD3ED', desc:'active time' },
                     { label:'Weekly Volume',       val:'18,500kg',  icon:'💪', color:'#7B61FF', desc:'total lifted' },
                   ].map(s => (
@@ -1360,7 +1360,7 @@ export default function WorkoutPage() {
                           <div style={{ fontSize:'2rem', marginBottom:'8px' }}>🏆</div>
                           <div style={{
                             fontFamily:"'Clash Display',sans-serif", fontSize:'1.9rem', fontWeight:900,
-                            color:'#2E7DFF', fontVariantNumeric:'tabular-nums',
+                            color:'#1FA8C9', fontVariantNumeric:'tabular-nums',
                             textShadow:'0 0 20px rgba(46,125,255,0.5)'
                           }}>{pr.oneRM}<span style={{ fontSize:'0.85rem', fontWeight:400 }}> kg</span></div>
                           <div style={{ color:'var(--text-primary)', fontSize:'0.85rem', fontWeight:600, margin:'4px 0' }}>{name}</div>
@@ -1509,8 +1509,8 @@ export default function WorkoutPage() {
                                 width:'100%', borderRadius:'6px 6px 0 0',
                                 background: i===7
                                   ? 'linear-gradient(180deg,#15B2CF,#4FD3ED)'
-                                  : 'rgba(31,107,255,0.25)',
-                                boxShadow: i===7 ? '0 0 20px rgba(31,107,255,0.4)' : 'none'
+                                  : 'rgba(21, 178, 207,0.25)',
+                                boxShadow: i===7 ? '0 0 20px rgba(21, 178, 207,0.4)' : 'none'
                               }}
                             />
                             <div style={{ color:'#4B5563', fontSize:'0.65rem', marginTop:'4px' }}>{d.week}</div>
@@ -1530,7 +1530,7 @@ export default function WorkoutPage() {
                       { label:'Body Fat',      val:'14.2%',    change:'-0.8%',    good:true,  color:'#4FD3ED' },
                       { label:'Muscle Mass',   val:'58.8 kg',  change:'+0.6kg',   good:true,  color:'#7B61FF' },
                       { label:'Visceral Fat',  val:'Level 5',  change:'-1 level', good:true,  color:'#FFD700' },
-                      { label:'BMR',           val:'1,842 kcal',change:'+24',     good:true,  color:'#2E7DFF' },
+                      { label:'BMR',           val:'1,842 kcal',change:'+24',     good:true,  color:'#1FA8C9' },
                     ].map(s => (
                       <div key={s.label} style={{
                         display:'flex', justifyContent:'space-between',
@@ -1542,8 +1542,8 @@ export default function WorkoutPage() {
                           <div style={{ color: s.color, fontWeight:700, fontSize:'0.95rem' }}>{s.val}</div>
                         </div>
                         <div style={{
-                          background: s.good ? 'rgba(31,107,255,0.1)' : 'rgba(255,59,48,0.1)',
-                          border:`1px solid ${s.good ? 'rgba(31,107,255,0.2)' : 'rgba(255,59,48,0.2)'}`,
+                          background: s.good ? 'rgba(21, 178, 207,0.1)' : 'rgba(255,59,48,0.1)',
+                          border:`1px solid ${s.good ? 'rgba(21, 178, 207,0.2)' : 'rgba(255,59,48,0.2)'}`,
                           borderRadius:'99px', padding:'3px 10px',
                           color: s.good ? '#15B2CF' : '#FF3B30',
                           fontSize:'0.72rem', fontWeight:700
@@ -1582,12 +1582,12 @@ export default function WorkoutPage() {
                                   borderRadius:'4px',
                                   background: cell.future ? 'transparent'
                                     : !cell.trained ? 'var(--border)'
-                                    : intensity >= 1 ? 'rgba(31,107,255,0.85)'
-                                    : intensity > 0.4 ? 'rgba(31,107,255,0.5)'
-                                    : 'rgba(31,107,255,0.22)',
+                                    : intensity >= 1 ? 'rgba(21, 178, 207,0.85)'
+                                    : intensity > 0.4 ? 'rgba(21, 178, 207,0.5)'
+                                    : 'rgba(21, 178, 207,0.22)',
                                   border: cell.future ? '1px dashed var(--border)' : 'none',
                                   cursor:'pointer',
-                                  boxShadow: intensity >= 1 ? '0 0 6px rgba(31,107,255,0.4)' : 'none'
+                                  boxShadow: intensity >= 1 ? '0 0 6px rgba(21, 178, 207,0.4)' : 'none'
                                 }}
                               />
                             )
@@ -1598,7 +1598,7 @@ export default function WorkoutPage() {
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:'8px', marginTop:'14px' }}>
                     <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Less</span>
-                    {['var(--border)','rgba(31,107,255,0.2)','rgba(31,107,255,0.45)','rgba(31,107,255,0.8)'].map((bg,i) => (
+                    {['var(--border)','rgba(21, 178, 207,0.2)','rgba(21, 178, 207,0.45)','rgba(21, 178, 207,0.8)'].map((bg,i) => (
                       <div key={i} style={{ width:'14px', height:'14px', borderRadius:'3px', background:bg }}/>
                     ))}
                     <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>More</span>
@@ -1693,7 +1693,7 @@ export default function WorkoutPage() {
                   <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(5,1fr)', gap:'12px', marginBottom:'32px' }}>
                     {[
                       { label:'Duration',  val:selected.duration,         unit:'min',     color:selected.color, icon:'⏱' },
-                      { label:'Calories',  val:selected.calories,         unit:'kcal',    color:'#2E7DFF',       icon:'🔥' },
+                      { label:'Calories',  val:selected.calories,         unit:'kcal',    color:'#1FA8C9',       icon:'🔥' },
                       { label:'Exercises', val:selected.exercises.length, unit:'moves',   color:'#7B61FF',       icon:'💪' },
                       { label:'Sets',      val:selected.exercises.reduce((a,e)=>a+e.sets,0), unit:'total', color:'#4FD3ED', icon:'🔄' },
                       { label:'Muscles',   val:selected.muscles.length,   unit:'groups',  color:'#FFD700',       icon:'🎯' },
@@ -1780,7 +1780,7 @@ export default function WorkoutPage() {
                                   fontVariantNumeric:'tabular-nums'
                                 }} />
                               {oneRM != null ? (
-                                <span style={{ color:'#2E7DFF', fontSize:'0.72rem', fontWeight:700, fontVariantNumeric:'tabular-nums' }}>
+                                <span style={{ color:'#1FA8C9', fontSize:'0.72rem', fontWeight:700, fontVariantNumeric:'tabular-nums' }}>
                                   est. 1RM {oneRM} kg{reps ? ` @ ${reps} reps` : ''}
                                 </span>
                               ) : (
@@ -1795,7 +1795,7 @@ export default function WorkoutPage() {
                           { label:'Sets', val:ex.sets, color:selected.color },
                           { label:'Reps', val:ex.reps, color: 'var(--text-primary)' },
                           { label:'Rest', val:`${ex.rest}s`, color:'#4FD3ED' },
-                          { label:'kcal', val:ex.calories, color:'#2E7DFF' },
+                          { label:'kcal', val:ex.calories, color:'#1FA8C9' },
                         ].map(s => (
                           <div key={s.label}>
                             <div style={{ color:s.color, fontWeight:700, fontSize:'0.88rem' }}>{s.val}</div>
@@ -1853,12 +1853,12 @@ export default function WorkoutPage() {
             >
               <div style={{ fontSize:'2rem', marginBottom:'6px' }}>🎉</div>
               <div style={{
-                fontFamily:"'Clash Display',sans-serif", color:'#2E7DFF',
+                fontFamily:"'Clash Display',sans-serif", color:'#1FA8C9',
                 fontSize:'1.2rem', fontWeight:800, marginBottom:'8px'
               }}>New PR{prCelebration.length > 1 ? 's' : ''}!</div>
               {prCelebration.map(pr => (
                 <div key={pr.name} style={{ color:'var(--text-primary)', fontSize:'0.88rem', marginBottom:'4px' }}>
-                  <strong>{pr.name}</strong> — <span style={{ color:'#2E7DFF', fontWeight:700, fontVariantNumeric:'tabular-nums' }}>
+                  <strong>{pr.name}</strong> — <span style={{ color:'#1FA8C9', fontWeight:700, fontVariantNumeric:'tabular-nums' }}>
                     {pr.oneRM} kg est. 1RM
                   </span>
                   <span style={{ color:'var(--text-muted)', fontSize:'0.78rem' }}>
@@ -1871,7 +1871,7 @@ export default function WorkoutPage() {
                 style={{
                   marginTop:'12px', background:'rgba(46,125,255,0.15)',
                   border:'1px solid rgba(46,125,255,0.4)', borderRadius:'99px',
-                  padding:'8px 24px', color:'#2E7DFF', cursor:'pointer',
+                  padding:'8px 24px', color:'#1FA8C9', cursor:'pointer',
                   fontSize:'0.82rem', fontWeight:700
                 }}>Keep Going 💪</button>
             </motion.div>

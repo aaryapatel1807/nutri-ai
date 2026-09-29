@@ -171,7 +171,7 @@ export default function BarcodeScanner() {
             <motion.div key="camera" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <div style={{
                 position: 'relative', borderRadius: '16px', overflow: 'hidden',
-                border: '2px solid rgba(31,107,255,0.4)', marginBottom: '16px',
+                border: '2px solid rgba(21, 178, 207,0.4)', marginBottom: '16px',
                 background: '#000'
               }}>
                 <video
@@ -249,8 +249,8 @@ export default function BarcodeScanner() {
                   disabled={loading || !code}
                   style={{
                     padding: '12px 20px', flexShrink: 0,
-                    background: 'rgba(31,107,255,0.12)',
-                    border: '1px solid rgba(31,107,255,0.35)',
+                    background: 'rgba(21, 178, 207,0.12)',
+                    border: '1px solid rgba(21, 178, 207,0.35)',
                     borderRadius: '12px', color: '#15B2CF',
                     fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
                     opacity: code ? 1 : 0.5
@@ -270,7 +270,7 @@ export default function BarcodeScanner() {
               marginTop: '16px', padding: '10px 16px',
               background: 'rgba(46,125,255,0.08)',
               border: '1px solid rgba(46,125,255,0.3)',
-              borderRadius: '12px', color: '#2E7DFF', fontSize: '0.85rem'
+              borderRadius: '12px', color: '#1FA8C9', fontSize: '0.85rem'
             }}>
             {error}
           </motion.div>
@@ -304,8 +304,8 @@ export default function BarcodeScanner() {
             exit={{ opacity: 0, scale: 0.98 }}
             style={{
               ...card, marginBottom: '24px',
-              border: '1px solid rgba(31,107,255,0.25)',
-              boxShadow: '0 0 40px rgba(31,107,255,0.12), 0 8px 32px var(--shadow-color)'
+              border: '1px solid rgba(21, 178, 207,0.25)',
+              boxShadow: '0 0 40px rgba(21, 178, 207,0.12), 0 8px 32px var(--shadow-color)'
             }}
           >
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
@@ -323,8 +323,8 @@ export default function BarcodeScanner() {
               <div style={{ flex: 1, minWidth: '200px' }}>
                 <div style={{
                   display: 'inline-block', fontSize: '0.72rem', fontWeight: 700,
-                  color: '#15B2CF', background: 'rgba(31,107,255,0.1)',
-                  border: '1px solid rgba(31,107,255,0.3)',
+                  color: '#15B2CF', background: 'rgba(21, 178, 207,0.1)',
+                  border: '1px solid rgba(21, 178, 207,0.3)',
                   borderRadius: '99px', padding: '3px 12px', marginBottom: '8px'
                 }}>
                   ✓ PRODUCT FOUND
@@ -357,7 +357,7 @@ export default function BarcodeScanner() {
                 { label: 'Calories', val: product.calories, unit: 'kcal', color: '#15B2CF' },
                 { label: 'Protein', val: product.protein, unit: 'g', color: '#7B61FF' },
                 { label: 'Carbs', val: product.carbs, unit: 'g', color: '#4FD3ED' },
-                { label: 'Fat', val: product.fat, unit: 'g', color: '#2E7DFF' },
+                { label: 'Fat', val: product.fat, unit: 'g', color: '#1FA8C9' },
               ].map(m => (
                 <div key={m.label} style={{
                   background: 'var(--border)', borderRadius: '12px',
@@ -402,8 +402,8 @@ export default function BarcodeScanner() {
                   <a
                     href="/meal-logger"
                     style={{
-                      padding: '10px 20px', background: 'rgba(31,107,255,0.12)',
-                      border: '1px solid rgba(31,107,255,0.35)', borderRadius: '10px',
+                      padding: '10px 20px', background: 'rgba(21, 178, 207,0.12)',
+                      border: '1px solid rgba(21, 178, 207,0.35)', borderRadius: '10px',
                       color: '#15B2CF', fontSize: '0.85rem', fontWeight: 700,
                       textDecoration: 'none'
                     }}>

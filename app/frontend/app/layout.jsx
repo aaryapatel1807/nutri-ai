@@ -22,47 +22,17 @@ export default function RootLayout({ children }) {
       </head>
       <body className={inter.className}>
         <div style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh' }}>
-          {/* Background Orbs */}
-          <div 
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '500px',
-              height: '500px',
-              background: 'radial-gradient(rgba(31,107,255,0.04) 0%, transparent 70%)',
-              animation: 'float 8s ease-in-out infinite',
-              zIndex: -1,
-              pointerEvents: 'none'
-            }}
-          />
-          <div 
-            style={{
-              position: 'fixed',
-              bottom: 0,
-              right: 0,
-              width: '600px',
-              height: '600px',
-              background: 'radial-gradient(rgba(123,97,255,0.03) 0%, transparent 70%)',
-              animation: 'float 12s ease-in-out infinite reverse',
-              zIndex: -1,
-              pointerEvents: 'none'
-            }}
-          />
-          <div 
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '350px',
-              height: '350px',
-              background: 'radial-gradient(rgba(46,125,255,0.025) 0%, transparent 70%)',
-              animation: 'float 10s ease-in-out infinite 2s',
-              zIndex: -1,
-              pointerEvents: 'none'
-            }}
-          />
+          {/* Frosted-glass page backdrop: color wash + frost veil + grain + sheen */}
+          <div className="frosted-backdrop" aria-hidden="true">
+            <div className="frost-orb frost-orb-a" />
+            <div className="frost-orb frost-orb-b" />
+            <div className="frost-orb frost-orb-c" />
+            <div className="frost-orb frost-orb-d" />
+            <div className="frost-veil" />
+            <div className="frost-grain" />
+            <div className="frost-sheen" />
+            <div className="frost-vignette" />
+          </div>
           
           <LayoutContent>
             {children}

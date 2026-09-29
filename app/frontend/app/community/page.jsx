@@ -52,7 +52,7 @@ function PostCard({ post, isOwn, onKudos, onDelete }) {
           style={{
             width: 40, height: 40, borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'linear-gradient(135deg, rgba(46,125,255,0.25), rgba(31,107,255,0.12))',
+            background: 'linear-gradient(135deg, rgba(46,125,255,0.25), rgba(21, 178, 207,0.12))',
             border: '1px solid rgba(46,125,255,0.3)',
             color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.95rem',
           }}
@@ -96,12 +96,12 @@ function PostCard({ post, isOwn, onKudos, onDelete }) {
             background: liked ? 'rgba(46,125,255,0.14)' : 'transparent',
             border: liked ? '1px solid rgba(46,125,255,0.4)' : '1px solid var(--border)',
             borderRadius: 999, padding: '0.45rem 0.9rem', cursor: 'pointer',
-            color: liked ? '#2E7DFF' : 'var(--text-muted)',
+            color: liked ? '#1FA8C9' : 'var(--text-muted)',
             fontWeight: 700, fontSize: '0.85rem',
           }}
           aria-label="Give kudos"
         >
-          <Heart size={16} fill={liked ? '#2E7DFF' : 'none'} color={liked ? '#2E7DFF' : 'currentColor'} />
+          <Heart size={16} fill={liked ? '#1FA8C9' : 'none'} color={liked ? '#1FA8C9' : 'currentColor'} />
           <motion.span
             key={post.likes}
             initial={popping ? { scale: 1.6 } : false}
@@ -218,7 +218,7 @@ export default function CommunityPage() {
             onClick={fetchPosts}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: 'linear-gradient(135deg, #2E7DFF, #15B2CF)', color: '#1A1714',
+              background: 'linear-gradient(135deg, #1FA8C9, #15B2CF)', color: '#1A1714',
               border: 'none', borderRadius: 999, padding: '0.65rem 1.4rem',
               fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
             }}
@@ -260,9 +260,9 @@ export default function CommunityPage() {
         <div
           style={{
             width: 46, height: 46, borderRadius: 14,
-            background: 'linear-gradient(135deg, rgba(46,125,255,0.25), rgba(31,107,255,0.12))',
+            background: 'linear-gradient(135deg, rgba(46,125,255,0.25), rgba(21, 178, 207,0.12))',
             border: '1px solid rgba(46,125,255,0.35)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2E7DFF',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1FA8C9',
           }}
         >
           <Users size={22} />
@@ -310,7 +310,7 @@ export default function CommunityPage() {
             disabled={!draft.trim() || overLimit || posting}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              background: (!draft.trim() || overLimit || posting) ? 'var(--border)' : 'linear-gradient(135deg, #2E7DFF, #15B2CF)',
+              background: (!draft.trim() || overLimit || posting) ? 'var(--border)' : 'linear-gradient(135deg, #1FA8C9, #15B2CF)',
               color: (!draft.trim() || overLimit || posting) ? 'var(--text-muted)' : '#1A1714',
               border: 'none', borderRadius: 999, padding: '0.6rem 1.3rem',
               fontWeight: 700, fontSize: '0.88rem',

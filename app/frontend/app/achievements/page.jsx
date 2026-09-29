@@ -421,7 +421,7 @@ export default function Achievements() {
           background:`
             radial-gradient(800px circle at 20% 40%, rgba(255,215,0,0.08) 0%, transparent 60%),
             radial-gradient(600px circle at 80% 60%, rgba(123,97,255,0.06) 0%, transparent 60%),
-            radial-gradient(400px circle at 50% 20%, rgba(31,107,255,0.04) 0%, transparent 60%)
+            radial-gradient(400px circle at 50% 20%, rgba(21, 178, 207,0.04) 0%, transparent 60%)
           `
         }}/>
 

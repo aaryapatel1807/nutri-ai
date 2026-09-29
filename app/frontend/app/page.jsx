@@ -15,7 +15,7 @@ import { auth } from '../lib/api'
    Reduced-motion: static composed states, no scroll-driven animation.
    ═══════════════════════════════════════════════════════════════════ */
 
-const AMBER = '#2E7DFF'
+const AMBER = '#1FA8C9'
 const AMBER_DEEP = '#15B2CF'
 const CHARCOAL = '#141210'
 const CHARCOAL_2 = '#1A1714'
