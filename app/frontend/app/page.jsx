@@ -68,7 +68,7 @@ function Nav() {
   return (
     <header style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      background: 'rgba(20,18,16,.62)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+      background: 'rgba(20,18,16,.92)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
       borderBottom: `1px solid ${HAIRLINE}`,
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -105,9 +105,9 @@ function Ring3D({ spin, arc, size = 440 }) {
         }}>
           {[-18, 0, 18].map((z) => (
             <svg key={z} viewBox="0 0 200 200" style={{ position: 'absolute', inset: 0, transform: `translateZ(${z}px)` }}>
-              <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(245,165,36,.14)" strokeWidth="11" />
+              <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(170,110,35,.32)" strokeWidth="13" />
               <motion.circle
-                cx="100" cy="100" r={R} fill="none" stroke={AMBER} strokeWidth="11" strokeLinecap="round"
+                cx="100" cy="100" r={R} fill="none" stroke={AMBER} strokeWidth="13" strokeLinecap="round"
                 strokeDasharray={C}
                 style={{
                   strokeDashoffset: dashOffset, transform: 'rotate(-90deg)', transformOrigin: '100px 100px',
@@ -148,7 +148,7 @@ function Hero({ reduce }) {
   // scroll-driven values (always created; only applied when !reduce)
   const grade = useTransform(scrollYProgress, [0.25, 0.75], [0, 1])
   const ringSpin = useTransform(scrollYProgress, [0, 1], [0, 320])
-  const ringArc = useTransform(scrollYProgress, [0, 0.92], [0.1, 1])
+  const ringArc = useTransform(scrollYProgress, [0, 0.92], [0.28, 1])
   const cardAY = useTransform(scrollYProgress, [0, 1], [0, -150])
   const cardBY = useTransform(scrollYProgress, [0, 1], [0, 130])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
@@ -236,9 +236,9 @@ function HeroCopy({ lines, onCta, accentLast, dark, style }) {
   return (
     <motion.div style={{
       position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', padding: '0 6vw', pointerEvents: 'none', ...style,
+      justifyContent: 'flex-start', padding: '15vh 6vw 0', pointerEvents: 'none', ...style,
     }}>
-      <div style={{ pointerEvents: 'auto', maxWidth: 900 }}>
+      <div style={{ pointerEvents: 'auto', maxWidth: 1100 }}>
         {lines.map((l, i) => (
           <div key={l} style={{ overflow: 'hidden' }}>
             <motion.h1
@@ -246,9 +246,9 @@ function HeroCopy({ lines, onCta, accentLast, dark, style }) {
               transition={{ duration: 0.9, delay: 0.15 + i * 0.14, ease: [0.22, 1, 0.36, 1] }}
               className="nl-campaign"
               style={{
-                fontSize: 'clamp(3rem, 10.5vw, 9.5rem)', margin: 0,
+                fontSize: 'clamp(3rem, 9.5vw, 8.5rem)', margin: 0, whiteSpace: 'nowrap',
                 color: accentLast && i === lines.length - 1 ? AMBER_DEEP : ink,
-                textShadow: !dark && accentLast && i === lines.length - 1 ? '0 0 44px rgba(249,115,22,.45)' : 'none',
+                textShadow: !dark && accentLast && i === lines.length - 1 ? '0 0 44px rgba(245,165,36,.45)' : 'none',
               }}
             >
               <span className="nl-squeeze">{l}</span>
