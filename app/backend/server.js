@@ -41,38 +41,24 @@ app.use(helmet())
 app.use(morgan('dev'))
 app.use(express.json())
 
-// Helper: safe-load a route — logs warning instead of crashing
-function safeRoute(path) {
-  try {
-    return require(path)
-  } catch (e) {
-    console.warn(`⚠️ Route not found (skipped): ${path} — ${e.message}`)
-    const router = express.Router()
-    router.all('*', (req, res) => {
-      res.status(503).json({
-        error: `Route module missing: ${path}`,
-      })
-    })
-    return router
-  }
-}
-
-// API Routes
-app.use('/api/auth', safeRoute('./routes/auth'))
-app.use('/api/meals', safeRoute('./routes/meals'))
-app.use('/api/workouts', safeRoute('./routes/workouts'))
-app.use('/api/badges', safeRoute('./routes/badges'))
-app.use('/api/stats', safeRoute('./routes/stats'))
-app.use('/api/ml', safeRoute('./routes/mlProxy'))
+// API Routes — direct requires (NOT dynamic): Vercel's file tracer only
+// bundles statically-analyzable requires. A dynamic require() wrapper
+// (the old safeRoute helper) silently 503'd every route in production.
+app.use('/api/auth', require('./routes/auth'))
+app.use('/api/meals', require('./routes/meals'))
+app.use('/api/workouts', require('./routes/workouts'))
+app.use('/api/badges', require('./routes/badges'))
+app.use('/api/stats', require('./routes/stats'))
+app.use('/api/ml', require('./routes/mlProxy'))
 
 // Feature Routes
-app.use('/api/posts', safeRoute('./routes/posts'))
-app.use('/api/water', safeRoute('./routes/water'))
-app.use('/api/weight', safeRoute('./routes/weight'))
-app.use('/api/recipes', safeRoute('./routes/recipes'))
-app.use('/api/barcode', safeRoute('./routes/barcode'))
-app.use('/api/sleep', safeRoute('./routes/sleep'))
-app.use('/api/coaching', safeRoute('./routes/coaching'))
+app.use('/api/posts', require('./routes/posts'))
+app.use('/api/water', require('./routes/water'))
+app.use('/api/weight', require('./routes/weight'))
+app.use('/api/recipes', require('./routes/recipes'))
+app.use('/api/barcode', require('./routes/barcode'))
+app.use('/api/sleep', require('./routes/sleep'))
+app.use('/api/coaching', require('./routes/coaching'))
 
 // Root Route
 app.get('/', (req, res) => {
