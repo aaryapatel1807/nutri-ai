@@ -198,7 +198,7 @@ function Hero({ reduce }) {
           className="nl-glass nl-floaty nl-fcard-a"
           style={reduce
             ? { position: 'absolute', left: '6%', bottom: '20%', width: 250, borderRadius: 18, padding: 18 }
-            : { position: 'absolute', left: '6%', bottom: '20%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
+            : { position: 'absolute', left: '5%', bottom: '8%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
         >
           <FloatScanCard />
         </motion.div>
