@@ -65,10 +65,9 @@ const LANDING_CSS = `
 @media (max-width:768px) {
   .nl-hero-copy-inner { max-width:none !important; }
   .nl-visual { width:100% !important; top:auto !important; bottom:0 !important; height:64% !important; }
-  .nl-hero-ring { right:-30% !important; top:6% !important; opacity:.45; transform:scale(.62); transform-origin:top right; }
-  .nl-fcard-a { left:4% !important; right:auto !important; bottom:4% !important; width:205px !important; }
-  .nl-fcard-b { right:4% !important; bottom:28% !important; width:195px !important; opacity:.94; }
-  .nl-cue-wrap { left:auto !important; right:18px !important; bottom:18px !important; transform:none !important; }
+  .nl-fcard-a { left:4% !important; right:auto !important; top:24% !important; bottom:auto !important; width:168px !important; padding:14px !important; }
+  .nl-fcard-b { right:4% !important; bottom:2% !important; top:auto !important; width:165px !important; opacity:.94; }
+  .nl-cue-wrap { left:18px !important; right:auto !important; bottom:18px !important; transform:none !important; }
 }
 `
 
@@ -94,64 +93,7 @@ function Nav() {
   )
 }
 
-/* ── Scroll-driven 3D ring: one volumetric torus + live day-fuel readout ─ */
-function Ring3D({ spin, arc, gradeMV, size = 440 }) {
-  const R = 80
-  const C = 2 * Math.PI * R
-  const dashOffset = useTransform(arc, (a) => C * (1 - Math.min(1, Math.max(0, a))))
-  const pct = useTransform(arc, (a) => Math.round(100 * Math.min(1, Math.max(0, a))))
-  const fallbackGrade = useMotionValue(0)
-  const readoutColor = useTransform(gradeMV || fallbackGrade, [0, 1], [INK, CREAM])
-  const ringR = (R / 200) * size
-  const k = size / 440 // scale the centre readout with the ring
-  return (
-    <div style={{ width: size, height: size, perspective: 1100, position: 'relative' }}>
-      {/* blue energy glow */}
-      <div style={{
-        position: 'absolute', inset: '12%', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,107,94,.22) 0%, transparent 65%)',
-        filter: 'blur(10px)',
-      }} className="nl-pulse-glow" />
-      <motion.div style={{ width: '100%', height: '100%', rotate: spin, transformStyle: 'preserve-3d' }}>
-        <div style={{
-          width: '100%', height: '100%', position: 'relative',
-          transform: 'rotateX(56deg)', transformStyle: 'preserve-3d',
-        }}>
-          {[-27, -18, -9, 0, 9, 18, 27].map((z) => {
-            const depth = (z + 27) / 54 // 0 = back → 1 = front
-            return (
-              <svg key={z} viewBox="0 0 200 200" style={{ position: 'absolute', inset: 0, transform: `translateZ(${z}px)`, opacity: 0.5 + depth * 0.5 }}>
-                <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(170,110,35,.32)" strokeWidth="13" />
-                <motion.circle
-                  cx="100" cy="100" r={R} fill="none" stroke={AMBER} strokeWidth="13" strokeLinecap="round"
-                  strokeDasharray={C}
-                  style={{
-                    strokeDashoffset: dashOffset, transform: 'rotate(-90deg)', transformOrigin: '100px 100px',
-                    filter: 'drop-shadow(0 0 9px rgba(255,107,94,.6))',
-                  }}
-                />
-              </svg>
-            )
-          })}
-          {/* satellite orbiting in the ring plane */}
-          <motion.div style={{ position: 'absolute', left: '50%', top: '50%', width: 0, height: 0, rotate: spin }}>
-            <div style={{
-              position: 'absolute', left: -8, top: -ringR - 8, width: 16, height: 16, borderRadius: '50%',
-              background: AMBER, boxShadow: '0 0 22px rgba(255,107,94,.95)',
-            }} />
-          </motion.div>
-        </div>
-      </motion.div>
-      {/* day-fuel readout — ties the ring's progress to the nutrition story */}
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-        <motion.span className="nl-tnum" style={{ color: readoutColor, fontWeight: 800, fontSize: `${2.4 * k}rem`, lineHeight: 1 }}>{pct}</motion.span>
-        <motion.span className="nl-kicker" style={{ color: readoutColor, opacity: .6, marginTop: 6 * k }}>day fuel</motion.span>
-      </div>
-    </div>
-  )
-}
-
-/* ── HERO: kinetic headline + scroll-driven ring + grade morph ───── */
+/* ── HERO: kinetic headline + floating glass cards + grade morph ───── */
 function Hero({ reduce }) {
   const wrapRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ['start start', 'end end'] })
@@ -169,8 +111,6 @@ function Hero({ reduce }) {
 
   // scroll-driven values (always created; only applied when !reduce)
   const grade = useTransform(scrollYProgress, [0.25, 0.75], [0, 1])
-  const ringSpin = useTransform(scrollYProgress, [0, 1], [0, 320])
-  const ringArc = useTransform(scrollYProgress, [0, 0.92], [0.28, 1])
   const cardAY = useTransform(scrollYProgress, [0, 1], [0, -56])
   const cardBY = useTransform(scrollYProgress, [0, 1], [0, 90])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
@@ -179,16 +119,10 @@ function Hero({ reduce }) {
   const cardAYc = useTransform(sy, (v) => v * 14)
   const cardBX = useTransform(sx, (v) => v * -24)
   const cardBYc = useTransform(sy, (v) => v * -18)
-  const ringX = useTransform(sx, (v) => v * 26)
-  const ringY = useTransform(sy, (v) => v * 20)
   const paperFade = useTransform(grade, [0, 1], [1, 0])
 
   const goAuth = () => document.getElementById('auth')?.scrollIntoView({ behavior: 'smooth' })
 
-  const staticSpin = useMotionValue(38)
-  const staticArc = useMotionValue(0.82)
-  const spinMV = reduce ? staticSpin : ringSpin
-  const arcMV = reduce ? staticArc : ringArc
 
   const lines = ['YOUR BODY.', 'YOUR DATA.', 'YOUR AI.']
 
@@ -208,28 +142,23 @@ function Hero({ reduce }) {
           <motion.div style={{ position: 'absolute', inset: 0, background: CHARCOAL, opacity: grade, pointerEvents: 'none' }} />
         )}
 
-        {/* right visual zone — ring + cards stay inside; the left text area is protected */}
+        {/* right visual zone — floating glass cards; the left text area is protected */}
         <div className="nl-visual" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '46%', overflow: 'hidden', pointerEvents: 'none' }}>
-          <div className="nl-hero-ring" style={{ position: 'absolute', right: '-16%', top: '-6%' }}>
-            <motion.div style={reduce ? { opacity: .9 } : { x: ringX, y: ringY, opacity: .95 }}>
-              <Ring3D spin={spinMV} arc={arcMV} gradeMV={reduce ? null : grade} size={620} />
-            </motion.div>
-          </div>
-
-          {/* floating cutout-parallax cards — recomposed along the bottom, clear of the ring */}
+          {/* ambient warmth behind the cards */}
+          <div aria-hidden="true" className="nl-pulse-glow" style={{ position: 'absolute', right: '4%', top: '16%', width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,107,94,.16) 0%, transparent 65%)', filter: 'blur(30px)' }} />
           <motion.div
             className="nl-glass nl-floaty nl-fcard-a"
             style={reduce
-              ? { position: 'absolute', right: '48%', bottom: '9%', width: 250, borderRadius: 18, padding: 18 }
-              : { position: 'absolute', right: '48%', bottom: '9%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
+              ? { position: 'absolute', right: '24%', top: '12%', width: 280, borderRadius: 18, padding: 20 }
+              : { position: 'absolute', right: '24%', top: '12%', width: 280, borderRadius: 18, padding: 20, y: cardAY, x: cardAX }}
           >
             <FloatScanCard />
           </motion.div>
           <motion.div
             className="nl-glass nl-floaty nl-fcard-b"
             style={reduce
-              ? { position: 'absolute', right: '6%', bottom: '7%', width: 230, borderRadius: 18, padding: 18, animationDelay: '1.4s' }
-              : { position: 'absolute', right: '6%', bottom: '7%', width: 230, borderRadius: 18, padding: 18, y: cardBY, x: cardBX }}
+              ? { position: 'absolute', right: '6%', bottom: '14%', width: 260, borderRadius: 18, padding: 20, animationDelay: '1.4s' }
+              : { position: 'absolute', right: '6%', bottom: '14%', width: 260, borderRadius: 18, padding: 20, y: cardBY, x: cardBX, animationDelay: '1.4s' }}
           >
             <FloatWorkoutCard />
           </motion.div>
@@ -334,7 +263,7 @@ function FloatWorkoutCard() {
         <span className="nl-kicker" style={{ color: '#D6D3D1' }}>Workout</span>
       </div>
       <div style={{ fontWeight: 700, fontSize: '.95rem', color: CREAM }}>Push Day</div>
-      <div className="nl-tnum" style={{ color: CREAM, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px' }}>
+      <div className="nl-tnum" style={{ color: CREAM, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px', whiteSpace: 'nowrap' }}>
         42:18 <span style={{ fontSize: '.75rem', color: '#D6D3D1', fontWeight: 500 }}>· <Flame size={12} color={AMBER} style={{ display: 'inline' }} /> 312 kcal</span>
       </div>
       <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}>
