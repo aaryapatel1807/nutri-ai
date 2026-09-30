@@ -1,17 +1,16 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
-import {
-  motion, useScroll, useTransform, useSpring, useMotionValue, useReducedMotion,
-} from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import {
-  Camera, MessageCircle, Dumbbell, Flame, ArrowRight, ChevronDown, Activity, Zap,
+  Camera, MessageCircle, Dumbbell, Flame, Activity, Zap,
 } from 'lucide-react'
 import { auth } from '../lib/api'
+import Hero from '../components/landing/StoryHero'
 
 /* ═══════════════════════════════════════════════════════════════════
    NutriAI — cinematic 3D storytelling landing.
-   Dark-first. Electric blue rationed (CTAs, rings, key numerals only).
+    Warm paper hero, charcoal chapters, coral and amber accents.
    Reduced-motion: static composed states, no scroll-driven animation.
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -19,302 +18,71 @@ const AMBER = '#FF6B5E'
 const AMBER_DEEP = '#FFB020'
 const CHARCOAL = '#141210'
 const CHARCOAL_2 = '#1A1714'
-const PAPER = '#F5F1E8'
-const INK = '#1C1917'
 const CREAM = '#F5EFE4'
 const MUTED = '#A8A29E'
 const HAIRLINE = 'rgba(255,107,94,0.12)'
 
 const LANDING_CSS = `
 .nl-root { background:${CHARCOAL}; color:${CREAM}; font-family:'Satoshi',sans-serif; overflow-x:clip; }
+html:has(.nl-root) { scroll-behavior:smooth; }
 .nl-root ::selection { background:rgba(255,107,94,.35); color:#141210; }
-.nl-campaign { font-family:'Clash Display',sans-serif; font-weight:700; text-transform:uppercase; line-height:.92; letter-spacing:-.015em; }
-.nl-squeeze { display:inline-block; transform:scaleX(.84); transform-origin:left center; }
-@media (max-width:768px){ .nl-squeeze { transform-origin:center; } }
-.nl-tnum { font-variant-numeric:tabular-nums; }
-.nl-kicker { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.14em; }
-.nl-hairline { border:1px solid ${HAIRLINE}; }
-.nl-hairline-t { border-top:1px solid ${HAIRLINE}; }
-.nl-cta { background:linear-gradient(135deg,#FF6B5E,#FFB020 52%,#7B61FF); color:#FFFFFF; font-weight:800; border:none; border-radius:14px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 rgba(255,107,94,0); }
-.nl-cta:hover { box-shadow:0 0 32px rgba(255,107,94,.35); }
-.nl-cta:active { transform:scale(.97); }
-.nl-cta:disabled { opacity:.6; cursor:wait; }
-.nl-input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:13px 16px; color:${CREAM}; font-size:.95rem; outline:none; box-sizing:border-box; transition:border-color .15s ease; }
-.nl-input::placeholder { color:#6B6560; }
-.nl-input:focus { border-color:rgba(255,107,94,.55); }
-.nl-input:disabled { opacity:.6; }
-.nl-glass { background:rgba(30,26,22,.62); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid ${HAIRLINE}; }
+.nl-root .nl-campaign { font-family:'Clash Display',sans-serif; font-weight:700; text-transform:uppercase; line-height:.92; letter-spacing:-.015em; }
+.nl-root .nl-squeeze { display:inline-block; transform:scaleX(.84); transform-origin:left center; }
+@media (max-width:768px){ .nl-root .nl-squeeze { transform-origin:center; } }
+.nl-root .nl-tnum { font-variant-numeric:tabular-nums; }
+.nl-root .nl-kicker { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.14em; }
+.nl-root .nl-hairline { border:1px solid ${HAIRLINE}; }
+.nl-root .nl-hairline-t { border-top:1px solid ${HAIRLINE}; }
+.nl-root :where(a) { color:inherit; }
+.nl-root :is(a,button,input):focus-visible { outline:3px solid #FFD166; outline-offset:3px; }
+.nl-root [id] { scroll-margin-top:96px; }
+.nl-root .nl-cta { background:linear-gradient(135deg,#FF6B5E,#FFB020 52%,#FFD166); color:#141210; font-weight:800; border:none; border-radius:14px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 rgba(255,107,94,0); text-decoration:none; }
+.nl-root .nl-cta:hover { box-shadow:0 0 32px rgba(255,107,94,.35); }
+.nl-root .nl-cta:active { transform:scale(.97); }
+.nl-root .nl-cta:disabled { opacity:.6; cursor:wait; }
+.nl-root .nl-input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:13px 16px; color:${CREAM}; font-size:.95rem; outline:none; box-sizing:border-box; transition:border-color .15s ease; }
+.nl-root .nl-input::placeholder { color:#B8B0AA; opacity:1; }
+.nl-root .nl-input:focus { border-color:rgba(255,107,94,.55); }
+.nl-root .nl-input:disabled { opacity:.6; }
+.nl-root .nl-label { color:${CREAM}; font-size:.82rem; font-weight:700; margin:2px 2px -5px; }
+.nl-root .nl-nav-link { color:${CREAM}; font-size:.84rem; font-weight:700; text-decoration:none; padding:10px 6px; }
+.nl-root .nl-glass { background:rgba(30,26,22,.62); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid ${HAIRLINE}; }
 @keyframes nl-scan { 0%{top:8%} 50%{top:88%} 100%{top:8%} }
-@keyframes nl-floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-@keyframes nl-cue { 0%,100%{transform:translateY(0);opacity:.9} 50%{transform:translateY(10px);opacity:.4} }
-@keyframes nl-pulse-glow { 0%,100%{opacity:.5} 50%{opacity:1} }
-.nl-scanline { animation:nl-scan 3.2s ease-in-out infinite; }
-.nl-floaty { animation:nl-floaty 7s ease-in-out infinite; }
-.nl-cue { animation:nl-cue 1.8s ease-in-out infinite; }
-.nl-pulse-glow { animation:nl-pulse-glow 2.6s ease-in-out infinite; }
+.nl-root .nl-scanline { animation:nl-scan 3.2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .nl-scanline, .nl-floaty, .nl-cue, .nl-pulse-glow { animation:none !important; }
+  html:has(.nl-root) { scroll-behavior:auto !important; }
+  .nl-root *, .nl-root *::before, .nl-root *::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; }
+  .nl-root .nl-scanline { animation:none !important; }
 }
 @media (max-width:768px) {
-  .nl-hero-ring { right:-16% !important; top:5% !important; opacity:.42; transform:scale(.58); transform-origin:top right; }
-  .nl-fcard-a { left:4% !important; bottom:5% !important; width:205px !important; }
-  .nl-fcard-b { right:4% !important; bottom:31% !important; width:195px !important; opacity:.94; }
+  .nl-root .nl-nav-links { display:none !important; }
+  .nl-root .nl-chapter { position:relative !important; min-height:auto !important; }
 }
+@media (max-height:720px) { .nl-root .nl-chapter { position:relative !important; min-height:auto !important; } }
 `
 
 /* ── Slim sticky nav ─────────────────────────────────────────────── */
 function Nav() {
-  const goAuth = () => document.getElementById('auth')?.scrollIntoView({ behavior: 'smooth' })
   return (
     <header style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+      position: 'fixed', top: 12, left: 16, right: 16, zIndex: 50,
       background: 'rgba(20,18,16,.92)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-      borderBottom: `1px solid ${HAIRLINE}`,
+      border: `1px solid ${HAIRLINE}`, borderRadius: 16,
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: '1.4rem' }}>🥗</span>
+      <nav aria-label="Primary navigation" style={{ maxWidth: 1280, margin: '0 auto', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 18 }}>
+        <a href="#top" aria-label="NutriAI home" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginRight: 'auto' }}>
+          <span aria-hidden="true" style={{ fontSize: '1.4rem' }}>🥗</span>
           <span className="nl-campaign" style={{ fontSize: '1.15rem', letterSpacing: '.02em' }}>NutriAI</span>
+        </a>
+        <div className="nl-nav-links" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <a className="nl-nav-link" href="#chapters">Features</a>
+          <a className="nl-nav-link" href="#stats">Stats</a>
         </div>
-        <button onClick={goAuth} className="nl-cta" style={{ padding: '10px 22px', fontSize: '.85rem' }}>
+        <a href="#auth" className="nl-cta" style={{ padding: '12px 18px', minHeight: 44, display: 'inline-flex', alignItems: 'center', fontSize: '.85rem' }}>
           Sign in
-        </button>
-      </div>
+        </a>
+      </nav>
     </header>
-  )
-}
-
-/* ── Scroll-driven 3D blue ring (layered SVG torus illusion) ────── */
-function Ring3D({ spin, arc, size = 440 }) {
-  const R = 80
-  const C = 2 * Math.PI * R
-  const dashOffset = useTransform(arc, (a) => C * (1 - Math.min(1, Math.max(0, a))))
-  const ringR = (R / 200) * size
-  return (
-    <div style={{ width: size, height: size, perspective: 1100, position: 'relative' }}>
-      {/* blue energy glow */}
-      <div style={{
-        position: 'absolute', inset: '12%', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,107,94,.22) 0%, transparent 65%)',
-        filter: 'blur(10px)',
-      }} className="nl-pulse-glow" />
-      <motion.div style={{ width: '100%', height: '100%', rotate: spin, transformStyle: 'preserve-3d' }}>
-        <div style={{
-          width: '100%', height: '100%', position: 'relative',
-          transform: 'rotateX(56deg)', transformStyle: 'preserve-3d',
-        }}>
-          {[-18, 0, 18].map((z) => (
-            <svg key={z} viewBox="0 0 200 200" style={{ position: 'absolute', inset: 0, transform: `translateZ(${z}px)` }}>
-              <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(170,110,35,.32)" strokeWidth="13" />
-              <motion.circle
-                cx="100" cy="100" r={R} fill="none" stroke={AMBER} strokeWidth="13" strokeLinecap="round"
-                strokeDasharray={C}
-                style={{
-                  strokeDashoffset: dashOffset, transform: 'rotate(-90deg)', transformOrigin: '100px 100px',
-                  filter: 'drop-shadow(0 0 9px rgba(255,107,94,.6))',
-                }}
-              />
-            </svg>
-          ))}
-          {/* satellite orbiting in the ring plane */}
-          <motion.div style={{ position: 'absolute', left: '50%', top: '50%', width: 0, height: 0, rotate: spin }}>
-            <div style={{
-              position: 'absolute', left: -8, top: -ringR - 8, width: 16, height: 16, borderRadius: '50%',
-              background: AMBER, boxShadow: '0 0 22px rgba(255,107,94,.95)',
-            }} />
-          </motion.div>
-        </div>
-      </motion.div>
-    </div>
-  )
-}
-
-/* ── HERO: kinetic headline + scroll-driven ring + grade morph ───── */
-function Hero({ reduce }) {
-  const wrapRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ['start start', 'end end'] })
-
-  // cursor parallax (buttery via springs)
-  const mx = useMotionValue(0), my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 55, damping: 18 })
-  const sy = useSpring(my, { stiffness: 55, damping: 18 })
-  const onMove = (e) => {
-    if (reduce) return
-    const r = e.currentTarget.getBoundingClientRect()
-    mx.set((e.clientX - r.left) / r.width - 0.5)
-    my.set((e.clientY - r.top) / r.height - 0.5)
-  }
-
-  // scroll-driven values (always created; only applied when !reduce)
-  const grade = useTransform(scrollYProgress, [0.25, 0.75], [0, 1])
-  const ringSpin = useTransform(scrollYProgress, [0, 1], [0, 320])
-  const ringArc = useTransform(scrollYProgress, [0, 0.92], [0.28, 1])
-  const cardAY = useTransform(scrollYProgress, [0, 1], [0, -150])
-  const cardBY = useTransform(scrollYProgress, [0, 1], [0, 130])
-  const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
-  const headY = useTransform(scrollYProgress, [0, 1], [0, -90])
-  const cardAX = useTransform(sx, (v) => v * 46)
-  const cardAYc = useTransform(sy, (v) => v * 30)
-  const cardBX = useTransform(sx, (v) => v * -60)
-  const cardBYc = useTransform(sy, (v) => v * -38)
-  const ringX = useTransform(sx, (v) => v * 26)
-  const ringY = useTransform(sy, (v) => v * 20)
-  const paperFade = useTransform(grade, [0, 1], [1, 0])
-
-  const goAuth = () => document.getElementById('auth')?.scrollIntoView({ behavior: 'smooth' })
-
-  const staticSpin = useMotionValue(38)
-  const staticArc = useMotionValue(0.82)
-  const spinMV = reduce ? staticSpin : ringSpin
-  const arcMV = reduce ? staticArc : ringArc
-
-  const lines = ['YOUR BODY.', 'YOUR DATA.', 'YOUR AI.']
-
-  return (
-    <section ref={wrapRef} onMouseMove={onMove} style={{ position: 'relative', height: reduce ? '100vh' : '185vh', background: PAPER }}>
-      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
-
-        {/* paper-grade base copy (dark ink) */}
-        <HeroCopy
-          dark
-          style={reduce ? { opacity: 0, pointerEvents: 'none' } : { opacity: paperFade, y: headY }}
-          lines={lines} onCta={goAuth} accentLast
-        />
-
-        {/* charcoal grade wash */}
-        {!reduce && (
-          <motion.div style={{ position: 'absolute', inset: 0, background: CHARCOAL, opacity: grade, pointerEvents: 'none' }} />
-        )}
-
-        {/* 3D ring layer */}
-        <div className="nl-hero-ring" style={{ position: 'absolute', right: '4%', top: '15%' }}>
-          <motion.div style={reduce ? { opacity: .9 } : { x: ringX, y: ringY, opacity: .95 }}>
-            <Ring3D spin={spinMV} arc={arcMV} size={440} />
-          </motion.div>
-        </div>
-
-        {/* floating cutout-parallax cards */}
-        <motion.div
-          className="nl-glass nl-floaty nl-fcard-a"
-          style={reduce
-            ? { position: 'absolute', left: '6%', bottom: '20%', width: 250, borderRadius: 18, padding: 18 }
-            : { position: 'absolute', left: '5%', bottom: '8%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
-        >
-          <FloatScanCard />
-        </motion.div>
-        <motion.div
-          className="nl-glass nl-floaty nl-fcard-b"
-          style={reduce
-            ? { position: 'absolute', right: '7%', bottom: '12%', width: 230, borderRadius: 18, padding: 18, animationDelay: '1.4s' }
-            : { position: 'absolute', right: '7%', bottom: '12%', width: 230, borderRadius: 18, padding: 18, y: cardBY, x: cardBX }}
-        >
-          <FloatWorkoutCard />
-        </motion.div>
-
-        {/* charcoal-grade copy (cream) */}
-        <HeroCopy
-          lines={lines} onCta={goAuth} accentLast
-          style={reduce ? {} : { opacity: grade, y: headY }}
-        />
-
-        {/* scroll cue */}
-        <motion.div style={reduce ? { display: 'none' } : {
-          position: 'absolute', bottom: 28, left: '50%', x: '-50%', opacity: cueOpacity,
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: MUTED,
-        }}>
-          <span className="nl-kicker">Scroll</span>
-          <ChevronDown size={20} className="nl-cue" />
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-function HeroCopy({ lines, onCta, accentLast, dark, style }) {
-  const ink = dark ? INK : CREAM
-  const sub = dark ? '#57534E' : MUTED
-  return (
-    <motion.div style={{
-      position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-      justifyContent: 'flex-start', padding: '15vh 6vw 0', pointerEvents: 'none', ...style,
-    }}>
-      <div style={{ pointerEvents: 'auto', maxWidth: 1100 }}>
-        {lines.map((l, i) => (
-          <div key={l} style={{ overflow: 'hidden' }}>
-            <motion.h1
-              initial={{ y: '110%' }} animate={{ y: 0 }}
-              transition={{ duration: 0.9, delay: 0.15 + i * 0.14, ease: [0.22, 1, 0.36, 1] }}
-              className="nl-campaign"
-              style={{
-                fontSize: 'clamp(3rem, 9.5vw, 8.5rem)', margin: 0, whiteSpace: 'nowrap',
-                color: accentLast && i === lines.length - 1 ? AMBER_DEEP : ink,
-                textShadow: !dark && accentLast && i === lines.length - 1 ? '0 0 44px rgba(255,107,94,.45)' : 'none',
-              }}
-            >
-              <span className="nl-squeeze">{l}</span>
-            </motion.h1>
-          </div>
-        ))}
-        <motion.p
-          initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          style={{ color: sub, fontSize: '1.05rem', margin: '26px 0 0', maxWidth: 460, lineHeight: 1.6 }}
-        >
-          Track nutrition. Predict health. Train with an AI coach that knows your body.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.85 }}
-          style={{ marginTop: 30, display: 'flex', gap: 14, flexWrap: 'wrap' }}
-        >
-          <button onClick={onCta} className="nl-cta" style={{ padding: '16px 34px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
-            Start training <ArrowRight size={18} />
-          </button>
-        </motion.div>
-      </div>
-    </motion.div>
-  )
-}
-
-function FloatScanCard() {
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <Camera size={15} color={AMBER} />
-        <span className="nl-kicker" style={{ color: MUTED }}>AI food scan</span>
-      </div>
-      <div style={{ fontWeight: 700, fontSize: '.95rem', color: CREAM }}>Masala Dosa</div>
-      <div className="nl-tnum" style={{ color: AMBER, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px' }}>540 <span style={{ fontSize: '.75rem', color: MUTED }}>kcal</span></div>
-      {[['P', 18, 82], ['C', 72, 88], ['F', 21, 46]].map(([k, g, w]) => (
-        <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <span className="nl-tnum" style={{ fontSize: '.68rem', color: MUTED, width: 14 }}>{k}</span>
-          <div style={{ flex: 1, height: 5, borderRadius: 99, background: 'rgba(255,255,255,.08)' }}>
-            <div style={{ width: `${w}%`, height: '100%', borderRadius: 99, background: k === 'P' ? AMBER : 'rgba(255,107,94,.45)' }} />
-          </div>
-          <span className="nl-tnum" style={{ fontSize: '.68rem', color: CREAM }}>{g}g</span>
-        </div>
-      ))}
-      <div style={{ marginTop: 10, fontSize: '.72rem', color: '#2ECC71', fontWeight: 700 }}>✓ Logged to diary</div>
-    </div>
-  )
-}
-
-function FloatWorkoutCard() {
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <Dumbbell size={15} color={AMBER} />
-        <span className="nl-kicker" style={{ color: MUTED }}>Workout</span>
-      </div>
-      <div style={{ fontWeight: 700, fontSize: '.95rem', color: CREAM }}>Push Day</div>
-      <div className="nl-tnum" style={{ color: CREAM, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px' }}>
-        42:18 <span style={{ fontSize: '.75rem', color: MUTED, fontWeight: 500 }}>· <Flame size={12} color={AMBER} style={{ display: 'inline' }} /> 312 kcal</span>
-      </div>
-      <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}>
-        <div style={{ width: '68%', height: '100%', borderRadius: 99, background: `linear-gradient(90deg,${AMBER},${AMBER_DEEP})`, boxShadow: '0 0 12px rgba(255,107,94,.5)' }} />
-      </div>
-      <div className="nl-tnum" style={{ marginTop: 8, fontSize: '.72rem', color: MUTED }}>7 / 10 sets done</div>
-    </div>
   )
 }
 
@@ -467,7 +235,7 @@ function Chapter({ c, reduce }) {
   const content = (
     <div style={{
       maxWidth: 1200, margin: '0 auto', padding: '0 6vw', width: '100%',
-      display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))',
+      display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%, 300px),1fr))',
       gap: 56, alignItems: 'center',
     }}>
       <div>
@@ -490,7 +258,7 @@ function Chapter({ c, reduce }) {
   )
   return (
     <section
-      className="nl-hairline-t"
+      className="nl-chapter nl-hairline-t"
       style={{
         position: reduce ? 'relative' : 'sticky', top: 0, minHeight: '100vh',
         background: c.bg, display: 'flex', alignItems: 'center', padding: '110px 0 70px',
@@ -522,7 +290,12 @@ function CountUp({ to, reduce }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.4 })
   const [val, setVal] = useState(reduce ? to : 0)
   useEffect(() => {
-    if (!inView || reduce) return
+    if (reduce) {
+      setVal(to)
+      return
+    }
+    if (!inView) return
+    setVal(0)
     let raf
     const start = performance.now(), dur = 1300
     const tick = (t) => {
@@ -563,7 +336,7 @@ function StatsBand({ reduce }) {
 }
 
 /* ── Final CTA: the story ends at the product — working auth card ── */
-function AuthChapter() {
+function AuthChapter({ reduce }) {
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -641,7 +414,7 @@ function AuthChapter() {
       position: 'relative', padding: '130px 0', overflow: 'hidden',
       background: `radial-gradient(700px 420px at 50% 0%, rgba(255,107,94,.12), transparent 65%), ${CHARCOAL_2}`,
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 64, alignItems: 'center' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%, 320px),1fr))', gap: 64, alignItems: 'center' }}>
         <div>
           <h2 className="nl-campaign" style={{ fontSize: 'clamp(2.6rem,6vw,5rem)', margin: '0 0 8px', color: CREAM }}>
             <span className="nl-squeeze">STOP SCROLLING.</span>
@@ -655,46 +428,52 @@ function AuthChapter() {
         </div>
 
         <motion.div
-          animate={shake ? { x: [0, -12, 12, -9, 9, -5, 0] } : { x: 0 }}
+          animate={!reduce && shake ? { x: [0, -12, 12, -9, 9, -5, 0] } : { x: 0 }}
           transition={{ duration: 0.45 }}
           className="nl-glass"
-          style={{ borderRadius: 24, padding: 36, width: '100%', maxWidth: 430, justifySelf: 'center' }}
+          style={{ borderRadius: 24, padding: 36, width: '100%', maxWidth: 430, justifySelf: 'center', boxSizing: 'border-box' }}
         >
           <div style={{ textAlign: 'center', marginBottom: 26 }}>
             <span style={{ fontSize: '1.6rem' }}>🥗</span>
             <div className="nl-campaign" style={{ fontSize: '1.5rem', color: CREAM, marginTop: 6 }}>NutriAI</div>
           </div>
 
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,.06)', borderRadius: 99, padding: 4, marginBottom: 24 }}>
-            <button onClick={() => { setActiveTab('login'); setError('') }} style={tabStyle(activeTab === 'login')}>Login</button>
-            <button onClick={() => { setActiveTab('signup'); setError('') }} style={tabStyle(activeTab === 'signup')}>Sign Up</button>
+          <div role="group" aria-label="Authentication mode" style={{ display: 'flex', background: 'rgba(255,255,255,.06)', borderRadius: 99, padding: 4, marginBottom: 24 }}>
+            <button type="button" aria-pressed={activeTab === 'login'} onClick={() => { setActiveTab('login'); setError('') }} style={tabStyle(activeTab === 'login')}>Login</button>
+            <button type="button" aria-pressed={activeTab === 'signup'} onClick={() => { setActiveTab('signup'); setError('') }} style={tabStyle(activeTab === 'signup')}>Sign Up</button>
           </div>
 
           {error && (
-            <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.35)', color: '#F87171', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center' }}>
+            <div id="auth-error" role="alert" aria-live="assertive" style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.35)', color: '#FF9B9B', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center' }}>
               {error}
             </div>
           )}
 
           {activeTab === 'login' ? (
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input type="email" placeholder="Email" className="nl-input" value={loginForm.email}
+            <form onSubmit={handleLogin} aria-describedby={error ? 'auth-error' : undefined} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <label className="nl-label" htmlFor="login-email">Email</label>
+              <input id="login-email" name="email" type="email" autoComplete="email" placeholder="you@example.com" className="nl-input" value={loginForm.email}
                 onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })} required disabled={loading} />
-              <input type="password" placeholder="Password" className="nl-input" value={loginForm.password}
+              <label className="nl-label" htmlFor="login-password">Password</label>
+              <input id="login-password" name="password" type="password" autoComplete="current-password" placeholder="Enter your password" className="nl-input" value={loginForm.password}
                 onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} required disabled={loading} />
               <button type="submit" disabled={loading} className="nl-cta" style={{ padding: '14px', fontSize: '1rem', marginTop: 6 }}>
                 {loading ? 'Signing in…' : 'Sign In'}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input type="text" placeholder="Name" className="nl-input" value={signupForm.name}
+            <form onSubmit={handleSignup} aria-describedby={error ? 'auth-error' : undefined} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <label className="nl-label" htmlFor="signup-name">Name</label>
+              <input id="signup-name" name="name" type="text" autoComplete="name" placeholder="Your name" className="nl-input" value={signupForm.name}
                 onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })} required disabled={loading} />
-              <input type="email" placeholder="Email" className="nl-input" value={signupForm.email}
+              <label className="nl-label" htmlFor="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" autoComplete="email" placeholder="you@example.com" className="nl-input" value={signupForm.email}
                 onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })} required disabled={loading} />
-              <input type="password" placeholder="Password" className="nl-input" value={signupForm.password}
+              <label className="nl-label" htmlFor="signup-password">Password</label>
+              <input id="signup-password" name="password" type="password" autoComplete="new-password" placeholder="Create a password" className="nl-input" value={signupForm.password}
                 onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} required disabled={loading} />
-              <input type="password" placeholder="Confirm password" className="nl-input" value={signupForm.confirmPassword}
+              <label className="nl-label" htmlFor="signup-confirm-password">Confirm password</label>
+              <input id="signup-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" placeholder="Repeat your password" className="nl-input" value={signupForm.confirmPassword}
                 onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} required disabled={loading} />
               <button type="submit" disabled={loading} className="nl-cta" style={{ padding: '14px', fontSize: '1rem', marginTop: 6 }}>
                 {loading ? 'Creating account…' : 'Create Account'}
@@ -737,7 +516,7 @@ export default function LandingPage() {
       <Hero reduce={reduce} />
       <ChapterDeck reduce={reduce} />
       <StatsBand reduce={reduce} />
-      <AuthChapter />
+      <AuthChapter reduce={reduce} />
       <Footer />
     </div>
   )
