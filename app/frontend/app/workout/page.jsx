@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import useIsMobile from '../../lib/useIsMobile'
 import MuscleBodyMap from '../../components/workout/MuscleBodyMap'
+import EditorialMuscleExplorer from '../../components/workout/EditorialMuscleExplorer'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 // PageWrapper removed to fix double-wrap bug
 
@@ -302,15 +303,6 @@ const WORKOUTS = [
     ]
   },
 ]
-
-const MUSCLE_GROUPS = {
-  'Chest': { color:'#FF6B5E', exercises:['Bench Press','Push Up','Fly','Dip'] },
-  'Back':  { color:'#15B2CF', exercises:['Pull Up','Row','Deadlift','Pulldown'] },
-  'Legs':  { color:'#7B61FF', exercises:['Squat','Lunge','Press','Curl'] },
-  'Shoulders':{ color:'#FFB020', exercises:['Press','Raise','Upright Row','Shrug'] },
-  'Arms':  { color:'#FFD700', exercises:['Curl','Pushdown','Extension','Dip'] },
-  'Core':  { color:'#F472B6', exercises:['Plank','Crunch','Twist','Raise'] },
-}
 
 const WEEKLY_PLAN = [
   { day:'Mon', workout:'Upper Body Strength', status:'done',    calories:320 },
@@ -1249,7 +1241,7 @@ export default function WorkoutPage() {
               </motion.div>
             )}
 
-            {/* ═══ MUSCLE MAP TAB ═══ */}
+            {/* ═══ MUSCLE EXPLORER TAB ═══ */}
             {activeTab === 'muscles' && (
               <motion.div
                 key="muscles"
@@ -1257,77 +1249,7 @@ export default function WorkoutPage() {
                 animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'20px' }}>
-                  {Object.entries(MUSCLE_GROUPS).map(([muscle, data], i) => {
-                    const relatedWorkouts = WORKOUTS.filter(w => w.muscles.some(m => m.toLowerCase().includes(muscle.toLowerCase())))
-                    return (
-                      <motion.div
-                        key={muscle}
-                        initial={{ opacity:0, scale:0.9 }}
-                        animate={{ opacity:1, scale:1 }}
-                        transition={{ delay:i*0.08 }}
-                        whileHover={{ y:-6, scale:1.02 }}
-                        style={{
-                          ...card, padding:'24px',
-                          background:`${data.color}06`,
-                          border:`1px solid ${data.color}20`,
-                          cursor:'pointer'
-                        }}
-                      >
-                        <div style={{
-                          display:'flex', justifyContent:'space-between',
-                          alignItems:'center', marginBottom:'16px'
-                        }}>
-                          <h3 style={{
-                            fontFamily:"'Clash Display',sans-serif",
-                            color: data.color, fontSize:'1.2rem',
-                            fontWeight:700, margin:0
-                          }}>{muscle}</h3>
-                          <div style={{
-                            background:`${data.color}20`,
-                            border:`1px solid ${data.color}30`,
-                            borderRadius:'99px', padding:'4px 12px',
-                            color: data.color, fontSize:'0.75rem', fontWeight:700
-                          }}>{relatedWorkouts.length} workouts</div>
-                        </div>
-
-                        {/* Key exercises */}
-                        <div style={{ marginBottom:'16px' }}>
-                          <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'8px' }}>
-                            KEY EXERCISES
-                          </div>
-                          {data.exercises.map(ex => (
-                            <div key={ex} style={{
-                              display:'flex', alignItems:'center', gap:'8px',
-                              marginBottom:'5px'
-                            }}>
-                              <span style={{ color:data.color, fontSize:'0.6rem' }}>▶</span>
-                              <span style={{ color:'var(--text-faint)', fontSize:'0.8rem' }}>{ex}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Volume this week */}
-                        <div>
-                          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'5px' }}>
-                            <span style={{ color:'var(--text-muted)', fontSize:'0.75rem' }}>Weekly Volume</span>
-                            <span style={{ color:data.color, fontSize:'0.75rem', fontWeight:700 }}>
-                              {stablePct(muscle)}%
-                            </span>
-                          </div>
-                          <div style={{ height:'6px', background:'var(--border)', borderRadius:'99px', overflow:'hidden' }}>
-                            <motion.div
-                              initial={{ width:0 }}
-                              animate={{ width:`${stablePct(muscle)}%` }}
-                              transition={{ duration:1.5, delay:i*0.1 }}
-                              style={{ height:'100%', background:data.color, borderRadius:'99px', boxShadow:`0 0 8px ${data.color}60` }}
-                            />
-                          </div>
-                        </div>
-                      </motion.div>
-                    )
-                  })}
-                </div>
+                <EditorialMuscleExplorer onStartWorkout={startWorkout} />
               </motion.div>
             )}
 

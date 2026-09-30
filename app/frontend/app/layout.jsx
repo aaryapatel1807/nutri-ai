@@ -18,6 +18,10 @@ export default function RootLayout({ children }) {
           rel="stylesheet" 
           href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600&f[]=satoshi@400,500,700&display=swap"
         />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap"
+        />
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('nutriai_theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}})()` }} />
       </head>
       <body className={inter.className}>
