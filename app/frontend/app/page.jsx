@@ -6,7 +6,7 @@ import {
 import { useInView } from 'react-intersection-observer'
 import {
   Camera, MessageCircle, Dumbbell, Flame, ArrowRight, ChevronDown, Activity, Zap,
-  Eye, EyeOff, Mail, Lock, User,
+  Eye, EyeOff, Mail, Lock, User, Wifi,
 } from 'lucide-react'
 import { auth } from '../lib/api'
 
@@ -80,12 +80,15 @@ function Nav() {
       background: 'rgba(20,18,16,.92)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
       borderBottom: `1px solid ${HAIRLINE}`,
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: '1.4rem' }}>🥗</span>
-          <span className="nl-campaign" style={{ fontSize: '1.15rem', letterSpacing: '.02em' }}>NutriAI</span>
+          <span style={{ fontSize: '1.25rem' }}>🥗</span>
+          <span className="nl-campaign" style={{ fontSize: '1rem', letterSpacing: '.24em' }}>NutriAI</span>
         </div>
-        <button onClick={goAuth} className="nl-cta" style={{ padding: '10px 22px', fontSize: '.85rem' }}>
+        <button onClick={goAuth} style={{
+          background: 'none', border: 'none', cursor: 'pointer', color: CREAM, fontSize: '.85rem', fontWeight: 600,
+          textDecoration: 'underline', textUnderlineOffset: 4, textDecorationColor: 'rgba(255,255,255,.35)',
+        }}>
           Sign in
         </button>
       </div>
@@ -270,6 +273,53 @@ function FloatWorkoutCard() {
         <div style={{ width: '68%', height: '100%', borderRadius: 99, background: `linear-gradient(90deg,${AMBER},${AMBER_DEEP})`, boxShadow: '0 0 12px rgba(255,107,94,.5)' }} />
       </div>
       <div className="nl-tnum" style={{ marginTop: 8, fontSize: '.72rem', color: '#D6D3D1' }}>7 / 10 sets done</div>
+    </div>
+  )
+}
+
+/* ── AUTH: phone mockup with the two cards on its screen ───────────── */
+function AuthPhoneMockup() {
+  return (
+    <div style={{ position: 'relative', width: 'min(80%,300px)' }}>
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: -70, pointerEvents: 'none',
+        background: 'radial-gradient(circle, rgba(255,107,94,.22) 0%, transparent 65%)', filter: 'blur(28px)',
+      }} />
+      <div style={{
+        position: 'relative', borderRadius: 46, padding: 11,
+        background: 'linear-gradient(165deg,#333336 0%,#0b0b0d 60%)',
+        border: '1px solid rgba(255,255,255,.16)',
+        boxShadow: '0 44px 90px -24px rgba(0,0,0,.75), inset 0 1px 1px rgba(255,255,255,.18)',
+      }}>
+        <div style={{ position: 'relative', borderRadius: 36, overflow: 'hidden', background: '#101013' }}>
+          <div aria-hidden="true" style={{
+            position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
+            width: 92, height: 25, borderRadius: 99, background: '#000', zIndex: 2,
+          }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px 24px 4px', color: '#fff' }}>
+            <span className="nl-tnum" style={{ fontSize: '.72rem', fontWeight: 600 }}>9:41</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+                {[4, 7, 10, 13].map((h) => (
+                  <span key={h} style={{ width: 3, height: h, borderRadius: 1, background: '#fff' }} />
+                ))}
+              </span>
+              <Wifi size={13} color="#fff" />
+              <span style={{ width: 22, height: 11, borderRadius: 3, border: '1px solid rgba(255,255,255,.7)', position: 'relative', display: 'inline-block' }}>
+                <span style={{ position: 'absolute', inset: 1.5, width: '70%', borderRadius: 1.5, background: '#fff' }} />
+              </span>
+            </span>
+          </div>
+          <div style={{ padding: '12px 14px 22px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ borderRadius: 18, padding: '16px 16px 14px', background: 'rgba(255,255,255,.055)', border: '1px solid rgba(255,255,255,.11)' }}>
+              <FloatScanCard />
+            </div>
+            <div style={{ borderRadius: 18, padding: '16px 16px 14px', background: 'rgba(255,255,255,.055)', border: '1px solid rgba(255,255,255,.11)' }}>
+              <FloatWorkoutCard />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -651,7 +701,13 @@ function AuthChapter() {
     <section id="auth" className="nl-hairline-t" style={{
       position: 'relative', padding: '120px 0', overflow: 'hidden', background: CHARCOAL_2,
     }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 56, alignItems: 'center' }} className="nl-auth-grid">
+      {/* aurora wash merged across the whole section */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', left: '-12%', top: '-22%', width: '62%', height: '82%', background: 'radial-gradient(ellipse, rgba(255,107,94,.17) 0%, transparent 65%)', filter: 'blur(70px)' }} />
+        <div style={{ position: 'absolute', right: '-16%', bottom: '-28%', width: '66%', height: '88%', background: 'radial-gradient(ellipse, rgba(255,176,32,.14) 0%, transparent 65%)', filter: 'blur(70px)' }} />
+        <div style={{ position: 'absolute', left: '30%', top: '28%', width: '46%', height: '52%', background: 'radial-gradient(ellipse, rgba(123,97,255,.09) 0%, transparent 65%)', filter: 'blur(80px)' }} />
+      </div>
+      <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 56, alignItems: 'center' }} className="nl-auth-grid">
 
         {/* frosted form card with ambient blobs */}
         <div style={{ position: 'relative', width: '100%', maxWidth: 540, justifySelf: 'center' }}>
@@ -727,25 +783,12 @@ function AuthChapter() {
           </motion.div>
         </div>
 
-        {/* decorative panel — ring motif + typewriter quote */}
+        {/* decorative panel — phone mockup + typewriter quote */}
         <div className="nl-auth-deco" style={{
-          position: 'relative', borderRadius: 36, overflow: 'hidden', minHeight: 560,
-          background: 'linear-gradient(140deg,#191410 0%,#241A13 55%,#2E1F14 100%)',
-          border: '1px solid rgba(255,255,255,.08)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 48,
+          position: 'relative', minHeight: 560,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 0',
         }}>
-          <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-            <div style={{ position: 'absolute', left: '50%', top: '38%', transform: 'translate(-50%,-50%)', width: 420, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,107,94,.16) 0%, transparent 65%)', filter: 'blur(20px)' }} />
-          </div>
-          <svg viewBox="0 0 200 200" style={{ width: 'min(72%,340px)', opacity: .9 }} aria-hidden="true">
-            {[88, 72, 56].map((r, i) => (
-              <circle key={r} cx="100" cy="100" r={r} fill="none"
-                stroke={i === 0 ? AMBER : 'rgba(255,176,32,.35)'} strokeWidth={i === 0 ? 7 : 4}
-                strokeDasharray={i === 0 ? '420 130' : undefined} strokeLinecap="round"
-                transform="rotate(-90 100 100)" style={i === 0 ? { filter: 'drop-shadow(0 0 10px rgba(255,107,94,.55))' } : undefined} />
-            ))}
-            <circle cx="100" cy="12" r="6" fill={AMBER} style={{ filter: 'drop-shadow(0 0 8px rgba(255,107,94,.9))' }} />
-          </svg>
+          <AuthPhoneMockup />
           <blockquote style={{ margin: '36px 0 0', textAlign: 'center', maxWidth: 380 }}>
             <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: CREAM, lineHeight: 1.5, minHeight: '3.6em' }}>
               &ldquo;{quote}<span style={{ color: AMBER }}>|</span>&rdquo;
@@ -764,15 +807,8 @@ function AuthChapter() {
 /* ── Minimal footer ─────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="nl-hairline-t" style={{ background: '#100E0C', padding: '34px 0' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: '1.2rem' }}>🥗</span>
-          <span className="nl-campaign" style={{ fontSize: '1rem', color: CREAM }}>NutriAI</span>
-        </div>
-        <div className="nl-kicker" style={{ color: MUTED }}>Train. Log. Know.</div>
-        <div className="nl-tnum" style={{ color: MUTED, fontSize: '.8rem' }}>© 2026 NutriAI</div>
-      </div>
+    <footer className="nl-hairline-t" style={{ background: '#100E0C', padding: '30px 0', textAlign: 'center' }}>
+      <div className="nl-kicker" style={{ color: MUTED, letterSpacing: '.38em' }}>Train&nbsp;&nbsp;·&nbsp;&nbsp;Log&nbsp;&nbsp;·&nbsp;&nbsp;Know</div>
     </footer>
   )
 }
