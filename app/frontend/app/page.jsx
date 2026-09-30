@@ -35,7 +35,7 @@ const LANDING_CSS = `
 .nl-kicker { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.14em; }
 .nl-hairline { border:1px solid ${HAIRLINE}; }
 .nl-hairline-t { border-top:1px solid ${HAIRLINE}; }
-.nl-cta { background:linear-gradient(135deg,#FF6B5E,#FFB020 52%,#7B61FF); color:#FFFFFF; font-weight:800; border:none; border-radius:14px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 rgba(255,107,94,0); }
+.nl-cta { background:linear-gradient(135deg,#FF6B5E,#FFB020 52%,#7B61FF); color:#FFFFFF; font-weight:800; border:none; border-radius:14px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; box-shadow:0 0 0 rgba(255,107,94,0); white-space:nowrap; }
 .nl-cta:hover { box-shadow:0 0 32px rgba(255,107,94,.35); }
 .nl-cta:active { transform:scale(.97); }
 .nl-cta:disabled { opacity:.6; cursor:wait; }
@@ -43,7 +43,7 @@ const LANDING_CSS = `
 .nl-input::placeholder { color:#6B6560; }
 .nl-input:focus { border-color:rgba(255,107,94,.55); }
 .nl-input:disabled { opacity:.6; }
-.nl-glass { background:rgba(30,26,22,.62); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid ${HAIRLINE}; }
+.nl-glass { background:linear-gradient(160deg, rgba(34,29,24,.94), rgba(24,20,17,.9)); backdrop-filter:blur(14px) saturate(1.25); -webkit-backdrop-filter:blur(14px) saturate(1.25); border:1px solid rgba(255,255,255,.16); box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 18px 44px rgba(20,14,10,.38); }
 @keyframes nl-scan { 0%{top:8%} 50%{top:88%} 100%{top:8%} }
 @keyframes nl-floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
 @keyframes nl-cue { 0%,100%{transform:translateY(0);opacity:.9} 50%{transform:translateY(10px);opacity:.4} }
@@ -56,9 +56,12 @@ const LANDING_CSS = `
   .nl-scanline, .nl-floaty, .nl-cue, .nl-pulse-glow { animation:none !important; }
 }
 @media (max-width:768px) {
-  .nl-hero-ring { right:-16% !important; top:5% !important; opacity:.42; transform:scale(.58); transform-origin:top right; }
-  .nl-fcard-a { left:4% !important; bottom:5% !important; width:205px !important; }
+  .nl-hero-copy-inner { max-width:none !important; }
+  .nl-visual { width:100% !important; top:auto !important; bottom:0 !important; height:64% !important; }
+  .nl-hero-ring { right:-22% !important; top:2% !important; opacity:.42; transform:scale(.58); transform-origin:top right; }
+  .nl-fcard-a { left:4% !important; right:auto !important; bottom:5% !important; width:205px !important; }
   .nl-fcard-b { right:4% !important; bottom:31% !important; width:195px !important; opacity:.94; }
+  .nl-cue-wrap { left:auto !important; right:18px !important; bottom:18px !important; transform:none !important; }
 }
 `
 
@@ -71,7 +74,7 @@ function Nav() {
       background: 'rgba(20,18,16,.92)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
       borderBottom: `1px solid ${HAIRLINE}`,
     }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: '1.4rem' }}>🥗</span>
           <span className="nl-campaign" style={{ fontSize: '1.15rem', letterSpacing: '.02em' }}>NutriAI</span>
@@ -84,11 +87,14 @@ function Nav() {
   )
 }
 
-/* ── Scroll-driven 3D blue ring (layered SVG torus illusion) ────── */
-function Ring3D({ spin, arc, size = 440 }) {
+/* ── Scroll-driven 3D ring: one volumetric torus + live day-fuel readout ─ */
+function Ring3D({ spin, arc, gradeMV, size = 440 }) {
   const R = 80
   const C = 2 * Math.PI * R
   const dashOffset = useTransform(arc, (a) => C * (1 - Math.min(1, Math.max(0, a))))
+  const pct = useTransform(arc, (a) => Math.round(100 * Math.min(1, Math.max(0, a))))
+  const fallbackGrade = useMotionValue(0)
+  const readoutColor = useTransform(gradeMV || fallbackGrade, [0, 1], [INK, CREAM])
   const ringR = (R / 200) * size
   return (
     <div style={{ width: size, height: size, perspective: 1100, position: 'relative' }}>
@@ -103,19 +109,22 @@ function Ring3D({ spin, arc, size = 440 }) {
           width: '100%', height: '100%', position: 'relative',
           transform: 'rotateX(56deg)', transformStyle: 'preserve-3d',
         }}>
-          {[-18, 0, 18].map((z) => (
-            <svg key={z} viewBox="0 0 200 200" style={{ position: 'absolute', inset: 0, transform: `translateZ(${z}px)` }}>
-              <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(170,110,35,.32)" strokeWidth="13" />
-              <motion.circle
-                cx="100" cy="100" r={R} fill="none" stroke={AMBER} strokeWidth="13" strokeLinecap="round"
-                strokeDasharray={C}
-                style={{
-                  strokeDashoffset: dashOffset, transform: 'rotate(-90deg)', transformOrigin: '100px 100px',
-                  filter: 'drop-shadow(0 0 9px rgba(255,107,94,.6))',
-                }}
-              />
-            </svg>
-          ))}
+          {[-27, -18, -9, 0, 9, 18, 27].map((z) => {
+            const depth = (z + 27) / 54 // 0 = back → 1 = front
+            return (
+              <svg key={z} viewBox="0 0 200 200" style={{ position: 'absolute', inset: 0, transform: `translateZ(${z}px)`, opacity: 0.5 + depth * 0.5 }}>
+                <circle cx="100" cy="100" r={R} fill="none" stroke="rgba(170,110,35,.32)" strokeWidth="13" />
+                <motion.circle
+                  cx="100" cy="100" r={R} fill="none" stroke={AMBER} strokeWidth="13" strokeLinecap="round"
+                  strokeDasharray={C}
+                  style={{
+                    strokeDashoffset: dashOffset, transform: 'rotate(-90deg)', transformOrigin: '100px 100px',
+                    filter: 'drop-shadow(0 0 9px rgba(255,107,94,.6))',
+                  }}
+                />
+              </svg>
+            )
+          })}
           {/* satellite orbiting in the ring plane */}
           <motion.div style={{ position: 'absolute', left: '50%', top: '50%', width: 0, height: 0, rotate: spin }}>
             <div style={{
@@ -125,6 +134,11 @@ function Ring3D({ spin, arc, size = 440 }) {
           </motion.div>
         </div>
       </motion.div>
+      {/* day-fuel readout — ties the ring's progress to the nutrition story */}
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+        <motion.span className="nl-tnum" style={{ color: readoutColor, fontWeight: 800, fontSize: '2.4rem', lineHeight: 1 }}>{pct}</motion.span>
+        <motion.span className="nl-kicker" style={{ color: readoutColor, opacity: .6, marginTop: 6 }}>day fuel</motion.span>
+      </div>
     </div>
   )
 }
@@ -149,14 +163,14 @@ function Hero({ reduce }) {
   const grade = useTransform(scrollYProgress, [0.25, 0.75], [0, 1])
   const ringSpin = useTransform(scrollYProgress, [0, 1], [0, 320])
   const ringArc = useTransform(scrollYProgress, [0, 0.92], [0.28, 1])
-  const cardAY = useTransform(scrollYProgress, [0, 1], [0, -150])
-  const cardBY = useTransform(scrollYProgress, [0, 1], [0, 130])
+  const cardAY = useTransform(scrollYProgress, [0, 1], [0, -80])
+  const cardBY = useTransform(scrollYProgress, [0, 1], [0, 90])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
   const headY = useTransform(scrollYProgress, [0, 1], [0, -90])
-  const cardAX = useTransform(sx, (v) => v * 46)
-  const cardAYc = useTransform(sy, (v) => v * 30)
-  const cardBX = useTransform(sx, (v) => v * -60)
-  const cardBYc = useTransform(sy, (v) => v * -38)
+  const cardAX = useTransform(sx, (v) => v * 18)
+  const cardAYc = useTransform(sy, (v) => v * 14)
+  const cardBX = useTransform(sx, (v) => v * -24)
+  const cardBYc = useTransform(sy, (v) => v * -18)
   const ringX = useTransform(sx, (v) => v * 26)
   const ringY = useTransform(sy, (v) => v * 20)
   const paperFade = useTransform(grade, [0, 1], [1, 0])
@@ -177,7 +191,7 @@ function Hero({ reduce }) {
         {/* paper-grade base copy (dark ink) */}
         <HeroCopy
           dark
-          style={reduce ? { opacity: 0, pointerEvents: 'none' } : { opacity: paperFade, y: headY }}
+          style={reduce ? {} : { opacity: paperFade, y: headY }}
           lines={lines} onCta={goAuth} accentLast
         />
 
@@ -186,44 +200,49 @@ function Hero({ reduce }) {
           <motion.div style={{ position: 'absolute', inset: 0, background: CHARCOAL, opacity: grade, pointerEvents: 'none' }} />
         )}
 
-        {/* 3D ring layer */}
-        <div className="nl-hero-ring" style={{ position: 'absolute', right: '4%', top: '15%' }}>
-          <motion.div style={reduce ? { opacity: .9 } : { x: ringX, y: ringY, opacity: .95 }}>
-            <Ring3D spin={spinMV} arc={arcMV} size={440} />
+        {/* right visual zone — ring + cards stay inside; the left text area is protected */}
+        <div className="nl-visual" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '46%', overflow: 'hidden', pointerEvents: 'none' }}>
+          <div className="nl-hero-ring" style={{ position: 'absolute', right: '-8%', top: '5%' }}>
+            <motion.div style={reduce ? { opacity: .9 } : { x: ringX, y: ringY, opacity: .95 }}>
+              <Ring3D spin={spinMV} arc={arcMV} gradeMV={reduce ? null : grade} size={440} />
+            </motion.div>
+          </div>
+
+          {/* floating cutout-parallax cards — animate inside the zone only */}
+          <motion.div
+            className="nl-glass nl-floaty nl-fcard-a"
+            style={reduce
+              ? { position: 'absolute', right: '44%', bottom: '12%', width: 250, borderRadius: 18, padding: 18 }
+              : { position: 'absolute', right: '44%', bottom: '12%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
+          >
+            <FloatScanCard />
+          </motion.div>
+          <motion.div
+            className="nl-glass nl-floaty nl-fcard-b"
+            style={reduce
+              ? { position: 'absolute', right: '5%', bottom: '34%', width: 230, borderRadius: 18, padding: 18, animationDelay: '1.4s' }
+              : { position: 'absolute', right: '5%', bottom: '34%', width: 230, borderRadius: 18, padding: 18, y: cardBY, x: cardBX }}
+          >
+            <FloatWorkoutCard />
           </motion.div>
         </div>
-
-        {/* floating cutout-parallax cards */}
-        <motion.div
-          className="nl-glass nl-floaty nl-fcard-a"
-          style={reduce
-            ? { position: 'absolute', left: '6%', bottom: '20%', width: 250, borderRadius: 18, padding: 18 }
-            : { position: 'absolute', left: '5%', bottom: '8%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
-        >
-          <FloatScanCard />
-        </motion.div>
-        <motion.div
-          className="nl-glass nl-floaty nl-fcard-b"
-          style={reduce
-            ? { position: 'absolute', right: '7%', bottom: '12%', width: 230, borderRadius: 18, padding: 18, animationDelay: '1.4s' }
-            : { position: 'absolute', right: '7%', bottom: '12%', width: 230, borderRadius: 18, padding: 18, y: cardBY, x: cardBX }}
-        >
-          <FloatWorkoutCard />
-        </motion.div>
 
         {/* charcoal-grade copy (cream) */}
         <HeroCopy
           lines={lines} onCta={goAuth} accentLast
-          style={reduce ? {} : { opacity: grade, y: headY }}
+          style={reduce ? { opacity: 0, pointerEvents: 'none' } : { opacity: grade, y: headY }}
         />
 
         {/* scroll cue */}
-        <motion.div style={reduce ? { display: 'none' } : {
-          position: 'absolute', bottom: 28, left: '50%', x: '-50%', opacity: cueOpacity,
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: MUTED,
+        <motion.div className="nl-cue-wrap" style={reduce ? { display: 'none' } : {
+          position: 'absolute', bottom: 44, left: '50%', x: '-50%', opacity: cueOpacity,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+          color: CREAM, background: 'rgba(20,18,16,.55)', border: `1px solid ${HAIRLINE}`,
+          borderRadius: 999, padding: '12px 22px', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+          boxShadow: '0 8px 28px rgba(20,14,10,.4)',
         }}>
           <span className="nl-kicker">Scroll</span>
-          <ChevronDown size={20} className="nl-cue" />
+          <ChevronDown size={26} className="nl-cue" color={AMBER_DEEP} />
         </motion.div>
       </div>
     </section>
@@ -238,7 +257,7 @@ function HeroCopy({ lines, onCta, accentLast, dark, style }) {
       position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
       justifyContent: 'flex-start', padding: '15vh 6vw 0', pointerEvents: 'none', ...style,
     }}>
-      <div style={{ pointerEvents: 'auto', maxWidth: 1100 }}>
+      <div className="nl-hero-copy-inner" style={{ pointerEvents: 'auto', maxWidth: 'min(760px, 52vw)' }}>
         {lines.map((l, i) => (
           <div key={l} style={{ overflow: 'hidden' }}>
             <motion.h1
@@ -246,7 +265,7 @@ function HeroCopy({ lines, onCta, accentLast, dark, style }) {
               transition={{ duration: 0.9, delay: 0.15 + i * 0.14, ease: [0.22, 1, 0.36, 1] }}
               className="nl-campaign"
               style={{
-                fontSize: 'clamp(3rem, 9.5vw, 8.5rem)', margin: 0, whiteSpace: 'nowrap',
+                fontSize: 'clamp(2.75rem, min(9.5vw, 12.5vh), 8.5rem)', margin: 0, whiteSpace: 'nowrap',
                 color: accentLast && i === lines.length - 1 ? AMBER_DEEP : ink,
                 textShadow: !dark && accentLast && i === lines.length - 1 ? '0 0 44px rgba(255,107,94,.45)' : 'none',
               }}
@@ -268,7 +287,7 @@ function HeroCopy({ lines, onCta, accentLast, dark, style }) {
           style={{ marginTop: 30, display: 'flex', gap: 14, flexWrap: 'wrap' }}
         >
           <button onClick={onCta} className="nl-cta" style={{ padding: '16px 34px', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 10 }}>
-            Start training <ArrowRight size={18} />
+            Start tracking free <ArrowRight size={18} />
           </button>
         </motion.div>
       </div>
@@ -281,20 +300,20 @@ function FloatScanCard() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <Camera size={15} color={AMBER} />
-        <span className="nl-kicker" style={{ color: MUTED }}>AI food scan</span>
+        <span className="nl-kicker" style={{ color: '#D6D3D1' }}>AI food scan</span>
       </div>
       <div style={{ fontWeight: 700, fontSize: '.95rem', color: CREAM }}>Masala Dosa</div>
-      <div className="nl-tnum" style={{ color: AMBER, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px' }}>540 <span style={{ fontSize: '.75rem', color: MUTED }}>kcal</span></div>
+      <div className="nl-tnum" style={{ color: AMBER, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px' }}>540 <span style={{ fontSize: '.75rem', color: '#D6D3D1' }}>kcal</span></div>
       {[['P', 18, 82], ['C', 72, 88], ['F', 21, 46]].map(([k, g, w]) => (
         <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-          <span className="nl-tnum" style={{ fontSize: '.68rem', color: MUTED, width: 14 }}>{k}</span>
+          <span className="nl-tnum" style={{ fontSize: '.68rem', color: '#D6D3D1', width: 14 }}>{k}</span>
           <div style={{ flex: 1, height: 5, borderRadius: 99, background: 'rgba(255,255,255,.08)' }}>
             <div style={{ width: `${w}%`, height: '100%', borderRadius: 99, background: k === 'P' ? AMBER : 'rgba(255,107,94,.45)' }} />
           </div>
           <span className="nl-tnum" style={{ fontSize: '.68rem', color: CREAM }}>{g}g</span>
         </div>
       ))}
-      <div style={{ marginTop: 10, fontSize: '.72rem', color: '#2ECC71', fontWeight: 700 }}>✓ Logged to diary</div>
+      <div style={{ marginTop: 10, fontSize: '.72rem', color: '#4ADE80', fontWeight: 700 }}>✓ Logged to diary</div>
     </div>
   )
 }
@@ -304,16 +323,16 @@ function FloatWorkoutCard() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <Dumbbell size={15} color={AMBER} />
-        <span className="nl-kicker" style={{ color: MUTED }}>Workout</span>
+        <span className="nl-kicker" style={{ color: '#D6D3D1' }}>Workout</span>
       </div>
       <div style={{ fontWeight: 700, fontSize: '.95rem', color: CREAM }}>Push Day</div>
       <div className="nl-tnum" style={{ color: CREAM, fontWeight: 800, fontSize: '1.35rem', margin: '4px 0 10px' }}>
-        42:18 <span style={{ fontSize: '.75rem', color: MUTED, fontWeight: 500 }}>· <Flame size={12} color={AMBER} style={{ display: 'inline' }} /> 312 kcal</span>
+        42:18 <span style={{ fontSize: '.75rem', color: '#D6D3D1', fontWeight: 500 }}>· <Flame size={12} color={AMBER} style={{ display: 'inline' }} /> 312 kcal</span>
       </div>
       <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}>
         <div style={{ width: '68%', height: '100%', borderRadius: 99, background: `linear-gradient(90deg,${AMBER},${AMBER_DEEP})`, boxShadow: '0 0 12px rgba(255,107,94,.5)' }} />
       </div>
-      <div className="nl-tnum" style={{ marginTop: 8, fontSize: '.72rem', color: MUTED }}>7 / 10 sets done</div>
+      <div className="nl-tnum" style={{ marginTop: 8, fontSize: '.72rem', color: '#D6D3D1' }}>7 / 10 sets done</div>
     </div>
   )
 }
