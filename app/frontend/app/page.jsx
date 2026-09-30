@@ -6,6 +6,7 @@ import {
 import { useInView } from 'react-intersection-observer'
 import {
   Camera, MessageCircle, Dumbbell, Flame, ArrowRight, ChevronDown, Activity, Zap,
+  Eye, EyeOff, Mail, Lock, User,
 } from 'lucide-react'
 import { auth } from '../lib/api'
 
@@ -54,6 +55,12 @@ const LANDING_CSS = `
 .nl-pulse-glow { animation:nl-pulse-glow 2.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .nl-scanline, .nl-floaty, .nl-cue, .nl-pulse-glow { animation:none !important; }
+}
+.nl-authinput:focus { border-color:rgba(255,107,94,.55) !important; background:rgba(255,255,255,.09) !important; }
+.nl-authinput::placeholder { color:#6B6560; }
+@media (max-width:960px) {
+  .nl-auth-grid { grid-template-columns:1fr !important; }
+  .nl-auth-deco { display:none !important; }
 }
 @media (max-width:768px) {
   .nl-hero-copy-inner { max-width:none !important; }
@@ -582,14 +589,70 @@ function StatsBand({ reduce }) {
   )
 }
 
-/* ── Final CTA: the story ends at the product — working auth card ── */
+/* ── Auth: LearnFlow-style split card — frosted form + decorative panel ── */
+function useTypewriter(text, speed = 42) {
+  const [out, setOut] = useState('')
+  useEffect(() => {
+    setOut('')
+    let i = 0
+    const id = setInterval(() => {
+      i += 1
+      setOut(text.slice(0, i))
+      if (i >= text.length) clearInterval(id)
+    }, speed)
+    return () => clearInterval(id)
+  }, [text])
+  return out
+}
+
+const AUTH_QUOTES = {
+  login: { text: 'Welcome back. Your streak missed you.', author: 'NutriAI' },
+  signup: { text: 'Small logs, logged daily, beat perfect plans.', author: 'NutriAI' },
+}
+
+function AuthInput({ icon: Icon, ...props }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <Icon size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#8A847E', pointerEvents: 'none' }} />
+      <input {...props} className="nl-authinput" style={{
+        width: '100%', padding: '13px 14px 13px 42px', borderRadius: 14,
+        border: '1px solid rgba(255,255,255,.14)', background: 'rgba(255,255,255,.06)',
+        color: CREAM, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
+      }} />
+    </div>
+  )
+}
+
+function AuthPasswordInput({ show, onToggleShow, ...props }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <Lock size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#8A847E', pointerEvents: 'none' }} />
+      <input {...props} type={show ? 'text' : 'password'} className="nl-authinput" style={{
+        width: '100%', padding: '13px 44px 13px 42px', borderRadius: 14,
+        border: '1px solid rgba(255,255,255,.14)', background: 'rgba(255,255,255,.06)',
+        color: CREAM, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
+      }} />
+      <button type="button" onClick={onToggleShow} aria-label={show ? 'Hide password' : 'Show password'} style={{
+        position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none',
+        color: '#8A847E', cursor: 'pointer', padding: 8, display: 'flex',
+      }}>
+        {show ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  )
+}
+
 function AuthChapter() {
-  const [activeTab, setActiveTab] = useState('login')
+  const [isSignIn, setIsSignIn] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [shake, setShake] = useState(false)
+  const [showPw, setShowPw] = useState(false)
+  const [showPw2, setShowPw2] = useState(false)
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
+
+  const quote = useTypewriter(AUTH_QUOTES[isSignIn ? 'login' : 'signup'].text)
 
   // Already signed in? Skip straight to the product.
   // Also restores an auth error across the api 401-interceptor reload.
@@ -614,14 +677,18 @@ function AuthChapter() {
     setTimeout(() => setShake(false), 600)
   }
 
+  const persist = (data) => {
+    localStorage.setItem('nutriai_token', data.token)
+    localStorage.setItem('nutriai_user', JSON.stringify(data.user))
+    window.location.href = '/dashboard'
+  }
+
   const handleLogin = async (e) => {
     e?.preventDefault()
     setLoading(true); setError('')
     try {
       const { data } = await auth.login({ email: loginForm.email, password: loginForm.password })
-      localStorage.setItem('nutriai_token', data.token)
-      localStorage.setItem('nutriai_user', JSON.stringify(data.user))
-      window.location.href = '/dashboard'
+      persist(data)
     } catch (err) {
       fail(err.response?.data?.error || 'Login failed')
     } finally {
@@ -639,9 +706,7 @@ function AuthChapter() {
     }
     try {
       const { data } = await auth.register({ name: signupForm.name, email: signupForm.email, password: signupForm.password })
-      localStorage.setItem('nutriai_token', data.token)
-      localStorage.setItem('nutriai_user', JSON.stringify(data.user))
-      window.location.href = '/dashboard'
+      persist(data)
     } catch (err) {
       fail(err.response?.data?.error || 'Registration failed')
     } finally {
@@ -649,87 +714,123 @@ function AuthChapter() {
     }
   }
 
-  const tabStyle = (active) => ({
-    flex: 1, padding: '11px 0', fontWeight: 700, fontSize: '.9rem', border: 'none',
-    borderRadius: 99, cursor: 'pointer', transition: 'all .2s ease',
-    background: active ? `linear-gradient(135deg,${AMBER},${AMBER_DEEP})` : 'transparent',
-    color: active ? '#141210' : MUTED,
-  })
+  const toggleMode = (signIn) => {
+    setIsSignIn(signIn); setError(''); setShowPw(false); setShowPw2(false)
+  }
 
   return (
     <section id="auth" className="nl-hairline-t" style={{
-      position: 'relative', padding: '130px 0', overflow: 'hidden',
-      background: `radial-gradient(700px 420px at 50% 0%, rgba(255,107,94,.12), transparent 65%), ${CHARCOAL_2}`,
+      position: 'relative', padding: '120px 0', overflow: 'hidden', background: CHARCOAL_2,
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 64, alignItems: 'center' }}>
-        <div>
-          <h2 className="nl-campaign" style={{ fontSize: 'clamp(2.6rem,6vw,5rem)', margin: '0 0 8px', color: CREAM }}>
-            <span className="nl-squeeze">STOP SCROLLING.</span>
-          </h2>
-          <h2 className="nl-campaign" style={{ fontSize: 'clamp(2.6rem,6vw,5rem)', margin: 0, color: AMBER, textShadow: '0 0 44px rgba(255,107,94,.4)' }}>
-            <span className="nl-squeeze">START TRAINING.</span>
-          </h2>
-          <p style={{ color: MUTED, fontSize: '1.05rem', lineHeight: 1.65, marginTop: 22, maxWidth: 420 }}>
-            Your coach is waiting. Log your first meal in under a minute — free, no card, no catch.
-          </p>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 56, alignItems: 'center' }} className="nl-auth-grid">
+
+        {/* frosted form card with ambient blobs */}
+        <div style={{ position: 'relative', width: '100%', maxWidth: 540, justifySelf: 'center' }}>
+          <div aria-hidden="true" style={{ position: 'absolute', inset: -40, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', left: -64, top: -64, width: 288, height: 288, borderRadius: '50%', background: 'rgba(255,107,94,.30)', filter: 'blur(90px)' }} />
+            <div style={{ position: 'absolute', right: -56, bottom: -80, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,176,32,.22)', filter: 'blur(90px)' }} />
+            <div style={{ position: 'absolute', left: '25%', top: '33%', width: 240, height: 240, borderRadius: '50%', background: 'rgba(255,107,94,.14)', filter: 'blur(90px)' }} />
+          </div>
+          <motion.div
+            animate={shake ? { x: [0, -12, 12, -9, 9, -5, 0] } : { x: 0 }}
+            transition={{ duration: 0.45 }}
+            className="nl-glass"
+            style={{ position: 'relative', borderRadius: 36, padding: '44px 52px', width: '100%', boxSizing: 'border-box' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, textAlign: 'center', marginBottom: 30 }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '1.5rem', background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.16)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.1)',
+              }}>🥗</div>
+              <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, color: CREAM, letterSpacing: '-.01em' }}>
+                {isSignIn ? 'Sign in to your account' : 'Create your account'}
+              </h2>
+              <p style={{ margin: 0, fontSize: '.9rem', color: MUTED }}>
+                {isSignIn ? 'Welcome back — your coach kept your seat warm.' : 'Free forever. No credit card, no catch.'}
+              </p>
+            </div>
+
+            {error && (
+              <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.35)', color: '#F87171', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center' }}>
+                {error}
+              </div>
+            )}
+
+            {isSignIn ? (
+              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <AuthInput icon={Mail} type="email" placeholder="Email" autoComplete="email" required disabled={loading}
+                  value={loginForm.email} onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })} />
+                <AuthPasswordInput show={showPw} onToggleShow={() => setShowPw((s) => !s)} placeholder="Password"
+                  autoComplete="current-password" required disabled={loading}
+                  value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} />
+                <button type="submit" disabled={loading} className="nl-cta" style={{ padding: '14px', fontSize: '1rem', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  {loading ? 'Signing in…' : (<>Sign In <ArrowRight size={18} /></>)}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <AuthInput icon={User} type="text" placeholder="Full name" autoComplete="name" required disabled={loading}
+                  value={signupForm.name} onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })} />
+                <AuthInput icon={Mail} type="email" placeholder="Email" autoComplete="email" required disabled={loading}
+                  value={signupForm.email} onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })} />
+                <AuthPasswordInput show={showPw} onToggleShow={() => setShowPw((s) => !s)} placeholder="Password"
+                  autoComplete="new-password" required disabled={loading}
+                  value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} />
+                <AuthPasswordInput show={showPw2} onToggleShow={() => setShowPw2((s) => !s)} placeholder="Confirm password"
+                  autoComplete="new-password" required disabled={loading}
+                  value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} />
+                <button type="submit" disabled={loading} className="nl-cta" style={{ padding: '14px', fontSize: '1rem', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  {loading ? 'Creating account…' : (<>Sign Up <ArrowRight size={18} /></>)}
+                </button>
+              </form>
+            )}
+
+            <p style={{ textAlign: 'center', color: MUTED, fontSize: '.85rem', margin: '24px 0 0' }}>
+              {isSignIn ? "Don't have an account?" : 'Already have an account?'}{' '}
+              <button onClick={() => toggleMode(!isSignIn)} style={{
+                background: 'none', border: 'none', color: CREAM, fontWeight: 700, cursor: 'pointer',
+                fontSize: '.85rem', textDecoration: 'underline', textUnderlineOffset: 4,
+              }}>
+                {isSignIn ? 'Sign up' : 'Sign in'}
+              </button>
+            </p>
+          </motion.div>
         </div>
 
-        <motion.div
-          animate={shake ? { x: [0, -12, 12, -9, 9, -5, 0] } : { x: 0 }}
-          transition={{ duration: 0.45 }}
-          className="nl-glass"
-          style={{ borderRadius: 24, padding: 36, width: '100%', maxWidth: 430, justifySelf: 'center' }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: 26 }}>
-            <span style={{ fontSize: '1.6rem' }}>🥗</span>
-            <div className="nl-campaign" style={{ fontSize: '1.5rem', color: CREAM, marginTop: 6 }}>NutriAI</div>
+        {/* decorative panel — ring motif + typewriter quote */}
+        <div className="nl-auth-deco" style={{
+          position: 'relative', borderRadius: 36, overflow: 'hidden', minHeight: 560,
+          background: 'linear-gradient(140deg,#191410 0%,#241A13 55%,#2E1F14 100%)',
+          border: '1px solid rgba(255,255,255,.08)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 48,
+        }}>
+          <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', left: '50%', top: '38%', transform: 'translate(-50%,-50%)', width: 420, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,107,94,.16) 0%, transparent 65%)', filter: 'blur(20px)' }} />
           </div>
-
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,.06)', borderRadius: 99, padding: 4, marginBottom: 24 }}>
-            <button onClick={() => { setActiveTab('login'); setError('') }} style={tabStyle(activeTab === 'login')}>Login</button>
-            <button onClick={() => { setActiveTab('signup'); setError('') }} style={tabStyle(activeTab === 'signup')}>Sign Up</button>
-          </div>
-
-          {error && (
-            <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.35)', color: '#F87171', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center' }}>
-              {error}
-            </div>
-          )}
-
-          {activeTab === 'login' ? (
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input type="email" placeholder="Email" className="nl-input" value={loginForm.email}
-                onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })} required disabled={loading} />
-              <input type="password" placeholder="Password" className="nl-input" value={loginForm.password}
-                onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} required disabled={loading} />
-              <button type="submit" disabled={loading} className="nl-cta" style={{ padding: '14px', fontSize: '1rem', marginTop: 6 }}>
-                {loading ? 'Signing in…' : 'Sign In'}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <input type="text" placeholder="Name" className="nl-input" value={signupForm.name}
-                onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })} required disabled={loading} />
-              <input type="email" placeholder="Email" className="nl-input" value={signupForm.email}
-                onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })} required disabled={loading} />
-              <input type="password" placeholder="Password" className="nl-input" value={signupForm.password}
-                onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} required disabled={loading} />
-              <input type="password" placeholder="Confirm password" className="nl-input" value={signupForm.confirmPassword}
-                onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} required disabled={loading} />
-              <button type="submit" disabled={loading} className="nl-cta" style={{ padding: '14px', fontSize: '1rem', marginTop: 6 }}>
-                {loading ? 'Creating account…' : 'Create Account'}
-              </button>
-            </form>
-          )}
-
-          <p style={{ textAlign: 'center', color: MUTED, fontSize: '.75rem', margin: '22px 0 0' }}>
-            No credit card required · Free forever
-          </p>
-        </motion.div>
+          <svg viewBox="0 0 200 200" style={{ width: 'min(72%,340px)', opacity: .9 }} aria-hidden="true">
+            {[88, 72, 56].map((r, i) => (
+              <circle key={r} cx="100" cy="100" r={r} fill="none"
+                stroke={i === 0 ? AMBER : 'rgba(255,176,32,.35)'} strokeWidth={i === 0 ? 7 : 4}
+                strokeDasharray={i === 0 ? '420 130' : undefined} strokeLinecap="round"
+                transform="rotate(-90 100 100)" style={i === 0 ? { filter: 'drop-shadow(0 0 10px rgba(255,107,94,.55))' } : undefined} />
+            ))}
+            <circle cx="100" cy="12" r="6" fill={AMBER} style={{ filter: 'drop-shadow(0 0 8px rgba(255,107,94,.9))' }} />
+          </svg>
+          <blockquote style={{ margin: '36px 0 0', textAlign: 'center', maxWidth: 380 }}>
+            <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: CREAM, lineHeight: 1.5, minHeight: '3.6em' }}>
+              &ldquo;{quote}<span style={{ color: AMBER }}>|</span>&rdquo;
+            </p>
+            <cite style={{ display: 'block', marginTop: 10, fontSize: '.85rem', color: MUTED, fontStyle: 'normal' }}>
+              — {AUTH_QUOTES[isSignIn ? 'login' : 'signup'].author}
+            </cite>
+          </blockquote>
+        </div>
       </div>
     </section>
   )
 }
+
 
 /* ── Minimal footer ─────────────────────────────────────────────── */
 function Footer() {
