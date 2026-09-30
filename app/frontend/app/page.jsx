@@ -58,9 +58,9 @@ const LANDING_CSS = `
 @media (max-width:768px) {
   .nl-hero-copy-inner { max-width:none !important; }
   .nl-visual { width:100% !important; top:auto !important; bottom:0 !important; height:64% !important; }
-  .nl-hero-ring { right:-22% !important; top:2% !important; opacity:.42; transform:scale(.58); transform-origin:top right; }
-  .nl-fcard-a { left:4% !important; right:auto !important; bottom:5% !important; width:205px !important; }
-  .nl-fcard-b { right:4% !important; bottom:31% !important; width:195px !important; opacity:.94; }
+  .nl-hero-ring { right:-30% !important; top:6% !important; opacity:.45; transform:scale(.62); transform-origin:top right; }
+  .nl-fcard-a { left:4% !important; right:auto !important; bottom:4% !important; width:205px !important; }
+  .nl-fcard-b { right:4% !important; bottom:28% !important; width:195px !important; opacity:.94; }
   .nl-cue-wrap { left:auto !important; right:18px !important; bottom:18px !important; transform:none !important; }
 }
 `
@@ -96,6 +96,7 @@ function Ring3D({ spin, arc, gradeMV, size = 440 }) {
   const fallbackGrade = useMotionValue(0)
   const readoutColor = useTransform(gradeMV || fallbackGrade, [0, 1], [INK, CREAM])
   const ringR = (R / 200) * size
+  const k = size / 440 // scale the centre readout with the ring
   return (
     <div style={{ width: size, height: size, perspective: 1100, position: 'relative' }}>
       {/* blue energy glow */}
@@ -136,8 +137,8 @@ function Ring3D({ spin, arc, gradeMV, size = 440 }) {
       </motion.div>
       {/* day-fuel readout — ties the ring's progress to the nutrition story */}
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-        <motion.span className="nl-tnum" style={{ color: readoutColor, fontWeight: 800, fontSize: '2.4rem', lineHeight: 1 }}>{pct}</motion.span>
-        <motion.span className="nl-kicker" style={{ color: readoutColor, opacity: .6, marginTop: 6 }}>day fuel</motion.span>
+        <motion.span className="nl-tnum" style={{ color: readoutColor, fontWeight: 800, fontSize: `${2.4 * k}rem`, lineHeight: 1 }}>{pct}</motion.span>
+        <motion.span className="nl-kicker" style={{ color: readoutColor, opacity: .6, marginTop: 6 * k }}>day fuel</motion.span>
       </div>
     </div>
   )
@@ -163,7 +164,7 @@ function Hero({ reduce }) {
   const grade = useTransform(scrollYProgress, [0.25, 0.75], [0, 1])
   const ringSpin = useTransform(scrollYProgress, [0, 1], [0, 320])
   const ringArc = useTransform(scrollYProgress, [0, 0.92], [0.28, 1])
-  const cardAY = useTransform(scrollYProgress, [0, 1], [0, -80])
+  const cardAY = useTransform(scrollYProgress, [0, 1], [0, -56])
   const cardBY = useTransform(scrollYProgress, [0, 1], [0, 90])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
   const headY = useTransform(scrollYProgress, [0, 1], [0, -90])
@@ -202,26 +203,26 @@ function Hero({ reduce }) {
 
         {/* right visual zone — ring + cards stay inside; the left text area is protected */}
         <div className="nl-visual" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '46%', overflow: 'hidden', pointerEvents: 'none' }}>
-          <div className="nl-hero-ring" style={{ position: 'absolute', right: '-8%', top: '5%' }}>
+          <div className="nl-hero-ring" style={{ position: 'absolute', right: '-16%', top: '-6%' }}>
             <motion.div style={reduce ? { opacity: .9 } : { x: ringX, y: ringY, opacity: .95 }}>
-              <Ring3D spin={spinMV} arc={arcMV} gradeMV={reduce ? null : grade} size={440} />
+              <Ring3D spin={spinMV} arc={arcMV} gradeMV={reduce ? null : grade} size={620} />
             </motion.div>
           </div>
 
-          {/* floating cutout-parallax cards — animate inside the zone only */}
+          {/* floating cutout-parallax cards — recomposed along the bottom, clear of the ring */}
           <motion.div
             className="nl-glass nl-floaty nl-fcard-a"
             style={reduce
-              ? { position: 'absolute', right: '44%', bottom: '12%', width: 250, borderRadius: 18, padding: 18 }
-              : { position: 'absolute', right: '44%', bottom: '12%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
+              ? { position: 'absolute', right: '48%', bottom: '9%', width: 250, borderRadius: 18, padding: 18 }
+              : { position: 'absolute', right: '48%', bottom: '9%', width: 250, borderRadius: 18, padding: 18, y: cardAY, x: cardAX }}
           >
             <FloatScanCard />
           </motion.div>
           <motion.div
             className="nl-glass nl-floaty nl-fcard-b"
             style={reduce
-              ? { position: 'absolute', right: '5%', bottom: '34%', width: 230, borderRadius: 18, padding: 18, animationDelay: '1.4s' }
-              : { position: 'absolute', right: '5%', bottom: '34%', width: 230, borderRadius: 18, padding: 18, y: cardBY, x: cardBX }}
+              ? { position: 'absolute', right: '6%', bottom: '7%', width: 230, borderRadius: 18, padding: 18, animationDelay: '1.4s' }
+              : { position: 'absolute', right: '6%', bottom: '7%', width: 230, borderRadius: 18, padding: 18, y: cardBY, x: cardBX }}
           >
             <FloatWorkoutCard />
           </motion.div>
