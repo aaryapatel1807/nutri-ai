@@ -2,9 +2,10 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
-  Camera, Dumbbell, Flame, Eye, EyeOff, Mail, Lock, User,
+  Camera, Dumbbell, Flame, Eye, EyeOff, Mail, Lock, User, Sun, Moon,
 } from 'lucide-react'
 import { auth } from '../lib/api'
+import { useTheme } from '../components/shared/ThemeContext'
 
 /* ═══════════════════════════════════════════════════════════════════
    NutriAI — cinematic 3D storytelling landing.
@@ -460,6 +461,7 @@ function AuthChapter() {
       background: 'var(--auth-section-bg)',
       transition: 'background .3s ease',
     }}>
+      <ThemeToggle />
       {/* ambient wash across the whole section */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
@@ -564,6 +566,35 @@ function AuthChapter() {
 
 
 /* ── Minimal footer ─────────────────────────────────────────────── */
+/* ── Theme toggle: small fixed button, top-right ───────────────────────── */
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  const dark = theme === 'dark'
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={dark ? 'Light mode' : 'Dark mode'}
+      style={{
+        position: 'fixed', top: 20, right: 20, zIndex: 50,
+        width: 42, height: 42, borderRadius: '50%', padding: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'var(--auth-card-bg)',
+        border: '1px solid var(--auth-warm-border)',
+        boxShadow: 'var(--auth-card-shadow)',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        color: 'var(--auth-kicker)', cursor: 'pointer',
+        transition: 'transform .2s ease, background .3s ease, border-color .3s ease',
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.08)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+    >
+      {dark ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
+    </button>
+  )
+}
+
 /* ── Page composition: sign-in only ─────────────────────────────────── */
 export default function SignInPage() {
   return (

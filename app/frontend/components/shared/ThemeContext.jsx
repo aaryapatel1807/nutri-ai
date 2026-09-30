@@ -5,7 +5,12 @@ const ThemeContext = createContext({ theme: 'light', toggleTheme: () => {}, setT
 const STORAGE_KEY = 'nutriai_theme'
 
 export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState('light')
+  const [theme, setThemeState] = useState(() => {
+    if (typeof document === 'undefined') return 'light'
+    const t = document.documentElement.dataset.theme
+    if (t === 'dark' || t === 'light') return t
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
 
   useEffect(() => {
     try {
