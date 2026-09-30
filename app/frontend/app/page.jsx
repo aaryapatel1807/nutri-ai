@@ -282,12 +282,14 @@ function FloatWorkoutCard() {
 
 /* ── AUTH: floating dark showcase cards (standalone, no phone frame) ──── */
 const SHOWCARD = {
-  background: 'linear-gradient(165deg, rgba(28,23,20,.98), rgba(15,12,10,.98))',
-  border: '1px solid rgba(255,140,90,.14)',
+  background: 'linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 30%), linear-gradient(165deg, rgba(30,24,20,.74), rgba(14,11,9,.78))',
+  border: '1px solid rgba(255,150,90,.22)',
   borderRadius: 22,
-  boxShadow: '0 30px 60px -18px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.07)',
+  boxShadow: '0 0 70px rgba(255,110,60,.10), 0 30px 60px -18px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)',
+  backdropFilter: 'blur(22px) saturate(1.4)', WebkitBackdropFilter: 'blur(22px) saturate(1.4)',
   padding: '26px 28px 24px',
   width: 'min(100%, 380px)',
+  position: 'relative', overflow: 'hidden',
 }
 
 function AuthScanCard() {
@@ -627,8 +629,9 @@ function AuthInput({ icon: Icon, ...props }) {
       <Icon size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: night ? '#8A847E' : '#A8A29E', pointerEvents: 'none' }} />
       <input {...props} className={`nl-authinput${night ? '' : ' nl-authinput-light'}`} style={{
         width: '100%', padding: '13px 14px 13px 42px', borderRadius: 14,
-        border: night ? '1px solid rgba(255,255,255,.14)' : '1px solid #E3DCCF',
-        background: night ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.95)',
+        border: night ? '1px solid rgba(255,150,100,.18)' : '1px solid #E3DCCF',
+        background: night ? 'linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025))' : 'rgba(255,255,255,.95)',
+        boxShadow: night ? 'inset 0 1px 3px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05)' : 'none',
         color: night ? CREAM : INK, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
       }} />
     </div>
@@ -643,8 +646,9 @@ function AuthPasswordInput({ show, onToggleShow, ...props }) {
       <Lock size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: night ? '#8A847E' : '#A8A29E', pointerEvents: 'none' }} />
       <input {...props} type={show ? 'text' : 'password'} className={`nl-authinput${night ? '' : ' nl-authinput-light'}`} style={{
         width: '100%', padding: '13px 44px 13px 42px', borderRadius: 14,
-        border: night ? '1px solid rgba(255,255,255,.14)' : '1px solid #E3DCCF',
-        background: night ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.95)',
+        border: night ? '1px solid rgba(255,150,100,.18)' : '1px solid #E3DCCF',
+        background: night ? 'linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025))' : 'rgba(255,255,255,.95)',
+        boxShadow: night ? 'inset 0 1px 3px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05)' : 'none',
         color: night ? CREAM : INK, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
       }} />
       <button type="button" onClick={onToggleShow} aria-label={show ? 'Hide password' : 'Show password'} style={{
@@ -738,22 +742,17 @@ function AuthChapter() {
   return (
     <section id="auth" className="nl-hairline-t" style={{
       position: 'relative', padding: '120px 0', overflow: 'hidden',
-      background: night ? CHARCOAL_2 : '#F6F2EA',
+      background: night
+        ? `#0C0B09 url('/images/auth-nebula-night.jpg') center / cover no-repeat`
+        : '#F6F2EA',
       transition: 'background .3s ease',
     }}>
       {/* ambient wash across the whole section */}
       {night ? (
-        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          {/* left flame */}
-          <div style={{ position: 'absolute', left: '-10%', top: '-8%', width: '44%', height: '78%', background: 'radial-gradient(ellipse at 40% 45%, rgba(255,122,60,.42) 0%, rgba(255,90,50,.18) 38%, transparent 68%)', filter: 'blur(50px)', transform: 'rotate(-18deg)' }} />
-          <div style={{ position: 'absolute', left: '-6%', bottom: '-20%', width: '36%', height: '60%', background: 'radial-gradient(ellipse at 45% 55%, rgba(255,150,80,.30) 0%, transparent 65%)', filter: 'blur(55px)', transform: 'rotate(12deg)' }} />
-          {/* right flame */}
-          <div style={{ position: 'absolute', right: '-10%', top: '-6%', width: '44%', height: '74%', background: 'radial-gradient(ellipse at 60% 40%, rgba(255,110,70,.38) 0%, rgba(200,80,120,.14) 45%, transparent 70%)', filter: 'blur(50px)', transform: 'rotate(16deg)' }} />
-          <div style={{ position: 'absolute', right: '-4%', bottom: '-18%', width: '38%', height: '58%', background: 'radial-gradient(ellipse at 55% 50%, rgba(255,130,60,.26) 0%, transparent 65%)', filter: 'blur(55px)', transform: 'rotate(-10deg)' }} />
-          {/* centre-bottom wisp + faint top glow */}
-          <div style={{ position: 'absolute', left: '30%', bottom: '-24%', width: '44%', height: '52%', background: 'radial-gradient(ellipse, rgba(255,120,60,.16) 0%, transparent 65%)', filter: 'blur(60px)' }} />
-          <div style={{ position: 'absolute', left: '20%', top: '-20%', width: '60%', height: '44%', background: 'radial-gradient(ellipse, rgba(255,90,60,.10) 0%, transparent 65%)', filter: 'blur(70px)' }} />
-        </div>
+        <div aria-hidden="true" style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 60% 55% at 50% 45%, rgba(5,4,3,.38) 0%, transparent 70%), linear-gradient(180deg, rgba(5,4,3,.45) 0%, transparent 18%, transparent 82%, rgba(5,4,3,.5) 100%)',
+        }} />
       ) : (
         <div aria-hidden="true" style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
@@ -783,8 +782,11 @@ function AuthChapter() {
             style={{
               position: 'relative', borderRadius: 36, padding: '44px 52px', width: '100%', boxSizing: 'border-box',
               ...(night ? {
-                border: '1px solid rgba(255,150,90,.22)',
-                boxShadow: '0 0 90px rgba(255,110,60,.14), inset 0 1px 0 rgba(255,255,255,.09), 0 18px 44px rgba(20,14,10,.38)',
+                background: 'linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,0) 28%), linear-gradient(165deg, rgba(34,27,23,.72), rgba(14,11,9,.78))',
+                backdropFilter: 'blur(26px) saturate(1.5)', WebkitBackdropFilter: 'blur(26px) saturate(1.5)',
+                border: '1px solid rgba(255,166,100,.30)',
+                boxShadow: '0 0 110px rgba(255,110,60,.18), 0 24px 60px rgba(10,7,5,.5), inset 0 1px 0 rgba(255,255,255,.10)',
+                overflow: 'hidden',
               } : {
                 background: 'rgba(255,255,255,.78)',
                 backdropFilter: 'blur(20px) saturate(1.3)', WebkitBackdropFilter: 'blur(20px) saturate(1.3)',
@@ -793,6 +795,12 @@ function AuthChapter() {
               }),
             }}
           >
+            {night && (
+              <div aria-hidden="true" style={{
+                position: 'absolute', inset: 0, borderRadius: 36, pointerEvents: 'none',
+                background: 'linear-gradient(90deg, rgba(255,150,80,.10), transparent 20%), linear-gradient(270deg, rgba(255,150,80,.07), transparent 16%), linear-gradient(180deg, rgba(255,190,140,.06), transparent 12%)',
+              }} />
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, textAlign: 'center', marginBottom: 30 }}>
               <div style={{
                 width: 52, height: 52, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
