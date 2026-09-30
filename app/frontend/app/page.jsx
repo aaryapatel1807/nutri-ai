@@ -9,7 +9,6 @@ import {
   Eye, EyeOff, Mail, Lock, User,
 } from 'lucide-react'
 import { auth } from '../lib/api'
-import { useTheme } from '../components/shared/ThemeContext'
 
 /* ═══════════════════════════════════════════════════════════════════
    NutriAI — cinematic 3D storytelling landing.
@@ -57,10 +56,192 @@ const LANDING_CSS = `
 @media (prefers-reduced-motion: reduce) {
   .nl-scanline, .nl-floaty, .nl-cue, .nl-pulse-glow { animation:none !important; }
 }
-.nl-authinput:focus { border-color:rgba(255,107,94,.55) !important; background:rgba(255,255,255,.09) !important; }
-.nl-authinput::placeholder { color:#6B6560; }
-.nl-authinput-light:focus { border-color:rgba(255,107,94,.5) !important; background:#FFFFFF !important; }
-.nl-authinput-light::placeholder { color:#B0A896; }
+/* ── Auth section theme variables: dark default; light via prefers-color-scheme or [data-theme] ── */
+.nl-auth {
+  --auth-section-bg:#0C0B09 url('/images/bg-nebula.jpg') center / cover no-repeat;
+  --auth-overlay:radial-gradient(ellipse 95% 95% at 50% 50%, transparent 52%, rgba(4,3,2,.6) 100%);
+  --auth-card-bg:rgba(20,15,15,0.6);
+  --auth-card-filter:blur(20px) saturate(1.25);
+  --auth-card-border:1px solid rgba(255,160,110,0.35);
+  --auth-card-shadow:0 0 90px rgba(255,120,60,.14), 0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  --auth-inner-border:1px solid rgba(255,160,110,.16);
+  --auth-badge-bg:rgba(255,255,255,.06);
+  --auth-badge-border:1px solid rgba(255,180,120,.45);
+  --auth-badge-shadow:0 0 24px rgba(255,140,80,.25), inset 0 1px 0 rgba(255,255,255,.12);
+  --auth-heading:#FFFFFF;
+  --auth-sub:#A8A29E;
+  --auth-input-bg:rgba(255,255,255,.06);
+  --auth-input-border:1px solid rgba(255,255,255,.12);
+  --auth-input-shadow:none;
+  --auth-input-color:#FFF7ED;
+  --auth-input-icon:#8A847E;
+  --auth-input-placeholder:#6B6560;
+  --auth-input-focus-border:rgba(255,107,94,.55);
+  --auth-input-focus-ring:0 0 0 4px rgba(255,107,94,.15);
+  --auth-input-focus-bg:rgba(255,255,255,.09);
+  --auth-btn-shadow:0 8px 28px rgba(255,95,109,.35), inset 0 1px 0 rgba(255,255,255,.25);
+  --auth-link:#FF7A45;
+  --auth-error-bg:rgba(239,68,68,.1);
+  --auth-error-border:1px solid rgba(239,68,68,.35);
+  --auth-error-color:#F87171;
+  --auth-show-bg:rgba(18,14,14,.85);
+  --auth-show-filter:blur(8px);
+  --auth-show-border:1px solid rgba(255,160,110,.20);
+  --auth-show-shadow:0 24px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+  --auth-ink:#FFFFFF;
+  --auth-kicker:#D9A08A;
+  --auth-kcal:#FF8A3C;
+  --auth-macro-label:#A8A29E;
+  --auth-track:rgba(255,255,255,.12);
+  --auth-logged:#4ADE80;
+  --auth-sets:#A8A29E;
+  --auth-flame:#FF8A3C;
+  --auth-quote:#D8D2CA;
+  --auth-cite:#8A847E;
+}
+@media (prefers-color-scheme: light) {
+  .nl-auth {
+    --auth-section-bg:#F7F2E9 url('/images/bg-light.jpg') center / cover no-repeat;
+    --auth-overlay:radial-gradient(ellipse 75% 65% at 50% 45%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 70%);
+    --auth-card-bg:rgba(255,255,255,0.65);
+    --auth-card-filter:blur(20px) saturate(1.2);
+    --auth-card-border:1px solid rgba(255,140,90,0.45);
+    --auth-card-shadow:0 20px 60px rgba(200,110,80,0.18), inset 0 1px 0 rgba(255,255,255,.7);
+    --auth-inner-border:1px solid rgba(255,140,90,0.30);
+    --auth-badge-bg:#FFFFFF;
+    --auth-badge-border:1px solid rgba(255,140,90,.4);
+    --auth-badge-shadow:0 6px 16px rgba(200,110,80,.15);
+    --auth-heading:#1F1A1A;
+    --auth-sub:#5A4E4A;
+    --auth-input-bg:#FFFFFF;
+    --auth-input-border:1.5px solid rgba(120,80,60,0.25);
+    --auth-input-shadow:0 2px 6px rgba(120,80,60,0.08);
+    --auth-input-color:#1F1A1A;
+    --auth-input-icon:#8A7C77;
+    --auth-input-placeholder:#8A7C77;
+    --auth-input-focus-border:#FF7A45;
+    --auth-input-focus-ring:0 0 0 4px rgba(255,122,69,0.18);
+    --auth-input-focus-bg:#FFFFFF;
+    --auth-btn-shadow:0 8px 24px rgba(255,110,90,0.35), inset 0 1px 0 rgba(255,255,255,.25);
+    --auth-link:#D14D1A;
+    --auth-error-bg:rgba(239,68,68,.07);
+    --auth-error-border:1px solid rgba(239,68,68,.3);
+    --auth-error-color:#DC2626;
+    --auth-show-bg:rgba(255,255,255,0.78);
+    --auth-show-filter:blur(14px) saturate(1.2);
+    --auth-show-border:1px solid rgba(255,140,90,0.35);
+    --auth-show-shadow:0 20px 60px rgba(200,110,80,0.18), inset 0 1px 0 rgba(255,255,255,.7);
+    --auth-ink:#1F1A1A;
+    --auth-kicker:#F26B2E;
+    --auth-kcal:#D9531F;
+    --auth-macro-label:#6B5F5A;
+    --auth-track:rgba(0,0,0,0.08);
+    --auth-logged:#1E9E5A;
+    --auth-sets:#6B5F5A;
+    --auth-flame:#F26B2E;
+    --auth-quote:#3A302D;
+    --auth-cite:#8A7C77;
+  }
+}
+html[data-theme="light"] .nl-auth {
+  --auth-section-bg:#F7F2E9 url('/images/bg-light.jpg') center / cover no-repeat;
+  --auth-overlay:radial-gradient(ellipse 75% 65% at 50% 45%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 70%);
+  --auth-card-bg:rgba(255,255,255,0.65);
+  --auth-card-filter:blur(20px) saturate(1.2);
+  --auth-card-border:1px solid rgba(255,140,90,0.45);
+  --auth-card-shadow:0 20px 60px rgba(200,110,80,0.18), inset 0 1px 0 rgba(255,255,255,.7);
+  --auth-inner-border:1px solid rgba(255,140,90,0.30);
+  --auth-badge-bg:#FFFFFF;
+  --auth-badge-border:1px solid rgba(255,140,90,.4);
+  --auth-badge-shadow:0 6px 16px rgba(200,110,80,.15);
+  --auth-heading:#1F1A1A;
+  --auth-sub:#5A4E4A;
+  --auth-input-bg:#FFFFFF;
+  --auth-input-border:1.5px solid rgba(120,80,60,0.25);
+  --auth-input-shadow:0 2px 6px rgba(120,80,60,0.08);
+  --auth-input-color:#1F1A1A;
+  --auth-input-icon:#8A7C77;
+  --auth-input-placeholder:#8A7C77;
+  --auth-input-focus-border:#FF7A45;
+  --auth-input-focus-ring:0 0 0 4px rgba(255,122,69,0.18);
+  --auth-input-focus-bg:#FFFFFF;
+  --auth-btn-shadow:0 8px 24px rgba(255,110,90,0.35), inset 0 1px 0 rgba(255,255,255,.25);
+  --auth-link:#D14D1A;
+  --auth-error-bg:rgba(239,68,68,.07);
+  --auth-error-border:1px solid rgba(239,68,68,.3);
+  --auth-error-color:#DC2626;
+  --auth-show-bg:rgba(255,255,255,0.78);
+  --auth-show-filter:blur(14px) saturate(1.2);
+  --auth-show-border:1px solid rgba(255,140,90,0.35);
+  --auth-show-shadow:0 20px 60px rgba(200,110,80,0.18), inset 0 1px 0 rgba(255,255,255,.7);
+  --auth-ink:#1F1A1A;
+  --auth-kicker:#F26B2E;
+  --auth-kcal:#D9531F;
+  --auth-macro-label:#6B5F5A;
+  --auth-track:rgba(0,0,0,0.08);
+  --auth-logged:#1E9E5A;
+  --auth-sets:#6B5F5A;
+  --auth-flame:#F26B2E;
+  --auth-quote:#3A302D;
+  --auth-cite:#8A7C77;
+}
+html[data-theme="dark"] .nl-auth {
+  --auth-section-bg:#0C0B09 url('/images/bg-nebula.jpg') center / cover no-repeat;
+  --auth-overlay:radial-gradient(ellipse 95% 95% at 50% 50%, transparent 52%, rgba(4,3,2,.6) 100%);
+  --auth-card-bg:rgba(20,15,15,0.6);
+  --auth-card-filter:blur(20px) saturate(1.25);
+  --auth-card-border:1px solid rgba(255,160,110,0.35);
+  --auth-card-shadow:0 0 90px rgba(255,120,60,.14), 0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  --auth-inner-border:1px solid rgba(255,160,110,.16);
+  --auth-badge-bg:rgba(255,255,255,.06);
+  --auth-badge-border:1px solid rgba(255,180,120,.45);
+  --auth-badge-shadow:0 0 24px rgba(255,140,80,.25), inset 0 1px 0 rgba(255,255,255,.12);
+  --auth-heading:#FFFFFF;
+  --auth-sub:#A8A29E;
+  --auth-input-bg:rgba(255,255,255,.06);
+  --auth-input-border:1px solid rgba(255,255,255,.12);
+  --auth-input-shadow:none;
+  --auth-input-color:#FFF7ED;
+  --auth-input-icon:#8A847E;
+  --auth-input-placeholder:#6B6560;
+  --auth-input-focus-border:rgba(255,107,94,.55);
+  --auth-input-focus-ring:0 0 0 4px rgba(255,107,94,.15);
+  --auth-input-focus-bg:rgba(255,255,255,.09);
+  --auth-btn-shadow:0 8px 28px rgba(255,95,109,.35), inset 0 1px 0 rgba(255,255,255,.25);
+  --auth-link:#FF7A45;
+  --auth-error-bg:rgba(239,68,68,.1);
+  --auth-error-border:1px solid rgba(239,68,68,.35);
+  --auth-error-color:#F87171;
+  --auth-show-bg:rgba(18,14,14,.85);
+  --auth-show-filter:blur(8px);
+  --auth-show-border:1px solid rgba(255,160,110,.20);
+  --auth-show-shadow:0 24px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+  --auth-ink:#FFFFFF;
+  --auth-kicker:#D9A08A;
+  --auth-kcal:#FF8A3C;
+  --auth-macro-label:#A8A29E;
+  --auth-track:rgba(255,255,255,.12);
+  --auth-logged:#4ADE80;
+  --auth-sets:#A8A29E;
+  --auth-flame:#FF8A3C;
+  --auth-quote:#D8D2CA;
+  --auth-cite:#8A847E;
+}
+.nl-authinput {
+  width:100%; height:56px; padding:0 16px 0 50px; border-radius:14px;
+  border:var(--auth-input-border); background:var(--auth-input-bg); box-shadow:var(--auth-input-shadow);
+  color:var(--auth-input-color); font-size:.95rem; outline:none; box-sizing:border-box;
+  transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.nl-authinput::placeholder { color:var(--auth-input-placeholder); }
+.nl-authinput:focus {
+  border-color:var(--auth-input-focus-border);
+  box-shadow:var(--auth-input-focus-ring), var(--auth-input-shadow);
+  background:var(--auth-input-focus-bg);
+}
+.nl-authinput-pw { padding-right:50px; }
+.nl-authicon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--auth-input-icon); pointer-events:none; display:flex; }
+.nl-autheye { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--auth-input-icon); display:flex; padding:6px; }
 .nl-authtitle { white-space:nowrap; }
 .nl-authsub { white-space:nowrap; }
 @keyframes nl-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
@@ -556,11 +737,11 @@ const AUTH_QUOTES = {
 }
 
 const SHOWCARD = {
-  background: 'rgba(18,14,14,.85)',
-  backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-  border: '1px solid rgba(255,160,110,.20)',
+  background: 'var(--auth-show-bg)',
+  backdropFilter: 'var(--auth-show-filter)', WebkitBackdropFilter: 'var(--auth-show-filter)',
+  border: 'var(--auth-show-border)',
   borderRadius: 24,
-  boxShadow: '0 24px 50px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06)',
+  boxShadow: 'var(--auth-show-shadow)',
   padding: '28px 30px',
   width: '100%', boxSizing: 'border-box',
 }
@@ -569,23 +750,23 @@ function AuthScanCard() {
   return (
     <div style={SHOWCARD}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 14 }}>
-        <Camera size={16} color="#D9A08A" />
-        <span style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.2em', color: '#D9A08A' }}>AI FOOD SCAN</span>
+        <Camera size={16} color="var(--auth-kicker)" />
+        <span style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.2em', color: 'var(--auth-kicker)' }}>AI FOOD SCAN</span>
       </div>
-      <div style={{ fontWeight: 800, fontSize: '1.25rem', color: '#FFFFFF' }}>Masala Dosa</div>
-      <div className="nl-tnum" style={{ color: '#FF8A3C', fontWeight: 800, fontSize: '1.6rem', margin: '4px 0 16px', whiteSpace: 'nowrap' }}>
+      <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--auth-ink)' }}>Masala Dosa</div>
+      <div className="nl-tnum" style={{ color: 'var(--auth-kcal)', fontWeight: 800, fontSize: '1.6rem', margin: '4px 0 16px', whiteSpace: 'nowrap' }}>
         540 kcal
       </div>
       {[['P', '18g', 50], ['C', '72g', 45], ['F', '21g', 47]].map(([k, g, w]) => (
         <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <span style={{ fontSize: '.85rem', color: '#A8A29E', width: 12 }}>{k}</span>
-          <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,.12)' }}>
+          <span style={{ fontSize: '.85rem', color: 'var(--auth-macro-label)', width: 12 }}>{k}</span>
+          <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'var(--auth-track)' }}>
             <div style={{ width: `${w}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#FF8A3C,#FF3D5E)' }} />
           </div>
-          <span className="nl-tnum" style={{ fontSize: '.85rem', color: '#FFFFFF', fontWeight: 600 }}>{g}</span>
+          <span className="nl-tnum" style={{ fontSize: '.85rem', color: 'var(--auth-ink)', fontWeight: 600 }}>{g}</span>
         </div>
       ))}
-      <div style={{ marginTop: 14, fontSize: '.85rem', color: '#4ADE80', fontWeight: 600 }}>✓ Logged to diary</div>
+      <div style={{ marginTop: 14, fontSize: '.85rem', color: 'var(--auth-logged)', fontWeight: 600 }}>✓ Logged to diary</div>
     </div>
   )
 }
@@ -594,34 +775,34 @@ function AuthWorkoutCard() {
   return (
     <div style={SHOWCARD}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 14 }}>
-        <Dumbbell size={16} color="#D9A08A" />
-        <span style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.2em', color: '#D9A08A' }}>WORKOUT</span>
+        <Dumbbell size={16} color="var(--auth-kicker)" />
+        <span style={{ fontSize: '.72rem', fontWeight: 700, letterSpacing: '.2em', color: 'var(--auth-kicker)' }}>WORKOUT</span>
       </div>
-      <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#FFFFFF' }}>Push Day</div>
+      <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--auth-ink)' }}>Push Day</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, margin: '6px 0 16px' }}>
-        <span className="nl-tnum" style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '2.5rem', letterSpacing: '-.01em' }}>42:18</span>
-        <span className="nl-tnum" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '.9rem', color: '#B8B2AC' }}>
-          <Flame size={14} color="#FF8A3C" /> 312 kcal
+        <span className="nl-tnum" style={{ color: 'var(--auth-ink)', fontWeight: 800, fontSize: '2.5rem', letterSpacing: '-.01em' }}>42:18</span>
+        <span className="nl-tnum" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '.9rem', color: 'var(--auth-sets)' }}>
+          <Flame size={14} color="var(--auth-flame)" /> 312 kcal
         </span>
       </div>
-      <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,.12)', overflow: 'hidden' }}>
+      <div style={{ height: 6, borderRadius: 99, background: 'var(--auth-track)', overflow: 'hidden' }}>
         <div style={{ width: '70%', height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#FDB03C,#FF5F6D 55%,#8A63D2)' }} />
       </div>
-      <div className="nl-tnum" style={{ marginTop: 10, fontSize: '.85rem', color: '#A8A29E' }}>7 / 10 sets done</div>
+      <div className="nl-tnum" style={{ marginTop: 10, fontSize: '.85rem', color: 'var(--auth-sets)' }}>7 / 10 sets done</div>
     </div>
   )
 }
 
-function AuthShowcase({ quote, author, night }) {
+function AuthShowcase({ quote, author }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 24, width: '100%' }}>
       <AuthScanCard />
       <AuthWorkoutCard />
       <blockquote style={{ margin: '8px 0 0', width: '100%' }}>
-        <p style={{ margin: 0, fontSize: '1rem', fontWeight: 400, color: night ? '#D8D2CA' : '#5A544E', lineHeight: 1.6 }}>
+        <p style={{ margin: 0, fontSize: '1rem', fontWeight: 400, color: 'var(--auth-quote)', lineHeight: 1.6 }}>
           &ldquo;{quote}&rdquo;<span className="nl-cursorblink" />
         </p>
-        <cite style={{ display: 'block', marginTop: 10, fontSize: '.85rem', color: night ? '#8A847E' : '#8A847E', fontStyle: 'normal', textAlign: 'right' }}>
+        <cite style={{ display: 'block', marginTop: 10, fontSize: '.85rem', color: 'var(--auth-cite)', fontStyle: 'normal', textAlign: 'right' }}>
           — {author}
         </cite>
       </blockquote>
@@ -630,37 +811,20 @@ function AuthShowcase({ quote, author, night }) {
 }
 
 function AuthInput({ icon: Icon, ...props }) {
-  const { theme } = useTheme()
-  const night = theme === 'dark'
   return (
     <div style={{ position: 'relative' }}>
-      <Icon size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: night ? '#8A847E' : '#A8A29E', pointerEvents: 'none' }} />
-      <input {...props} className={`nl-authinput${night ? '' : ' nl-authinput-light'}`} style={{
-        width: '100%', height: 56, padding: '0 16px 0 50px', borderRadius: 14,
-        border: night ? '1px solid rgba(255,255,255,.12)' : '1px solid #E3DCCF',
-        background: night ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.95)',
-        color: night ? CREAM : INK, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
-      }} />
+      <span className="nl-authicon"><Icon size={18} /></span>
+      <input {...props} className="nl-authinput" />
     </div>
   )
 }
 
 function AuthPasswordInput({ show, onToggleShow, ...props }) {
-  const { theme } = useTheme()
-  const night = theme === 'dark'
   return (
     <div style={{ position: 'relative' }}>
-      <Lock size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: night ? '#8A847E' : '#A8A29E', pointerEvents: 'none' }} />
-      <input {...props} type={show ? 'text' : 'password'} className={`nl-authinput${night ? '' : ' nl-authinput-light'}`} style={{
-        width: '100%', height: 56, padding: '0 50px 0 50px', borderRadius: 14,
-        border: night ? '1px solid rgba(255,255,255,.12)' : '1px solid #E3DCCF',
-        background: night ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.95)',
-        color: night ? CREAM : INK, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
-      }} />
-      <button type="button" onClick={onToggleShow} aria-label={show ? 'Hide password' : 'Show password'} style={{
-        position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none',
-        color: night ? '#8A847E' : '#A8A29E', cursor: 'pointer', padding: 8, display: 'flex',
-      }}>
+      <span className="nl-authicon"><Lock size={18} /></span>
+      <input {...props} type={show ? 'text' : 'password'} className="nl-authinput nl-authinput-pw" />
+      <button type="button" onClick={onToggleShow} aria-label={show ? 'Hide password' : 'Show password'} className="nl-autheye">
         {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>
     </div>
@@ -668,8 +832,6 @@ function AuthPasswordInput({ show, onToggleShow, ...props }) {
 }
 
 function AuthChapter() {
-  const { theme } = useTheme()
-  const night = theme === 'dark'
   const [isSignIn, setIsSignIn] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -746,80 +908,55 @@ function AuthChapter() {
   }
 
   return (
-    <section id="auth" style={{
+    <section id="auth" className="nl-auth" style={{
       position: 'relative', padding: '110px 0', overflow: 'hidden',
-      background: night
-        ? `#0C0B09 url('/images/bg-nebula.jpg') center / cover no-repeat`
-        : '#F6F2EA',
+      background: 'var(--auth-section-bg)',
       transition: 'background .3s ease',
     }}>
       {/* ambient wash across the whole section */}
-      {night ? (
-        <div aria-hidden="true" style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse 95% 95% at 50% 50%, transparent 52%, rgba(4,3,2,.6) 100%)',
-        }} />
-      ) : (
-        <div aria-hidden="true" style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse 58% 48% at 14% 18%, rgba(255,182,150,.20) 0%, transparent 65%), radial-gradient(ellipse 54% 52% at 88% 28%, rgba(255,150,118,.15) 0%, transparent 65%), radial-gradient(ellipse 50% 44% at 58% 96%, rgba(255,198,158,.14) 0%, transparent 65%)',
-        }} />
-      )}
+      <div aria-hidden="true" style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'var(--auth-overlay)',
+      }} />
       <div className="nl-auth-grid" style={{ position: 'relative', margin: '0 auto', padding: '0 4vw', maxWidth: 1600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6vw' }}>
 
         {/* frosted form card with ambient blobs */}
         <div className="nl-auth-left" style={{ position: 'relative', width: 'min(37vw, 580px)', flexShrink: 0 }}>
-          {!night && (
-            <div aria-hidden="true" style={{ position: 'absolute', inset: -40, pointerEvents: 'none' }}>
-              <div style={{ position: 'absolute', left: -64, top: -64, width: 288, height: 288, borderRadius: '50%', background: 'rgba(255,170,130,.28)', filter: 'blur(90px)' }} />
-              <div style={{ position: 'absolute', right: -56, bottom: -80, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,190,150,.22)', filter: 'blur(90px)' }} />
-            </div>
-          )}
           <motion.div
             animate={shake ? { x: [0, -12, 12, -9, 9, -5, 0] } : { x: 0 }}
             transition={{ duration: 0.45 }}
-            className={night ? 'nl-glass' : ''}
             style={{
               position: 'relative', borderRadius: 28, padding: '32px 44px', width: '100%', boxSizing: 'border-box',
-              ...(night ? {
-                background: 'rgba(20,15,15,0.6)',
-                backdropFilter: 'blur(20px) saturate(1.25)', WebkitBackdropFilter: 'blur(20px) saturate(1.25)',
-                border: '1px solid rgba(255,160,110,0.35)',
-                boxShadow: '0 0 90px rgba(255,120,60,.14), 0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08)',
-                overflow: 'hidden',
-              } : {
-                background: 'rgba(255,255,255,.78)',
-                backdropFilter: 'blur(20px) saturate(1.3)', WebkitBackdropFilter: 'blur(20px) saturate(1.3)',
-                border: '1px solid rgba(28,25,23,.08)',
-                boxShadow: '0 30px 70px -20px rgba(120,80,50,.22), inset 0 1px 0 rgba(255,255,255,.9)',
-              }),
+              background: 'var(--auth-card-bg)',
+              backdropFilter: 'var(--auth-card-filter)', WebkitBackdropFilter: 'var(--auth-card-filter)',
+              border: 'var(--auth-card-border)',
+              boxShadow: 'var(--auth-card-shadow)',
+              overflow: 'hidden',
             }}
           >
             <div aria-hidden="true" style={{
               position: 'absolute', inset: 14, borderRadius: 18, pointerEvents: 'none',
-              border: night ? '1px solid rgba(255,160,110,.16)' : '1px solid rgba(28,25,23,.06)',
+              border: 'var(--auth-inner-border)',
             }} />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, textAlign: 'center', marginBottom: 24 }}>
               <div style={{
                 width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '1.6rem',
-                ...(night
-                  ? { background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,180,120,.45)', boxShadow: '0 0 24px rgba(255,140,80,.25), inset 0 1px 0 rgba(255,255,255,.12)' }
-                  : { background: '#FFFFFF', border: '1px solid #E5DED3', boxShadow: '0 6px 16px rgba(120,80,50,.12)' }),
+                background: 'var(--auth-badge-bg)', border: 'var(--auth-badge-border)', boxShadow: 'var(--auth-badge-shadow)',
               }}>🥗</div>
-              <h2 className="nl-authtitle" style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: night ? '#FFFFFF' : INK, letterSpacing: '-.01em' }}>
+              <h2 className="nl-authtitle" style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: 'var(--auth-heading)', letterSpacing: '-.01em' }}>
                 {isSignIn ? 'Sign in to your account' : 'Create your account'}
               </h2>
-              <p className="nl-authsub" style={{ margin: 0, fontSize: '.95rem', color: night ? MUTED : '#7A736B' }}>
+              <p className="nl-authsub" style={{ margin: 0, fontSize: '.95rem', color: 'var(--auth-sub)' }}>
                 {isSignIn ? 'Welcome back — your coach kept your seat warm.' : 'Free forever. No credit card, no catch.'}
               </p>
             </div>
 
             {error && (
               <div style={{
-                background: night ? 'rgba(239,68,68,.1)' : 'rgba(239,68,68,.07)',
-                border: night ? '1px solid rgba(239,68,68,.35)' : '1px solid rgba(239,68,68,.3)',
-                color: night ? '#F87171' : '#DC2626', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center',
+                background: 'var(--auth-error-bg)',
+                border: 'var(--auth-error-border)',
+                color: 'var(--auth-error-color)', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center',
               }}>
                 {error}
               </div>
@@ -832,7 +969,7 @@ function AuthChapter() {
                 <AuthPasswordInput show={showPw} onToggleShow={() => setShowPw((s) => !s)} placeholder="Password"
                   autoComplete="current-password" required disabled={loading}
                   value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} />
-                <button type="submit" disabled={loading} className="nl-cta" style={{ height: 58, width: '100%', borderRadius: 999, border: 'none', cursor: 'pointer', fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(90deg,#FDB03C,#FF5F6D 55%,#8A63D2)', boxShadow: '0 8px 28px rgba(255,95,109,.35), inset 0 1px 0 rgba(255,255,255,.25)' }}>
+                <button type="submit" disabled={loading} className="nl-cta" style={{ height: 58, width: '100%', borderRadius: 999, border: 'none', cursor: 'pointer', fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(90deg,#FDB03C,#FF5F6D 55%,#8A63D2)', boxShadow: 'var(--auth-btn-shadow)' }}>
                   {loading ? 'Signing in…' : 'Sign In →'}
                 </button>
               </form>
@@ -848,16 +985,16 @@ function AuthChapter() {
                 <AuthPasswordInput show={showPw2} onToggleShow={() => setShowPw2((s) => !s)} placeholder="Confirm password"
                   autoComplete="new-password" required disabled={loading}
                   value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} />
-                <button type="submit" disabled={loading} className="nl-cta" style={{ height: 58, width: '100%', borderRadius: 999, border: 'none', cursor: 'pointer', fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(90deg,#FDB03C,#FF5F6D 55%,#8A63D2)', boxShadow: '0 8px 28px rgba(255,95,109,.35), inset 0 1px 0 rgba(255,255,255,.25)' }}>
+                <button type="submit" disabled={loading} className="nl-cta" style={{ height: 58, width: '100%', borderRadius: 999, border: 'none', cursor: 'pointer', fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(90deg,#FDB03C,#FF5F6D 55%,#8A63D2)', boxShadow: 'var(--auth-btn-shadow)' }}>
                   {loading ? 'Creating account…' : 'Sign Up →'}
                 </button>
               </form>
             )}
 
-            <p style={{ textAlign: 'center', color: night ? MUTED : '#7A736B', fontSize: '.9rem', margin: '18px 0 0', whiteSpace: 'nowrap' }}>
+            <p style={{ textAlign: 'center', color: 'var(--auth-sub)', fontSize: '.9rem', margin: '18px 0 0', whiteSpace: 'nowrap' }}>
               {isSignIn ? "Don't have an account?" : 'Already have an account?'}{' '}
               <button onClick={() => toggleMode(!isSignIn)} style={{
-                background: 'none', border: 'none', color: '#FF7A45', fontWeight: 700, cursor: 'pointer',
+                background: 'none', border: 'none', color: 'var(--auth-link)', fontWeight: 700, cursor: 'pointer',
                 fontSize: '.9rem', textDecoration: 'underline', textUnderlineOffset: 4,
               }}>
                 {isSignIn ? 'Sign up' : 'Sign in'}
@@ -871,7 +1008,7 @@ function AuthChapter() {
           position: 'relative', width: 'min(26vw, 400px)', flexShrink: 0, alignSelf: 'flex-start',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
-          <AuthShowcase quote={quote} author={AUTH_QUOTES[isSignIn ? 'login' : 'signup'].author} night={night} />
+          <AuthShowcase quote={quote} author={AUTH_QUOTES[isSignIn ? 'login' : 'signup'].author} />
         </div>
       </div>
     </section>
