@@ -6,9 +6,10 @@ import {
 import { useInView } from 'react-intersection-observer'
 import {
   Camera, MessageCircle, Dumbbell, Flame, ArrowRight, ChevronDown, Activity, Zap,
-  Eye, EyeOff, Mail, Lock, User, Wifi,
+  Eye, EyeOff, Mail, Lock, User,
 } from 'lucide-react'
 import { auth } from '../lib/api'
+import { useTheme } from '../components/shared/ThemeContext'
 
 /* ═══════════════════════════════════════════════════════════════════
    NutriAI — cinematic 3D storytelling landing.
@@ -58,6 +59,8 @@ const LANDING_CSS = `
 }
 .nl-authinput:focus { border-color:rgba(255,107,94,.55) !important; background:rgba(255,255,255,.09) !important; }
 .nl-authinput::placeholder { color:#6B6560; }
+.nl-authinput-light:focus { border-color:rgba(255,107,94,.5) !important; background:#FFFFFF !important; }
+.nl-authinput-light::placeholder { color:#B0A896; }
 @media (max-width:960px) {
   .nl-auth-grid { grid-template-columns:1fr !important; }
   .nl-auth-deco { display:none !important; }
@@ -277,49 +280,73 @@ function FloatWorkoutCard() {
   )
 }
 
-/* ── AUTH: phone mockup with the two cards on its screen ───────────── */
-function AuthPhoneMockup() {
+/* ── AUTH: floating dark showcase cards (standalone, no phone frame) ──── */
+const SHOWCARD = {
+  background: 'linear-gradient(165deg, rgba(28,23,20,.98), rgba(15,12,10,.98))',
+  border: '1px solid rgba(255,255,255,.09)',
+  borderRadius: 24,
+  boxShadow: '0 30px 60px -18px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.07)',
+  padding: '26px 28px 24px',
+  width: 'min(100%, 380px)',
+}
+
+function AuthScanCard() {
   return (
-    <div style={{ position: 'relative', width: 'min(80%,300px)' }}>
-      <div aria-hidden="true" style={{
-        position: 'absolute', inset: -70, pointerEvents: 'none',
-        background: 'radial-gradient(circle, rgba(255,107,94,.22) 0%, transparent 65%)', filter: 'blur(28px)',
-      }} />
-      <div style={{
-        position: 'relative', borderRadius: 46, padding: 11,
-        background: 'linear-gradient(165deg,#333336 0%,#0b0b0d 60%)',
-        border: '1px solid rgba(255,255,255,.16)',
-        boxShadow: '0 44px 90px -24px rgba(0,0,0,.75), inset 0 1px 1px rgba(255,255,255,.18)',
-      }}>
-        <div style={{ position: 'relative', borderRadius: 36, overflow: 'hidden', background: '#101013' }}>
-          <div aria-hidden="true" style={{
-            position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
-            width: 92, height: 25, borderRadius: 99, background: '#000', zIndex: 2,
-          }} />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px 24px 4px', color: '#fff' }}>
-            <span className="nl-tnum" style={{ fontSize: '.72rem', fontWeight: 600 }}>9:41</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
-                {[4, 7, 10, 13].map((h) => (
-                  <span key={h} style={{ width: 3, height: h, borderRadius: 1, background: '#fff' }} />
-                ))}
-              </span>
-              <Wifi size={13} color="#fff" />
-              <span style={{ width: 22, height: 11, borderRadius: 3, border: '1px solid rgba(255,255,255,.7)', position: 'relative', display: 'inline-block' }}>
-                <span style={{ position: 'absolute', inset: 1.5, width: '70%', borderRadius: 1.5, background: '#fff' }} />
-              </span>
-            </span>
-          </div>
-          <div style={{ padding: '12px 14px 22px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ borderRadius: 18, padding: '16px 16px 14px', background: 'rgba(255,255,255,.055)', border: '1px solid rgba(255,255,255,.11)' }}>
-              <FloatScanCard />
-            </div>
-            <div style={{ borderRadius: 18, padding: '16px 16px 14px', background: 'rgba(255,255,255,.055)', border: '1px solid rgba(255,255,255,.11)' }}>
-              <FloatWorkoutCard />
-            </div>
-          </div>
-        </div>
+    <div className="nl-floaty" style={SHOWCARD}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 12 }}>
+        <Camera size={16} color={AMBER} />
+        <span className="nl-kicker" style={{ color: '#D6D3D1' }}>AI food scan</span>
       </div>
+      <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#FFFFFF' }}>Masala Dosa</div>
+      <div className="nl-tnum" style={{ color: AMBER, fontWeight: 800, fontSize: '1.6rem', margin: '6px 0 14px' }}>
+        540 <span style={{ fontSize: '.8rem', color: '#D6D3D1', fontWeight: 600 }}>kcal</span>
+      </div>
+      {[['P', 18, 72], ['C', 72, 84], ['F', 21, 52]].map(([k, g, w]) => (
+        <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+          <span className="nl-tnum" style={{ fontSize: '.72rem', color: '#A8A29E', width: 14 }}>{k}</span>
+          <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,.09)' }}>
+            <div style={{ width: `${w}%`, height: '100%', borderRadius: 99, background: `linear-gradient(90deg, ${AMBER}, ${AMBER_DEEP})` }} />
+          </div>
+          <span className="nl-tnum" style={{ fontSize: '.75rem', color: '#FFFFFF', fontWeight: 600 }}>{g}g</span>
+        </div>
+      ))}
+      <div style={{ marginTop: 14, fontSize: '.8rem', color: '#4ADE80', fontWeight: 700 }}>✓ Logged to diary</div>
+    </div>
+  )
+}
+
+function AuthWorkoutCard() {
+  return (
+    <div className="nl-floaty" style={{ ...SHOWCARD, animationDelay: '-3.5s' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 12 }}>
+        <Dumbbell size={16} color={AMBER} />
+        <span className="nl-kicker" style={{ color: '#D6D3D1' }}>Workout</span>
+      </div>
+      <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#FFFFFF' }}>Push Day</div>
+      <div className="nl-tnum" style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '1.6rem', margin: '6px 0 14px', whiteSpace: 'nowrap' }}>
+        42:18 <span style={{ fontSize: '.8rem', color: '#D6D3D1', fontWeight: 500 }}>· <Flame size={13} color={AMBER_DEEP} style={{ display: 'inline' }} /> 312 kcal</span>
+      </div>
+      <div style={{ height: 7, borderRadius: 99, background: 'rgba(255,255,255,.09)', overflow: 'hidden' }}>
+        <div style={{ width: '68%', height: '100%', borderRadius: 99, background: `linear-gradient(90deg, ${AMBER_DEEP}, ${AMBER} 55%, #7B61FF)`, boxShadow: '0 0 14px rgba(255,107,94,.55)' }} />
+      </div>
+      <div className="nl-tnum" style={{ marginTop: 10, fontSize: '.78rem', color: '#A8A29E' }}>7 / 10 sets done</div>
+    </div>
+  )
+}
+
+function AuthShowcase({ quote, author, night }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26, width: '100%', maxWidth: 400 }}>
+      <AuthScanCard />
+      <AuthWorkoutCard />
+      <blockquote style={{ margin: '12px 0 0', textAlign: 'center', maxWidth: 380 }}>
+        <p style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, color: night ? CREAM : INK, lineHeight: 1.5, minHeight: '3.4em', letterSpacing: '-.01em' }}>
+          &ldquo;{quote}<span style={{ color: AMBER }}>|</span>&rdquo;
+        </p>
+        <cite style={{ display: 'block', marginTop: 12, fontSize: '.85rem', color: night ? MUTED : '#8A847E', fontStyle: 'normal' }}>
+          — {author}
+        </cite>
+      </blockquote>
     </div>
   )
 }
@@ -590,30 +617,36 @@ const AUTH_QUOTES = {
 }
 
 function AuthInput({ icon: Icon, ...props }) {
+  const { theme } = useTheme()
+  const night = theme === 'dark'
   return (
     <div style={{ position: 'relative' }}>
-      <Icon size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#8A847E', pointerEvents: 'none' }} />
-      <input {...props} className="nl-authinput" style={{
+      <Icon size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: night ? '#8A847E' : '#A8A29E', pointerEvents: 'none' }} />
+      <input {...props} className={`nl-authinput${night ? '' : ' nl-authinput-light'}`} style={{
         width: '100%', padding: '13px 14px 13px 42px', borderRadius: 14,
-        border: '1px solid rgba(255,255,255,.14)', background: 'rgba(255,255,255,.06)',
-        color: CREAM, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
+        border: night ? '1px solid rgba(255,255,255,.14)' : '1px solid #E3DCCF',
+        background: night ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.95)',
+        color: night ? CREAM : INK, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
       }} />
     </div>
   )
 }
 
 function AuthPasswordInput({ show, onToggleShow, ...props }) {
+  const { theme } = useTheme()
+  const night = theme === 'dark'
   return (
     <div style={{ position: 'relative' }}>
-      <Lock size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: '#8A847E', pointerEvents: 'none' }} />
-      <input {...props} type={show ? 'text' : 'password'} className="nl-authinput" style={{
+      <Lock size={16} style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)', color: night ? '#8A847E' : '#A8A29E', pointerEvents: 'none' }} />
+      <input {...props} type={show ? 'text' : 'password'} className={`nl-authinput${night ? '' : ' nl-authinput-light'}`} style={{
         width: '100%', padding: '13px 44px 13px 42px', borderRadius: 14,
-        border: '1px solid rgba(255,255,255,.14)', background: 'rgba(255,255,255,.06)',
-        color: CREAM, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
+        border: night ? '1px solid rgba(255,255,255,.14)' : '1px solid #E3DCCF',
+        background: night ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.95)',
+        color: night ? CREAM : INK, fontSize: '.95rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color .15s ease, background .15s ease',
       }} />
       <button type="button" onClick={onToggleShow} aria-label={show ? 'Hide password' : 'Show password'} style={{
         position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none',
-        color: '#8A847E', cursor: 'pointer', padding: 8, display: 'flex',
+        color: night ? '#8A847E' : '#A8A29E', cursor: 'pointer', padding: 8, display: 'flex',
       }}>
         {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>
@@ -622,6 +655,8 @@ function AuthPasswordInput({ show, onToggleShow, ...props }) {
 }
 
 function AuthChapter() {
+  const { theme } = useTheme()
+  const night = theme === 'dark'
   const [isSignIn, setIsSignIn] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -699,45 +734,75 @@ function AuthChapter() {
 
   return (
     <section id="auth" className="nl-hairline-t" style={{
-      position: 'relative', padding: '120px 0', overflow: 'hidden', background: CHARCOAL_2,
+      position: 'relative', padding: '120px 0', overflow: 'hidden',
+      background: night ? CHARCOAL_2 : '#F6F2EA',
+      transition: 'background .3s ease',
     }}>
-      {/* aurora wash merged across the whole section */}
-      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', left: '-12%', top: '-22%', width: '62%', height: '82%', background: 'radial-gradient(ellipse, rgba(255,107,94,.17) 0%, transparent 65%)', filter: 'blur(70px)' }} />
-        <div style={{ position: 'absolute', right: '-16%', bottom: '-28%', width: '66%', height: '88%', background: 'radial-gradient(ellipse, rgba(255,176,32,.14) 0%, transparent 65%)', filter: 'blur(70px)' }} />
-        <div style={{ position: 'absolute', left: '30%', top: '28%', width: '46%', height: '52%', background: 'radial-gradient(ellipse, rgba(123,97,255,.09) 0%, transparent 65%)', filter: 'blur(80px)' }} />
-      </div>
+      {/* ambient wash across the whole section */}
+      {night ? (
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', left: '-14%', top: '-12%', width: '56%', height: '72%', background: 'radial-gradient(ellipse at 32% 42%, rgba(255,107,94,.22) 0%, transparent 65%)', filter: 'blur(60px)', transform: 'rotate(-16deg)' }} />
+          <div style={{ position: 'absolute', right: '-16%', top: '4%', width: '54%', height: '66%', background: 'radial-gradient(ellipse at 68% 36%, rgba(255,150,60,.18) 0%, transparent 65%)', filter: 'blur(60px)', transform: 'rotate(14deg)' }} />
+          <div style={{ position: 'absolute', left: '26%', bottom: '-26%', width: '62%', height: '62%', background: 'radial-gradient(ellipse, rgba(255,107,94,.10) 0%, transparent 65%)', filter: 'blur(70px)' }} />
+        </div>
+      ) : (
+        <div aria-hidden="true" style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 58% 48% at 14% 18%, rgba(255,182,150,.20) 0%, transparent 65%), radial-gradient(ellipse 54% 52% at 88% 28%, rgba(255,150,118,.15) 0%, transparent 65%), radial-gradient(ellipse 50% 44% at 58% 96%, rgba(255,198,158,.14) 0%, transparent 65%)',
+        }} />
+      )}
       <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', padding: '0 6vw', display: 'grid', gridTemplateColumns: '1.05fr .95fr', gap: 56, alignItems: 'center' }} className="nl-auth-grid">
 
         {/* frosted form card with ambient blobs */}
         <div style={{ position: 'relative', width: '100%', maxWidth: 540, justifySelf: 'center' }}>
-          <div aria-hidden="true" style={{ position: 'absolute', inset: -40, pointerEvents: 'none' }}>
-            <div style={{ position: 'absolute', left: -64, top: -64, width: 288, height: 288, borderRadius: '50%', background: 'rgba(255,107,94,.30)', filter: 'blur(90px)' }} />
-            <div style={{ position: 'absolute', right: -56, bottom: -80, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,176,32,.22)', filter: 'blur(90px)' }} />
-            <div style={{ position: 'absolute', left: '25%', top: '33%', width: 240, height: 240, borderRadius: '50%', background: 'rgba(255,107,94,.14)', filter: 'blur(90px)' }} />
-          </div>
+          {night ? (
+            <div aria-hidden="true" style={{ position: 'absolute', inset: -40, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', left: -64, top: -64, width: 288, height: 288, borderRadius: '50%', background: 'rgba(255,107,94,.30)', filter: 'blur(90px)' }} />
+              <div style={{ position: 'absolute', right: -56, bottom: -80, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,176,32,.22)', filter: 'blur(90px)' }} />
+              <div style={{ position: 'absolute', left: '25%', top: '33%', width: 240, height: 240, borderRadius: '50%', background: 'rgba(255,107,94,.14)', filter: 'blur(90px)' }} />
+            </div>
+          ) : (
+            <div aria-hidden="true" style={{ position: 'absolute', inset: -40, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', left: -64, top: -64, width: 288, height: 288, borderRadius: '50%', background: 'rgba(255,170,130,.28)', filter: 'blur(90px)' }} />
+              <div style={{ position: 'absolute', right: -56, bottom: -80, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,190,150,.22)', filter: 'blur(90px)' }} />
+            </div>
+          )}
           <motion.div
             animate={shake ? { x: [0, -12, 12, -9, 9, -5, 0] } : { x: 0 }}
             transition={{ duration: 0.45 }}
-            className="nl-glass"
-            style={{ position: 'relative', borderRadius: 36, padding: '44px 52px', width: '100%', boxSizing: 'border-box' }}
+            className={night ? 'nl-glass' : ''}
+            style={{
+              position: 'relative', borderRadius: 36, padding: '44px 52px', width: '100%', boxSizing: 'border-box',
+              ...(!night ? {
+                background: 'rgba(255,255,255,.78)',
+                backdropFilter: 'blur(20px) saturate(1.3)', WebkitBackdropFilter: 'blur(20px) saturate(1.3)',
+                border: '1px solid rgba(28,25,23,.08)',
+                boxShadow: '0 30px 70px -20px rgba(120,80,50,.22), inset 0 1px 0 rgba(255,255,255,.9)',
+              } : {}),
+            }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, textAlign: 'center', marginBottom: 30 }}>
               <div style={{
                 width: 52, height: 52, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.5rem', background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.16)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.1)',
+                fontSize: '1.5rem',
+                ...(night
+                  ? { background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.16)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.1)' }
+                  : { background: '#FFFFFF', border: '1px solid #E5DED3', boxShadow: '0 6px 16px rgba(120,80,50,.12)' }),
               }}>🥗</div>
-              <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, color: CREAM, letterSpacing: '-.01em' }}>
+              <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800, color: night ? CREAM : INK, letterSpacing: '-.01em' }}>
                 {isSignIn ? 'Sign in to your account' : 'Create your account'}
               </h2>
-              <p style={{ margin: 0, fontSize: '.9rem', color: MUTED }}>
+              <p style={{ margin: 0, fontSize: '.9rem', color: night ? MUTED : '#7A736B' }}>
                 {isSignIn ? 'Welcome back — your coach kept your seat warm.' : 'Free forever. No credit card, no catch.'}
               </p>
             </div>
 
             {error && (
-              <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.35)', color: '#F87171', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center' }}>
+              <div style={{
+                background: night ? 'rgba(239,68,68,.1)' : 'rgba(239,68,68,.07)',
+                border: night ? '1px solid rgba(239,68,68,.35)' : '1px solid rgba(239,68,68,.3)',
+                color: night ? '#F87171' : '#DC2626', padding: '12px 14px', borderRadius: 12, marginBottom: 18, fontSize: '.875rem', textAlign: 'center',
+              }}>
                 {error}
               </div>
             )}
@@ -771,10 +836,10 @@ function AuthChapter() {
               </form>
             )}
 
-            <p style={{ textAlign: 'center', color: MUTED, fontSize: '.85rem', margin: '24px 0 0' }}>
+            <p style={{ textAlign: 'center', color: night ? MUTED : '#7A736B', fontSize: '.85rem', margin: '24px 0 0' }}>
               {isSignIn ? "Don't have an account?" : 'Already have an account?'}{' '}
               <button onClick={() => toggleMode(!isSignIn)} style={{
-                background: 'none', border: 'none', color: CREAM, fontWeight: 700, cursor: 'pointer',
+                background: 'none', border: 'none', color: AMBER, fontWeight: 700, cursor: 'pointer',
                 fontSize: '.85rem', textDecoration: 'underline', textUnderlineOffset: 4,
               }}>
                 {isSignIn ? 'Sign up' : 'Sign in'}
@@ -783,20 +848,12 @@ function AuthChapter() {
           </motion.div>
         </div>
 
-        {/* decorative panel — phone mockup + typewriter quote */}
+        {/* floating showcase cards + typewriter quote */}
         <div className="nl-auth-deco" style={{
-          position: 'relative', minHeight: 560,
+          position: 'relative',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 0',
         }}>
-          <AuthPhoneMockup />
-          <blockquote style={{ margin: '36px 0 0', textAlign: 'center', maxWidth: 380 }}>
-            <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: CREAM, lineHeight: 1.5, minHeight: '3.6em' }}>
-              &ldquo;{quote}<span style={{ color: AMBER }}>|</span>&rdquo;
-            </p>
-            <cite style={{ display: 'block', marginTop: 10, fontSize: '.85rem', color: MUTED, fontStyle: 'normal' }}>
-              — {AUTH_QUOTES[isSignIn ? 'login' : 'signup'].author}
-            </cite>
-          </blockquote>
+          <AuthShowcase quote={quote} author={AUTH_QUOTES[isSignIn ? 'login' : 'signup'].author} night={night} />
         </div>
       </div>
     </section>
