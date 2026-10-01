@@ -38,7 +38,8 @@ app.options('*', cors())
 
 // Middleware
 app.use(helmet())
-app.use(morgan('dev'))
+// 'dev' format is verbose — use the quieter 'combined' format in production
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 app.use(express.json())
 
 // API Routes — direct requires (NOT dynamic): Vercel's file tracer only

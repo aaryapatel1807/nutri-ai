@@ -414,7 +414,14 @@ function AuthChapter() {
   }
 
   const persist = (data) => {
+    // Register may return a tokenless generic message (email-enumeration
+    // guard) — show it instead of signing in.
+    if (!data.token) {
+      fail(data.message || 'Please sign in with your new account.')
+      return
+    }
     localStorage.setItem('nutriai_token', data.token)
+    if (data.refreshToken) localStorage.setItem('nutriai_refresh', data.refreshToken)
     localStorage.setItem('nutriai_user', JSON.stringify(data.user))
     window.location.href = '/dashboard'
   }

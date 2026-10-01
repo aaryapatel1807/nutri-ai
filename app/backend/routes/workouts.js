@@ -12,7 +12,8 @@ router.get('/', authMiddleware, async (req, res) => {
     })
     res.json(workouts)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load workouts:', err.message)
+    res.status(500).json({ error: 'Failed to load workouts' })
   }
 })
 
@@ -36,7 +37,8 @@ router.get('/stats', authMiddleware, async (req, res) => {
       totalCaloriesBurned: totalCalories._sum.calories || 0
     })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load workout stats:', err.message)
+    res.status(500).json({ error: 'Failed to load workout stats' })
   }
 })
 
@@ -82,7 +84,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
     })
     res.json(workout)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to update workout:', err.message)
+    res.status(500).json({ error: 'Failed to update workout' })
   }
 })
 
@@ -97,7 +100,8 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await prisma.workout.delete({ where: { id: req.params.id } })
     res.json({ success: true })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to delete workout:', err.message)
+    res.status(500).json({ error: 'Failed to delete workout' })
   }
 })
 
@@ -110,7 +114,8 @@ router.post('/:id/complete', authMiddleware, async (req, res) => {
     if (!workout) return res.status(404).json({ error: 'Workout not found' })
     res.json({ success: true, workout })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to complete workout:', err.message)
+    res.status(500).json({ error: 'Failed to complete workout' })
   }
 })
 

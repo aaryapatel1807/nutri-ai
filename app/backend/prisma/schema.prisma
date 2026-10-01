@@ -185,3 +185,60 @@ model ConnectedAccount {
 
   @@unique([userId, provider])
 }
+
+// ---------------------------------------------------------------------------
+// Security models (added 2026-10-01 audit fixes)
+// ---------------------------------------------------------------------------
+
+// Rotating refresh tokens — only the SHA-256 hash is stored; the raw token
+// is shown to the client once at issue time. Rotation: each use revokes the
+// old token and issues a new pair (theft of a refresh token is detectable
+// when the legitimate client presents an already-rotated token).
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique // sha256 hex of the opaque refresh token
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Password-reset tokens — single-use, 1h expiry, only the hash is stored.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique // sha256 hex of the opaque reset token
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// OAuth `state` values — short-lived (10 min), single-use, consumed on
+// callback. Replaces the old pattern of passing the user's JWT as `state`.
+model OAuthState {
+  state     String   @id // crypto-random, passed to the OAuth provider
+  userId    String
+  provider  String   // e.g. 'google-fit'
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+// Per-user daily AI usage — serverless-safe quota enforcement for the
+// Groq/Gemini free tiers (in-memory rate limiters don't survive cold starts).
+model AiUsage {
+  userId String
+  date   DateTime // UTC midnight of the usage day
+  count  Int      @default(0)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, date])
+}

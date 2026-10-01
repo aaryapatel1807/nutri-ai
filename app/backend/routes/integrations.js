@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const crypto = require('crypto')
 const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
-const AuthService = require('../services/auth.service')
+const { encryptToken, decryptTokenLenient } = require('../utils/tokenCrypto')
 
 // ---------------------------------------------------------------------------
 // Google Fit integration — real OAuth 2.0 + data sync.
@@ -67,6 +68,58 @@ const ACTIVITY_KCAL_PER_MIN = {
 
 // --- token helpers ---------------------------------------------------------
 
+// OAuth `state`: a short-lived (10 min), single-use random value stored in
+// the DB. Replaces the old pattern of passing the user's JWT as `state`,
+// which leaked the token into browser history, server logs and Referer
+// headers. Serverless-safe: no shared session store needed.
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000
+
+async function createOAuthState(userId, provider) {
+  const state = crypto.randomBytes(32).toString('hex')
+  await prisma.oAuthState.create({
+    data: {
+      state,
+      userId,
+      provider,
+      expiresAt: new Date(Date.now() + OAUTH_STATE_TTL_MS),
+    },
+  })
+  return state
+}
+
+// Returns the userId bound to the state, or null. Single-use: the row is
+// deleted whether it was valid or not (replay-safe).
+async function consumeOAuthState(state, provider) {
+  if (!state || typeof state !== 'string') return null
+  const row = await prisma.oAuthState.findUnique({ where: { state } })
+  if (row && row.provider === provider) {
+    await prisma.oAuthState.delete({ where: { state } }).catch(() => {})
+    if (row.expiresAt > new Date()) return row.userId
+    return null // expired
+  }
+  if (row) await prisma.oAuthState.delete({ where: { state } }).catch(() => {})
+  return null
+}
+
+// Google OAuth tokens are encrypted at rest (AES-256-GCM, TOKEN_ENCRYPTION_KEY).
+// decryptTokenLenient keeps rows written before this fix working — they are
+// re-encrypted on the next write (connect or token refresh).
+function encryptAccountTokens(data) {
+  const out = { ...data }
+  if (out.accessToken) out.accessToken = encryptToken(out.accessToken)
+  if (out.refreshToken) out.refreshToken = encryptToken(out.refreshToken)
+  return out
+}
+
+function decryptAccountTokens(account) {
+  if (!account) return account
+  return {
+    ...account,
+    accessToken: decryptTokenLenient(account.accessToken),
+    refreshToken: account.refreshToken ? decryptTokenLenient(account.refreshToken) : account.refreshToken,
+  }
+}
+
 async function exchangeCode(code) {
   const body = new URLSearchParams({
     code,
@@ -86,9 +139,10 @@ async function exchangeCode(code) {
 }
 
 async function refreshAccessToken(account) {
-  if (!account.refreshToken) throw new Error('No refresh token — please reconnect Google Fit')
+  const acc = decryptAccountTokens(account)
+  if (!acc.refreshToken) throw new Error('No refresh token — please reconnect Google Fit')
   const body = new URLSearchParams({
-    refresh_token: account.refreshToken,
+    refresh_token: acc.refreshToken,
     client_id: process.env.GOOGLE_FIT_CLIENT_ID,
     client_secret: process.env.GOOGLE_FIT_CLIENT_SECRET,
     grant_type: 'refresh_token',
@@ -101,17 +155,17 @@ async function refreshAccessToken(account) {
   const data = await r.json()
   if (!r.ok) throw new Error(data.error_description || data.error || 'Token refresh failed')
   const updated = await prisma.connectedAccount.update({
-    where: { id: account.id },
-    data: {
+    where: { id: acc.id },
+    data: encryptAccountTokens({
       accessToken: data.access_token,
       expiresAt: new Date(Date.now() + (data.expires_in || 3600) * 1000),
-    },
+    }),
   })
-  return updated
+  return decryptAccountTokens(updated)
 }
 
 async function fitFetch(account, path, options = {}) {
-  let acc = account
+  let acc = decryptAccountTokens(account)
   if (acc.expiresAt && acc.expiresAt.getTime() - Date.now() < 60_000) {
     acc = await refreshAccessToken(acc)
   }
@@ -150,8 +204,8 @@ const dayStartUTC = (d) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth()
 // --- routes ----------------------------------------------------------------
 
 // Step 1: return the Google consent URL (frontend redirects the user there).
-// The user's own NutriAI JWT is passed as `state` so the callback can
-// identify them (serverless — no shared session store).
+// A short-lived random `state` is stored in the DB and validated on callback
+// (serverless — no shared session store; no JWT in the URL).
 router.get('/google-fit/connect', authMiddleware, async (req, res) => {
   try {
     if (!credsReady()) {
@@ -160,7 +214,7 @@ router.get('/google-fit/connect', authMiddleware, async (req, res) => {
         error: 'Google Fit is not configured on the server (missing GOOGLE_FIT_CLIENT_ID / GOOGLE_FIT_CLIENT_SECRET)',
       })
     }
-    const token = req.headers.authorization?.split(' ')[1]
+    const state = await createOAuthState(req.userId, PROVIDER)
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_FIT_CLIENT_ID,
       redirect_uri: redirectUri(),
@@ -168,11 +222,12 @@ router.get('/google-fit/connect', authMiddleware, async (req, res) => {
       scope: SCOPES,
       access_type: 'offline',   // needed to receive a refresh_token
       prompt: 'consent',        // ensures refresh_token on every connect
-      state: token,
+      state,
     })
     res.json({ success: true, url: `${GOOGLE_AUTH_URL}?${params.toString()}` })
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message })
+    console.error('Google Fit connect error:', err.message)
+    res.status(500).json({ success: false, error: 'Could not start Google Fit connection' })
   }
 })
 
@@ -183,35 +238,32 @@ router.get('/google-fit/callback', async (req, res) => {
     const { code, state, error } = req.query
     if (error) return fail(`Google: ${error}`)
     if (!code || !state) return fail('Missing code or state')
-    let userId
-    try {
-      const decoded = await new AuthService().verifyToken(state)
-      userId = decoded.userId
-    } catch {
-      return fail('Session expired — please connect again')
-    }
+    const userId = await consumeOAuthState(state, PROVIDER)
+    if (!userId) return fail('Session expired — please connect again')
     const tokens = await exchangeCode(code)
+    const tokenData = encryptAccountTokens({
+      accessToken: tokens.access_token,
+      expiresAt: new Date(Date.now() + (tokens.expires_in || 3600) * 1000),
+      scopes: tokens.scope || SCOPES,
+    })
     await prisma.connectedAccount.upsert({
       where: { userId_provider: { userId, provider: PROVIDER } },
       update: {
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token || undefined,
-        expiresAt: new Date(Date.now() + (tokens.expires_in || 3600) * 1000),
-        scopes: tokens.scope || SCOPES,
+        ...tokenData,
+        // Only overwrite the refresh token if Google sent a new one
+        ...(tokens.refresh_token ? { refreshToken: encryptToken(tokens.refresh_token) } : {}),
       },
       create: {
         userId,
         provider: PROVIDER,
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-        expiresAt: new Date(Date.now() + (tokens.expires_in || 3600) * 1000),
-        scopes: tokens.scope || SCOPES,
+        ...tokenData,
+        refreshToken: tokens.refresh_token ? encryptToken(tokens.refresh_token) : null,
       },
     })
     res.redirect(`${frontendUrl()}/profile?tab=apps&gfit=connected`)
   } catch (err) {
     console.error('Google Fit callback error:', err.message)
-    fail(err.message)
+    fail('Could not complete the Google Fit connection — please try again')
   }
 })
 
@@ -224,7 +276,8 @@ router.get('/google-fit/status', authMiddleware, async (req, res) => {
     })
     res.json({ success: true, connected: Boolean(acc), lastSyncAt: acc?.lastSyncAt || null })
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message })
+    console.error('Google Fit status error:', err.message)
+    res.status(500).json({ success: false, error: 'Could not check Google Fit status' })
   }
 })
 
@@ -345,7 +398,7 @@ router.post('/google-fit/sync', authMiddleware, async (req, res) => {
     res.json({ success: true, summary, lastSyncAt: new Date() })
   } catch (err) {
     console.error('Google Fit sync error:', err.message)
-    res.status(500).json({ success: false, error: err.message })
+    res.status(500).json({ success: false, error: 'Google Fit sync failed' })
   }
 })
 
@@ -357,7 +410,8 @@ router.delete('/google-fit/disconnect', authMiddleware, async (req, res) => {
     })
     res.json({ success: true })
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message })
+    console.error('Google Fit disconnect error:', err.message)
+    res.status(500).json({ success: false, error: 'Could not disconnect Google Fit' })
   }
 })
 

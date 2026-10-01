@@ -41,6 +41,27 @@ const rateLimitMiddleware = (maxRequests = 100, windowMs = 15 * 60 * 1000) => {
   })
 }
 
+// Per-user variant — keys on the authenticated userId (falls back to IP for
+// unauthenticated callers). Must be mounted AFTER authMiddleware so req.userId
+// is set. NOTE: express-rate-limit's default store is in-memory, which is
+// best-effort on serverless (cold starts reset it). It still blunts bursts
+// against warm instances; the DB-backed daily quota in routes/mlProxy.js is
+// the hard guarantee for the AI free tier.
+const userRateLimitMiddleware = (maxRequests = 100, windowMs = 15 * 60 * 1000) => {
+  return rateLimit({
+    windowMs,
+    max: maxRequests,
+    keyGenerator: (req) => req.userId || req.ip,
+    message: {
+      success: false,
+      error: 'Too many requests — please slow down',
+      retryAfter: Math.ceil(windowMs / 1000)
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+  })
+}
+
 const errorHandler = (err, req, res, next) => {
   console.error('Error:', err)
 
@@ -69,5 +90,6 @@ const errorHandler = (err, req, res, next) => {
 module.exports = {
   authMiddleware,
   rateLimitMiddleware,
+  userRateLimitMiddleware,
   errorHandler
 }

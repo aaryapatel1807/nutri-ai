@@ -1,5 +1,19 @@
 import axios from 'axios'
 
+// ---------------------------------------------------------------------------
+// Auth token storage — localStorage tradeoff (2026-10-01 audit note):
+// a JWT in localStorage is stealable by any XSS. We accept this because the
+// backend is serverless (no HttpOnly-cookie session infra) AND the chatbot
+// XSS vector is now closed (formatMessage escapes before markdown). The
+// access token lives only 1h and refresh tokens rotate server-side, so a
+// stolen token's blast radius is bounded. Revisit with HttpOnly cookies if
+// a stricter posture is ever needed.
+// ---------------------------------------------------------------------------
+
+const TOKEN_KEY = 'nutriai_token'
+const REFRESH_KEY = 'nutriai_refresh'
+const USER_KEY = 'nutriai_user'
+
 // Create Axios instance
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
@@ -8,11 +22,23 @@ const api = axios.create({
   },
 })
 
+function clearAuthStorage() {
+  localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(REFRESH_KEY)
+  localStorage.removeItem(USER_KEY)
+  // Clear all user-scoped chat history
+  try {
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('nutriai_chat_')) localStorage.removeItem(key)
+    })
+  } catch { /* private mode */ }
+}
+
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
     try {
-      const token = localStorage.getItem('nutriai_token')
+      const token = localStorage.getItem(TOKEN_KEY)
       if (token && token !== 'undefined' && token !== 'null' && token.length > 0) {
         config.headers.Authorization = `Bearer ${token}`
       }
@@ -24,13 +50,44 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Response interceptor - handle 401
+// Single-flight refresh: concurrent 401s share one refresh call.
+let refreshPromise = null
+async function silentRefresh() {
+  if (refreshPromise) return refreshPromise
+  const stored = (() => { try { return localStorage.getItem(REFRESH_KEY) } catch { return null } })()
+  if (!stored) return null
+  refreshPromise = axios
+    .post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/refresh`, { refreshToken: stored })
+    .then(({ data }) => {
+      try {
+        localStorage.setItem(TOKEN_KEY, data.token)
+        localStorage.setItem(REFRESH_KEY, data.refreshToken)
+      } catch { /* private mode */ }
+      return data.token
+    })
+    .catch(() => null)
+    .finally(() => { refreshPromise = null })
+  return refreshPromise
+}
+
+// Response interceptor - try silent refresh on 401 before logging out
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const original = error.config
+    const isRefreshCall = original?.url?.includes('/api/auth/refresh')
+
+    if (error.response?.status === 401 && !isRefreshCall && !original?._retry) {
+      original._retry = true
+      const newToken = await silentRefresh()
+      if (newToken) {
+        original.headers.Authorization = `Bearer ${newToken}`
+        return api(original) // retry once with the fresh access token
+      }
+    }
+
     if (error.response?.status === 401) {
-      localStorage.removeItem('nutriai_token')
-      localStorage.removeItem('nutriai_user')
+      clearAuthStorage()
       if (typeof window !== 'undefined') {
         window.location.href = '/'
       }
@@ -43,34 +100,36 @@ api.interceptors.response.use(
 export const auth = {
   register: (data) => api.post('/api/auth/register', data),
   login: (data) => api.post('/api/auth/login', data),
+  refresh: (refreshToken) => api.post('/api/auth/refresh', { refreshToken }),
+  forgotPassword: (email) => api.post('/api/auth/forgot-password', { email }),
+  resetPassword: (token, newPassword) => api.post('/api/auth/reset-password', { token, newPassword }),
   getMe: () => api.get('/api/auth/me'),
   updateProfile: (data) => api.put('/api/auth/profile', data),
   logout: () => {
-  localStorage.removeItem('nutriai_token')
-  localStorage.removeItem('nutriai_user')
-  
-  // Clear all user-scoped chat history
-  const keys = Object.keys(localStorage)
-  keys.forEach(key => {
-    if (key.startsWith('nutriai_chat_')) {
-      localStorage.removeItem(key)
-    }
-  })
-},
+    // Revoke the refresh token server-side (fire-and-forget — local cleanup
+    // must happen even if the network call fails).
+    try {
+      const rt = localStorage.getItem(REFRESH_KEY)
+      if (rt) {
+        api.post('/api/auth/logout', { refreshToken: rt }).catch(() => {})
+      }
+    } catch { /* private mode */ }
+    clearAuthStorage()
+  },
   getCurrentUser: () => {
     try {
-      const user = localStorage.getItem('nutriai_user')
+      const user = localStorage.getItem(USER_KEY)
       if (!user || user === 'undefined' || user === 'null' || user.length === 0) return null
       return JSON.parse(user)
     } catch (e) {
-      localStorage.removeItem('nutriai_user')
+      localStorage.removeItem(USER_KEY)
       return null
     }
   },
-  
+
   getToken: () => {
     try {
-      const token = localStorage.getItem('nutriai_token')
+      const token = localStorage.getItem(TOKEN_KEY)
       if (!token || token === 'undefined' || token === 'null' || token.length === 0) return null
       return token
     } catch (e) {

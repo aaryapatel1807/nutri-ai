@@ -20,7 +20,8 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json(badges)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load badges:', err.message)
+    res.status(500).json({ error: 'Failed to load badges' })
   }
 })
 
@@ -58,7 +59,8 @@ router.get('/xp', authMiddleware, async (req, res) => {
       unlockedBadges: userBadges.length
     })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load XP:', err.message)
+    res.status(500).json({ error: 'Failed to load XP' })
   }
 })
 

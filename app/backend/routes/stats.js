@@ -62,7 +62,8 @@ router.get('/', authMiddleware, async (req, res) => {
       fatGoal:     user?.fatGoal     || 65,
     })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load stats:', err.message)
+    res.status(500).json({ error: 'Failed to load stats' })
   }
 })
 

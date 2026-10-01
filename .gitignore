@@ -35,3 +35,10 @@ Thumbs.db
 
 # Local UI audit screenshots (not part of the app)
 .screenshots/
+
+# Real secret files must never be committed (2026-10-01 audit fix) —
+# app/ml-service/.env was previously tracked; it is now untracked.
+# Only *.example templates belong in git.
+app/ml-service/.env
+**/.env
+!.env.example

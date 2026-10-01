@@ -12,7 +12,8 @@ router.get('/', authMiddleware, async (req, res) => {
     })
     res.json(meals)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load meals:', err.message)
+    res.status(500).json({ error: 'Failed to load meals' })
   }
 })
 
@@ -61,7 +62,8 @@ router.get('/today', authMiddleware, async (req, res) => {
       grouped
     })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error("Failed to load today's meals:", err.message)
+    res.status(500).json({ error: "Failed to load today's meals" })
   }
 })
 
@@ -109,7 +111,8 @@ router.get('/weekly', authMiddleware, async (req, res) => {
     }
     res.json(days)
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to load weekly meals:', err.message)
+    res.status(500).json({ error: 'Failed to load weekly meals' })
   }
 })
 
@@ -160,7 +163,8 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await prisma.meal.delete({ where: { id: req.params.id } })
     res.json({ success: true })
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error('Failed to delete meal:', err.message)
+    res.status(500).json({ error: 'Failed to delete meal' })
   }
 })
 

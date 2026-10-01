@@ -316,9 +316,20 @@ export default function AICoach() {
     setShowQuickActions(true)
   }
 
+  // Escape HTML entities BEFORE the markdown replacements below. The model's
+  // output is rendered via dangerouslySetInnerHTML, and LLM text is
+  // attacker-steerable (prompt injection through message/history). Escaping
+  // first means the only HTML in the final string is the markup WE generate.
+  const escapeHtml = (s) => s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
   const formatMessage = (text) => {
     // Convert markdown-like text to styled spans
-    return text
+    return escapeHtml(text)
       .replace(/\*\*(.*?)\*\*/g, '<strong style="color:white;font-weight:700">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em style="color:var(--text-faint)">$1</em>')
       .replace(/`(.*?)`/g, '<code style="background:var(--border);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.85em;color:#15B2CF">$1</code>')

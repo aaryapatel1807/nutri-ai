@@ -1,10 +1,91 @@
 const express = require('express')
 const router = express.Router()
+const dns = require('dns').promises
+const net = require('net')
 const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY
 const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b'
+
+// ---------------------------------------------------------------------------
+// SSRF guard for the recipe-import URL fetch.
+//
+// The fetch below runs server-side, so a malicious URL like
+// http://169.254.169.254/latest/meta-data/ (cloud metadata) or
+// http://localhost:5432/ could probe the server's own network. Defense:
+//   1. Only http/https schemes (already enforced at the route).
+//   2. DNS-resolve the hostname and reject any private/loopback/link-local
+//      address — checked on EVERY redirect hop, not just the first URL,
+//      which also closes the basic DNS-rebinding hole.
+// ---------------------------------------------------------------------------
+function isBlockedIp(ip) {
+  if (!net.isIP(ip)) return true // unparseable → block
+  if (net.isIPv4(ip)) {
+    const [a, b] = ip.split('.').map(Number)
+    return (
+      a === 10 ||                                    // 10.0.0.0/8
+      a === 127 ||                                   // 127.0.0.0/8 loopback
+      (a === 172 && b >= 16 && b <= 31) ||            // 172.16.0.0/12
+      (a === 192 && b === 168) ||                     // 192.168.0.0/16
+      (a === 169 && b === 254) ||                     // 169.254.0.0/16 link-local (cloud metadata)
+      a === 0                                        // 0.0.0.0/8
+    )
+  }
+  // IPv6
+  const low = ip.toLowerCase()
+  return (
+    low === '::1' ||                                 // loopback
+    low === '::' ||
+    low.startsWith('fc') || low.startsWith('fd') ||   // fc00::/7 unique-local
+    low.startsWith('fe80:')                          // fe80::/10 link-local
+  )
+}
+
+async function assertPublicHost(hostname) {
+  let addrs
+  try {
+    addrs = await dns.lookup(hostname, { all: true })
+  } catch {
+    throw new Error('Could not resolve that hostname')
+  }
+  if (!addrs.length || addrs.some((a) => isBlockedIp(a.address))) {
+    throw new Error('That URL resolves to a private or internal address')
+  }
+}
+
+// Fetch with manual redirect handling (max 3 hops) so every hop's host is
+// SSRF-checked — fetch()'s automatic redirects would skip the check.
+async function fetchPublicPage(rawUrl, timeoutMs = 10000) {
+  let url = rawUrl
+  for (let hop = 0; hop < 3; hop++) {
+    const parsed = new URL(url)
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      throw new Error('Only http(s) URLs are supported')
+    }
+    await assertPublicHost(parsed.hostname)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), timeoutMs)
+    try {
+      const res = await fetch(url, {
+        signal: controller.signal,
+        redirect: 'manual',
+        headers: { 'User-Agent': 'NutriAI/1.0 (recipe-import)' },
+      })
+      if ([301, 302, 303, 307, 308].includes(res.status)) {
+        const loc = res.headers.get('location')
+        if (!loc) throw new Error('Redirect with no location')
+        url = new URL(loc, url).toString()
+        await res.arrayBuffer().catch(() => {}) // drain
+        continue
+      }
+      return res
+    } finally {
+      clearTimeout(timeout)
+    }
+  }
+  throw new Error('Too many redirects')
+}
 
 // Call Groq in JSON mode (same OpenAI-compatible pattern as routes/mlProxy.js)
 async function callGroqJson(userContent, systemPrompt) {
@@ -112,14 +193,10 @@ router.post('/import', authMiddleware, async (req, res) => {
     if (!GROQ_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
 
     const MAX_BYTES = 2 * 1024 * 1024
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 10000)
     let html = ''
     try {
-      const page = await fetch(parsed.toString(), {
-        signal: controller.signal,
-        headers: { 'User-Agent': 'NutriAI/1.0 (recipe-import)' }
-      })
+      // SSRF-checked fetch: scheme + DNS/IP validation on every redirect hop
+      const page = await fetchPublicPage(parsed.toString())
       if (!page.ok) return res.status(502).json({ error: 'Could not fetch that page' })
       const contentType = page.headers.get('content-type') || ''
       if (!/text\/html|application\/xhtml/.test(contentType))
@@ -127,7 +204,10 @@ router.post('/import', authMiddleware, async (req, res) => {
       const buf = Buffer.from(await page.arrayBuffer())
       if (buf.length > MAX_BYTES) return res.status(400).json({ error: 'Page is too large to import' })
       html = buf.toString('utf8')
-    } finally { clearTimeout(timeout) }
+    } catch (e) {
+      console.error('Recipe import fetch error:', e.message)
+      return res.status(400).json({ error: e.message || 'Could not fetch that page' })
+    }
 
     const text = htmlToText(html).slice(0, 8000)
     if (text.length < 100) return res.status(502).json({ error: 'No readable recipe content found on that page' })
