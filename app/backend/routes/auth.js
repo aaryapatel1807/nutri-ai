@@ -55,7 +55,11 @@ router.post('/register', authLimiter, async (req, res) => {
     if (!name || !email || !password)
       return res.status(400).json({ error: 'All fields required' })
 
-    if (!EMAIL_RE.test(email))
+    // Normalize: the mobile app lowercases+trims, the web sends raw input.
+    // Storing normalized prevents case/whitespace login mismatches.
+    const normEmail = String(email).trim().toLowerCase()
+
+    if (!EMAIL_RE.test(normEmail))
       return res.status(400).json({ error: 'Invalid email address' })
 
     if (password.length < MIN_PASSWORD_LEN)
@@ -64,7 +68,10 @@ router.post('/register', authLimiter, async (req, res) => {
     // Do NOT reveal whether the email is taken (user-enumeration guard).
     // An existing address gets the same 201 + generic message, but no
     // account is created and no token is issued.
-    const existing = await prisma.user.findUnique({ where: { email } })
+    // Case-insensitive: older accounts may have been stored un-normalized.
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: normEmail, mode: 'insensitive' } },
+    })
     if (existing)
       return res.status(201).json({
         message: 'If this email is new, an account was created. Please sign in.',
@@ -75,7 +82,7 @@ router.post('/register', authLimiter, async (req, res) => {
 
     // Create user
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword }
+      data: { name: String(name).trim(), email: normEmail, password: hashedPassword }
     })
 
     const refreshToken = await issueRefreshToken(user.id)
@@ -98,7 +105,12 @@ router.post('/login', authLimiter, async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ error: 'Email and password required' })
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    // Case-insensitive + trimmed lookup: the mobile app normalizes the email
+    // but the web historically sent raw input, so stored values may differ
+    // in case or surrounding whitespace.
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: String(email).trim(), mode: 'insensitive' } },
+    })
 
     // Generic error either way — no user enumeration via login
     if (!user)
