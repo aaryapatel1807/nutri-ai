@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,41 +8,45 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  password      String
-  phone         String?
-  dob           String?
-  gender        String?
-  location      String?
-  height        Float?
-  weight        Float?
-  targetWeight  Float?
-  bodyFat       Float?
-  muscleMass    Float?
-  bmi           Float?
-  fitnessGoal   String?
-  dietType      String?
-  activityLevel String?
-  calorieGoal   Int?      @default(2000)
-  proteinGoal   Int?      @default(150)
-  carbGoal      Int?      @default(250)
-  fatGoal       Int?      @default(65)
-  waterGoal     Float?    @default(2.5)
-  sleepGoal     Float?    @default(8)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  meals         Meal[]
-  workouts      Workout[]
-  badges        UserBadge[]
-  posts         Post[]
-  waterLogs     WaterLog[]
-  weightLogs    WeightLog[]
-  sleepLogs     SleepLog[]
-  savedRecipes  Recipe[]
-  chatMessages  ChatMessage[]
-  connectedAccounts ConnectedAccount[]
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  password            String
+  phone               String?
+  dob                 String?
+  gender              String?
+  location            String?
+  height              Float?
+  weight              Float?
+  targetWeight        Float?
+  bodyFat             Float?
+  muscleMass          Float?
+  bmi                 Float?
+  fitnessGoal         String?
+  dietType            String?
+  activityLevel       String?
+  calorieGoal         Int?                 @default(2000)
+  proteinGoal         Int?                 @default(150)
+  carbGoal            Int?                 @default(250)
+  fatGoal             Int?                 @default(65)
+  waterGoal           Float?               @default(2.5)
+  sleepGoal           Float?               @default(8)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now()) @updatedAt
+  meals               Meal[]
+  workouts            Workout[]
+  badges              UserBadge[]
+  posts               Post[]
+  waterLogs           WaterLog[]
+  weightLogs          WeightLog[]
+  sleepLogs           SleepLog[]
+  savedRecipes        Recipe[]
+  chatMessages        ChatMessage[]
+  connectedAccounts   ConnectedAccount[]
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  oauthStates         OAuthState[]
+  aiUsage             AiUsage[]
 }
 
 model Meal {
@@ -60,29 +64,29 @@ model Meal {
 }
 
 model Workout {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   userId      String
   name        String
   duration    Int
   calories    Int
   category    String?
   difficulty  String?
-  completedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completedAt DateTime          @default(now())
+  createdAt   DateTime          @default(now())
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   exercises   WorkoutExercise[]
 }
 
 model WorkoutExercise {
-  id         String   @id @default(cuid())
-  workoutId  String
-  name       String
-  sets       Int?
-  reps       Int?
-  weight     Float?
-  duration   Int?     // in seconds
-  calories   Int?
-  workout    Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  workoutId String
+  name      String
+  sets      Int?
+  reps      Int?
+  weight    Float?
+  duration  Int? // in seconds
+  calories  Int?
+  workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
 }
 
 model Badge {
@@ -103,6 +107,7 @@ model UserBadge {
   unlockedAt DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge      Badge    @relation(fields: [badgeId], references: [id])
+
   @@unique([userId, badgeId])
 }
 
@@ -117,19 +122,19 @@ model Post {
 }
 
 model WaterLog {
-  id        String   @id @default(cuid())
-  userId    String
-  amountMl  Int      // Amount in milliliters
-  date      DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String   @id @default(cuid())
+  userId   String
+  amountMl Int // Amount in milliliters
+  date     DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model WeightLog {
-  id        String   @id @default(cuid())
-  userId    String
-  weight    Float
-  date      DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String   @id @default(cuid())
+  userId String
+  weight Float
+  date   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model SleepLog {
@@ -145,26 +150,26 @@ model SleepLog {
 }
 
 model Recipe {
-  id          String   @id @default(cuid())
-  userId      String
-  title       String
-  ingredients String
+  id           String   @id @default(cuid())
+  userId       String
+  title        String
+  ingredients  String
   instructions String
-  calories    Float?
-  protein     Float?
-  carbs       Float?
-  fat         Float?
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calories     Float?
+  protein      Float?
+  carbs        Float?
+  fat          Float?
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ChatMessage {
   id        String   @id @default(cuid())
   userId    String
-  role      String   // 'user' or 'assistant'
+  role      String // 'user' or 'assistant'
   content   String
-  persona   String?  // 'nutrition', 'workout', etc.
+  persona   String? // 'nutrition', 'workout', etc.
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -172,7 +177,7 @@ model ChatMessage {
 model ConnectedAccount {
   id             String    @id @default(cuid())
   userId         String
-  provider       String    // e.g. 'google-fit'
+  provider       String // e.g. 'google-fit'
   providerUserId String?
   accessToken    String    @db.Text
   refreshToken   String?   @db.Text
@@ -224,7 +229,7 @@ model PasswordResetToken {
 model OAuthState {
   state     String   @id // crypto-random, passed to the OAuth provider
   userId    String
-  provider  String   // e.g. 'google-fit'
+  provider  String // e.g. 'google-fit'
   expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
