@@ -10,13 +10,19 @@ import { EDITORIAL_MUSCLES } from './editorialMuscleData'
 // serif exercise panel. Click a muscle → its exercises appear.
 export default function EditorialMuscleExplorer({ onStartWorkout }) {
   const [muscleId, setMuscleId] = useState('shoulders')
+  const [zoomed, setZoomed] = useState(false)
   const [view, setView] = useState('front')
   const [gender, setGender] = useState('female')
 
   const muscle = EDITORIAL_MUSCLES[muscleId]
 
   const selectMuscle = (id) => {
+    if (id === muscleId) {
+      setZoomed((z) => !z) // tap again to zoom back out
+      return
+    }
     setMuscleId(id)
+    setZoomed(true)
     const views = EDITORIAL_MUSCLES[id].views
     if (!views.includes(view)) setView(views[0])
   }
@@ -97,6 +103,9 @@ export default function EditorialMuscleExplorer({ onStartWorkout }) {
         .ed-figure{ display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; }
         .ed-figure-frame{ position:relative; display:inline-block; line-height:0;
           background:transparent; border:none; box-shadow:none; }
+        .ed-figure-3d{ perspective:1400px; }
+        .ed-figure-tilt{ position:relative; line-height:0; transform-style:preserve-3d;
+          will-change:transform; transition:transform 1s cubic-bezier(0.22,1,0.36,1); }
         .ed-figure-img{ height:min(58vh,600px); width:auto; max-width:min(78vw,340px);
           object-fit:contain; user-select:none; -webkit-user-drag:none; }
         .ed-wash{ position:absolute; pointer-events:none;
@@ -146,20 +155,21 @@ export default function EditorialMuscleExplorer({ onStartWorkout }) {
           <div className="ed-toggles">
             {seg(
               [{ label: 'Front', value: 'front' }, { label: 'Back', value: 'back' }],
-              view, setView,
+              view, (v) => { setView(v); setZoomed(false); },
             )}
             {seg(
               [{ label: 'Female', value: 'female' }, { label: 'Male', value: 'male' }],
-              gender, setGender,
+              gender, (g) => { setGender(g); setZoomed(false); },
             )}
           </div>
           <EditorialFigure
             sex={gender} view={view}
             selectedId={muscleId}
+            zoomed={zoomed}
             onSelect={selectMuscle}
             caption={`${muscle.name.toUpperCase()} · ${view === 'front' ? 'ANTERIOR' : 'POSTERIOR'} VIEW`}
           />
-          <div className="ed-hint">TAP A MUSCLE TO EXPLORE ITS EXERCISES</div>
+          <div className="ed-hint">TAP A MUSCLE TO ZOOM IN · TAP AGAIN TO ZOOM OUT</div>
         </div>
 
         <EditorialExercisePanel muscle={muscle} onAdd={addToWorkout} />

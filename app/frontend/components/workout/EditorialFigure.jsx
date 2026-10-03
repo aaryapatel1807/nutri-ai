@@ -110,7 +110,7 @@ const LABELS = {
   glutes: 'Glutes', quads: 'Quads', hamstrings: 'Hamstrings', calves: 'Calves',
 };
 
-export default function EditorialFigure({ sex, view, selectedId, onSelect, caption }) {
+export default function EditorialFigure({ sex, view, selectedId, zoomed, onSelect, caption }) {
   const key = `${sex}-${view}`;
   const zones = ZONES[key] || [];
   const [hovered, setHovered] = useState(null);
@@ -118,6 +118,20 @@ export default function EditorialFigure({ sex, view, selectedId, onSelect, capti
   const src = (theme === 'dark' ? FIGURE_SRC_DARK : FIGURE_SRC)[key];
 
   const activeZones = zones.filter((z) => z.id === selectedId);
+  const focus = activeZones[0];
+  /* 3D camera move: zoom into the tapped muscle and tilt the figure toward it,
+     like rotating a 3D model. transform-origin sits on the muscle's centre. */
+  const cx = focus ? focus.x + focus.w / 2 : 50;
+  const cy = focus ? focus.y + focus.h / 2 : 50;
+  const tiltY = focus ? (50 - cx) * 0.32 : 0;
+  const tiltX = focus ? (50 - cy) * 0.10 : 0;
+  const tiltStyle =
+    zoomed && focus
+      ? {
+          transform: `scale(2.05) rotateY(${tiltY.toFixed(2)}deg) rotateX(${tiltX.toFixed(2)}deg)`,
+          transformOrigin: `${cx.toFixed(1)}% ${cy.toFixed(1)}%`,
+        }
+      : {};
   /* One watercolour blob per zone, so paired muscles (shoulders, biceps…)
      wash each side instead of one giant smear across the torso. */
   const blobs = activeZones.map((z) => ({
@@ -129,7 +143,8 @@ export default function EditorialFigure({ sex, view, selectedId, onSelect, capti
 
   return (
     <div className="ed-figure">
-      <div className="ed-figure-frame">
+      <div className="ed-figure-frame ed-figure-3d">
+        <div className="ed-figure-tilt" style={tiltStyle}>
         <img
           src={src}
           alt={`${sex} ${view} anatomical figure`}
@@ -155,6 +170,7 @@ export default function EditorialFigure({ sex, view, selectedId, onSelect, capti
             onBlur={() => setHovered(null)}
           />
         ))}
+        </div>
       </div>
       {caption && <p className="ed-figure-caption">{caption}</p>}
     </div>
