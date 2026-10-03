@@ -42,16 +42,35 @@ router.get('/stats', authMiddleware, async (req, res) => {
   }
 })
 
+// Validation: duration/calories must be non-negative numbers when supplied.
+// A negative duration is objectively impossible — reject it with 400 rather
+// than storing it silently (testing 2026-10-03: duration -30 was accepted).
+// Returns { value } on success, { error } on invalid input, or undefined when
+// the field was not provided at all (caller keeps its own default).
+function parseWorkoutNumber(value, field) {
+  if (value === undefined || value === null || value === '') return undefined
+  const n = Number(value)
+  if (!Number.isFinite(n) || n < 0)
+    return { error: `${field} must be a non-negative number` }
+  return { value: Math.floor(n) }
+}
+
 // POST /api/workouts - log completed workout
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { name, duration, calories, category, difficulty } = req.body
+
+    const dur = parseWorkoutNumber(duration, 'duration')
+    if (dur && dur.error) return res.status(400).json({ error: dur.error })
+    const cal = parseWorkoutNumber(calories, 'calories')
+    if (cal && cal.error) return res.status(400).json({ error: cal.error })
+
     const workout = await prisma.workout.create({
       data: {
         userId:     req.userId,
         name:       name || 'Workout',
-        duration:   parseInt(duration) || 0,
-        calories:   parseInt(calories) || 0,
+        duration:   dur ? dur.value : 0,
+        calories:   cal ? cal.value : 0,
         category:   category || 'Strength',
         difficulty: difficulty || 'Intermediate',
       }
@@ -72,15 +91,20 @@ router.put('/:id', authMiddleware, async (req, res) => {
     })
     if (!existing) return res.status(404).json({ error: 'Workout not found' })
 
+    const data = {}
+    if (name) data.name = name
+    if (category) data.category = category
+    if (difficulty) data.difficulty = difficulty
+    const dur = parseWorkoutNumber(duration, 'duration')
+    if (dur && dur.error) return res.status(400).json({ error: dur.error })
+    if (dur) data.duration = dur.value
+    const cal = parseWorkoutNumber(calories, 'calories')
+    if (cal && cal.error) return res.status(400).json({ error: cal.error })
+    if (cal) data.calories = cal.value
+
     const workout = await prisma.workout.update({
       where: { id: req.params.id },
-      data: {
-        ...(name       && { name }),
-        ...(duration   && { duration: parseInt(duration) }),
-        ...(calories   && { calories: parseInt(calories) }),
-        ...(category   && { category }),
-        ...(difficulty && { difficulty }),
-      }
+      data,
     })
     res.json(workout)
   } catch (err) {

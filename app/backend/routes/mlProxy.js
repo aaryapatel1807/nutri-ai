@@ -213,8 +213,27 @@ async function callGroq(messages, systemPrompt, jsonMode = false) {
   )
 
   const data = await response.json()
-  if (!response.ok) throw new Error(data.error?.message || 'Groq error')
+  if (!response.ok) {
+    // Surface the upstream status so callers can map 429 → 429 instead of a
+    // generic 500 (testing 2026-10-03: Groq quota surfaced as "Chat failed").
+    const err = new Error(data.error?.message || 'Groq error')
+    err.status = response.status
+    throw err
+  }
   return data.choices?.[0]?.message?.content || ''
+}
+
+// Map AI failures to the right status: a 429 from the provider (or our own
+// quota middleware) becomes a friendly 429 for the client, not a 500.
+function aiErrorResponse(res, error, fallbackMessage) {
+  if (error && error.status === 429) {
+    return res.status(429).json({
+      error: 'AI service is busy — please wait a moment and try again',
+      retryAfter: 60,
+    })
+  }
+  console.error(`${fallbackMessage}:`, error && error.message)
+  return res.status(500).json({ error: fallbackMessage })
 }
 
 // POST /api/ml/chat — powered by Groq
@@ -246,8 +265,7 @@ router.post('/chat', authMiddleware, aiBurst, aiDailyQuota, async (req, res) => 
     const text = await callGroq(messages, systemPrompt)
     res.json({ response: text, text })
   } catch (error) {
-    console.error('Chat error:', error.message)
-    res.status(500).json({ error: 'Chat failed' })
+    aiErrorResponse(res, error, 'Chat failed')
   }
 })
 
@@ -279,8 +297,7 @@ Respond in JSON format: { "recipes": [{ "name": "", "ingredients": [], "instruct
       res.json({ recipes: [], raw: text })
     }
   } catch (error) {
-    console.error('Recipe suggestions error:', error.message)
-    res.status(500).json({ error: 'Recipe suggestions failed' })
+    aiErrorResponse(res, error, 'Recipe suggestions failed')
   }
 })
 
@@ -308,15 +325,34 @@ Respond in JSON: { "forecast": [], "recommendations": [] }`
       res.json({ forecast: [], recommendations: [], raw: text })
     }
   } catch (error) {
-    console.error('Nutrition forecast error:', error.message)
-    res.status(500).json({ error: 'Nutrition forecast failed' })
+    aiErrorResponse(res, error, 'Nutrition forecast failed')
   }
 })
+
+// Validate image by magic bytes, not by the client-supplied mimetype.
+// (Testing 2026-10-03: a fake .exe labelled image/jpeg reached Gemini and
+// 500'd; an SVG with an embedded <script> was accepted. Both are now 400.)
+function isImageBuffer(buf) {
+  if (!buf || buf.length < 12) return false
+  if (buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF) return true // JPEG
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) return true // PNG
+  if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') return true // WebP
+  const gif = buf.toString('ascii', 0, 6)
+  if (gif === 'GIF87a' || gif === 'GIF89a') return true // GIF
+  // HEIC/HEIF: ftyp box at offset 4 (iPhone photos)
+  if (buf.toString('ascii', 4, 8) === 'ftyp') {
+    const brand = buf.toString('ascii', 8, 12)
+    if (['heic','heix','hevc','hevx','heim','heis','hevm','hevs','mif1','msf1'].includes(brand)) return true
+  }
+  return false
+}
 
 // POST /api/ml/detect-food — stays on Gemini Vision (Groq's free tier has no vision-capable model)
 router.post('/detect-food', authMiddleware, aiBurst, aiDailyQuota, uploadSingle, async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No image file uploaded' })
+    if (!isImageBuffer(req.file.buffer))
+      return res.status(400).json({ error: 'Only image files (JPEG, PNG, WebP, GIF, HEIC) are accepted' })
     if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI service not configured' })
 
     // Convert image to base64 and send to Gemini Vision
@@ -341,7 +377,11 @@ router.post('/detect-food', authMiddleware, aiBurst, aiDailyQuota, uploadSingle,
     )
 
     const data = await response.json()
-    if (!response.ok) throw new Error(data.error?.message || 'Gemini vision error')
+    if (!response.ok) {
+      const err = new Error(data.error?.message || 'Gemini vision error')
+      err.status = response.status
+      throw err
+    }
     
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
     const clean = text.replace(/```json|```/g, '').trim()
@@ -351,8 +391,7 @@ router.post('/detect-food', authMiddleware, aiBurst, aiDailyQuota, uploadSingle,
       res.json({ foods: [], total_calories: 0, raw: text })
     }
   } catch (error) {
-    console.error('Food detection error:', error.message)
-    res.status(500).json({ error: 'Food detection failed' })
+    aiErrorResponse(res, error, 'Food detection failed')
   }
 })
 
