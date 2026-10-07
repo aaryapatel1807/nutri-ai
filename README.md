@@ -93,6 +93,31 @@ The frontend reads the API URL from `app/frontend/.env.local`
 - AI calls never expose keys to the browser: the frontend talks to
   `/api/ai/*` on the backend, which proxies to Gemini server-side.
 
+## Testing
+
+- Backend: `cd app/backend && npm test` — unit tests via the built-in
+  `node:test` runner (zero extra dependencies). Covers meal-input
+  validation/normalization (`utils/nutrition.js`) and the AES-256-GCM
+  token crypto (`utils/tokenCrypto.js`).
+- Frontend: `cd app/frontend && npm test` — Vitest suite for the food
+  database (`lib/foods-db.js`): dataset integrity, search relevance,
+  portion scaling, recents/favorites.
+
+## Features
+
+- **Meal logger** (`/meal-logger`): offline-first curated food database
+  (140 Indian + global foods, hand-verified macros) with token-scored
+  search, recently-logged foods, star favorites (+ favorites-only
+  filter), and a 4-step portion sheet (½×–2×) with live macro preview.
+  Voice input fills the search box; custom foods supported.
+- **Nutrition math** (`app/backend/utils/nutrition.js`): pure,
+  test-covered helpers — meal input normalization (clamps negatives,
+  caps absurd values, validates meal type/date), macro summation and
+  calorie-based macro split percentages.
+- **Workout library**: exercise entries carry step-by-step instructions
+  sourced from the public-domain `yuhonas/free-exercise-db` dataset
+  (Unlicense), matched to the in-app workout programs.
+
 ## What was fixed vs the original zip
 
 1. Missing routes (posts, water, weight, recipes) — all created

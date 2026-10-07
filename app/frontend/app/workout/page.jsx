@@ -4,6 +4,7 @@ import { workouts as workoutsApi } from '../../lib/api'
 import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import useIsMobile from '../../lib/useIsMobile'
+import { getExerciseInfo } from '../../lib/exercise-db'
 import MuscleBodyMap from '../../components/workout/MuscleBodyMap'
 import EditorialMuscleExplorer from '../../components/workout/EditorialMuscleExplorer'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
@@ -786,6 +787,36 @@ export default function WorkoutPage() {
                                       color:'var(--text-muted)', fontSize:'0.72rem',
                                       fontStyle:'italic'
                                     }}>💡 {ex.tip}</div>
+                                    {(() => {
+                                      const info = getExerciseInfo(ex.name)
+                                      if (!info || !info.instructions?.length) return null
+                                      return (
+                                        <div style={{
+                                          marginTop:'6px', padding:'10px 12px',
+                                          background:'rgba(47,191,155,0.06)',
+                                          border:'1px solid var(--border)',
+                                          borderRadius:'10px',
+                                        }}>
+                                          <div style={{ display:'flex', gap:'6px', flexWrap:'wrap', marginBottom:'8px' }}>
+                                            {info.level && (
+                                              <span style={{ fontSize:'0.65rem', fontWeight:700, padding:'2px 8px', borderRadius:'20px', background:'rgba(123,97,255,0.12)', color:'#7B61FF', textTransform:'capitalize' }}>{info.level}</span>
+                                            )}
+                                            {info.equipment && (
+                                              <span style={{ fontSize:'0.65rem', fontWeight:700, padding:'2px 8px', borderRadius:'20px', background:'var(--border)', color:'var(--text-muted)', textTransform:'capitalize' }}>{info.equipment}</span>
+                                            )}
+                                            {(info.primaryMuscles||[]).slice(0,2).map(m => (
+                                              <span key={m} style={{ fontSize:'0.65rem', fontWeight:700, padding:'2px 8px', borderRadius:'20px', background:'rgba(255,107,94,0.1)', color:'#FF6B5E', textTransform:'capitalize' }}>{m}</span>
+                                            ))}
+                                          </div>
+                                          <div style={{ color:'var(--text-primary)', fontSize:'0.75rem', fontWeight:700, marginBottom:'6px' }}>How to perform</div>
+                                          <ol style={{ margin:0, paddingLeft:'18px', color:'var(--text-muted)', fontSize:'0.75rem', lineHeight:1.6 }}>
+                                            {info.instructions.map((step, si) => (
+                                              <li key={si} style={{ marginBottom:'4px' }}>{step}</li>
+                                            ))}
+                                          </ol>
+                                        </div>
+                                      )
+                                    })()}
                                   </motion.div>
                                 )}
                               </AnimatePresence>
