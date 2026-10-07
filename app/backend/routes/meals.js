@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
+const { normalizeMealInput } = require('../utils/nutrition')
 
 // GET /api/meals - get all meals for user
 router.get('/', authMiddleware, async (req, res) => {
@@ -119,26 +120,12 @@ router.get('/weekly', authMiddleware, async (req, res) => {
 // POST /api/meals - log a new meal
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { name, calories, protein, carbs, fat, mealType, date } = req.body
-
-    let parsedDate = new Date()
-    if (date) {
-      parsedDate = new Date(date)
-      if (isNaN(parsedDate.getTime()))
-        return res.status(400).json({ error: 'Invalid date' })
-    }
+    const normalized = normalizeMealInput(req.body)
+    if (normalized.error)
+      return res.status(400).json({ error: normalized.error })
 
     const meal = await prisma.meal.create({
-      data: {
-        userId:   req.userId,
-        name:     name || 'Unknown',
-        calories: parseFloat(calories) || 0,
-        protein:  parseFloat(protein)  || 0,
-        carbs:    parseFloat(carbs)    || 0,
-        fat:      parseFloat(fat)      || 0,
-        mealType: mealType || 'Breakfast',
-        date:     parsedDate
-      }
+      data: { userId: req.userId, ...normalized.value }
     })
 
     // Auto award badges after logging meal

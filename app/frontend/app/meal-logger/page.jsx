@@ -2,24 +2,21 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
+import {
+  searchFoods, scaleFood,
+  getRecentFoods, addRecentFood,
+  getFavoriteFoods, toggleFavorite, isFavorite,
+} from '../../lib/foods-db'
 import useIsMobile from '../../lib/useIsMobile'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
 
-const SAMPLE_FOODS = [
-  { name: 'Oatmeal with Banana', calories: 320, protein: 12, carbs: 58, fat: 6, emoji: '🥣' },
-  { name: 'Grilled Chicken Breast', calories: 165, protein: 31, carbs: 0, fat: 4, emoji: '🍗' },
-  { name: 'Dal Rice', calories: 380, protein: 14, carbs: 72, fat: 4, emoji: '🍛' },
-  { name: 'Egg Bhurji (2 eggs)', calories: 210, protein: 14, carbs: 4, fat: 15, emoji: '🍳' },
-  { name: 'Paneer Tikka (100g)', calories: 265, protein: 18, carbs: 8, fat: 18, emoji: '🧀' },
-  { name: 'Mixed Fruit Bowl', calories: 120, protein: 2, carbs: 28, fat: 1, emoji: '🍱' },
-  { name: 'Roti (2 pieces)', calories: 180, protein: 5, carbs: 36, fat: 2, emoji: '🫓' },
-  { name: 'Greek Yogurt', calories: 100, protein: 17, carbs: 6, fat: 1, emoji: '🥛' },
-  { name: 'Banana', calories: 89, protein: 1, carbs: 23, fat: 0, emoji: '🍌' },
-  { name: 'Almonds (30g)', calories: 174, protein: 6, carbs: 6, fat: 15, emoji: '🥜' },
-  { name: 'Protein Shake', calories: 150, protein: 25, carbs: 8, fat: 3, emoji: '🥤' },
-  { name: 'Rajma Chawal', calories: 420, protein: 16, carbs: 78, fat: 5, emoji: '🍲' },
+const PORTIONS = [
+  { label: '½×', factor: 0.5 },
+  { label: '1×', factor: 1 },
+  { label: '1½×', factor: 1.5 },
+  { label: '2×', factor: 2 },
 ]
 
 export default function MealLogger() {
@@ -37,6 +34,12 @@ export default function MealLogger() {
   const [error, setError] = useState('')
   const [listening, setListening] = useState(false)
   const [voiceError, setVoiceError] = useState('')
+  // Food search state: portion sheet, recents, favorites
+  const [portionFood, setPortionFood] = useState(null)
+  const [portion, setPortion] = useState(1)
+  const [recents, setRecents] = useState([])
+  const [favs, setFavs] = useState([])
+  const [favOnly, setFavOnly] = useState(false)
 
   useEffect(() => {
     const loadTodayMeals = async () => {
@@ -77,9 +80,19 @@ export default function MealLogger() {
     boxShadow: 'var(--glass-shadow), inset 0 1px 0 var(--glass-highlight)',
   }
 
-  const filtered = SAMPLE_FOODS.filter(f =>
-    f.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const searching = search.trim().length > 0
+  const results = searching ? searchFoods(search) : []
+  const favList = favOnly ? getFavoriteFoods() : []
+
+  useEffect(() => {
+    if (showSearch) {
+      setRecents(getRecentFoods())
+      setFavs(getFavoriteFoods())
+      setFavOnly(false)
+      setPortionFood(null)
+      setPortion(1)
+    }
+  }, [showSearch])
 
   const totals = logged.reduce((acc, m) => ({
     calories: acc.calories + m.calories,
@@ -90,14 +103,17 @@ export default function MealLogger() {
 
   const addFood = async (food) => {
     try {
+      // foods-db uses kcal/p/c/f; backend expects calories/protein/carbs/fat
       const mealData = {
         name: food.name,
-        calories: food.calories || 0,
-        protein: food.protein || 0,
-        carbs: food.carbs || 0,
-        fat: food.fat || 0,
+        calories: Math.round(food.kcal ?? food.calories ?? 0),
+        protein: food.p ?? food.protein ?? 0,
+        carbs: food.c ?? food.carbs ?? 0,
+        fat: food.f ?? food.fat ?? 0,
         mealType: activeMeal,
       }
+      addRecentFood(food.name)
+      setRecents(getRecentFoods())
       const res = await logMeal(mealData)
       if (res && res.data) {
         // Use the returned meal which has the database ID
@@ -109,7 +125,7 @@ export default function MealLogger() {
     } catch (err) {
       console.error('Failed to log meal to backend:', err)
       // Optimistic update on error to keep UI functional
-      setLogged(prev => [...prev, { ...food, mealType: activeMeal, id: Date.now().toString() }])
+      setLogged(prev => [...prev, { ...mealData, id: Date.now().toString() }])
     }
     setShowSearch(false)
     setSearch('')
@@ -192,6 +208,62 @@ export default function MealLogger() {
       }
     }
   }
+
+  const toggleFav = (name) => {
+    toggleFavorite(name)
+    setFavs(getFavoriteFoods())
+  }
+
+  const renderFoodRow = (food) => {
+    const fav = isFavorite(food.name)
+    return (
+      <motion.div
+        key={food.name}
+        whileHover={{ backgroundColor: 'rgba(255, 107, 94,0.05)', x: 4 }}
+        onClick={() => { setPortionFood(food); setPortion(1) }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Log ${food.name}, ${food.kcal} kilocalories`}
+        onKeyDown={(e) => { if (e.key === 'Enter') { setPortionFood(food); setPortion(1) } }}
+        style={{
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px', borderRadius: '12px',
+          cursor: 'pointer', marginBottom: '6px',
+          border: '1px solid var(--border)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+          <span style={{ fontSize: '1.5rem' }} aria-hidden="true">{food.emoji}</span>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: 500 }}>{food.name}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+              {food.serving} · P:{food.p}g · C:{food.c}g · F:{food.f}g
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            aria-label={fav ? `Remove ${food.name} from favorites` : `Add ${food.name} to favorites`}
+            aria-pressed={fav}
+            onClick={(e) => { e.stopPropagation(); toggleFav(food.name) }}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: '1.1rem', opacity: fav ? 1 : 0.35, padding: '4px',
+            }}
+          >{fav ? '⭐' : '☆'}</button>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ color: '#FF6B5E', fontWeight: 700 }}>{food.kcal}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>kcal</div>
+          </div>
+        </div>
+      </motion.div>
+    )
+  }
+
+  const sectionTitle = (t) => (
+    <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '14px 4px 8px' }}>{t}</div>
+  )
 
   const mealGroups = MEAL_TYPES.map(type => ({
     type,
@@ -531,13 +603,27 @@ export default function MealLogger() {
                     style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
                 </div>
 
-                <input
-                  autoFocus
-                  placeholder="Search foods..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  style={{ ...inputStyle, marginBottom: '16px' }}
-                />
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  <input
+                    autoFocus
+                    placeholder="Search 140+ foods..."
+                    aria-label="Search foods"
+                    value={search}
+                    onChange={e => { setSearch(e.target.value); setFavOnly(false) }}
+                    style={{ ...inputStyle, marginBottom: 0, flex: 1 }}
+                  />
+                  <button
+                    onClick={() => setFavOnly(v => !v)}
+                    aria-pressed={favOnly}
+                    aria-label="Show favorites only"
+                    title="Favorites only"
+                    style={{
+                      padding: '0 14px', borderRadius: '12px', cursor: 'pointer', fontSize: '1.1rem',
+                      background: favOnly ? 'rgba(255,176,32,0.15)' : 'var(--border)',
+                      border: favOnly ? '1px solid #FFB020' : '1px solid var(--border)',
+                    }}
+                  >⭐</button>
+                </div>
 
                 <button
                   onClick={() => { setShowCustom(true); setShowSearch(false) }}
@@ -552,34 +638,89 @@ export default function MealLogger() {
                   + Add Custom Food
                 </button>
 
-                {filtered.map((food, i) => (
-                  <motion.div
-                    key={food.name}
-                    whileHover={{ backgroundColor: 'rgba(255, 107, 94,0.05)', x: 4 }}
-                    onClick={() => addFood(food)}
-                    style={{
-                      display: 'flex', alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '12px', borderRadius: '12px',
-                      cursor: 'pointer', marginBottom: '6px',
-                      border: '1px solid var(--border)'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '1.5rem' }}>{food.emoji}</span>
+                {/* RESULTS / SECTIONS */}
+                {portionFood ? (
+                  <div>
+                    <button
+                      onClick={() => setPortionFood(null)}
+                      aria-label="Back to food list"
+                      style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem', marginBottom: '12px', padding: 0 }}
+                    >← Back to results</button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                      <span style={{ fontSize: '2.2rem' }} aria-hidden="true">{portionFood.emoji}</span>
                       <div>
-                        <div style={{ color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: 500 }}>{food.name}</div>
-                        <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-                          P:{food.protein}g · C:{food.carbs}g · F:{food.fat}g
-                        </div>
+                        <div style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '1rem' }}>{portionFood.name}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>per {portionFood.serving}</div>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ color: '#FF6B5E', fontWeight: 700 }}>{food.calories}</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>kcal</div>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }} role="group" aria-label="Portion size">
+                      {PORTIONS.map(p => (
+                        <button
+                          key={p.factor}
+                          onClick={() => setPortion(p.factor)}
+                          aria-pressed={portion === p.factor}
+                          style={{
+                            flex: 1, padding: '10px 0', borderRadius: '12px', cursor: 'pointer',
+                            fontWeight: 700, fontSize: '0.9rem',
+                            background: portion === p.factor ? 'rgba(255,107,94,0.15)' : 'var(--border)',
+                            border: portion === p.factor ? '1px solid #FF6B5E' : '1px solid var(--border)',
+                            color: portion === p.factor ? '#FF6B5E' : 'var(--text-primary)',
+                          }}
+                        >{p.label}</button>
+                      ))}
                     </div>
-                  </motion.div>
-                ))}
+                    {(() => {
+                      const s = scaleFood(portionFood, portion)
+                      return (
+                        <div style={{
+                          display: 'flex', justifyContent: 'space-around',
+                          padding: '14px', borderRadius: '14px', marginBottom: '16px',
+                          background: 'rgba(255,107,94,0.06)', border: '1px solid var(--border)',
+                        }}>
+                          {[['kcal', s.kcal, '#FF6B5E'], ['Protein', `${s.p}g`, '#7B61FF'], ['Carbs', `${s.c}g`, '#2FBF9B'], ['Fat', `${s.f}g`, '#FFB020']].map(([l, v, c]) => (
+                            <div key={l} style={{ textAlign: 'center' }}>
+                              <div style={{ color: c, fontWeight: 700, fontSize: '1.05rem' }}>{v}</div>
+                              <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>{l}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    })()}
+                    <button
+                      onClick={() => { addFood(scaleFood(portionFood, portion)) }}
+                      style={{
+                        width: '100%', padding: '13px', borderRadius: '14px', border: 'none',
+                        background: 'linear-gradient(135deg, #FF6B5E, #FF8E53)', color: '#fff',
+                        fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer',
+                      }}
+                    >Log {portion}× to {activeMeal}</button>
+                  </div>
+                ) : (
+                  <>
+                    {!searching && !favOnly && (
+                      <>
+                        {favs.length > 0 && (<>{sectionTitle('⭐ Favorites')}{favs.map(renderFoodRow)}</>)}
+                        {recents.length > 0 && (<>{sectionTitle('🕘 Recently logged')}{recents.map(renderFoodRow)}</>)}
+                        {favs.length === 0 && recents.length === 0 && (
+                          <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '24px 12px' }}>
+                            Search 140+ Indian & global foods above —<br />or tap ☆ on any food to pin it here.
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {searching && results.length === 0 && (
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '24px 12px' }}>
+                        No matches for “{search}”.<br />Try “Add Custom Food” below — or check spelling.
+                      </div>
+                    )}
+                    {(searching ? results : favOnly ? favList : []).map(renderFoodRow)}
+                    {favOnly && favList.length === 0 && (
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '24px 12px' }}>
+                        No favorites yet — tap ☆ on any food to pin it.
+                      </div>
+                    )}
+                  </>
+                )}
               </motion.div>
             </motion.div>
           )}
