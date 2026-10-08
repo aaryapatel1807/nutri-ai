@@ -1,0 +1,28 @@
+name = "nutriai-backend"
+# Deploy on Aarya's Cloudflare account: npx wrangler deploy
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+# Required for Prisma internals (@prisma/adapter-neon + generated client).
+# Everything else is plain Web-standard APIs (WebCrypto, fetch, btoa…).
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Public / non-secret config. Secrets go via `wrangler secret put <NAME>`.
+NODE_ENV = "production"
+FRONTEND_URL = "https://nutriai-frontend-three.vercel.app"
+# Update to the deployed Workers URL after the first deploy:
+# BACKEND_URL = "https://nutriai-backend.<account>.workers.dev"
+GROQ_MODEL = "openai/gpt-oss-120b"
+AI_DAILY_CAP = "100"
+
+# ── Secrets (NEVER commit values; set with `wrangler secret put NAME`): ──
+# DATABASE_URL      — Neon connection string (pooled endpoint; use the -pooler
+#                     host; serverless driver requires no TCP sockets)
+# DIRECT_URL        — Neon direct host (for migrations run locally only)
+# JWT_SECRET        — must match the old backend (keeps existing tokens valid)
+# TOKEN_ENCRYPTION_KEY — 64 hex chars (existing Google Fit rows depend on it)
+# GROQ_API_KEY      — Groq free tier (chat/recipes/forecast)
+# GEMINI_API_KEY    — Gemini vision (detect-food only)
+# GOOGLE_FIT_CLIENT_ID / GOOGLE_FIT_CLIENT_SECRET
+# MAILER_WEBHOOK_URL — optional; stubbed to console when unset
+# ALLOWED_ORIGINS   — optional comma-separated extra CORS origins

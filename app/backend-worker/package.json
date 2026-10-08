@@ -1,0 +1,24 @@
+{
+  "name": "nutriai-backend-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NutriAI backend ported to Hono for Cloudflare Workers (see docs/cloudflare-migration.md)",
+  "scripts": {
+    "generate": "prisma generate",
+    "test": "node --test \"test/*.test.js\"",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@prisma/adapter-neon": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "hash-wasm": "^4.12.0",
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.2",
+    "wrangler": "^4.0.0"
+  }
+}

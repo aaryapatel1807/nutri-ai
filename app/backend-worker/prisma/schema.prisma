@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  runtime  = "workerd"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  password            String
+  phone               String?
+  dob                 String?
+  gender              String?
+  location            String?
+  height              Float?
+  weight              Float?
+  targetWeight        Float?
+  bodyFat             Float?
+  muscleMass          Float?
+  bmi                 Float?
+  fitnessGoal         String?
+  dietType            String?
+  activityLevel       String?
+  calorieGoal         Int?                 @default(2000)
+  proteinGoal         Int?                 @default(150)
+  carbGoal            Int?                 @default(250)
+  fatGoal             Int?                 @default(65)
+  waterGoal           Float?               @default(2.5)
+  sleepGoal           Float?               @default(8)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now()) @updatedAt
+  meals               Meal[]
+  workouts            Workout[]
+  badges              UserBadge[]
+  posts               Post[]
+  waterLogs           WaterLog[]
+  weightLogs          WeightLog[]
+  sleepLogs           SleepLog[]
+  savedRecipes        Recipe[]
+  chatMessages        ChatMessage[]
+  connectedAccounts   ConnectedAccount[]
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  oauthStates         OAuthState[]
+  aiUsage             AiUsage[]
+}
+
+model Meal {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  calories  Float
+  protein   Float    @default(0)
+  carbs     Float    @default(0)
+  fat       Float    @default(0)
+  mealType  String   @default("Breakfast")
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Workout {
+  id          String            @id @default(cuid())
+  userId      String
+  name        String
+  duration    Int
+  calories    Int
+  category    String?
+  difficulty  String?
+  completedAt DateTime          @default(now())
+  createdAt   DateTime          @default(now())
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises   WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id        String  @id @default(cuid())
+  workoutId String
+  name      String
+  sets      Int?
+  reps      Int?
+  weight    Float?
+  duration  Int? // in seconds
+  calories  Int?
+  workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  emoji       String
+  description String
+  category    String
+  rarity      String
+  xp          Int
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id         String   @id @default(cuid())
+  userId     String
+  badgeId    String
+  unlockedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge      Badge    @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  image     String?
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WaterLog {
+  id       String   @id @default(cuid())
+  userId   String
+  amountMl Int // Amount in milliliters
+  date     DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WeightLog {
+  id     String   @id @default(cuid())
+  userId String
+  weight Float
+  date   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SleepLog {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime
+  hours     Float
+  quality   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model Recipe {
+  id           String   @id @default(cuid())
+  userId       String
+  title        String
+  ingredients  String
+  instructions String
+  calories     Float?
+  protein      Float?
+  carbs        Float?
+  fat          Float?
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String // 'user' or 'assistant'
+  content   String
+  persona   String? // 'nutrition', 'workout', etc.
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ConnectedAccount {
+  id             String    @id @default(cuid())
+  userId         String
+  provider       String // e.g. 'google-fit'
+  providerUserId String?
+  accessToken    String    @db.Text
+  refreshToken   String?   @db.Text
+  expiresAt      DateTime?
+  scopes         String?
+  lastSyncAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+}
+
+// ---------------------------------------------------------------------------
+// Security models (added 2026-10-01 audit fixes)
+// ---------------------------------------------------------------------------
+
+// Rotating refresh tokens — only the SHA-256 hash is stored; the raw token
+// is shown to the client once at issue time. Rotation: each use revokes the
+// old token and issues a new pair (theft of a refresh token is detectable
+// when the legitimate client presents an already-rotated token).
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique // sha256 hex of the opaque refresh token
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Password-reset tokens — single-use, 1h expiry, only the hash is stored.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique // sha256 hex of the opaque reset token
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// OAuth `state` values — short-lived (10 min), single-use, consumed on
+// callback. Replaces the old pattern of passing the user's JWT as `state`.
+model OAuthState {
+  state     String   @id // crypto-random, passed to the OAuth provider
+  userId    String
+  provider  String // e.g. 'google-fit'
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+// Per-user daily AI usage — serverless-safe quota enforcement for the
+// Groq/Gemini free tiers (in-memory rate limiters don't survive cold starts).
+model AiUsage {
+  userId String
+  date   DateTime // UTC midnight of the usage day
+  count  Int      @default(0)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, date])
+}
