@@ -1051,6 +1051,539 @@ const EXERCISE_INFO = {
     "primaryMuscles": [
       "lats"
     ]
+  },
+  // ── Hand-written entries (batch 2): in-app exercises with no public-domain match ──
+  "Battle Rope Slams": {
+    "instructions": [
+      "Stand with feet shoulder-width apart, knees soft, holding one rope end in each hand with an overhand grip.",
+      "Brace your core and drive both arms overhead, then slam the ropes down into the floor as hard as you can.",
+      "As the ropes rebound, catch the wave and immediately drive the next slam — keep a fast, continuous rhythm.",
+      "Keep your torso still and upright; the power comes from the shoulders and lats, not from leaning.",
+      "Continue for the target time interval, then rest fully before the next round."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Bounding": {
+    "instructions": [
+      "Stand tall, then drive one knee up explosively while pushing off the opposite foot, leaping forward.",
+      "Land on the ball of the lead foot with a soft knee, and immediately drive the other knee up into the next bound.",
+      "Swing the opposite arm forward with each bound, like an exaggerated sprint stride.",
+      "Cover distance with each leap — think height and length, not quick small steps.",
+      "Bound for the target distance, then walk back and repeat for the recommended sets."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Burpees": {
+    "instructions": [
+      "Stand with feet shoulder-width apart. Drop into a squat and place your hands on the floor in front of you.",
+      "Kick your feet back into a pushup position, keeping your body in a straight line from head to heels.",
+      "Perform one pushup, keeping your elbows close to your body.",
+      "Jump your feet back up to your hands, then explode upward into a jump with your hands overhead.",
+      "Land softly with bent knees and immediately flow into the next rep."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Clinch Work": {
+    "instructions": [
+      "Face your partner or heavy bag in a staggered fighting stance, hands up protecting your chin.",
+      "Step in and secure double inside control — both of your forearms inside your partner's arms, hands behind their neck.",
+      "Pull their head down slightly while driving your hips in close; keep your own posture tall.",
+      "Work short knees to the body or practice pummeling for inside position in 30-second bursts.",
+      "Break cleanly with a push or pivot out, reset your stance, and repeat."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Conditioning Circuit": {
+    "instructions": [
+      "Set up 4 to 6 stations (for example: pushups, squats, mountain climbers, kettlebell swings, planks, jump rope).",
+      "Work each station for 40 seconds at high effort, then rotate with 20 seconds of transition rest.",
+      "Complete all stations back-to-back — that is one round. Rest 90 seconds between rounds.",
+      "Keep form strict even as fatigue builds; slow down rather than breaking technique.",
+      "Perform 3 to 5 rounds depending on your conditioning level."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Cone Drills": {
+    "instructions": [
+      "Place cones in a line or square pattern, roughly 5 yards apart.",
+      "Sprint to the first cone, plant the outside foot, and cut sharply toward the next cone.",
+      "Stay low with bent knees through every change of direction — never cut on straight legs.",
+      "Accelerate out of each cut; chop your steps as you approach the cone.",
+      "Complete the pattern, rest 30 seconds, and repeat for the recommended reps."
+    ],
+    "level": "beginner",
+    "equipment": "other",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Defensive Slips": {
+    "instructions": [
+      "Stand in your boxing stance: chin tucked, hands up, elbows in, weight balanced.",
+      "Imagine a straight punch coming at your head. Rotate your torso slightly and shift your head just outside the punch line.",
+      "Let your knees bend as you slip — the movement comes from the legs and core, not from leaning at the waist.",
+      "Slip to the outside of the jab, then immediately slip back to center or roll under.",
+      "Keep your eyes on your opponent the entire time and your guard up."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "abdominals"
+    ]
+  },
+  "Depth Jumps": {
+    "instructions": [
+      "Stand on a box 12 to 24 inches high, toes near the edge. Step (do not jump) off the box.",
+      "Land on both feet with soft knees, absorbing the impact in a quarter-squat position.",
+      "The instant your feet touch the ground, explode straight up as high as possible.",
+      "Reach full extension at the top, then land softly again with bent knees.",
+      "Step back up, reset fully, and repeat for 3 to 5 reps per set. Stop if landings get sloppy."
+    ],
+    "level": "expert",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Dragon Flag": {
+    "instructions": [
+      "Lie on a bench and grip the edge behind your head with both hands, arms locked.",
+      "Kick your legs up and lift your entire body so only your upper back and shoulders touch the bench.",
+      "Keep your body in one rigid straight line from shoulders to toes — no bending at the hips.",
+      "Lower your body slowly toward the bench without touching down, maintaining the straight line.",
+      "Pause just above the bench, then raise back up. Repeat for the recommended reps."
+    ],
+    "level": "expert",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "abdominals"
+    ]
+  },
+  "Front Lever": {
+    "instructions": [
+      "Hang from a pullup bar with an overhand grip, arms straight.",
+      "Engage your lats and pull your shoulder blades down and back, then lift your legs up.",
+      "Raise your body until it is horizontal, parallel to the floor, arms straight.",
+      "Hold the position with a hollow body — ribs down, glutes squeezed, toes pointed.",
+      "Lower with control. Beginners should start with tuck or one-leg progressions."
+    ],
+    "level": "expert",
+    "equipment": "other",
+    "primaryMuscles": [
+      "lats"
+    ]
+  },
+  "Headstand": {
+    "instructions": [
+      "Kneel on a mat and interlace your fingers, placing the crown of your head on the floor inside your hands.",
+      "Walk your feet in toward your elbows, stacking your hips over your shoulders.",
+      "Slowly lift one leg, then the other, pressing through your forearms — not your neck.",
+      "Stack ankles over hips over shoulders, engaging your core to stay balanced.",
+      "Hold for the target time, then lower your legs with control. Practice near a wall."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "High Knees": {
+    "instructions": [
+      "Stand tall with feet hip-width apart, arms bent at your sides.",
+      "Drive one knee up to hip height while pumping the opposite arm forward.",
+      "As that foot lands on the ball of the foot, immediately drive the other knee up.",
+      "Stay on the balls of your feet with quick, light contacts — lean slightly forward.",
+      "Sprint in place for the target time, keeping your core tight throughout."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Human Flag": {
+    "instructions": [
+      "Grip a vertical pole with one hand high (overhand) and one hand low (underhand), arms nearly straight.",
+      "Jump or kick up, pressing through both arms to lift your body sideways off the ground.",
+      "Stack your body horizontally — head, torso, and legs in one straight line parallel to the floor.",
+      "Squeeze your entire body: lats, obliques, and glutes locked to hold the line.",
+      "Hold for the target time, then lower with control. Master side planks and pullups first."
+    ],
+    "level": "expert",
+    "equipment": "other",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "L-Sit Hold": {
+    "instructions": [
+      "Sit on the floor or parallettes with hands beside your hips, fingers pointing forward.",
+      "Press through your hands, depress your shoulders, and lift your hips slightly off the ground.",
+      "Extend both legs straight out in front of you, toes pointed, forming an L shape with your torso.",
+      "Keep your chest up and avoid rounding your lower back.",
+      "Hold for the target time. Bend the knees (tuck) to make it easier."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "abdominals"
+    ]
+  },
+  "L-Sit to V-Sit": {
+    "instructions": [
+      "Start in an L-sit: hands pressing down, legs extended straight ahead, torso upright.",
+      "Keeping your legs perfectly straight, slowly lift them higher while leaning your torso back.",
+      "Raise your legs until they pass 90 degrees, forming a V shape between torso and legs.",
+      "Hold the V position briefly, maintaining straight legs and pointed toes.",
+      "Lower back to the L-sit with control and repeat for the recommended reps."
+    ],
+    "level": "expert",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "abdominals"
+    ]
+  },
+  "Ladder Drills": {
+    "instructions": [
+      "Lay an agility ladder flat on the ground. Stand at one end in an athletic stance.",
+      "Run through the ladder placing one foot in each square (or two feet for the icky shuffle pattern).",
+      "Stay on the balls of your feet with fast, short steps — pump your arms.",
+      "Look forward, not down at your feet, once you know the pattern.",
+      "Walk back to the start, rest briefly, and repeat with a different footwork pattern."
+    ],
+    "level": "beginner",
+    "equipment": "other",
+    "primaryMuscles": [
+      "calves"
+    ]
+  },
+  "Lunge to Press": {
+    "instructions": [
+      "Stand holding a dumbbell in each hand at shoulder height, palms facing in.",
+      "Step forward into a lunge, lowering until both knees are bent at 90 degrees.",
+      "As you reach the bottom of the lunge, press both dumbbells overhead to full extension.",
+      "Lower the dumbbells back to your shoulders, then push through your front heel to stand.",
+      "Alternate legs each rep for the recommended count."
+    ],
+    "level": "intermediate",
+    "equipment": "dumbbell",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Overhead Tricep Ext": {
+    "instructions": [
+      "Stand or sit tall holding one dumbbell with both hands, arms extended overhead.",
+      "Keep your elbows close to your head and pointing forward — do not let them flare.",
+      "Slowly lower the dumbbell behind your head by bending only at the elbows.",
+      "Pause when your forearms are roughly parallel to the floor and you feel a stretch in the triceps.",
+      "Extend your arms back overhead, squeezing the triceps hard at the top."
+    ],
+    "level": "beginner",
+    "equipment": "dumbbell",
+    "primaryMuscles": [
+      "triceps"
+    ]
+  },
+  "Pad Work": {
+    "instructions": [
+      "Face your pad holder in your fighting stance, gloves up, chin tucked.",
+      "Throw the called combination — for example jab-cross-hook — snapping each punch and returning it to guard.",
+      "Pivot your hips and shoulders into power shots; step in with your punches, don't reach.",
+      "Stay light on your feet between combinations, breathing out sharply with every strike.",
+      "Work 3-minute rounds with 1-minute rests, for the scheduled number of rounds."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Pec Deck Fly": {
+    "instructions": [
+      "Sit on the pec deck machine with your back flat against the pad and feet planted.",
+      "Place your forearms against the vertical pads, elbows bent at 90 degrees, upper arms parallel to the floor.",
+      "Squeeze your chest to bring the pads together in front of you in a wide arc.",
+      "Pause and squeeze hard for one second at full contraction.",
+      "Open your arms slowly back to the starting stretch position and repeat."
+    ],
+    "level": "beginner",
+    "equipment": "machine",
+    "primaryMuscles": [
+      "chest"
+    ]
+  },
+  "Planche Leans": {
+    "instructions": [
+      "Start in a pushup position with hands turned slightly outward, fingers spread.",
+      "Keeping your arms completely straight, lean your shoulders forward past your wrists.",
+      "Protract your shoulder blades — push the floor away so your upper back rounds slightly.",
+      "Hold the leaned position with a hollow body: ribs down, glutes tight, legs straight.",
+      "Lean back to the start position with control. Stop the set when your arms start to bend."
+    ],
+    "level": "expert",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Plank Variations": {
+    "instructions": [
+      "Start in a forearm plank: elbows under shoulders, body in a straight line from head to heels.",
+      "Rotate through the variations for the set — for example 30 seconds standard, 30 seconds side plank each side, 30 seconds plank with shoulder taps.",
+      "For shoulder taps, keep your hips perfectly still and tap the opposite shoulder with control.",
+      "Brace your core hard throughout; never let your lower back sag or your hips pike up.",
+      "Rest 30 seconds and repeat for the recommended rounds."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "abdominals"
+    ]
+  },
+  "Reaction Drills": {
+    "instructions": [
+      "Stand in an athletic stance facing your partner or coach, eyes up.",
+      "On their visual or verbal cue (a hand drop, a number called, a direction pointed), react instantly.",
+      "Sprint, shuffle, or cut in the cued direction with an explosive first step.",
+      "Reset to the ready stance immediately after each rep — never stand flat-footed.",
+      "Run 8 to 12 reps per set, varying the cues so you can't anticipate them."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Shadow Boxing": {
+    "instructions": [
+      "Stand in your boxing stance — lead foot forward, chin down, gloves protecting your face.",
+      "Throw combinations at an imaginary opponent: jab, cross, hooks, uppercuts, moving your head after each combo.",
+      "Pivot on your feet as you punch; every strike starts from the ground up through the hips.",
+      "Add defensive moves between combinations — slips, rolls, and blocks.",
+      "Keep moving for full 3-minute rounds, staying light on your feet and breathing steadily."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Side Plank": {
+    "instructions": [
+      "Lie on your side with your elbow directly under your shoulder and your legs stacked.",
+      "Lift your hips so your body forms a straight line from head to feet — don't let the hips sag.",
+      "Stack your top foot on the bottom foot, or stagger them for more stability.",
+      "Reach your top arm toward the ceiling to open the chest, bracing your obliques hard.",
+      "Hold for the target time, lower with control, and repeat on the other side."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "abdominals"
+    ]
+  },
+  "Single Leg Deadlift": {
+    "instructions": [
+      "Stand holding a dumbbell in each hand (or one in the opposite hand to the working leg).",
+      "Shift your weight onto one foot with a soft knee, then hinge at the hips, extending the free leg straight behind you.",
+      "Lower the weights toward the floor while keeping your back flat and hips square to the ground.",
+      "Go until you feel a deep stretch in the hamstring of the standing leg, or your torso is parallel to the floor.",
+      "Drive through the heel of the standing leg to return upright, squeezing the glute at the top."
+    ],
+    "level": "intermediate",
+    "equipment": "dumbbell",
+    "primaryMuscles": [
+      "hamstrings"
+    ]
+  },
+  "Skull Crushers": {
+    "instructions": [
+      "Lie on a flat bench holding a barbell or EZ bar with an overhand grip, arms extended straight above your chest.",
+      "Keeping your upper arms locked in place and perpendicular to the floor, slowly bend your elbows to lower the bar toward your forehead.",
+      "Stop just above your forehead when your forearms are roughly parallel to the floor.",
+      "Extend your elbows to press the bar back up, squeezing your triceps hard at the top.",
+      "Do not let your elbows flare outward; repeat for the recommended reps."
+    ],
+    "level": "intermediate",
+    "equipment": "barbell",
+    "primaryMuscles": [
+      "triceps"
+    ]
+  },
+  "Speed Bag": {
+    "instructions": [
+      "Stand square to the speed bag with your fists up at chin level, elbows relaxed.",
+      "Strike the bag with the front of your fist in a small circular motion — hit, and let it rebound twice.",
+      "Keep your punches short and rhythmic: hit on every third rebound to find the tempo.",
+      "Stay relaxed in the shoulders; speed comes from rhythm and relaxation, not tension.",
+      "Work 2 to 3 minute rounds, alternating lead hands as you get comfortable."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Sprawl Drills": {
+    "instructions": [
+      "Stand in an athletic stance, feet slightly wider than shoulder-width, hands up.",
+      "On the cue, throw both legs back explosively, landing in a pushup position with your hips driving to the floor.",
+      "Keep your chest up and your weight on your toes and hands — don't collapse onto your knees.",
+      "Immediately pop back up to your stance, ready for the next rep.",
+      "Perform rapid-fire reps for the target time, keeping the hips low on every sprawl."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Sun Salutation A": {
+    "instructions": [
+      "Stand tall in mountain pose, palms together at your chest. Inhale, sweep your arms overhead into upward salute.",
+      "Exhale and fold forward into a standing forward bend, hands toward the floor.",
+      "Inhale to a halfway lift with a flat back, then exhale, step or jump back to plank.",
+      "Lower through chaturanga, inhale into upward-facing dog, exhale into downward-facing dog.",
+      "Hold downward dog for five breaths, then walk or jump your feet to your hands and rise back to standing."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "shoulders"
+    ]
+  },
+  "Sun Salutation B": {
+    "instructions": [
+      "Begin in mountain pose. Inhale into chair pose, exhale into a forward fold.",
+      "Inhale to halfway lift, exhale back to plank, flow through chaturanga to upward dog and downward dog.",
+      "From downward dog, step your right foot forward into Warrior I — back foot angled, arms reaching overhead.",
+      "Exhale back to plank and flow through the vinyasa again, then step the left foot forward into Warrior I.",
+      "Return to downward dog, walk your feet forward, and rise to standing to complete the round."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "T-Drill": {
+    "instructions": [
+      "Set three cones in a T shape: one at the base, two forming the top bar about 5 yards apart.",
+      "Sprint forward from the base cone to the middle of the top bar.",
+      "Shuffle sideways to the right cone without crossing your feet, staying low.",
+      "Shuffle all the way to the left cone, then shuffle back to the middle.",
+      "Backpedal to the start cone. Rest and repeat, alternating which side you hit first."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Teep Kick Drills": {
+    "instructions": [
+      "Stand in your Muay Thai stance, weight balanced, hands guarding your chin.",
+      "Lift your lead knee up toward your chest, then thrust your foot forward into the bag or pads, striking with the ball of the foot.",
+      "Extend your hips fully into the kick, leaning your torso slightly back for range.",
+      "Snap the leg back to chamber just as fast, then return to your stance without dropping your hands.",
+      "Drill 10 kicks per leg per round, focusing on a fast, snappy push rather than brute force."
+    ],
+    "level": "intermediate",
+    "equipment": "other",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Tricep Pushdown": {
+    "instructions": [
+      "Stand facing a cable machine with a straight or rope attachment at chest height.",
+      "Grip the bar with palms down, elbows pinned tight to your sides at 90 degrees.",
+      "Press the bar down by extending your elbows until your arms are fully straight.",
+      "Squeeze your triceps hard for one second at the bottom without letting your elbows drift forward.",
+      "Let the bar rise slowly back to the starting position and repeat."
+    ],
+    "level": "beginner",
+    "equipment": "cable",
+    "primaryMuscles": [
+      "triceps"
+    ]
+  },
+  "Tuck Jumps": {
+    "instructions": [
+      "Stand with feet shoulder-width apart, arms at your sides, knees soft.",
+      "Dip into a quarter squat, then explode upward as high as you can.",
+      "At the peak of the jump, drive both knees up toward your chest and briefly grab your shins.",
+      "Extend your legs before landing, touching down softly on the balls of your feet with bent knees.",
+      "Reset quickly and repeat for the target reps. Stop the set when your jump height drops."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Warrior I": {
+    "instructions": [
+      "From standing, step one foot back about 3 to 4 feet, turning the back foot out 45 degrees.",
+      "Bend your front knee until the thigh is roughly parallel to the floor, knee stacked over the ankle.",
+      "Square your hips toward the front of the mat, pressing the outer edge of your back foot down.",
+      "Inhale and raise both arms overhead, palms facing each other, shoulders relaxed away from the ears.",
+      "Hold for 5 to 10 breaths, gazing forward or slightly up, then switch sides."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Warrior II": {
+    "instructions": [
+      "Step your feet wide apart, about 4 feet, with the front foot pointing forward and the back foot turned 90 degrees.",
+      "Bend the front knee to 90 degrees, keeping the knee directly over the ankle.",
+      "Extend both arms out to the sides at shoulder height, palms facing down, gazing over the front middle finger.",
+      "Press the outer edge of the back foot firmly into the floor and keep your torso upright.",
+      "Hold for 5 to 10 breaths, then straighten the leg and switch sides."
+    ],
+    "level": "beginner",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "quadriceps"
+    ]
+  },
+  "Warrior III": {
+    "instructions": [
+      "Stand tall, then shift your weight onto one foot with a micro-bend in the knee.",
+      "Hinge forward at the hips, extending the other leg straight behind you as your torso lowers.",
+      "Reach your arms forward alongside your ears (or keep hands at the heart for balance), forming a T shape with your body.",
+      "Keep your hips square to the floor and your standing leg strong — gaze at a fixed point.",
+      "Hold for 3 to 5 breaths, then return to standing with control and switch sides."
+    ],
+    "level": "intermediate",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "glutes"
+    ]
   }
 }
 
