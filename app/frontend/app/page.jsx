@@ -439,6 +439,20 @@ function AuthChapter() {
     }
   }
 
+  // One-tap guest access: no name, email or password. Lands on the same
+  // dashboard via the shared demo account.
+  const handleDemoLogin = async () => {
+    setLoading(true); setError('')
+    try {
+      const { data } = await auth.demoLogin()
+      persist(data)
+    } catch (err) {
+      fail(err.response?.data?.error || 'Demo login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSignup = async (e) => {
     e?.preventDefault()
     setLoading(true); setError('')
@@ -546,6 +560,22 @@ function AuthChapter() {
                 </button>
               </form>
             )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0 0' }}>
+              <div style={{ flex: 1, height: 1, background: 'var(--auth-card-border-color, rgba(0,0,0,0.1))' }} />
+              <span style={{ color: 'var(--auth-sub)', fontSize: '.8rem' }}>or</span>
+              <div style={{ flex: 1, height: 1, background: 'var(--auth-card-border-color, rgba(0,0,0,0.1))' }} />
+            </div>
+            <button type="button" onClick={handleDemoLogin} disabled={loading} style={{
+              height: 52, width: '100%', borderRadius: 999, cursor: 'pointer', fontSize: '1rem', fontWeight: 700,
+              color: 'var(--auth-heading)', marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: 'transparent', border: '2px solid var(--auth-badge-border, rgba(0,0,0,0.12))',
+            }}>
+              {loading ? 'Opening demo…' : 'Try demo — no sign-up needed'}
+            </button>
+            <p style={{ textAlign: 'center', color: 'var(--auth-sub)', fontSize: '.78rem', margin: '10px 0 0' }}>
+              Demo uses a shared guest account — logs may be visible to other guests.
+            </p>
 
             <p style={{ textAlign: 'center', color: 'var(--auth-sub)', fontSize: '.9rem', margin: '18px 0 0', whiteSpace: 'nowrap' }}>
               {isSignIn ? "Don't have an account?" : 'Already have an account?'}{' '}

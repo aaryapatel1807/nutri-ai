@@ -132,6 +132,47 @@ router.post('/login', authLimiter, async (req, res) => {
   }
 })
 
+// DEMO LOGIN — one-tap guest access, no name/email/password required.
+// Uses a single shared demo account (demo@nutriai.app) so guests can try
+// the product and run queries immediately. The account is created on first
+// use with a random bcrypt password nobody knows, and seeded with sensible
+// default goals so the dashboard is not empty. Note: the demo account is
+// SHARED — logs created by one guest are visible to the next, which is
+// disclosed on the sign-in card.
+const DEMO_EMAIL = 'demo@nutriai.app'
+router.post('/demo', authLimiter, async (req, res) => {
+  try {
+    let user = await prisma.user.findFirst({
+      where: { email: { equals: DEMO_EMAIL, mode: 'insensitive' } },
+    })
+
+    if (!user) {
+      const randomPassword = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10)
+      user = await prisma.user.create({
+        data: {
+          name: 'Demo Guest',
+          email: DEMO_EMAIL,
+          password: randomPassword,
+          fitnessGoal: 'general-health',
+          dietType: 'balanced',
+          activityLevel: 'moderate',
+          calorieGoal: 2000,
+          proteinGoal: 150,
+          carbGoal: 250,
+          fatGoal: 65,
+        },
+      })
+    }
+
+    const refreshToken = await issueRefreshToken(user.id)
+    const { password: _pw, ...safeUser } = user
+    res.json({ ...tokenPair(user.id, refreshToken), user: { ...safeUser, isDemo: true } })
+  } catch (err) {
+    console.error('Demo login error:', err.message)
+    res.status(500).json({ error: 'Demo login failed' })
+  }
+})
+
 // REFRESH — rotate the refresh token and issue a new access token.
 // If a revoked/unknown token is presented, the whole chain is revoked
 // (reuse detection: a stolen refresh token being replayed kills the session).

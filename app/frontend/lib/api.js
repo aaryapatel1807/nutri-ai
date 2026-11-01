@@ -100,6 +100,7 @@ api.interceptors.response.use(
 export const auth = {
   register: (data) => api.post('/api/auth/register', data),
   login: (data) => api.post('/api/auth/login', data),
+  demoLogin: () => api.post('/api/auth/demo', {}),
   refresh: (refreshToken) => api.post('/api/auth/refresh', { refreshToken }),
   forgotPassword: (email) => api.post('/api/auth/forgot-password', { email }),
   resetPassword: (token, newPassword) => api.post('/api/auth/reset-password', { token, newPassword }),

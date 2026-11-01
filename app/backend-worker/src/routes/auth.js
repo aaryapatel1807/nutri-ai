@@ -120,6 +120,43 @@ app.post('/login', authLimiter(), async (c) => {
   }
 })
 
+// POST /api/auth/demo — one-tap guest access, no credentials required.
+// Shared demo account (demo@nutriai.app), created on first use with a random
+// password nobody knows. Mirrors the Express backend's demo endpoint.
+const DEMO_EMAIL = 'demo@nutriai.app'
+app.post('/demo', authLimiter(), async (c) => {
+  try {
+    const prisma = c.get('prisma')
+    let user = await prisma.user.findFirst({
+      where: { email: { equals: DEMO_EMAIL, mode: 'insensitive' } },
+    })
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name: 'Demo Guest',
+          email: DEMO_EMAIL,
+          password: await hashPassword(randomHex(32)),
+          fitnessGoal: 'general-health',
+          dietType: 'balanced',
+          activityLevel: 'moderate',
+          calorieGoal: 2000,
+          proteinGoal: 150,
+          carbGoal: 250,
+          fatGoal: 65,
+        },
+      })
+    }
+
+    const pair = await tokenPair(c.env, prisma, user.id)
+    const { password: _pw, ...safeUser } = user
+    return c.json({ ...pair, user: { ...safeUser, isDemo: true } })
+  } catch (err) {
+    console.error('Demo login error:', err.message)
+    return c.json({ error: 'Demo login failed' }, 500)
+  }
+})
+
 // POST /api/auth/refresh — rotate the refresh token, issue a new access token.
 app.post('/refresh', async (c) => {
   try {
