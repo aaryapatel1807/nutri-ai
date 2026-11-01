@@ -61,6 +61,8 @@ model Meal {
   date      DateTime @default(now())
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
 }
 
 model Workout {
@@ -75,6 +77,8 @@ model Workout {
   createdAt   DateTime          @default(now())
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   exercises   WorkoutExercise[]
+
+  @@index([userId, completedAt])
 }
 
 model WorkoutExercise {
@@ -87,6 +91,8 @@ model WorkoutExercise {
   duration  Int? // in seconds
   calories  Int?
   workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  @@index([workoutId])
 }
 
 model Badge {
@@ -127,6 +133,8 @@ model WaterLog {
   amountMl Int // Amount in milliliters
   date     DateTime @default(now())
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
 }
 
 model WeightLog {
@@ -135,6 +143,8 @@ model WeightLog {
   weight Float
   date   DateTime @default(now())
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
 }
 
 model SleepLog {

@@ -19,6 +19,53 @@ const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b'
 //      address — checked on EVERY redirect hop, not just the first URL,
 //      which also closes the basic DNS-rebinding hole.
 // ---------------------------------------------------------------------------
+// Expand an IPv6 address (handling :: compression and a trailing dotted
+// IPv4 part) into 8 numeric groups, or null when unparseable.
+function expandIpv6(ip) {
+  let addr = ip.toLowerCase()
+  let tailV4 = null
+  const v4Match = addr.match(/:(\d+\.\d+\.\d+\.\d+)$/)
+  if (v4Match) {
+    tailV4 = v4Match[1].split('.').map(Number)
+    if (tailV4.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return null
+    // Strip only the digits, not the preceding ':' — for "64:ff9b::8.8.8.8"
+    // that leaves "64:ff9b::" (compression marker intact); for a full form
+    // like "1:2:3:4:5:6:8.8.8.8" it leaves one stray ':' to trim.
+    addr = addr.slice(0, addr.length - v4Match[1].length)
+    if (addr.endsWith(':') && !addr.endsWith('::')) addr = addr.slice(0, -1)
+  }
+  const halves = addr.split('::')
+  if (halves.length > 2) return null
+  const head = halves[0] ? halves[0].split(':') : []
+  const tail = halves.length === 2 && halves[1] ? halves[1].split(':') : []
+  const all = [...head, ...tail]
+  if (all.some(g => !/^[0-9a-f]{1,4}$/.test(g))) return null
+  const nums = all.map(g => parseInt(g, 16))
+  const missing = 8 - nums.length - (tailV4 ? 2 : 0)
+  if (halves.length === 1) {
+    if (missing !== 0) return null
+    return [...nums, ...(tailV4 ? [(tailV4[0] << 8) + tailV4[1], (tailV4[2] << 8) + tailV4[3]] : [])]
+  }
+  if (missing < 0) return null
+  const expanded = [...nums.slice(0, head.length), ...Array(missing).fill(0), ...nums.slice(head.length)]
+  if (tailV4) expanded.push((tailV4[0] << 8) + tailV4[1], (tailV4[2] << 8) + tailV4[3])
+  return expanded.length === 8 ? expanded : null
+}
+
+// Extract an embedded IPv4 address from IPv6 transition forms, if present:
+// ::ffff:a.b.c.d (IPv4-mapped), 64:ff9b::a.b.c.d (NAT64 WKP), 2002::/16 (6to4).
+// The embedded address must pass the same checks — ::ffff:127.0.0.1 is
+// loopback even though the outer form looks like a global IPv6 address.
+function embeddedIpv4(ip) {
+  const g = expandIpv6(ip)
+  if (!g) return null
+  const v4 = (hi, lo) => `${(hi >> 8) & 0xff}.${hi & 0xff}.${(lo >> 8) & 0xff}.${lo & 0xff}`
+  if (g[0] === 0 && g[1] === 0 && g[2] === 0 && g[3] === 0 && g[4] === 0 && g[5] === 0xffff) return v4(g[6], g[7])
+  if (g[0] === 0x64 && g[1] === 0xff9b && g[2] === 0 && g[3] === 0 && g[4] === 0 && g[5] === 0) return v4(g[6], g[7])
+  if (g[0] === 0x2002) return v4(g[1], g[2])
+  return null
+}
+
 function isBlockedIp(ip) {
   if (!net.isIP(ip)) return true // unparseable → block
   if (net.isIPv4(ip)) {
@@ -29,16 +76,26 @@ function isBlockedIp(ip) {
       (a === 172 && b >= 16 && b <= 31) ||            // 172.16.0.0/12
       (a === 192 && b === 168) ||                     // 192.168.0.0/16
       (a === 169 && b === 254) ||                     // 169.254.0.0/16 link-local (cloud metadata)
-      a === 0                                        // 0.0.0.0/8
+      (a === 100 && b >= 64 && b <= 127) ||            // 100.64.0.0/10 CGNAT (cloud-internal)
+      (a === 198 && (b === 18 || b === 19)) ||         // 198.18.0.0/15 benchmarking (cloud-internal)
+      (a === 192 && b === 0) ||                        // 192.0.0.0/24 IETF protocol assignments
+      a === 0 ||                                       // 0.0.0.0/8
+      a >= 240                                          // 240.0.0.0/4 reserved + 255.255.255.255
     )
   }
-  // IPv6
-  const low = ip.toLowerCase()
+  // IPv6: check embedded IPv4 first (mapped/NAT64/6to4 bypasses).
+  const embedded = embeddedIpv4(ip)
+  if (embedded) return isBlockedIp(embedded)
+  const g = expandIpv6(ip)
+  if (!g) return true // unparseable IPv6 → block
+  const allZero = g.every(n => n === 0)
   return (
-    low === '::1' ||                                 // loopback
-    low === '::' ||
-    low.startsWith('fc') || low.startsWith('fd') ||   // fc00::/7 unique-local
-    low.startsWith('fe80:')                          // fe80::/10 link-local
+    allZero ||                                        // :: unspecified
+    (g.slice(0, 7).every(n => n === 0) && g[7] === 1) || // ::1 loopback
+    (g[0] >= 0xfc00 && g[0] <= 0xfdff) ||               // fc00::/7 unique-local
+    (g[0] >= 0xfe80 && g[0] <= 0xfebf) ||               // fe80::/10 link-local (full range)
+    (g[0] === 0x2001 && g[1] === 0x0db8) ||             // 2001:db8::/32 documentation (unroutable)
+    (g[0] === 0 && g[1] === 0 && g[2] === 0 && g[3] === 0 && g[4] === 0xffff && g[5] === 0) // ::ffff:0:0/96 translated
   )
 }
 
@@ -87,6 +144,37 @@ async function fetchPublicPage(rawUrl, timeoutMs = 10000) {
   throw new Error('Too many redirects')
 }
 
+// Read a fetch Response body with a hard byte cap, streaming — never buffer
+// an unbounded body first. Aborts (and throws) the moment the cap is passed,
+// so a multi-hundred-MB page can't OOM the serverless function before the
+// size check runs. The caller's AbortSignal (per-hop 10s timeout) also bounds
+// the total read time, including slow-drip bodies.
+async function readCappedBody(res, maxBytes) {
+  if (!res.body || typeof res.body.getReader !== 'function') {
+    const buf = Buffer.from(await res.arrayBuffer())
+    if (buf.length > maxBytes) throw new Error('Page is too large to import')
+    return buf
+  }
+  const reader = res.body.getReader()
+  const chunks = []
+  let total = 0
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      total += value.byteLength
+      if (total > maxBytes) {
+        try { await reader.cancel() } catch {}
+        throw new Error('Page is too large to import')
+      }
+      chunks.push(value)
+    }
+  } finally {
+    try { reader.releaseLock() } catch {}
+  }
+  return Buffer.concat(chunks.map(c => Buffer.from(c)))
+}
+
 // Call Groq in JSON mode (same OpenAI-compatible pattern as routes/mlProxy.js)
 async function callGroqJson(userContent, systemPrompt) {
   const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -95,6 +183,7 @@ async function callGroqJson(userContent, systemPrompt) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${GROQ_API_KEY}`
     },
+    signal: AbortSignal.timeout(30000),
     body: JSON.stringify({
       model: GROQ_MODEL,
       messages: [
@@ -201,8 +290,7 @@ router.post('/import', authMiddleware, async (req, res) => {
       const contentType = page.headers.get('content-type') || ''
       if (!/text\/html|application\/xhtml/.test(contentType))
         return res.status(400).json({ error: 'That URL is not a web page' })
-      const buf = Buffer.from(await page.arrayBuffer())
-      if (buf.length > MAX_BYTES) return res.status(400).json({ error: 'Page is too large to import' })
+      const buf = await readCappedBody(page, MAX_BYTES)
       html = buf.toString('utf8')
     } catch (e) {
       console.error('Recipe import fetch error:', e.message)
@@ -286,3 +374,9 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 })
 
 module.exports = router
+// Test hooks (attaching to the router object does not affect its use as
+// Express middleware). Unit tests import these without starting a server.
+module.exports.isBlockedIp = isBlockedIp
+module.exports.assertPublicHost = assertPublicHost
+module.exports.fetchPublicPage = fetchPublicPage
+module.exports.readCappedBody = readCappedBody

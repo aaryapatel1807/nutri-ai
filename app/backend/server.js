@@ -4,6 +4,14 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 require('dotenv').config()
 
+// Fail fast without a JWT secret: jwt.verify with an undefined secret throws
+// on every request, which would look like a total auth outage. Better to crash
+// at boot with a clear message than to serve a broken API.
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET is not set. Refusing to start without it.')
+  process.exit(1)
+}
+
 const app = express()
 
 // Trust the first proxy (Vercel) so rate limiting sees real client IPs
@@ -40,7 +48,10 @@ app.options('*', cors())
 app.use(helmet())
 // 'dev' format is verbose — use the quieter 'combined' format in production
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
-app.use(express.json())
+// Explicit body cap (Express's default is also 100kb, but implicit defaults
+// get "tuned" away by accident). JSON bodies here are small by design —
+// large payloads use the multer 5MB upload path on /api/ml/detect-food.
+app.use(express.json({ limit: '100kb' }))
 
 // API Routes — direct requires (NOT dynamic): Vercel's file tracer only
 // bundles statically-analyzable requires. A dynamic require() wrapper
