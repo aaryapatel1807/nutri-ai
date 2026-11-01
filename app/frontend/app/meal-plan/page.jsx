@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
-import api, { localDayString } from '../../lib/api'
+import api, { localDayString, localDayQuery } from '../../lib/api'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MEAL_PLANS = [
@@ -250,7 +250,7 @@ export default function MealPlanPage() {
       if (sc) setScheduleDone(JSON.parse(sc))
     } catch {}
     prefsLoaded.current = true
-    api.get(`/api/meals/today?date=${localDayString()}`).then(r => setTodayNutri(r.data)).catch(() => setNutriError('Could not load today\u2019s nutrition.'))
+    api.get(`/api/meals/today?${localDayQuery()}`).then(r => setTodayNutri(r.data)).catch(() => setNutriError('Could not load today\u2019s nutrition.'))
     api.get('/api/water').then(r => { setWaterLogs(r.data.logs || []); setWaterGlasses(Math.round((r.data.totalMl || 0) / 250)) }).catch(() => setWaterError('Could not load water intake.'))
     api.get('/api/auth/me').then(r => { setMeProfile(r.data); if (r.data?.waterGoal) setWaterGoalL(r.data.waterGoal) }).catch(() => {})
   }, [])

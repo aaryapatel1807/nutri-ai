@@ -191,3 +191,6 @@ router.post('/:id/complete', authMiddleware, async (req, res) => {
 })
 
 module.exports = router
+// Test hooks (do not affect use as Express middleware).
+module.exports.parseWorkoutExercise = parseWorkoutExercise
+module.exports.parseWorkoutNumber = parseWorkoutNumber

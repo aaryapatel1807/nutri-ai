@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import api, { getMeals, logMeal, deleteMeal, getCurrentUser, ml, localDayString } from '../../lib/api'
+import api, { getMeals, logMeal, deleteMeal, getCurrentUser, ml, localDayQuery } from '../../lib/api'
 import {
   searchFoods, scaleFood,
   getRecentFoods, addRecentFood,
@@ -52,7 +52,7 @@ export default function MealLogger() {
         const meals = await getMeals()
         // Goal comes from the same backend response family as the dashboard
         // (user's saved calorieGoal; backend default 2000).
-        api.get(`/api/meals/today?date=${localDayString()}`).then(res => {
+        api.get(`/api/meals/today?${localDayQuery()}`).then(res => {
           if (res.data?.goalCalories) setGoalCalories(res.data.goalCalories)
         }).catch(() => {})
         if (meals) {

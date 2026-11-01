@@ -4,11 +4,23 @@ const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 const { normalizeMealInput } = require('../utils/nutrition')
 
-// Parse ?date=YYYY-MM-DD (the caller's LOCAL calendar day) into a UTC range.
-// Returns { start, end } or null when the param is absent/invalid.
-function localDayRange(dateStr) {
+// Parse ?date=YYYY-MM-DD + ?tzOffset= (the caller's LOCAL calendar day and
+// their getTimezoneOffset() in minutes) into the matching UTC range.
+// Without tzOffset the day is treated as a UTC day (backward compatible).
+// The offset matters: a meal logged at 01:00 IST is 19:30 UTC the previous
+// day, so a naive UTC-day filter would drop early-morning meals for every
+// user east of UTC (and late-evening meals west of it). Local midnight as a
+// UTC instant = Date.UTC(y,m,d) + tzOffset minutes.
+function localDayRange(dateStr, tzOffset) {
   if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null
-  const start = new Date(`${dateStr}T00:00:00.000Z`)
+  const [y, m, d] = dateStr.split('-').map(Number)
+  // Date.UTC silently overflows (month 13 → next January), so validate ranges.
+  if (m < 1 || m > 12 || d < 1 || d > 31) return null
+  const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate()
+  if (d > daysInMonth) return null
+  const offset = Number(tzOffset)
+  const offsetMs = Number.isFinite(offset) ? offset * 60000 : 0
+  const start = new Date(Date.UTC(y, m - 1, d) + offsetMs)
   if (Number.isNaN(start.getTime())) return null
   const end = new Date(start.getTime() + 24 * 60 * 60 * 1000)
   return { start, end }
@@ -19,7 +31,7 @@ function localDayRange(dateStr) {
 // the query used to be silently ignored, returning everything).
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const range = localDayRange(req.query.date)
+    const range = localDayRange(req.query.date, req.query.tzOffset)
     const meals = await prisma.meal.findMany({
       where: {
         userId: req.userId,
@@ -41,7 +53,7 @@ router.get('/', authMiddleware, async (req, res) => {
 // totals on different pages.
 router.get('/today', authMiddleware, async (req, res) => {
   try {
-    const range = localDayRange(req.query.date) || (() => {
+    const range = localDayRange(req.query.date, req.query.tzOffset) || (() => {
       const now = new Date()
       const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
       return { start, end: new Date(start.getTime() + 24 * 60 * 60 * 1000) }
@@ -237,3 +249,5 @@ async function checkAndAwardBadges(userId) {
 }
 
 module.exports = router
+// Test hooks (do not affect use as Express middleware).
+module.exports.localDayRange = localDayRange

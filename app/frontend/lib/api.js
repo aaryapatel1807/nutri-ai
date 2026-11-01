@@ -209,12 +209,18 @@ export const localDayString = (d = new Date()) => {
   return `${y}-${m}-${day}`
 }
 
+/** Query fragment identifying the user's local day AND timezone offset, so
+ * the backend converts the local day to the correct UTC range (a meal at
+ * 01:00 IST is 19:30 UTC the previous day — a bare UTC-day filter drops it). */
+export const localDayQuery = (d = new Date()) =>
+  `date=${localDayString(d)}&tzOffset=${d.getTimezoneOffset()}`
+
 /** Fetch today's nutrition from real API.
  * THROWS on failure — callers must show an error state, never render a
  * silent zero day (a backend outage used to look like an empty day). */
 export const getTodayNutrition = async () => {
   // Add _t to bust browser cache (prevents 304 returning stale data)
-  const res = await api.get(`/api/meals/today?date=${localDayString()}&_t=${Date.now()}`)
+  const res = await api.get(`/api/meals/today?${localDayQuery()}&_t=${Date.now()}`)
   const data = res.data
   // Handle both mock server (data.totals.calories) and real server (data.totalCalories)
   const calories = data.totalCalories ?? data.totals?.calories ?? 0
@@ -247,7 +253,7 @@ export const getUserXP = async () => {
 /** Fetch today's meals from real API */
 export const getMeals = async () => {
   try {
-    const res = await api.get(`/api/meals/today?date=${localDayString()}&_t=${Date.now()}`)
+    const res = await api.get(`/api/meals/today?${localDayQuery()}&_t=${Date.now()}`)
     return res.data.meals || []
   } catch (e) {
     console.error('getMeals error:', e.message)
