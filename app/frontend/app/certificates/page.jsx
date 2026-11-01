@@ -14,8 +14,6 @@ export default function CertificatesPage() {
       category: 'nutrition',
       description: 'Complete comprehensive nutrition training',
       criteria: 'Complete 5 nutrition modules + pass final exam',
-      earnedAt: '2026-05-15',
-      earnedBy: 500,
       difficulty: 'Advanced',
     },
     {
@@ -25,8 +23,6 @@ export default function CertificatesPage() {
       category: 'fitness',
       description: 'Demonstrate mastery in workout planning',
       criteria: 'Log 100+ workouts with proper form scores',
-      earnedAt: '2026-04-20',
-      earnedBy: 1200,
       difficulty: 'Intermediate',
     },
     {
@@ -36,8 +32,6 @@ export default function CertificatesPage() {
       category: 'health',
       description: 'Achieve excellent holistic health metrics',
       criteria: 'Maintain 80+ wellness score for 30 days',
-      earnedAt: null,
-      earnedBy: 300,
       difficulty: 'Advanced',
     },
     {
@@ -47,8 +41,6 @@ export default function CertificatesPage() {
       category: 'health',
       description: 'Master sleep and recovery optimization',
       criteria: 'Complete sleep module + 15 day tracking',
-      earnedAt: '2026-03-10',
-      earnedBy: 400,
       difficulty: 'Intermediate',
     },
     {
@@ -58,8 +50,6 @@ export default function CertificatesPage() {
       category: 'nutrition',
       description: 'Create and share 20+ meal plans',
       criteria: 'Create personalized plans for 20 scenarios',
-      earnedAt: null,
-      earnedBy: 200,
       difficulty: 'Beginner',
     },
     {
@@ -69,8 +59,6 @@ export default function CertificatesPage() {
       category: 'community',
       description: 'Become a trusted voice in the community',
       criteria: 'Achieve 500+ helpful responses & mentor 5 users',
-      earnedAt: null,
-      earnedBy: 150,
       difficulty: 'Advanced',
     },
   ]
@@ -83,7 +71,7 @@ export default function CertificatesPage() {
           {/* Header */}
           <div className="mb-12">
             <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">🏆 Certificates & Achievements</h1>
-            <p className="text-gray-400">Showcase your expertise and dedication to your health journey</p>
+            <p className="text-gray-400">Showcase your expertise and dedication to your health journey. Certificates are not issued yet — these are the planned tracks and their criteria.</p>
           </div>
 
           {/* Filters */}
@@ -113,19 +101,10 @@ export default function CertificatesPage() {
                 transition={{ delay: idx * 0.1 }}
                 className="group"
               >
-                <div
-                  className={`relative p-6 rounded-xl border backdrop-blur-sm transition-all duration-300 ${
-                    cert.earnedAt
-                      ? 'border-yellow-500/30 bg-yellow-500/10 hover:border-yellow-500/50'
-                      : 'border-white/10 bg-white/5 hover:border-white/20'
-                  }`}
-                >
-                  {/* Earned Badge */}
-                  {cert.earnedAt && (
-                    <div className="absolute top-3 right-3 bg-yellow-500/20 text-yellow-300 text-xs px-3 py-1 rounded-full flex items-center gap-1">
-                      ✓ Earned
-                    </div>
-                  )}
+                <div className="relative p-6 rounded-xl border backdrop-blur-sm transition-all duration-300 border-white/10 bg-white/5 hover:border-white/20">
+                  <div className="absolute top-3 right-3 bg-amber-500/20 text-amber-400 text-xs px-3 py-1 rounded-full">
+                    Coming soon
+                  </div>
 
                   {/* Icon */}
                   <div className="text-5xl mb-3">{cert.emoji}</div>
@@ -156,56 +135,19 @@ export default function CertificatesPage() {
                         {cert.difficulty}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Earned by:</span>
-                      <span>{cert.earnedBy} users</span>
-                    </div>
                   </div>
 
-                  {/* CTA */}
-                  <button
-                    className={`w-full py-2 rounded-lg font-semibold transition-all ${
-                      cert.earnedAt
-                        ? 'bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30'
-                        : 'bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white hover:opacity-90'
-                    }`}
+                  {/* CTA — no issuance flow exists, so no working button is faked */}
+                  <button disabled
+                    className="w-full py-2 rounded-lg font-semibold bg-white/5 text-gray-500 cursor-not-allowed"
                   >
-                    {cert.earnedAt ? '📜 View Certificate' : 'Start Earning'}
+                    Certificate issuance coming soon
                   </button>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* Leaderboard Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="p-8 rounded-xl border border-purple-500/30 bg-purple-500/10 backdrop-blur-sm"
-          >
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6">👑 Top Certificate Earners</h2>
-            <div className="space-y-3">
-              {[
-                { rank: 1, name: 'Alex Johnson', certificates: 12, level: '🥇 Expert' },
-                { rank: 2, name: 'Sam Patel', certificates: 10, level: '🥈 Advanced' },
-                { rank: 3, name: 'Jordan Lee', certificates: 9, level: '🥉 Advanced' },
-              ].map((user) => (
-                <div key={user.rank} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] flex items-center justify-center text-white font-bold">
-                      {user.rank}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-[var(--text-primary)]">{user.name}</p>
-                      <p className="text-sm text-gray-400">{user.level}</p>
-                    </div>
-                  </div>
-                  <p className="text-yellow-400 font-bold">{user.certificates} 🏆</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
         </motion.div>
       </div>
   )

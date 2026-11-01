@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
+const { awardBadge, checkLegend } = require('../utils/badges')
 
 // GET /api/water - get water logs for today (or by date query param)
 router.get('/', authMiddleware, async (req, res) => {
@@ -65,6 +66,32 @@ router.post('/', authMiddleware, async (req, res) => {
     const log = await prisma.waterLog.create({
       data: { userId: req.userId, amountMl: Math.round(ml) }
     })
+
+    // Hydration Hero: 2000ml+ on each of the last 14 UTC calendar days.
+    try {
+      const today = new Date()
+      const last14Days = Array.from({ length: 14 }, (_, i) => {
+        const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - i))
+        return d.toISOString().split('T')[0]
+      })
+      const start = new Date(`${last14Days[13]}T00:00:00.000Z`)
+      const logs = await prisma.waterLog.findMany({
+        where: { userId: req.userId, date: { gte: start } },
+        select: { date: true, amountMl: true },
+      })
+      const mlByDay = {}
+      for (const l of logs) {
+        const day = l.date.toISOString().split('T')[0]
+        mlByDay[day] = (mlByDay[day] || 0) + (l.amountMl || 0)
+      }
+      if (last14Days.every(d => (mlByDay[d] || 0) >= 2000)) {
+        await awardBadge(req.userId, 'Hydration Hero')
+      }
+      await checkLegend(req.userId)
+    } catch (e) {
+      console.error('Water badge check error:', e.message)
+    }
+
     res.status(201).json(log)
   } catch (err) {
     console.error('Log water error:', err.message)

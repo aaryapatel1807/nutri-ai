@@ -30,16 +30,10 @@ class BadgeService {
       const isUnlocked = unlockedIds.has(badge.id)
       let progress = 0
 
-      // Calculate progress based on badge type
-      if (badge.name === 'First Bite') {
-        progress = isUnlocked ? 100 : 0
-      } else if (badge.name === 'Protein King') {
-        // This would need meal tracking logic
-        progress = isUnlocked ? 100 : Math.random() * 80 // Placeholder
-      } else if (badge.name === 'Week Warrior') {
-        // This would need streak tracking logic
-        progress = isUnlocked ? 100 : Math.random() * 60 // Placeholder
-      }
+      // Honest progress: 100 when unlocked, else 0. Per-badge progress
+      // tracking is not implemented, and the old Math.random() placeholders
+      // fabricated progress percentages — never show invented progress.
+      progress = isUnlocked ? 100 : 0
 
       return {
         ...badge,

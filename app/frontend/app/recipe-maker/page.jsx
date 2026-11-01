@@ -72,6 +72,12 @@ export default function RecipeMaker() {
   const [urlLoading, setUrlLoading] = useState(false)
   const [urlError, setUrlError] = useState('')
   const [hoveredId, setHoveredId] = useState(null)
+  const [aiHint, setAiHint] = useState('')
+  const [saveState, setSaveState] = useState({}) // recipe key -> 'saving' | 'saved' | error msg
+  const [myRecipes, setMyRecipes] = useState([])
+  const [myRecipesError, setMyRecipesError] = useState('')
+  const [mealPlanMsg, setMealPlanMsg] = useState('')
+  const [cookStep, setCookStep] = useState(0) // cooking-mode step index in the detail modal
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
@@ -109,49 +115,108 @@ export default function RecipeMaker() {
     return { ...best, _ai: false, _match: bestScore > 0 ? bestScore : null }
   }
 
+  // Saved recipes (real backend CRUD): load once for the "My recipes" section.
+  const loadMyRecipes = async () => {
+    try {
+      const res = await api.get('/api/recipes')
+      setMyRecipes(Array.isArray(res.data) ? res.data : [])
+      setMyRecipesError('')
+    } catch (e) {
+      setMyRecipesError('Could not load your saved recipes.')
+    }
+  }
+  useEffect(() => { loadMyRecipes() }, [])
+
+  // Save any displayed recipe (AI, imported, or collection) to the backend.
+  // The Recipe model stores ingredients/instructions as strings.
+  const recipeKey = (r) => r._savedId || `${r.name}-${r.time || ''}`
+  const handleSaveRecipe = async (r) => {
+    const key = recipeKey(r)
+    setSaveState(s => ({ ...s, [key]: 'saving' }))
+    try {
+      const res = await api.post('/api/recipes', {
+        title: r.name,
+        ingredients: (r.ingredients || []).join('\n'),
+        instructions: (r.steps || []).join('\n'),
+        calories: r.calories || 0,
+        protein: r.protein || 0,
+        carbs: r.carbs || 0,
+        fat: r.fat || 0,
+      })
+      setSaveState(s => ({ ...s, [key]: 'saved' }))
+      if (res.data?.id) setAiResult(prev => (prev && recipeKey(prev) === key ? { ...prev, _savedId: res.data.id } : prev))
+      loadMyRecipes()
+    } catch (e) {
+      setSaveState(s => ({ ...s, [key]: e.response?.data?.error || 'Save failed — try again.' }))
+    }
+  }
+  const handleDeleteSaved = async (id) => {
+    try {
+      await api.delete(`/api/recipes/${id}`)
+      loadMyRecipes()
+    } catch (e) {
+      setMyRecipesError('Could not delete that recipe.')
+    }
+  }
+  // Log a recipe as today's meal (real backend write, confirmed before UI claims it).
+  const handleAddToMealPlan = async (r) => {
+    setMealPlanMsg('')
+    try {
+      await api.post('/api/meals', {
+        name: r.name, calories: r.calories || 0, protein: r.protein || 0,
+        carbs: r.carbs || 0, fat: r.fat || 0, mealType: 'Lunch',
+      })
+      setMealPlanMsg(`Added “${r.name}” to today's meals.`)
+    } catch (e) {
+      setMealPlanMsg('Could not add to meals — please try again.')
+    }
+  }
+  const openRecipe = (r) => { setSelected(r); setAiMode(false); setCookStep(0); setMealPlanMsg('') }
+
   const handleAIMatch = async () => {
-    if (!ingredients.trim()) return
+    if (!ingredients.trim()) { setAiHint('Type at least one ingredient first.'); return }
+    setAiHint('')
     setAiLoading(true)
     setAiResult(null)
     try {
+      // Agreed contract: { recipes: [...] }. 30s timeout on both sides.
       const res = await ml.recipe({
         ingredients: ingredients.split(',').map(i => i.trim()),
         dietary_preferences: [], // could be pulled from user profile
         meal_type: 'any'
-      })
-      
-      if (res.data && res.data.recipe) {
-        // Map ML service response to UI format
-        const r = res.data.recipe
+      }, { timeout: 30000 })
+
+      const first = res.data?.recipes?.[0]
+      if (first && first.name) {
         setAiResult({
           id: 'ai-' + Date.now(),
-          name: r.title || 'AI Suggestion',
+          name: first.name,
           emoji: '✨',
-          time: r.readyInMinutes || 30,
-          calories: r.calories || 0,
-          protein: r.protein || 0,
-          carbs: r.carbs || 0,
-          fat: r.fat || 0,
+          time: first.readyInMinutes || 30,
+          calories: first.calories || 0,
+          protein: first.protein || 0,
+          carbs: first.carbs || 0,
+          fat: first.fat || 0,
           difficulty: 'Medium',
           cuisine: 'AI Personalized',
-          tags: r.tags || ['AI Generated'],
+          tags: (first.tags && first.tags.length) ? first.tags : ['AI Generated'],
           color: '#7B61FF',
           glow: 'rgba(123, 97, 255,0.3)',
-          ingredients: r.ingredients || [],
-          steps: r.instructions || [],
+          ingredients: first.ingredients || [],
+          steps: first.instructions || [],
           _ai: true,
-          _match: matchPct(r.ingredients, ingredients)
+          _match: matchPct(first.ingredients, ingredients)
         })
         setAiNotice(null)
       } else {
-        // No recipe from AI — show the closest collection recipe, labelled honestly
+        // Empty AI result — show the closest collection recipe, labelled honestly
         setAiResult(bestCollectionPick(ingredients))
         setAiNotice('unavailable')
       }
     } catch (err) {
       console.error('AI Match error:', err)
       setAiResult(bestCollectionPick(ingredients))
-      setAiNotice('unavailable')
+      setAiNotice(err.code === 'ECONNABORTED' ? 'timeout' : 'unavailable')
     } finally {
       setAiLoading(false)
     }
@@ -437,6 +502,9 @@ export default function RecipeMaker() {
                           >🧠 Analyzing ingredients...</motion.span>
                         ) : '✨ Find My Recipe'}
                       </motion.button>
+                      {aiHint && (
+                        <div style={{ color:'#FFB020', fontSize:'0.82rem', marginTop:'10px', textAlign:'center' }}>{aiHint}</div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -466,13 +534,15 @@ export default function RecipeMaker() {
                           <div style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>{aiResult._match}% ingredient match</div>
                         )}
                       </div>
-                      {aiNotice === 'unavailable' && (
+                      {(aiNotice === 'unavailable' || aiNotice === 'timeout') && (
                         <div style={{
                           background:'rgba(255,180,0,0.08)', border:'1px solid rgba(255,180,0,0.3)',
                           borderRadius:'12px', padding:'10px 14px', marginBottom:'16px',
                           color:'var(--text-muted)', fontSize:'0.8rem'
                         }}>
-                          ⚠️ AI matching is unavailable right now — showing the closest recipe from our collection instead.
+                          {aiNotice === 'timeout'
+                            ? '⚠️ The AI took too long to respond — showing the closest recipe from our collection instead. Try again in a moment.'
+                            : '⚠️ AI matching is unavailable right now — showing the closest recipe from our collection instead.'}
                         </div>
                       )}
                       <div style={{ display:'flex', gap:'24px', flexWrap:'wrap' }}>
@@ -504,19 +574,37 @@ export default function RecipeMaker() {
                             ))}
                           </div>
                         </div>
+                        <div style={{ alignSelf:'center', display:'flex', flexDirection:'column', gap:'8px' }}>
                         <motion.button
                           whileHover={{ scale:1.05 }}
                           whileTap={{ scale:0.95 }}
-                          onClick={() => { setSelected(aiResult); setAiMode(false) }}
+                          onClick={() => openRecipe(aiResult)}
                           style={{
-                            alignSelf:'center',
                             background:`linear-gradient(135deg, ${aiResult.color}, ${aiResult.color}99)`,
                             border:'none', borderRadius:'14px',
                             padding:'12px 24px', color:'#000',
                             fontWeight:700, cursor:'pointer',
                             fontFamily:"'Satoshi',sans-serif", fontSize:'0.9rem',
-                            boxShadow:`0 4px 20px ${aiResult.glow}` 
+                            boxShadow:`0 4px 20px ${aiResult.glow}`
                           }}>View Recipe →</motion.button>
+                        <motion.button
+                          whileHover={{ scale:1.03 }}
+                          whileTap={{ scale:0.97 }}
+                          disabled={saveState[recipeKey(aiResult)] === 'saving' || saveState[recipeKey(aiResult)] === 'saved'}
+                          onClick={() => handleSaveRecipe(aiResult)}
+                          style={{
+                            background:'transparent',
+                            border:`1px solid ${aiResult.color}60`,
+                            borderRadius:'14px', padding:'10px 24px', color:aiResult.color,
+                            fontWeight:700, cursor:'pointer',
+                            fontFamily:"'Satoshi',sans-serif", fontSize:'0.85rem',
+                          }}>
+                          {saveState[recipeKey(aiResult)] === 'saving' ? 'Saving…' : saveState[recipeKey(aiResult)] === 'saved' ? '✓ Saved' : '♡ Save recipe'}
+                        </motion.button>
+                        {typeof saveState[recipeKey(aiResult)] === 'string' && saveState[recipeKey(aiResult)] !== 'saving' && saveState[recipeKey(aiResult)] !== 'saved' && (
+                          <div style={{ color:'#FF6B5E', fontSize:'0.75rem', textAlign:'center' }}>{saveState[recipeKey(aiResult)]}</div>
+                        )}
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -595,7 +683,7 @@ export default function RecipeMaker() {
                       whileHover={{ y:-8, scale:1.02 }}
                       onHoverStart={() => setHoveredId(recipe.id)}
                       onHoverEnd={() => setHoveredId(null)}
-                      onClick={() => setSelected(recipe)}
+                      onClick={() => openRecipe(recipe)}
                       style={{
                         ...card(recipe.glow),
                         cursor:'pointer',
@@ -681,6 +769,48 @@ export default function RecipeMaker() {
                       </div>
                     </motion.div>
                   ))}
+                </div>
+
+                {/* MY RECIPES — real saved recipes from the backend */}
+                <div style={{ marginTop:'40px' }}>
+                  <h2 style={{ fontFamily:"'Clash Display',sans-serif", fontSize:'1.4rem', color:'var(--text-primary)', margin:'0 0 16px' }}>
+                    ♡ My recipes
+                  </h2>
+                  {myRecipesError && (
+                    <div style={{ color:'#FF6B5E', fontSize:'0.85rem', marginBottom:'12px' }}>
+                      {myRecipesError}{' '}
+                      <button onClick={loadMyRecipes} style={{ background:'none', border:'none', color:'#7B61FF', fontWeight:700, cursor:'pointer', padding:0, textDecoration:'underline' }}>Retry</button>
+                    </div>
+                  )}
+                  {myRecipes.length === 0 && !myRecipesError ? (
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.85rem' }}>
+                      Nothing saved yet — use AI Match or open a recipe and tap Save.
+                    </div>
+                  ) : (
+                    <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap:'16px' }}>
+                      {myRecipes.map(r => (
+                        <div key={r.id} style={{ ...card(), padding:'20px' }}>
+                          <div style={{ fontWeight:700, color:'var(--text-primary)', marginBottom:'6px' }}>{r.title}</div>
+                          <div style={{ color:'var(--text-muted)', fontSize:'0.8rem', marginBottom:'14px' }}>
+                            {r.calories != null ? `${Math.round(r.calories)} kcal` : '—'}
+                            {r.protein != null ? ` · ${Math.round(r.protein)}g protein` : ''}
+                          </div>
+                          <div style={{ display:'flex', gap:'8px' }}>
+                            <button onClick={() => openRecipe({
+                              name: r.title, emoji:'♡', time: 30,
+                              calories: r.calories || 0, protein: r.protein || 0,
+                              carbs: r.carbs || 0, fat: r.fat || 0,
+                              tags: ['Saved'], color:'#7B61FF', glow:'rgba(123,97,255,0.3)',
+                              ingredients: String(r.ingredients || '').split('\n').filter(Boolean),
+                              steps: String(r.instructions || '').split('\n').filter(Boolean),
+                              _savedId: r.id,
+                            })} style={{ flex:1, padding:'9px', borderRadius:'10px', border:'1px solid var(--border)', background:'var(--border)', color:'var(--text-primary)', cursor:'pointer', fontSize:'0.82rem', fontWeight:600 }}>View</button>
+                            <button onClick={() => handleDeleteSaved(r.id)} style={{ padding:'9px 14px', borderRadius:'10px', border:'1px solid rgba(239,68,68,0.3)', background:'transparent', color:'#EF4444', cursor:'pointer', fontSize:'0.82rem' }}>Delete</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -828,7 +958,7 @@ export default function RecipeMaker() {
                       ))}
                     </div>
 
-                    {/* Steps */}
+                    {/* Steps — cooking mode shows one step at a time */}
                     <div>
                       <h3 style={{
                         fontFamily:"'Clash Display',sans-serif",
@@ -842,8 +972,10 @@ export default function RecipeMaker() {
                           animate={{ opacity:1, x:0 }}
                           transition={{ delay: i*0.06 }}
                           style={{
-                            display:'flex', gap:'12px',
-                            marginBottom:'10px'
+                            display: (cookStep === 0 || cookStep - 1 === i) ? 'flex' : 'none',
+                            gap:'12px',
+                            marginBottom:'10px',
+                            opacity: cookStep > 0 && cookStep - 1 !== i ? 0.4 : 1,
                           }}
                         >
                           <div style={{
@@ -857,31 +989,64 @@ export default function RecipeMaker() {
                           <p style={{ color:'var(--text-muted)', fontSize:'0.83rem', margin:0, lineHeight:1.5 }}>{step}</p>
                         </motion.div>
                       ))}
+                      {cookStep > 0 && (
+                        <div style={{ display:'flex', gap:'8px', alignItems:'center', marginTop:'8px' }}>
+                          <button onClick={() => setCookStep(s => Math.max(1, s - 1))} disabled={cookStep <= 1}
+                            style={{ padding:'8px 14px', borderRadius:'10px', border:'1px solid var(--border)', background:'var(--border)', color:'var(--text-muted)', cursor:'pointer', fontSize:'0.8rem' }}>← Previous</button>
+                          <span style={{ color:'var(--text-muted)', fontSize:'0.8rem' }}>Step {cookStep} of {selected.steps.length}</span>
+                          {cookStep < selected.steps.length ? (
+                            <button onClick={() => setCookStep(s => Math.min(selected.steps.length, s + 1))}
+                              style={{ padding:'8px 14px', borderRadius:'10px', border:'none', background:selected.color, color:'#000', cursor:'pointer', fontSize:'0.8rem', fontWeight:700 }}>Next →</button>
+                          ) : (
+                            <button onClick={() => setCookStep(0)}
+                              style={{ padding:'8px 14px', borderRadius:'10px', border:'1px solid var(--border)', background:'var(--border)', color:'var(--text-muted)', cursor:'pointer', fontSize:'0.8rem' }}>Show all steps</button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* CTA */}
-                  <div style={{ display:'flex', gap:'12px', marginTop:'28px' }}>
+                  {/* CTA — all wired: cooking mode, save, log as a meal */}
+                  {mealPlanMsg && (
+                    <div style={{ marginTop:'16px', fontSize:'0.82rem', color: mealPlanMsg.startsWith('Could not') ? '#FF6B5E' : '#9DCE2C' }}>{mealPlanMsg}</div>
+                  )}
+                  <div style={{ display:'flex', gap:'12px', marginTop:'28px', flexWrap:'wrap' }}>
                     <motion.button
                       whileHover={{ scale:1.03, boxShadow:`0 8px 30px ${selected.glow}` }}
                       whileTap={{ scale:0.97 }}
+                      onClick={() => setCookStep(s => s === 0 ? 1 : 0)}
                       style={{
                         flex:1, padding:'14px',
                         background:`linear-gradient(135deg, ${selected.color}, ${selected.color}80)`,
                         border:'none', borderRadius:'14px',
                         color:'#000', fontWeight:800, cursor:'pointer',
                         fontSize:'0.95rem', fontFamily:"'Clash Display',sans-serif"
-                      }}>🍽️ Start Cooking</motion.button>
+                      }}>{cookStep === 0 ? '🍽️ Start Cooking' : '📋 Show all steps'}</motion.button>
                     <motion.button
                       whileHover={{ scale:1.03 }}
                       whileTap={{ scale:0.97 }}
+                      disabled={saveState[recipeKey(selected)] === 'saving' || saveState[recipeKey(selected)] === 'saved'}
+                      onClick={() => handleSaveRecipe(selected)}
                       style={{
                         padding:'14px 20px',
                         background:'var(--border)',
                         border:'1px solid var(--border)',
                         borderRadius:'14px', color:'var(--text-muted)',
                         cursor:'pointer', fontSize:'0.9rem'
-                      }}>+ Add to Meal Plan</motion.button>
+                      }}>
+                      {saveState[recipeKey(selected)] === 'saving' ? 'Saving…' : saveState[recipeKey(selected)] === 'saved' ? '✓ Saved' : '♡ Save'}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale:1.03 }}
+                      whileTap={{ scale:0.97 }}
+                      onClick={() => handleAddToMealPlan(selected)}
+                      style={{
+                        padding:'14px 20px',
+                        background:'var(--border)',
+                        border:'1px solid var(--border)',
+                        borderRadius:'14px', color:'var(--text-muted)',
+                        cursor:'pointer', fontSize:'0.9rem'
+                      }}>+ Add to today's meals</motion.button>
                   </div>
                 </div>
               </motion.div>

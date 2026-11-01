@@ -143,16 +143,14 @@ export default function RoadmapPage() {
             className="p-8 rounded-xl border border-[#FF6B5E]/30 bg-[#FF6B5E]/10 backdrop-blur-sm text-center"
           >
             <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">📬 Stay Updated</h3>
-            <p className="text-gray-300 mb-6">Subscribe to get notified when new features launch</p>
-            <div className="flex gap-2 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-[var(--border)] text-[var(--text-primary)] placeholder-gray-500 focus:outline-none focus:border-[#15B2CF]"
-              />
-              <button className="px-6 py-3 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:bg-green-600 transition-all">
-                Subscribe
-              </button>
+            <p className="text-gray-300 mb-6">There&apos;s no newsletter signup yet — email us and we&apos;ll let you know when new features launch.</p>
+            <div className="flex justify-center">
+              <a
+                href="mailto:careers@nutriai.com?subject=Keep%20me%20posted%20on%20NutriAI%20updates"
+                className="px-6 py-3 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:opacity-90 transition-all"
+              >
+                Email us to stay updated
+              </a>
             </div>
           </motion.div>
         </motion.div>

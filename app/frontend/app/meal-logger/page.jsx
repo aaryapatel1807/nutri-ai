@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import api, { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
+import api, { getMeals, logMeal, deleteMeal, getCurrentUser, ml, localDayString } from '../../lib/api'
 import {
   searchFoods, scaleFood,
   getRecentFoods, addRecentFood,
@@ -52,7 +52,7 @@ export default function MealLogger() {
         const meals = await getMeals()
         // Goal comes from the same backend response family as the dashboard
         // (user's saved calorieGoal; backend default 2000).
-        api.get('/api/meals/today').then(res => {
+        api.get(`/api/meals/today?date=${localDayString()}`).then(res => {
           if (res.data?.goalCalories) setGoalCalories(res.data.goalCalories)
         }).catch(() => {})
         if (meals) {
@@ -126,14 +126,22 @@ export default function MealLogger() {
       if (res && res.data) {
         // Use the returned meal which has the database ID
         setLogged(prev => [...prev, res.data])
+        if (food._macrosUnknown && res.data.id)
+          setMacrosUnknownIds(prev => new Set(prev).add(res.data.id))
       } else {
         // Fallback optimistic update
-        setLogged(prev => [...prev, { ...mealData, id: Date.now().toString() }])
+        const tmpId = Date.now().toString()
+        setLogged(prev => [...prev, { ...mealData, id: tmpId }])
+        if (food._macrosUnknown)
+          setMacrosUnknownIds(prev => new Set(prev).add(tmpId))
       }
     } catch (err) {
       console.error('Failed to log meal to backend:', err)
       // Optimistic update on error to keep UI functional
-      setLogged(prev => [...prev, { ...mealData, id: Date.now().toString() }])
+      const tmpId = Date.now().toString()
+      setLogged(prev => [...prev, { ...mealData, id: tmpId }])
+      if (food._macrosUnknown)
+        setMacrosUnknownIds(prev => new Set(prev).add(tmpId))
     }
     setShowSearch(false)
     setSearch('')
@@ -178,8 +186,17 @@ export default function MealLogger() {
     }
   }
 
+  const [customError, setCustomError] = useState('')
+  // Backend ids of AI-photo-detected meals: their macros are unknown (vision
+  // returns name + calories only), shown as a tag on the row.
+  const [macrosUnknownIds, setMacrosUnknownIds] = useState(new Set())
+  const [scanNote, setScanNote] = useState('')
   const addCustom = () => {
-    if (!custom.name || !custom.calories) return
+    if (!custom.name.trim() || !custom.calories) {
+      setCustomError('Please enter a food name and calories.')
+      return
+    }
+    setCustomError('')
     addFood({
       name: custom.name,
       calories: parseInt(custom.calories) || 0,
@@ -437,6 +454,15 @@ export default function MealLogger() {
           </div>
         </motion.div>
 
+        {scanNote && (
+          <div style={{ background:'rgba(255,180,0,0.08)', border:'1px solid rgba(255,180,0,0.3)', borderRadius:'12px',
+            padding:'10px 14px', marginBottom:'16px', color:'var(--text-muted)', fontSize:'0.82rem',
+            display:'flex', justifyContent:'space-between', gap:'12px', alignItems:'center' }}>
+            <span>{scanNote}</span>
+            <button onClick={() => setScanNote('')} style={{ background:'none', border:'none', color:'var(--text-muted)', cursor:'pointer', fontSize:'1rem', flexShrink:0 }}>✕</button>
+          </div>
+        )}
+
         {/* MEAL TYPE TABS */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
           {MEAL_TYPES.map(type => {
@@ -549,6 +575,9 @@ export default function MealLogger() {
                             <div style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 500 }}>{item.name}</div>
                             <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
                               P:{item.protein}g · C:{item.carbs}g · F:{item.fat}g
+                              {macrosUnknownIds.has(item.id) && (
+                                <span style={{ marginLeft:'6px', color:'#FFB020', fontWeight:600 }}>· macros unknown</span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -778,6 +807,9 @@ export default function MealLogger() {
                     />
                   </div>
                 ))}
+                {customError && (
+                  <div style={{ color: '#E14E42', fontSize: '0.8rem', marginTop: '4px' }}>{customError}</div>
+                )}
                 <button
                   onClick={addCustom}
                   style={{
@@ -857,13 +889,18 @@ export default function MealLogger() {
                             await addFood({
                               name: item.name || 'Detected Food',
                               calories: Math.round(item.calories || 0),
+                              // Gemini vision returns name + calories only, so
+                              // macros are genuinely unknown — flag it on the
+                              // row instead of silently logging zeros.
                               protein: 0,
                               carbs: 0,
                               fat: 0,
-                              emoji: '🤖'
+                              emoji: '🤖',
+                              _macrosUnknown: true,
                             })
                           }
                           setShowCamera(false)
+                          setScanNote('Photo items were logged with calories only — macros are unknown for AI-detected foods (tagged below).')
                         } else {
                           setScanError('Could not identify food. Please try another photo.')
                         }

@@ -190,7 +190,7 @@ export const ml = {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
   forecast: (data) => api.post('/api/ml/nutrition-forecast', data),
-  recipe:   (data) => api.post('/api/ml/recipe-suggestions', data),
+  recipe:   (data, config) => api.post('/api/ml/recipe-suggestions', data, config),
   chat:     (data) => api.post('/api/ml/chat', data),
 }
 
@@ -202,12 +202,19 @@ export const logMeal = meals.log
 
 export const deleteMeal = meals.remove
 
+/** The user's LOCAL calendar day as YYYY-MM-DD (the backend's /today and
+ * ?date= filters key on this, so frontend and backend agree on "today"). */
+export const localDayString = (d = new Date()) => {
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 /** Fetch today's nutrition from real API.
  * THROWS on failure — callers must show an error state, never render a
  * silent zero day (a backend outage used to look like an empty day). */
 export const getTodayNutrition = async () => {
   // Add _t to bust browser cache (prevents 304 returning stale data)
-  const res = await api.get(`/api/meals/today?_t=${Date.now()}`)
+  const res = await api.get(`/api/meals/today?date=${localDayString()}&_t=${Date.now()}`)
   const data = res.data
   // Handle both mock server (data.totals.calories) and real server (data.totalCalories)
   const calories = data.totalCalories ?? data.totals?.calories ?? 0
@@ -240,7 +247,7 @@ export const getUserXP = async () => {
 /** Fetch today's meals from real API */
 export const getMeals = async () => {
   try {
-    const res = await api.get(`/api/meals/today?_t=${Date.now()}`)
+    const res = await api.get(`/api/meals/today?date=${localDayString()}&_t=${Date.now()}`)
     return res.data.meals || []
   } catch (e) {
     console.error('getMeals error:', e.message)

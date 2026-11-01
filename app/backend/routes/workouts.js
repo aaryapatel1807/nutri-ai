@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
+const { awardBadge, checkLegend } = require('../utils/badges')
 
 // GET /api/workouts - get all workouts, including per-exercise detail
 router.get('/', authMiddleware, async (req, res) => {
@@ -110,6 +111,17 @@ router.post('/', authMiddleware, async (req, res) => {
       },
       include: { exercises: true },
     })
+
+    // Real unlock triggers (previously only First Bite, on meals, had any).
+    try {
+      const count = await prisma.workout.count({ where: { userId: req.userId } })
+      if (count >= 1) await awardBadge(req.userId, 'First Rep')
+      if (count >= 100) await awardBadge(req.userId, 'Century Club')
+      await checkLegend(req.userId)
+    } catch (e) {
+      console.error('Workout badge check error:', e.message)
+    }
+
     res.status(201).json(workout)
   } catch (err) {
     console.error('Create workout error:', err.message)

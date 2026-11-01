@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Bell, Menu, Sun, Moon, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { glowPulse } from '../../lib/animations'
-import api from '../../lib/api'
+import api, { localDayString } from '../../lib/api'
 import useIsMobile from '../../lib/useIsMobile'
 import { useTheme } from './ThemeContext'
 
@@ -41,7 +41,7 @@ export default function Navbar({ onMenuClick = () => {}, collapsed = false, onTo
       .catch(() => {})
 
     // Load today nutrition for tip
-    api.get('/api/meals/today')
+    api.get(`/api/meals/today?date=${localDayString()}`)
       .then(res => {
         const data = res.data
         const cal     = Math.round(data.totalCalories || 0)

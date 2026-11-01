@@ -1,7 +1,8 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useIsMobile from '../../lib/useIsMobile'
+import api, { localDayString } from '../../lib/api'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 const MEAL_PLANS = [
@@ -222,7 +223,94 @@ export default function MealPlanPage() {
   const [activePlanView, setActivePlanView] = useState(null)
   const [checkedGrocery, setCheckedGrocery] = useState([])
   const [activeMacroGoal, setActiveMacroGoal] = useState('Muscle Building')
-  const [waterGlasses, setWaterGlasses] = useState(6)
+  const [waterGlasses, setWaterGlasses] = useState(0)
+  const [waterLogs, setWaterLogs] = useState([])
+  const [waterGoalL, setWaterGoalL] = useState(2.5)
+  const [waterError, setWaterError] = useState('')
+  const [todayNutri, setTodayNutri] = useState(null)
+  const [meProfile, setMeProfile] = useState(null)
+  const [nutriError, setNutriError] = useState('')
+  const [savedPlanId, setSavedPlanId] = useState(null)
+  const [planMsg, setPlanMsg] = useState('')
+  const [macroPlan, setMacroPlan] = useState(null) // plan whose macros are shown
+  const [scheduleDone, setScheduleDone] = useState([])
+
+  // Real data: today's nutrition + water + profile water goal. Plans
+  // themselves are sample plans to browse; the active/saved plan, grocery
+  // checks and schedule ticks persist on this device (localStorage) — there
+  // is no backend meal-plan endpoint yet, so nothing here pretends to sync.
+  const prefsLoaded = useRef(false)
+  useEffect(() => {
+    try {
+      const sp = localStorage.getItem('nutriai_saved_plan')
+      if (sp) { const id = Number(sp); setSavedPlanId(id); setActivePlanView(MEAL_PLANS.find(p => p.id === id) || null) }
+      const gr = localStorage.getItem('nutriai_grocery_checked')
+      if (gr) setCheckedGrocery(JSON.parse(gr))
+      const sc = localStorage.getItem('nutriai_hydration_schedule')
+      if (sc) setScheduleDone(JSON.parse(sc))
+    } catch {}
+    prefsLoaded.current = true
+    api.get(`/api/meals/today?date=${localDayString()}`).then(r => setTodayNutri(r.data)).catch(() => setNutriError('Could not load today\u2019s nutrition.'))
+    api.get('/api/water').then(r => { setWaterLogs(r.data.logs || []); setWaterGlasses(Math.round((r.data.totalMl || 0) / 250)) }).catch(() => setWaterError('Could not load water intake.'))
+    api.get('/api/auth/me').then(r => { setMeProfile(r.data); if (r.data?.waterGoal) setWaterGoalL(r.data.waterGoal) }).catch(() => {})
+  }, [])
+  useEffect(() => { if (prefsLoaded.current) { try { localStorage.setItem('nutriai_grocery_checked', JSON.stringify(checkedGrocery)) } catch {} } }, [checkedGrocery])
+  useEffect(() => { if (prefsLoaded.current) { try { localStorage.setItem('nutriai_hydration_schedule', JSON.stringify(scheduleDone)) } catch {} } }, [scheduleDone])
+
+  const waterGoalGlasses = Math.max(1, Math.round(waterGoalL * 4))
+  const savePlan = (plan) => {
+    try { localStorage.setItem('nutriai_saved_plan', String(plan.id)) } catch {}
+    setSavedPlanId(plan.id)
+    setPlanMsg(`“${plan.name}” saved on this device.`)
+  }
+  const startPlan = (plan) => {
+    savePlan(plan)
+    setActivePlanView(plan); setActiveTab('daily'); setSelectedPlan(null)
+  }
+  const addWaterGlass = async () => {
+    setWaterError('')
+    try {
+      const res = await api.post('/api/water', { amountMl: 250 })
+      setWaterLogs(prev => [res.data, ...prev])
+      setWaterGlasses(g => g + 1)
+    } catch { setWaterError('Could not add water — please try again.') }
+  }
+  const setWaterLevel = async (target) => {
+    // Clicking a glass adjusts the real total: add logs to go up, delete the
+    // newest logs to go down. Never just sets local state.
+    setWaterError('')
+    try {
+      if (target > waterGlasses) {
+        const res = await api.post('/api/water', { amountMl: (target - waterGlasses) * 250 })
+        setWaterLogs(prev => [res.data, ...prev])
+        setWaterGlasses(target)
+      } else if (target < waterGlasses) {
+        const sorted = [...waterLogs].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date))
+        let remaining = waterGlasses - target, kept = [...waterLogs]
+        for (const log of sorted) {
+          if (remaining <= 0) break
+          await api.delete(`/api/water/${log.id}`)
+          kept = kept.filter(l => l.id !== log.id)
+          remaining -= Math.round((log.amountMl || 250) / 250)
+        }
+        setWaterLogs(kept)
+        setWaterGlasses(target)
+      }
+    } catch { setWaterError('Could not update water — please try again.') }
+  }
+  const resetWaterToday = async () => {
+    setWaterError('')
+    try {
+      const today = localDayString()
+      const todays = waterLogs.filter(l => {
+        const d = new Date(l.createdAt || l.date)
+        return localDayString(d) === today
+      })
+      for (const log of todays) await api.delete(`/api/water/${log.id}`)
+      setWaterLogs(prev => prev.filter(l => !todays.some(t => t.id === l.id)))
+      setWaterGlasses(0)
+    } catch { setWaterError('Could not reset water — please try again.') }
+  }
 
   const filtered = MEAL_PLANS.filter(p => {
     const goalKeys = GOAL_MATCH[activeGoal] || [activeGoal]
@@ -258,6 +346,13 @@ export default function MealPlanPage() {
 
       <div style={{ width:'100%', position:'relative', zIndex:1 }}>
       <ScenicBackdrop />
+      <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'0 20px 4px', position:'relative', zIndex:1 }}>
+        <div style={{ background:'rgba(255,180,0,0.08)', border:'1px solid rgba(255,180,0,0.25)', borderRadius:'12px',
+          padding:'10px 14px', color:'var(--text-muted)', fontSize:'0.82rem' }}>
+          Sample plans to browse — your nutrition, water and active plan below are real, but plan
+          choices and grocery checks save on this device only (they don&apos;t sync to an account yet).
+        </div>
+      </div>
 
         {/* AMBIENT */}
         <div style={{
@@ -786,20 +881,22 @@ export default function MealPlanPage() {
                     </div>
                   </div>
 
-                  {/* Daily breakdown */}
+                  {/* Daily breakdown — real logged data, never constants.
+                      Fiber/sugar/sodium are not tracked by the backend, so
+                      those rows were removed rather than shown as fake numbers. */}
                   <div style={{ ...card, padding:'24px' }}>
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1rem', marginBottom:'16px' }}>
                       Today's Nutrients
                     </h3>
+                    {nutriError && (
+                      <div style={{ color:'#FF6B5E', fontSize:'0.8rem', marginBottom:'12px' }}>{nutriError}</div>
+                    )}
                     {[
-                      { label:'Calories',  current:1840, goal:2800, color:'#FF6B5E',  unit:'kcal' },
-                      { label:'Protein',   current:142,  goal:210,  color:'#15B2CF',  unit:'g' },
-                      { label:'Carbs',     current:210,  goal:320,  color:'#FFB020',  unit:'g' },
-                      { label:'Fat',       current:58,   goal:85,   color:'#7B61FF',  unit:'g' },
-                      { label:'Fiber',     current:18,   goal:35,   color:'#B5E5F2',  unit:'g' },
-                      { label:'Sugar',     current:42,   goal:60,   color:'#FBBF24',  unit:'g' },
-                      { label:'Sodium',    current:1800, goal:2300, color:'#4FD3ED',  unit:'mg' },
-                      { label:'Water',     current:1.8,  goal:3,    color:'#60A5FA',  unit:'L' },
+                      { label:'Calories',  current:Math.round(todayNutri?.totalCalories || 0), goal:todayNutri?.goalCalories || meProfile?.calorieGoal || 2000, color:'#FF6B5E',  unit:'kcal' },
+                      { label:'Protein',   current:Math.round(todayNutri?.protein || 0),  goal:meProfile?.proteinGoal || 150,  color:'#15B2CF',  unit:'g' },
+                      { label:'Carbs',     current:Math.round(todayNutri?.carbs || 0),    goal:meProfile?.carbGoal || 250,  color:'#FFB020',  unit:'g' },
+                      { label:'Fat',       current:Math.round(todayNutri?.fat || 0),      goal:meProfile?.fatGoal || 65,   color:'#7B61FF',  unit:'g' },
+                      { label:'Water',     current:Math.round((waterLogs.reduce((a, l) => a + (l.amountMl || 0), 0)) / 100) / 10, goal:waterGoalL, color:'#60A5FA', unit:'L' },
                     ].map((n,i) => (
                       <div key={n.label} style={{ marginBottom:'12px' }}>
                         <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'4px' }}>
@@ -1161,13 +1258,16 @@ export default function MealPlanPage() {
                     <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.1rem', marginBottom:'20px' }}>
                       💧 Today's Hydration
                     </h3>
+                    {waterError && (
+                      <div style={{ color:'#FF6B5E', fontSize:'0.8rem', marginBottom:'12px' }}>{waterError}</div>
+                    )}
                     <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'12px', marginBottom:'24px' }}>
-                      {[...Array(8)].map((_,i) => (
+                      {[...Array(waterGoalGlasses)].map((_,i) => (
                         <motion.div
                           key={i}
                           whileHover={{ scale:1.15 }}
                           whileTap={{ scale:0.9 }}
-                          onClick={() => setWaterGlasses(i+1)}
+                          onClick={() => setWaterLevel(i+1)}
                           style={{ cursor:'pointer', textAlign:'center' }}
                         >
                           <motion.div
@@ -1195,11 +1295,11 @@ export default function MealPlanPage() {
                     </div>
                     <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:'3rem', fontWeight:900, color:'#4FD3ED', marginBottom:'4px',
                       textShadow:'0 0 30px rgba(79, 211, 237,0.5)'
-                    }}>{waterGlasses}<span style={{ fontSize:'1.5rem', color:'var(--text-muted)' }}>/8</span></div>
-                    <div style={{ color:'var(--text-muted)', marginBottom:'20px' }}>{waterGlasses * 250}ml / 2000ml</div>
+                    }}>{waterGlasses}<span style={{ fontSize:'1.5rem', color:'var(--text-muted)' }}>/{waterGoalGlasses}</span></div>
+                    <div style={{ color:'var(--text-muted)', marginBottom:'20px' }}>{waterGlasses * 250}ml / {waterGoalGlasses * 250}ml</div>
                     <div style={{ height:'12px', background:'var(--border)', borderRadius:'99px', overflow:'hidden', marginBottom:'16px' }}>
                       <motion.div
-                        animate={{ width:`${(waterGlasses/8)*100}%` }}
+                        animate={{ width:`${(waterGlasses/waterGoalGlasses)*100}%` }}
                         transition={{ duration:0.5, type:'spring' }}
                         style={{
                           height:'100%',
@@ -1211,7 +1311,7 @@ export default function MealPlanPage() {
                     </div>
                     <div style={{ display:'flex', gap:'10px' }}>
                       <motion.button whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}
-                        onClick={() => setWaterGlasses(w => Math.min(w+1,8))}
+                        onClick={addWaterGlass}
                         style={{
                           flex:1, padding:'12px',
                           background:'linear-gradient(135deg,#4FD3ED,#60A5FA)',
@@ -1219,7 +1319,7 @@ export default function MealPlanPage() {
                           color:'#000', fontWeight:700, cursor:'pointer', fontSize:'0.9rem'
                         }}>+ Add Glass 💧</motion.button>
                       <motion.button whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}
-                        onClick={() => setWaterGlasses(0)}
+                        onClick={resetWaterToday}
                         style={{
                           padding:'12px 16px',
                           background:'var(--border)',
@@ -1274,42 +1374,48 @@ export default function MealPlanPage() {
                   </h3>
                   <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap:'14px' }}>
                     {[
-                      { time:'6:30 AM', amount:'500ml', reason:'Kickstart metabolism after overnight fast', icon:'🌅', done:true },
-                      { time:'9:00 AM', amount:'250ml', reason:'Mid-morning energy and focus', icon:'☀️', done:true },
-                      { time:'12:00 PM',amount:'500ml', reason:'Before lunch for portion control', icon:'🥗', done:true },
-                      { time:'2:30 PM', amount:'250ml', reason:'Post-lunch digestion support', icon:'💧', done:false },
-                      { time:'4:30 PM', amount:'400ml', reason:'Pre-workout hydration boost', icon:'💪', done:false },
-                      { time:'6:00 PM', amount:'500ml', reason:'During and post workout recovery', icon:'🏋️', done:false },
-                      { time:'8:00 PM', amount:'250ml', reason:'Evening wind down hydration', icon:'🌙', done:false },
-                      { time:'9:30 PM', amount:'150ml', reason:'Pre-sleep hydration (not too much!)', icon:'😴', done:false },
-                    ].map((s,i) => (
+                      { time:'6:30 AM', amount:'500ml', reason:'Kickstart metabolism after overnight fast', icon:'🌅' },
+                      { time:'9:00 AM', amount:'250ml', reason:'Mid-morning energy and focus', icon:'☀️' },
+                      { time:'12:00 PM',amount:'500ml', reason:'Before lunch for portion control', icon:'🥗' },
+                      { time:'2:30 PM', amount:'250ml', reason:'Post-lunch digestion support', icon:'💧' },
+                      { time:'4:30 PM', amount:'400ml', reason:'Pre-workout hydration boost', icon:'💪' },
+                      { time:'6:00 PM', amount:'500ml', reason:'During and post workout recovery', icon:'🏋️' },
+                      { time:'8:00 PM', amount:'250ml', reason:'Evening wind down hydration', icon:'🌙' },
+                      { time:'9:30 PM', amount:'150ml', reason:'Pre-sleep hydration (not too much!)', icon:'😴' },
+                    ].map((s,i) => {
+                      // Schedule ticks are reminders, not intake data: tapping
+                      // toggles the tick, persisted on this device.
+                      const done = scheduleDone.includes(s.time)
+                      return (
                       <motion.div
                         key={s.time}
                         initial={{ opacity:0, y:10 }}
                         animate={{ opacity:1, y:0 }}
                         transition={{ delay:i*0.06 }}
                         whileHover={{ y:-4 }}
+                        onClick={() => setScheduleDone(prev => prev.includes(s.time) ? prev.filter(t => t !== s.time) : [...prev, s.time])}
                         style={{
-                          background: s.done ? 'rgba(79, 211, 237,0.08)' : 'var(--border)',
-                          border:`1px solid ${s.done ? 'rgba(79, 211, 237,0.25)' : 'var(--border)'}`,
+                          background: done ? 'rgba(79, 211, 237,0.08)' : 'var(--border)',
+                          border:`1px solid ${done ? 'rgba(79, 211, 237,0.25)' : 'var(--border)'}`,
                           borderRadius:'14px', padding:'16px',
                           cursor:'pointer'
                         }}
                       >
                         <div style={{ fontSize:'1.5rem', marginBottom:'8px' }}>{s.icon}</div>
-                        <div style={{ color: s.done ? '#4FD3ED' : '#15B2CF', fontWeight:700, fontSize:'0.85rem', marginBottom:'2px' }}>{s.time}</div>
+                        <div style={{ color: done ? '#4FD3ED' : '#15B2CF', fontWeight:700, fontSize:'0.85rem', marginBottom:'2px' }}>{s.time}</div>
                         <div style={{ color: 'var(--text-primary)', fontWeight:700, fontSize:'0.9rem', marginBottom:'6px' }}>{s.amount}</div>
                         <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', lineHeight:1.4 }}>{s.reason}</div>
                         <div style={{
                           marginTop:'10px', display:'inline-block',
-                          background: s.done ? 'rgba(79, 211, 237,0.15)' : 'var(--border)',
-                          border:`1px solid ${s.done ? 'rgba(79, 211, 237,0.3)' : 'var(--border)'}`,
+                          background: done ? 'rgba(79, 211, 237,0.15)' : 'var(--border)',
+                          border:`1px solid ${done ? 'rgba(79, 211, 237,0.3)' : 'var(--border)'}`,
                           borderRadius:'99px', padding:'3px 10px',
-                          color: s.done ? '#4FD3ED' : 'var(--text-muted)',
+                          color: done ? '#4FD3ED' : 'var(--text-muted)',
                           fontSize:'0.68rem', fontWeight:700
-                        }}>{s.done ? '✓ Done' : 'Upcoming'}</div>
+                        }}>{done ? '✓ Done' : 'Upcoming'}</div>
                       </motion.div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               </motion.div>
@@ -1445,34 +1551,54 @@ export default function MealPlanPage() {
                     </motion.div>
                   ))}
 
-                  {/* CTAs */}
-                  <div style={{ display:'flex', gap:'12px', marginTop:'28px' }}>
+                  {/* CTAs — all wired. Plans are samples: starting/saving
+                      persists the choice on this device (localStorage). */}
+                  {planMsg && (
+                    <div style={{ marginTop:'16px', fontSize:'0.82rem', color:'#9DCE2C' }}>{planMsg}</div>
+                  )}
+                  {macroPlan && (
+                    <div style={{ marginTop:'16px', padding:'16px', borderRadius:'14px', background:'var(--border)', border:'1px solid var(--border)' }}>
+                      <div style={{ fontWeight:700, color:'var(--text-primary)', marginBottom:'8px' }}>
+                        {macroPlan.name} — daily macro targets
+                      </div>
+                      <div style={{ display:'flex', gap:'16px', flexWrap:'wrap', fontSize:'0.85rem', color:'var(--text-muted)' }}>
+                        <span>🔥 {macroPlan.calories} kcal</span>
+                        <span>💪 {macroPlan.protein}g protein</span>
+                        <span>🍞 {macroPlan.carbs}g carbs</span>
+                        <span>🥑 {macroPlan.fat}g fat</span>
+                      </div>
+                      <div style={{ fontSize:'0.75rem', color:'var(--text-muted)', marginTop:'8px' }}>
+                        Targets from the plan definition; individual days vary by their meals.
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ display:'flex', gap:'12px', marginTop:'28px', flexWrap:'wrap' }}>
                     <motion.button
                       whileHover={{ scale:1.03, boxShadow:`0 12px 40px ${selectedPlan.glow}` }}
                       whileTap={{ scale:0.97 }}
-                      onClick={() => { setActivePlanView(selectedPlan); setActiveTab('daily'); setSelectedPlan(null) }}
+                      onClick={() => startPlan(selectedPlan)}
                       style={{
                         flex:1, padding:'16px',
                         background:`linear-gradient(135deg,${selectedPlan.color},${selectedPlan.color}80)`,
                         border:'none', borderRadius:'16px',
                         color:'#000', fontWeight:900, cursor:'pointer',
                         fontSize:'1rem', fontFamily:"'Clash Display',sans-serif",
-                        boxShadow:`0 4px 24px ${selectedPlan.glow}` 
+                        boxShadow:`0 4px 24px ${selectedPlan.glow}`
                       }}>🚀 Start This Plan</motion.button>
-                    <motion.button whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }} style={{
+                    <motion.button whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }} onClick={() => setMacroPlan(selectedPlan)} style={{
                       padding:'16px 24px',
                       background:'var(--border)',
                       border:'1px solid var(--border)',
                       borderRadius:'16px', color:'var(--text-muted)',
                       cursor:'pointer', fontSize:'0.9rem'
                     }}>📊 View Macros</motion.button>
-                    <motion.button whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }} style={{
+                    <motion.button whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }} onClick={() => savePlan(selectedPlan)} style={{
                       padding:'16px 24px',
                       background:'var(--border)',
                       border:'1px solid var(--border)',
-                      borderRadius:'16px', color:'var(--text-muted)',
+                      borderRadius:'16px', color: savedPlanId === selectedPlan.id ? '#9DCE2C' : 'var(--text-muted)',
                       cursor:'pointer', fontSize:'0.9rem'
-                    }}>🔖 Save Plan</motion.button>
+                    }}>{savedPlanId === selectedPlan.id ? '✓ Saved on this device' : '🔖 Save Plan'}</motion.button>
                   </div>
                 </div>
               </motion.div>

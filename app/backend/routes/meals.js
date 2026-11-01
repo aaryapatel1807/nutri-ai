@@ -4,11 +4,27 @@ const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 const { normalizeMealInput } = require('../utils/nutrition')
 
-// GET /api/meals - get all meals for user
+// Parse ?date=YYYY-MM-DD (the caller's LOCAL calendar day) into a UTC range.
+// Returns { start, end } or null when the param is absent/invalid.
+function localDayRange(dateStr) {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null
+  const start = new Date(`${dateStr}T00:00:00.000Z`)
+  if (Number.isNaN(start.getTime())) return null
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000)
+  return { start, end }
+}
+
+// GET /api/meals - get all meals for user; ?date=YYYY-MM-DD filters to that
+// local calendar day (this is what lib/api meals.getByDate already called —
+// the query used to be silently ignored, returning everything).
 router.get('/', authMiddleware, async (req, res) => {
   try {
+    const range = localDayRange(req.query.date)
     const meals = await prisma.meal.findMany({
-      where: { userId: req.userId },
+      where: {
+        userId: req.userId,
+        ...(range ? { date: { gte: range.start, lt: range.end } } : {}),
+      },
       orderBy: { date: 'desc' }
     })
     res.json(meals)
@@ -18,18 +34,24 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
-// GET /api/meals/today - get today's meals with totals
+// GET /api/meals/today - get today's meals with totals.
+// The day is the caller's LOCAL calendar day (?date=YYYY-MM-DD, defaulting to
+// the server's current UTC day). The old 30-hour trailing window disagreed
+// with the frontend's local-day filter, so the same session showed different
+// totals on different pages.
 router.get('/today', authMiddleware, async (req, res) => {
   try {
-    // Use a 30-hour window (last 6h + today 24h) to handle any timezone offset up to UTC+14
-    const now = new Date()
-    const windowStart = new Date(now.getTime() - 30 * 60 * 60 * 1000) // 30 hours ago
+    const range = localDayRange(req.query.date) || (() => {
+      const now = new Date()
+      const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+      return { start, end: new Date(start.getTime() + 24 * 60 * 60 * 1000) }
+    })()
 
     const [meals, user] = await Promise.all([
       prisma.meal.findMany({
         where: {
           userId: req.userId,
-          date: { gte: windowStart, lte: now }
+          date: { gte: range.start, lt: range.end }
         },
         orderBy: { date: 'asc' }
       }),
@@ -155,21 +177,60 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 })
 
-// Helper: auto award badges after meal log
+// Helper: auto award badges after meal log. Criteria are computed from real
+// logged data (UTC calendar days, same convention as /api/stats streak).
+const { awardBadge, checkLegend } = require('../utils/badges')
+
 async function checkAndAwardBadges(userId) {
   try {
     const mealCount = await prisma.meal.count({ where: { userId } })
+    if (mealCount >= 1) await awardBadge(userId, 'First Bite')
 
-    if (mealCount >= 1) {
-      const badge = await prisma.badge.findFirst({ where: { name: 'First Bite' } })
-      if (badge) {
-        await prisma.userBadge.upsert({
-          where: { userId_badgeId: { userId, badgeId: badge.id } },
-          create: { userId, badgeId: badge.id },
-          update: {}
-        })
+    // Meal-day streak (consecutive UTC days ending today or yesterday).
+    const mealDates = await prisma.meal.findMany({
+      where: { userId },
+      select: { date: true },
+      orderBy: { date: 'desc' },
+    })
+    const uniqueDays = [...new Set(mealDates.map(m => m.date.toISOString().split('T')[0]))]
+    let streak = 0
+    if (uniqueDays.length > 0) {
+      const todayStr = new Date().toISOString().split('T')[0]
+      const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      if (uniqueDays[0] === todayStr || uniqueDays[0] === yesterdayStr) {
+        streak = 1
+        for (let i = 0; i < uniqueDays.length - 1; i++) {
+          const diffDays = Math.round(Math.abs(new Date(uniqueDays[i]) - new Date(uniqueDays[i + 1])) / 86400000)
+          if (diffDays === 1) streak++
+          else break
+        }
       }
     }
+    if (streak >= 7) await awardBadge(userId, 'Week Warrior')
+    if (streak >= 30) await awardBadge(userId, 'Monthly Monster')
+
+    // Protein King: 200g+ protein on each of the last 7 UTC calendar days
+    // (today + previous 6, consecutive — not just any 7 days in a window).
+    const today = new Date()
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - i))
+      return d.toISOString().split('T')[0]
+    })
+    const weekStart = new Date(`${last7Days[6]}T00:00:00.000Z`)
+    const weekMeals = await prisma.meal.findMany({
+      where: { userId, date: { gte: weekStart } },
+      select: { date: true, protein: true },
+    })
+    const proteinByDay = {}
+    for (const m of weekMeals) {
+      const day = m.date.toISOString().split('T')[0]
+      proteinByDay[day] = (proteinByDay[day] || 0) + (m.protein || 0)
+    }
+    if (last7Days.every(d => (proteinByDay[d] || 0) >= 200)) {
+      await awardBadge(userId, 'Protein King')
+    }
+
+    await checkLegend(userId)
   } catch (err) {
     console.error('Badge check error:', err.message)
   }

@@ -1,11 +1,12 @@
 'use client'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 // PageWrapper removed to fix double-wrap bug
 
 export default function QuizzesPage() {
-  const [selectedQuiz, setSelectedQuiz] = useState(null)
-
+  // Quizzes are NOT playable yet: no question bank, runner, or XP award
+  // exists behind these cards. The old page showed a fabricated "Completed"
+  // state and promised an Expert badge — both removed. Cards are previews
+  // until a real quiz flow ships.
   const quizzes = [
     {
       id: 1,
@@ -45,7 +46,7 @@ export default function QuizzesPage() {
       difficulty: 'Intermediate',
       questions: 8,
       reward: 75,
-      completed: true,
+      completed: false,
     },
   ]
 
@@ -55,7 +56,7 @@ export default function QuizzesPage() {
           {/* Header */}
           <div className="mb-12">
             <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">📚 Knowledge Quizzes</h1>
-            <p className="text-gray-400">Test your fitness and nutrition knowledge. Earn XP and unlock achievements!</p>
+            <p className="text-gray-400">Test your fitness and nutrition knowledge. Quizzes are coming soon — previews below, no questions or XP rewards yet.</p>
           </div>
 
           {/* Quiz Grid */}
@@ -66,16 +67,13 @@ export default function QuizzesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                onClick={() => setSelectedQuiz(quiz)}
-                className="cursor-pointer group"
+                className="group"
               >
                 <div className="relative p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-[var(--track)] transition-all duration-300 backdrop-blur-sm">
-                  {/* Badge */}
-                  {quiz.completed && (
-                    <div className="absolute top-3 right-3 bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">
-                      ✓ Completed
-                    </div>
-                  )}
+                  {/* Availability */}
+                  <div className="absolute top-3 right-3 bg-amber-500/20 text-amber-400 text-xs px-3 py-1 rounded-full">
+                    Coming soon
+                  </div>
 
                   {/* Content */}
                   <div className="text-4xl mb-3">{quiz.emoji}</div>
@@ -93,13 +91,6 @@ export default function QuizzesPage() {
                     <span className="text-yellow-400 font-semibold">+{quiz.reward} XP</span>
                   </div>
 
-                  {/* Progress bar */}
-                  <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] via-[#9DCE2C] via-[#22D3EE] to-[#7B61FF]"
-                      style={{ width: quiz.completed ? '100%' : '0%' }}
-                    ></div>
-                  </div>
                 </div>
               </motion.div>
             ))}
@@ -112,8 +103,7 @@ export default function QuizzesPage() {
             transition={{ delay: 0.4 }}
             className="mt-12 p-8 rounded-xl border border-[#FF6B5E]/30 bg-[#FF6B5E]/10 backdrop-blur-sm text-center"
           >
-            <p className="text-gray-300 mb-4">🎯 Complete all quizzes to unlock the Expert badge!</p>
-            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] rounded-full opacity-20"></div>
+            <p className="text-gray-300 mb-4">🎯 Quizzes with real questions, scoring and XP rewards are on the way — nothing here is scored or completed yet.</p>
           </motion.div>
         </motion.div>
       </div>

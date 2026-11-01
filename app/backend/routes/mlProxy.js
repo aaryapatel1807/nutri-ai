@@ -202,6 +202,9 @@ async function callGroq(messages, systemPrompt, jsonMode = false) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${GROQ_API_KEY}`
       },
+      // A hung provider must not hang the request forever (the frontend used
+      // to spin indefinitely on aiLoading with no timeout on either side).
+      signal: AbortSignal.timeout(30000),
       body: JSON.stringify({
         model: GROQ_MODEL,
         messages: groqMessages,
@@ -282,17 +285,47 @@ router.post('/recipe-suggestions', authMiddleware, aiBurst, aiDailyQuota, async 
     const prefs = cleanList(dietary_preferences)
     const mealType = ['any', 'breakfast', 'lunch', 'dinner', 'snack'].includes(meal_type) ? meal_type : 'any'
 
+    // Single agreed contract: { recipes: [{ name, ingredients[], instructions[],
+    // calories, protein, carbs, fat, readyInMinutes, tags[] }] }.
+    // (The frontend used to expect a singular `recipe` object while this route
+    // returned a `recipes` array with fewer fields — so every AI match fell
+    // through to the static collection. Both sides now use `recipes`.)
     const prompt = `Suggest 3 recipes using these ingredients: ${ing.join(', ')}.
 Dietary preferences: ${prefs.join(', ') || 'none'}.
 Meal type: ${mealType}.
-Respond in JSON format: { "recipes": [{ "name": "", "ingredients": [], "instructions": "", "calories": 0 }] }`
+Respond in JSON format only: { "recipes": [{ "name": "", "ingredients": [""],
+"instructions": ["step 1", "step 2"], "calories": 0, "protein": 0, "carbs": 0,
+"fat": 0, "readyInMinutes": 30, "tags": [""] }] }.
+Estimate nutrition per serving; instructions must be an array of steps.`
 
     const text = await callGroq([{ role: 'user', content: prompt }], undefined, true)
-    
-    // Try to parse JSON from response
+
+    // Parse + normalize: coerce string instructions to steps, fill missing
+    // numerics, drop nameless entries. Never return the raw model shape.
     const clean = text.replace(/```json|```/g, '').trim()
     try {
-      res.json(JSON.parse(clean))
+      const parsed = JSON.parse(clean)
+      const list = Array.isArray(parsed.recipes) ? parsed.recipes : []
+      const num = (v, d = 0) => { const n = Number(v); return Number.isFinite(n) && n >= 0 ? n : d }
+      const toSteps = (ins) => {
+        if (Array.isArray(ins)) return ins.map(s => String(s)).filter(Boolean)
+        if (typeof ins === 'string') return ins.split(/\n+/).map(s => s.replace(/^\s*\d+[.)]\s*/, '').trim()).filter(Boolean)
+        return []
+      }
+      const recipes = list
+        .filter(r => r && typeof r.name === 'string' && r.name.trim())
+        .map(r => ({
+          name: r.name.trim(),
+          ingredients: (Array.isArray(r.ingredients) ? r.ingredients : []).map(i => String(i)).filter(Boolean),
+          instructions: toSteps(r.instructions),
+          calories: num(r.calories),
+          protein: num(r.protein),
+          carbs: num(r.carbs),
+          fat: num(r.fat),
+          readyInMinutes: num(r.readyInMinutes, 30),
+          tags: (Array.isArray(r.tags) ? r.tags : []).map(t => String(t)).filter(Boolean),
+        }))
+      res.json({ recipes })
     } catch {
       res.json({ recipes: [], raw: text })
     }

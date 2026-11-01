@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 export default function CareersPage() {
   const [selectedJob, setSelectedJob] = useState(null)
+  const [activeFilter, setActiveFilter] = useState('All')
 
   const jobs = [
     {
@@ -69,6 +70,8 @@ export default function CareersPage() {
     },
   ]
 
+  const visibleJobs = activeFilter === 'All' ? jobs : jobs.filter(j => j.department === activeFilter)
+
   return (
       <div className="min-h-screen bg-gradient-to-b from-[var(--bg-primary)] to-[var(--bg-primary)] p-6">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
@@ -85,7 +88,12 @@ export default function CareersPage() {
             {['All', 'Engineering', 'Health', 'Product', 'Marketing'].map((filter) => (
               <button
                 key={filter}
-                className="px-4 py-2 rounded-lg border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--track)] transition-all whitespace-nowrap"
+                onClick={() => setActiveFilter(filter)}
+                className={`px-4 py-2 rounded-lg border transition-all whitespace-nowrap ${
+                  activeFilter === filter
+                    ? 'bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white border-transparent'
+                    : 'border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--track)]'
+                }`}
               >
                 {filter}
               </button>
@@ -94,7 +102,7 @@ export default function CareersPage() {
 
           {/* Jobs Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {jobs.map((job, idx) => (
+            {visibleJobs.map((job, idx) => (
               <motion.div
                 key={job.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -128,9 +136,13 @@ export default function CareersPage() {
                   </div>
 
                   {/* CTA */}
-                  <button className="mt-4 w-full py-2 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:opacity-90 transition-all">
+                  <a
+                    href={`mailto:careers@nutriai.com?subject=${encodeURIComponent('Application: ' + job.title)}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-4 block w-full py-2 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:opacity-90 transition-all text-center"
+                  >
                     Apply Now
-                  </button>
+                  </a>
                 </div>
               </motion.div>
             ))}
@@ -148,6 +160,35 @@ export default function CareersPage() {
               Send Your Resume
             </a>
           </motion.div>
+          {/* Job detail modal */}
+          {selectedJob && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}
+              onClick={() => setSelectedJob(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="w-full max-w-lg p-8 rounded-xl border border-white/10 bg-[#12121c]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="text-4xl">{selectedJob.emoji}</div>
+                  <button onClick={() => setSelectedJob(null)} className="text-gray-400 hover:text-white text-xl">✕</button>
+                </div>
+                <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-1">{selectedJob.title}</h2>
+                <p className="text-sm text-gray-400 mb-4">{selectedJob.department} · {selectedJob.location} · {selectedJob.type} · {selectedJob.experience}</p>
+                <p className="text-gray-300 mb-6">{selectedJob.description}</p>
+                <a
+                  href={`mailto:careers@nutriai.com?subject=${encodeURIComponent('Application: ' + selectedJob.title)}`}
+                  className="block w-full py-3 bg-gradient-to-r from-[#FF6B5E] via-[#FFB020] to-[#7B61FF] text-white rounded-lg font-semibold hover:opacity-90 transition-all text-center"
+                >
+                  Apply for this role
+                </a>
+              </motion.div>
+            </div>
+          )}
         </motion.div>
       </div>
   )

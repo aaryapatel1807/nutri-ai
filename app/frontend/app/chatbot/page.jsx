@@ -147,6 +147,9 @@ export default function AICoach() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  // Set to true by the "Show full reply" button to skip the fake word-by-word
+  // streaming (a long reply used to take tens of seconds to become readable).
+  const skipStreamRef = useRef(false)
   const [conversationHistory, setConversationHistory] = useState([])
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showQuickActions, setShowQuickActions] = useState(true)
@@ -263,10 +266,12 @@ export default function AICoach() {
 
       const assistantText = data.text || data.response || 'Sorry, I could not generate a response.'
 
-      // Simulate streaming effect
+      // Simulated streaming effect — skippable via the "Show full reply" button.
+      skipStreamRef.current = false
       let displayed = ''
       const words = assistantText.split(' ')
       for (let i = 0; i < words.length; i++) {
+        if (skipStreamRef.current) { setStreamedText(assistantText); break }
         displayed += (i > 0 ? ' ' : '') + words[i]
         setStreamedText(displayed)
         await new Promise(r => setTimeout(r, 18))
@@ -293,7 +298,8 @@ export default function AICoach() {
         role:'assistant',
         content: `⚠️ Connection error: ${err.message}\n\nMake sure backend is running and your API key is configured.`,
         timestamp: new Date().toISOString(),
-        isError: true
+        isError: true,
+        failedText: text, // Retry re-sends this without retyping
       }
       setMessages(prev => [...prev, errorMsg])
       setStreamedText('')
@@ -579,6 +585,14 @@ export default function AICoach() {
                         }}>
                           {new Date(msg.timestamp).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
                         </div>
+                        {msg.isError && msg.failedText && (
+                          <button onClick={() => sendMessage(msg.failedText)} disabled={loading}
+                            style={{ marginTop:'8px', background:'none', border:'1px solid rgba(255,59,48,0.4)',
+                              borderRadius:'99px', padding:'5px 12px', color:'#FF6B5E', cursor:'pointer',
+                              fontSize:'0.75rem', fontWeight:700 }}>
+                            ↻ Retry sending
+                          </button>
+                        )}
                       </div>
 
                       {msg.role === 'user' && (
@@ -623,6 +637,12 @@ export default function AICoach() {
                           transition={{ duration:0.7, repeat:Infinity }}
                           style={{ color:activePersona.color, fontSize:'1rem' }}
                         >▋</motion.span>
+                        <button onClick={() => { skipStreamRef.current = true }}
+                          style={{ marginTop:'8px', background:'none', border:'1px solid var(--border)',
+                            borderRadius:'99px', padding:'4px 12px', color:'var(--text-muted)',
+                            cursor:'pointer', fontSize:'0.72rem', fontWeight:600 }}>
+                          Show full reply
+                        </button>
                       </div>
                     </motion.div>
                   )}
@@ -709,6 +729,7 @@ export default function AICoach() {
                       <textarea
                         ref={inputRef}
                         value={input}
+                        maxLength={4000}
                         onChange={e => setInput(e.target.value)}
                         onKeyDown={e => {
                           if (e.key==='Enter' && !e.shiftKey) {
@@ -762,6 +783,11 @@ export default function AICoach() {
                         >⚙️</motion.span>
                       ) : '➤'}
                     </motion.button>
+                  </div>
+                  {/* Health disclaimer: the chat is guidance, never a diagnosis. */}
+                  <div style={{ marginTop:'10px', fontSize:'0.72rem', color:'var(--text-muted)', lineHeight:1.5 }}>
+                    AI guidance only — not medical advice or a diagnosis. For medical concerns,
+                    consult a qualified clinician. Never share passwords or payment details here.
                   </div>
                 </div>
               </div>
