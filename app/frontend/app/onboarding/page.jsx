@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import NeonButton from '@/components/shared/NeonButton'
@@ -38,6 +38,36 @@ export default function OnboardingPage() {
 
   const [stepError, setStepError] = useState('')
   const [finishing, setFinishing] = useState(false)
+  const [saveError, setSaveError] = useState('')
+
+  // Draft persistence: a refresh mid-onboarding used to wipe all 5 steps.
+  const DRAFT_KEY = 'nutriai_onboarding_draft'
+  const draftLoaded = useRef(false)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      if (raw) {
+        const draft = JSON.parse(raw)
+        if (draft && typeof draft === 'object') {
+          setFormData(prev => ({ ...prev, ...draft }))
+          if (draft._step >= 1 && draft._step <= 5) setCurrentStep(draft._step)
+        }
+      }
+    } catch {}
+    draftLoaded.current = true
+  }, [])
+  useEffect(() => {
+    // Skip the first save: it would overwrite the stored draft with the
+    // empty initial form before the restore above has applied.
+    if (!draftLoaded.current) return
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...formData, _step: currentStep })) } catch {}
+  }, [formData, currentStep])
+
+  // Onboarding ids → the exact vocabularies the profile page uses, so saved
+  // values render correctly everywhere instead of being stored verbatim.
+  const GOAL_MAP = { lose: 'Fat Loss', muscle: 'Muscle Building', healthy: 'Maintenance', fit: 'Athletic Performance' }
+  const DIET_MAP = { vegetarian: 'Vegetarian', vegan: 'Vegan', nonveg: 'No Restriction', keto: 'Keto', any: 'No Restriction' }
+  const ACTIVITY_MAP = { beginner: 'light', intermediate: 'moderate', advanced: 'very' }
 
   const validateStep = (step) => {
     if (step === 1) {
@@ -58,23 +88,35 @@ export default function OnboardingPage() {
   }
 
   const finishOnboarding = async () => {
-    setFinishing(true); setStepError('')
+    setFinishing(true); setStepError(''); setSaveError('')
     try {
+      // Age has no column on User; store a year-precision birth date derived
+      // from the age the user just gave, so the dashboard can show their age
+      // instead of a blank. (Exact day is unknown — Jan 1 of the birth year.)
+      const birthYear = new Date().getFullYear() - Number(formData.age)
       await auth.updateProfile({
         name: formData.name.trim(),
         gender: formData.gender,
+        dob: `${birthYear}-01-01`,
         height: Number(formData.height),
         weight: Number(formData.weight),
-        fitnessGoal: formData.goal,
-        dietType: formData.diet,
-        activityLevel: formData.activity,
+        fitnessGoal: GOAL_MAP[formData.goal] || formData.goal,
+        dietType: DIET_MAP[formData.diet] || formData.diet,
+        activityLevel: ACTIVITY_MAP[formData.activity] || formData.activity,
       })
-      try { localStorage.setItem('nutriai_onboarded', '1') } catch {}
-    } catch (e) {
-      // don't trap the user — keep going, the dashboard will use defaults
-      console.error('Onboarding save failed:', e.message)
-    } finally {
+      // Redirect ONLY after the backend confirms the save.
+      try {
+        localStorage.setItem('nutriai_onboarded', '1')
+        localStorage.removeItem(DRAFT_KEY)
+      } catch {}
       window.location.href = '/dashboard'
+    } catch (e) {
+      // Stay on step 5 with an error + retry — never silently continue as
+      // though setup was saved.
+      console.error('Onboarding save failed:', e.message)
+      setSaveError(e.response?.data?.error || 'Could not save your setup. Check your connection and try again.')
+    } finally {
+      setFinishing(false)
     }
   }
 
@@ -344,7 +386,7 @@ export default function OnboardingPage() {
               </NeonButton>
             )}
             <div className="flex-1" />
-            {stepError && <span className="text-red-400 text-sm self-center mr-3">{stepError}</span>}
+            {(stepError || saveError) && <span className="text-red-400 text-sm self-center mr-3">{stepError || saveError}</span>}
             <NeonButton onClick={nextStep} loading={finishing}>
               {finishing ? 'Saving...' : currentStep === 5 ? "Let's Go! →" : "Continue →"}
             </NeonButton>

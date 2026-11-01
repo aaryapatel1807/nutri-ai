@@ -58,7 +58,7 @@ router.get('/today', authMiddleware, async (req, res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate')
     res.json({
       ...totals,
-      goalCalories: user?.calorieGoal || 1800,
+      goalCalories: user?.calorieGoal || 2000,
       meals,
       grouped
     })

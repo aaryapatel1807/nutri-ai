@@ -64,9 +64,14 @@ export default function Dashboard() {
   const [realBadges, setRealBadges] = useState([])
   const [stats, setStats] = useState(null)
   const [sleepLogs, setSleepLogs] = useState([])
+  const [recentWorkouts, setRecentWorkouts] = useState([])
+  // Per-section load failures (a failed section shows its own error + retry
+  // instead of silent zeros — a backend outage must never look like an empty day).
+  const [sectionErrors, setSectionErrors] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [addingWater, setAddingWater] = useState(false)
+  const [waterError, setWaterError] = useState('')
   const [query, setQuery] = useState('')
   const [searchFocus, setSearchFocus] = useState(false)
   const [calMonth, setCalMonth] = useState(() => { const n = new Date(); return { y: n.getFullYear(), m: n.getMonth() } })
@@ -98,7 +103,7 @@ export default function Dashboard() {
         const localUser = getCurrentUser()
         if (localUser) setUser(localUser)
 
-        const [nutritionData, weekData, xpData, statsData, waterData, badgesData, sleepData, meData] = await Promise.allSettled([
+        const [nutritionData, weekData, xpData, statsData, waterData, badgesData, sleepData, meData, workoutsData] = await Promise.allSettled([
           getTodayNutrition(),
           getWeeklyNutrition(),
           getUserXP(),
@@ -107,22 +112,32 @@ export default function Dashboard() {
           badges.getAll().then(res => res.data),
           api.get('/api/sleep?days=31').then(res => res.data),
           api.get('/api/auth/me').then(res => res.data),
+          api.get('/api/workouts').then(res => res.data),
         ])
 
+        const errs = {}
         if (nutritionData.status === 'fulfilled' && nutritionData.value) setTodayNutrition(nutritionData.value)
+        else errs.nutrition = 'Could not load today\u2019s nutrition.'
         if (weekData.status === 'fulfilled' && weekData.value) setWeeklyData(weekData.value)
+        else errs.weekly = 'Could not load the weekly chart.'
         if (xpData.status === 'fulfilled' && xpData.value) setUserXP(xpData.value)
+        else errs.xp = 'Could not load XP.'
         if (statsData.status === 'fulfilled' && statsData.value) setStats(statsData.value)
+        else errs.stats = 'Could not load your stats.'
         if (waterData.status === 'fulfilled' && waterData.value) {
           setWater(waterData.value.totalMl / 250)
           setWaterLogs(waterData.value.logs)
-        }
+        } else errs.water = 'Could not load water intake.'
         if (badgesData.status === 'fulfilled' && Array.isArray(badgesData.value)) {
           setRealBadges(badgesData.value.filter(b => b.unlocked)
             .sort((a, b) => new Date(b.unlockedAt || 0) - new Date(a.unlockedAt || 0)).slice(0, 3))
-        }
+        } else errs.badges = 'Could not load badges.'
         if (sleepData.status === 'fulfilled' && Array.isArray(sleepData.value)) setSleepLogs(sleepData.value)
+        else errs.sleep = 'Could not load sleep logs.'
         if (meData.status === 'fulfilled' && meData.value) { setProfile(meData.value); setUser(u => ({ ...u, ...meData.value })) }
+        if (workoutsData.status === 'fulfilled' && Array.isArray(workoutsData.value)) setRecentWorkouts(workoutsData.value.slice(0, 3))
+        else errs.workouts = 'Could not load recent workouts.'
+        setSectionErrors(errs)
       } catch (err) {
         console.error('Dashboard data load error:', err)
         setError('Failed to load dashboard data')
@@ -141,6 +156,11 @@ export default function Dashboard() {
   }, [])
 
   // ── derived data ──
+  // Water goal in glasses: 1 glass = 250 ml, goal from the user's profile
+  // (default 2.5 L = 10 glasses) — never a hardcoded 8-glass cap.
+  // (Declared here, above its first use in dayScore — a later declaration
+  // caused a temporal-dead-zone crash during prerender.)
+  const waterGoalGlasses = Math.max(1, Math.round(((profile?.waterGoal ?? stats?.waterGoal ?? 2.5)) * 4))
   const goalCals = todayNutrition?.goalCalories || stats?.calorieGoal || 2000
   const proteinGoal = stats?.proteinGoal || 150
   const cals = todayNutrition?.calories || 0
@@ -150,7 +170,7 @@ export default function Dashboard() {
   const dayScore = Math.round(
     40 * Math.max(0, 1 - Math.abs(calRatio - 0.95) / 0.95) +
     20 * Math.min(protein / proteinGoal, 1) +
-    20 * Math.min(water / 8, 1) +
+    20 * Math.min(water / waterGoalGlasses, 1) +
     20 * Math.min((todayNutrition?.meals?.length || 0) / 3, 1)
   )
   const scoreColor = dayScore < 40 ? '#FF6B5E' : dayScore < 70 ? '#FFB020' : '#7B61FF'
@@ -199,15 +219,43 @@ export default function Dashboard() {
   const handleAddWater = async () => {
     if (addingWater) return
     setAddingWater(true)
+    setWaterError('')
     try {
       const res = await api.post('/api/water', { amountMl: 250 })
       if (res.data) {
-        setWater(w => Math.min(w + 1, 8))
+        setWater(w => Math.min(w + 1, waterGoalGlasses))
         setWaterLogs(prev => [res.data, ...prev])
       }
-    } catch (err) { console.error('Failed to log water:', err) }
+    } catch (err) {
+      console.error('Failed to log water:', err)
+      setWaterError('Could not add water — please try again.')
+    }
     finally { setAddingWater(false) }
   }
+
+  // Per-section retries — re-fetch just that section, clear its error on success.
+  const retrySection = async (key, fetcher, apply) => {
+    try {
+      const value = await fetcher()
+      apply(value)
+      setSectionErrors(prev => { const next = { ...prev }; delete next[key]; return next })
+    } catch (err) {
+      console.error(`Dashboard retry (${key}) failed:`, err.message)
+    }
+  }
+  const retryNutrition = () => retrySection('nutrition', getTodayNutrition, setTodayNutrition)
+  const retryWater = () => retrySection('water', () => api.get('/api/water').then(r => r.data),
+    v => { setWater(v.totalMl / 250); setWaterLogs(v.logs) })
+  const retrySleep = () => retrySection('sleep', () => api.get('/api/sleep?days=31').then(r => r.data), setSleepLogs)
+  const retryBadges = () => retrySection('badges', () => Promise.all([
+    badges.getAll().then(r => r.data), getUserXP(),
+  ]), ([badgeList, xp]) => {
+    setRealBadges(badgeList.filter(b => b.unlocked)
+      .sort((a, b) => new Date(b.unlockedAt || 0) - new Date(a.unlockedAt || 0)).slice(0, 3))
+    setUserXP(xp)
+  })
+  const retryWorkouts = () => retrySection('workouts', () => api.get('/api/workouts').then(r => r.data),
+    v => setRecentWorkouts(Array.isArray(v) ? v.slice(0, 3) : []))
 
   if (loading) {
     return (
@@ -345,6 +393,12 @@ export default function Dashboard() {
             <CountUp end={cals} duration={1.2} separator="," /> <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', fontFamily: "'Satoshi',sans-serif" }}>Kcal</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>of {goalCals.toLocaleString('en-GB')} goal</div>
+          {sectionErrors.nutrition && (
+            <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#FF6B5E' }}>
+              {sectionErrors.nutrition}{' '}
+              <button onClick={retryNutrition} style={{ background: 'none', border: 'none', color: '#FF6B5E', fontWeight: 700, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>Retry</button>
+            </div>
+          )}
         </motion.div>
 
         {/* Day Score */}
@@ -412,7 +466,7 @@ export default function Dashboard() {
             <span style={cardTitle}>Water</span>
           </div>
           <div style={{ display: 'flex', gap: '5px', height: '52px', alignItems: 'flex-end', marginBottom: '8px' }}>
-            {[...Array(8)].map((_, i) => (
+            {[...Array(waterGoalGlasses)].map((_, i) => (
               <motion.div key={i} initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} transition={{ delay: 0.3 + i * 0.05 }}
                 style={{ flex: 1, borderRadius: '4px', height: `${38 + (i % 3) * 14}%`,
                   background: i < Math.floor(water) ? 'linear-gradient(180deg,#22D3EE,#0891B2)' : 'var(--track)',
@@ -421,7 +475,7 @@ export default function Dashboard() {
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <div style={{ fontSize: '1.45rem', fontWeight: 700, color: '#06B6D4', fontFamily: "'Clash Display',sans-serif", fontVariantNumeric: 'tabular-nums' }}>
-              {Math.floor(water)}<span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', fontFamily: "'Satoshi',sans-serif" }}>/8 glasses</span>
+              {Math.floor(water)}<span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', fontFamily: "'Satoshi',sans-serif" }}>/{waterGoalGlasses} glasses</span>
             </div>
             <motion.button whileTap={{ scale: 0.92 }} onClick={handleAddWater} disabled={addingWater}
               style={{ border: 'none', borderRadius: '99px', padding: '7px 14px', cursor: addingWater ? 'wait' : 'pointer',
@@ -430,6 +484,12 @@ export default function Dashboard() {
               {addingWater ? '…' : '+ Add'}
             </motion.button>
           </div>
+          {(waterError || sectionErrors.water) && (
+            <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#FF6B5E' }}>
+              {waterError || sectionErrors.water}{' '}
+              <button onClick={retryWater} style={{ background: 'none', border: 'none', color: '#06B6D4', fontWeight: 700, cursor: 'pointer', padding: 0 }}>Retry</button>
+            </div>
+          )}
         </motion.div>
       </div>
 
@@ -649,9 +709,8 @@ export default function Dashboard() {
             </div>
           </motion.div>
 
-          {/* Badges strip */}
-          {realBadges.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.5 }}
+          {/* Badges strip — always visible: real XP/level even with no badges yet */}
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.5 }}
               style={{ ...glass, padding: '20px 22px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span style={cardTitle}>Latest Badges</span>
@@ -660,6 +719,16 @@ export default function Dashboard() {
                   View all →
                 </button>
               </div>
+              {sectionErrors.badges ? (
+                <div style={{ fontSize: '0.8rem', color: '#FF6B5E' }}>
+                  {sectionErrors.badges}{' '}
+                  <button onClick={retryBadges} style={{ background: 'none', border: 'none', color: '#7B61FF', fontWeight: 700, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>Retry</button>
+                </div>
+              ) : realBadges.length === 0 ? (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  No badges unlocked yet — log your first meal to earn your first badge.
+                </div>
+              ) : null}
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 {realBadges.map(b => (
                   <div key={b.id || b.name} style={{ display: 'flex', alignItems: 'center', gap: '10px',
@@ -680,7 +749,6 @@ export default function Dashboard() {
                 </div>
               </div>
             </motion.div>
-          )}
         </div>
 
         {/* ═══ RIGHT RAIL ═══ */}
@@ -800,7 +868,20 @@ export default function Dashboard() {
               <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Scheduled</span>
             </div>
             {[
-              { img: '/images/workout-hero.jpg', tag: 'Fitness', title: 'Cardio Workshop', sub: 'Strengthen your muscles', meta: 'Today · 45 min', href: '/workout' },
+              // First slot is the user's real most-recent workout — never a
+              // hardcoded class. Falls back to a "start your first workout"
+              // prompt when there is no workout history yet.
+              ...(sectionErrors.workouts
+                ? [{ icon: '⚠️', tag: 'Workout', title: 'Recent workouts unavailable', sub: 'Could not load workout history', meta: '', href: '/workout' }]
+                : recentWorkouts.length > 0
+                  ? [{
+                      img: '/images/workout-hero.jpg', tag: 'Workout',
+                      title: recentWorkouts[0].name || 'Workout',
+                      sub: `${recentWorkouts[0].exercises?.length || 0} exercises logged`,
+                      meta: `${new Date(recentWorkouts[0].completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} · ${recentWorkouts[0].duration || 0} min`,
+                      href: '/workout',
+                    }]
+                  : [{ icon: '🏋️', tag: 'Workout', title: 'No workouts yet', sub: 'Start your first session', meta: '', href: '/workout' }]),
               { icon: '🧠', tag: 'Coach', title: 'AI Coach Check-in', sub: 'Readiness & adaptive targets', meta: 'Daily', href: '/coach' },
               { icon: '📊', tag: 'Review', title: 'Weekly Recap', sub: 'Your week in review', meta: 'Sunday', href: '/recap' },
             ].map((s, i) => (

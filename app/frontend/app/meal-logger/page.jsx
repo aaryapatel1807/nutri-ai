@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
+import api, { getMeals, logMeal, deleteMeal, getCurrentUser, ml } from '../../lib/api'
 import {
   searchFoods, scaleFood,
   getRecentFoods, addRecentFood,
@@ -24,6 +24,9 @@ export default function MealLogger() {
   const [activeMeal, setActiveMeal] = useState('Breakfast')
   const [search, setSearch] = useState('')
   const [logged, setLogged] = useState([])
+  // Calorie goal from the user's saved profile (backend default 2000) —
+  // never a hardcoded per-page number.
+  const [goalCalories, setGoalCalories] = useState(2000)
   const [showSearch, setShowSearch] = useState(false)
   const [showCamera, setShowCamera] = useState(false)
   const [isScanning, setIsScanning] = useState(false)
@@ -47,6 +50,11 @@ export default function MealLogger() {
         setLoading(true)
         setError('')
         const meals = await getMeals()
+        // Goal comes from the same backend response family as the dashboard
+        // (user's saved calorieGoal; backend default 2000).
+        api.get('/api/meals/today').then(res => {
+          if (res.data?.goalCalories) setGoalCalories(res.data.goalCalories)
+        }).catch(() => {})
         if (meals) {
           // Group meals by type and filter for today (local timezone, not UTC)
           const now = new Date()
@@ -387,7 +395,7 @@ export default function MealLogger() {
               </div>
               <div style={{ fontFamily: "'Clash Display',sans-serif", fontSize: '2.5rem', fontWeight: 700, color: '#FF6B5E' }}>
                 {totals.calories}
-                <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}> / 1800 kcal</span>
+                <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}> / {goalCalories} kcal</span>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '24px' }}>
@@ -409,13 +417,13 @@ export default function MealLogger() {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Daily Goal</span>
                 <span style={{ color: '#FF6B5E', fontSize: '0.8rem', fontWeight: 600 }}>
-                  {Math.round((totals.calories / 1800) * 100)}%
+                  {Math.round((totals.calories / goalCalories) * 100)}%
                 </span>
               </div>
               <div style={{ height: '10px', background: 'var(--border)', borderRadius: '99px', overflow: 'hidden' }}>
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((totals.calories / 1800) * 100, 100)}%` }}
+                  animate={{ width: `${Math.min((totals.calories / goalCalories) * 100, 100)}%` }}
                   transition={{ duration: 1 }}
                   style={{
                     height: '100%',

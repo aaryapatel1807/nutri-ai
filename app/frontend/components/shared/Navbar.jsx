@@ -45,7 +45,7 @@ export default function Navbar({ onMenuClick = () => {}, collapsed = false, onTo
       .then(res => {
         const data = res.data
         const cal     = Math.round(data.totalCalories || 0)
-        const goal    = 2000 // fallback; ideally from user profile
+        const goal    = data.goalCalories || 2000 // user's saved goal from the backend
         const diff    = goal - cal
         if (diff > 300) {
           setTip(`You're ${diff} kcal under goal. Consider a healthy snack!`)

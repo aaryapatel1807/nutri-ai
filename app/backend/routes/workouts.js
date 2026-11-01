@@ -3,12 +3,13 @@ const router = express.Router()
 const { authMiddleware } = require('../middleware/auth.middleware')
 const { prisma } = require('../prisma.config')
 
-// GET /api/workouts - get all workouts
+// GET /api/workouts - get all workouts, including per-exercise detail
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const workouts = await prisma.workout.findMany({
       where: { userId: req.userId },
-      orderBy: { completedAt: 'desc' }
+      orderBy: { completedAt: 'desc' },
+      include: { exercises: true },
     })
     res.json(workouts)
   } catch (err) {
@@ -55,15 +56,47 @@ function parseWorkoutNumber(value, field) {
   return { value: Math.floor(n) }
 }
 
-// POST /api/workouts - log completed workout
+// Validate one exercise entry: name required; sets/reps non-negative ints;
+// weight non-negative number. Returns { value } or { error }.
+function parseWorkoutExercise(ex, i) {
+  if (!ex || typeof ex !== 'object') return { error: `exercises[${i}] must be an object` }
+  if (!ex.name || typeof ex.name !== 'string') return { error: `exercises[${i}].name is required` }
+  const out = { name: ex.name.trim() }
+  for (const [field, intOnly] of [['sets', true], ['reps', true], ['duration', true], ['calories', true]]) {
+    if (ex[field] === undefined || ex[field] === null || ex[field] === '') continue
+    const n = Number(ex[field])
+    if (!Number.isFinite(n) || n < 0) return { error: `exercises[${i}].${field} must be a non-negative number` }
+    out[field] = intOnly ? Math.floor(n) : n
+  }
+  if (ex.weight !== undefined && ex.weight !== null && ex.weight !== '') {
+    const w = Number(ex.weight)
+    if (!Number.isFinite(w) || w < 0) return { error: `exercises[${i}].weight must be a non-negative number` }
+    out.weight = w
+  }
+  return { value: out }
+}
+
+// POST /api/workouts - log completed workout, including per-exercise detail
+// (sets/reps/weight) as WorkoutExercise rows so history survives device changes.
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { name, duration, calories, category, difficulty } = req.body
+    const { name, duration, calories, category, difficulty, exercises } = req.body
 
     const dur = parseWorkoutNumber(duration, 'duration')
     if (dur && dur.error) return res.status(400).json({ error: dur.error })
     const cal = parseWorkoutNumber(calories, 'calories')
     if (cal && cal.error) return res.status(400).json({ error: cal.error })
+
+    let exerciseRows = []
+    if (exercises !== undefined) {
+      if (!Array.isArray(exercises)) return res.status(400).json({ error: 'exercises must be an array' })
+      if (exercises.length > 100) return res.status(400).json({ error: 'At most 100 exercises per workout' })
+      for (let i = 0; i < exercises.length; i++) {
+        const parsed = parseWorkoutExercise(exercises[i], i)
+        if (parsed.error) return res.status(400).json({ error: parsed.error })
+        exerciseRows.push(parsed.value)
+      }
+    }
 
     const workout = await prisma.workout.create({
       data: {
@@ -73,7 +106,9 @@ router.post('/', authMiddleware, async (req, res) => {
         calories:   cal ? cal.value : 0,
         category:   category || 'Strength',
         difficulty: difficulty || 'Intermediate',
-      }
+        exercises: exerciseRows.length ? { create: exerciseRows } : undefined,
+      },
+      include: { exercises: true },
     })
     res.status(201).json(workout)
   } catch (err) {

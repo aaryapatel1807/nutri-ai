@@ -76,29 +76,20 @@ const CONNECTED_APPS = [
   { name:'Garmin',        icon:'🗺️', connected:false, color:'#007CC3', desc:'GPS & HRV data'                },
 ]
 
-const WEIGHT_HISTORY = [
-  { date:'Jan 1', w:78.5, fat:22.4 },
-  { date:'Jan 15',w:77.8, fat:21.8 },
-  { date:'Feb 1', w:76.9, fat:21.1 },
-  { date:'Feb 15',w:76.2, fat:20.4 },
-  { date:'Mar 1', w:75.4, fat:19.8 },
-  { date:'Mar 9', w:74.8, fat:19.2 },
-]
-
 /* ══════════ TOGGLE SWITCH ══════════ */
-function Toggle({ on, onChange, color='#7B61FF' }) {
+function Toggle({ on, onChange, color='#7B61FF', disabled=false }) {
   return (
     <motion.div
-      onClick={onChange}
+      onClick={disabled ? undefined : onChange}
       style={{
         width:'44px', height:'24px', borderRadius:'99px',
         background: on ? color : 'var(--border)',
         border:`1px solid ${on ? color+'60' : 'var(--track)'}`,
-        cursor:'pointer', position:'relative', flexShrink:0,
+        cursor: disabled ? 'not-allowed' : 'pointer', position:'relative', flexShrink:0,
         boxShadow: on ? `0 0 12px ${color}50` : 'none',
-        transition:'all 0.3s'
+        transition:'all 0.3s', opacity: disabled ? 0.45 : 1,
       }}
-      whileTap={{ scale:0.92 }}
+      whileTap={disabled ? {} : { scale:0.92 }}
     >
       <motion.div
         animate={{ x: on ? 22 : 2 }}
@@ -117,7 +108,7 @@ function Toggle({ on, onChange, color='#7B61FF' }) {
 function StatRing({ value, max, color, size=80, label, unit }) {
   const r     = (size-12)/2
   const circ  = 2*Math.PI*r
-  const dash  = (value/max)*circ
+  const dash  = (value == null ? 0 : (value/max)*circ)
   return (
     <div style={{ textAlign:'center', position:'relative' }}>
       <svg width={size} height={size} style={{ display:'block', margin:'0 auto' }}>
@@ -135,7 +126,7 @@ function StatRing({ value, max, color, size=80, label, unit }) {
         />
       </svg>
       <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
-        <div style={{ color, fontWeight:800, fontSize:'1rem', fontFamily:"'Clash Display',sans-serif" }}>{value}</div>
+        <div style={{ color, fontWeight:800, fontSize:'1rem', fontFamily:"'Clash Display',sans-serif" }}>{value ?? '–'}</div>
         <div style={{ color:'#4B5563', fontSize:'0.6rem' }}>{unit}</div>
       </div>
       <div style={{ color:'var(--text-muted)', fontSize:'0.72rem', marginTop:'6px' }}>{label}</div>
@@ -148,11 +139,39 @@ export default function ProfilePage() {
   const isMobile = useIsMobile()
   const { theme: modeTheme, setTheme: setModeTheme } = useTheme()
   const [activeTab,      setActiveTab]       = useState('profile')
-  const [selectedAvatar, setSelectedAvatar]  = useState('warrior')
-  const [selectedFrame,  setSelectedFrame]   = useState('gold')
+  // Avatar/frame are device-local appearance picks (no backend field): they
+  // persist in localStorage like the theme, and the UI says so — they used
+  // to reset silently on every refresh.
+  const [selectedAvatar, setSelectedAvatar]  = useState(() => { try { return localStorage.getItem('nutriai_avatar') || 'warrior' } catch { return 'warrior' } })
+  const [selectedFrame,  setSelectedFrame]   = useState(() => { try { return localStorage.getItem('nutriai_frame') || 'gold' } catch { return 'gold' } })
+  useEffect(() => { try { localStorage.setItem('nutriai_avatar', selectedAvatar) } catch {} }, [selectedAvatar])
+  useEffect(() => { try { localStorage.setItem('nutriai_frame', selectedFrame) } catch {} }, [selectedFrame])
+  // Workout-days picks have no backend field either: persist device-locally
+  // so they survive refresh (they used to reset silently).
+  const workoutDaysLoaded = useRef(false)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('nutriai_workout_days')
+      if (raw) { const days = JSON.parse(raw); if (Array.isArray(days)) setProfile(p => ({ ...p, workoutDays: days })) }
+    } catch {}
+    workoutDaysLoaded.current = true
+  }, [])
+  useEffect(() => {
+    if (!workoutDaysLoaded.current) return
+    try { localStorage.setItem('nutriai_workout_days', JSON.stringify(profile.workoutDays)) } catch {}
+  }, [profile.workoutDays])
   const [showAvatarModal,setShowAvatarModal] = useState(false)
   const [selectedTheme,  setSelectedTheme]   = useState('brand')
   const [editMode,       setEditMode]        = useState(false)
+  // Cancel must discard unsaved edits: snapshot on edit-start, restore on cancel.
+  // (Edits used to mutate `profile` directly, so Cancel left them on screen.)
+  const editSnapshot = useRef(null)
+  const startEdit = () => { editSnapshot.current = { ...profile }; setEditMode(true) }
+  const cancelEdit = () => {
+    if (editSnapshot.current) setProfile(editSnapshot.current)
+    editSnapshot.current = null
+    setEditMode(false)
+  }
   const [saved,          setSaved]           = useState(false)
   const [apps,           setApps]            = useState(CONNECTED_APPS)
 
@@ -226,47 +245,57 @@ export default function ProfilePage() {
   const [notifs,         setNotifs]          = useState({ meal:true, workout:true, water:true, streak:true, badge:true, report:false, ai:true, challenge:false })
   const [privacyS,       setPrivacyS]        = useState({ public:true, streak:true, weight:false, board:true, ailearn:true })
   const [hovAvatar,      setHovAvatar]       = useState(null)
+  // Neutral initial state: NO fake persona. Until the backend profile loads,
+  // every field is empty and renders as '–' — a null backend value must never
+  // display as invented numbers (the old defaults showed 175 cm / 74.8 kg /
+  // 2800 kcal for every new user).
   const [profile, setProfile] = useState({
-    name:'User', username:'', tagline:'Getting stronger every day 💪',
+    name:'', username:'',
     email:'', phone:'',
-    dob:'2000-01-01', gender:'Male', location:'',
-    height:175, weight:74.8, targetWeight:70,
-    bodyFat:19.2, muscle:60.1, bmi:24.4,
-    goal:'Muscle Building', diet:'No Restriction', activity:'very',
-    workoutDays:['Mon','Thu','Fri','Sat','Sun'],
-    calorieGoal:2800, proteinGoal:210, carbGoal:320, fatGoal:85,
-    waterGoal:3, sleepGoal:8,
+    dob:'', gender:'', location:'',
+    height:null, weight:null, targetWeight:null,
+    bodyFat:null, muscle:null, bmi:null,
+    goal:'', diet:'', activity:'',
+    workoutDays:[],
+    calorieGoal:null, proteinGoal:null,
+    carbGoal:null, fatGoal:null,
+    waterGoal:null, sleepGoal:null,
   })
+  const [xpStats, setXpStats] = useState(null)   // real XP/level from /api/badges/xp
+  const [realStats, setRealStats] = useState(null) // real counts from /api/stats
+  const [weightHistory, setWeightHistory] = useState(null) // null = loading, [] = no logs
 
   // Hydrate from the real backend profile (falls back to cached identity)
   useEffect(() => {
     const applyUser = (u) => {
       if (!u) return
-      const name = u.name || 'User'
+      const name = u.name || ''
       const derivedUsername = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+      // Backend value or null — NEVER fall back to a previous persona value,
+      // so an unset field renders as '–' instead of invented numbers.
       setProfile(p => ({
         ...p,
         name,
-        username: p.username || derivedUsername,
-        email: u.email || p.email,
-        phone: u.phone ?? p.phone,
-        dob: u.dob || p.dob,
-        gender: u.gender || p.gender,
-        location: u.location || p.location,
-        height: u.height ?? p.height,
-        weight: u.weight ?? p.weight,
-        targetWeight: u.targetWeight ?? p.targetWeight,
-        bodyFat: u.bodyFat ?? p.bodyFat,
-        muscle: u.muscleMass ?? p.muscle,
-        goal: u.fitnessGoal || p.goal,
-        diet: u.dietType || p.diet,
-        activity: u.activityLevel || p.activity,
-        calorieGoal: u.calorieGoal ?? p.calorieGoal,
-        proteinGoal: u.proteinGoal ?? p.proteinGoal,
-        carbGoal: u.carbGoal ?? p.carbGoal,
-        fatGoal: u.fatGoal ?? p.fatGoal,
-        waterGoal: u.waterGoal ?? p.waterGoal,
-        sleepGoal: u.sleepGoal ?? p.sleepGoal,
+        username: derivedUsername,
+        email: u.email || '',
+        phone: u.phone ?? null,
+        dob: u.dob || '',
+        gender: u.gender || '',
+        location: u.location || '',
+        height: u.height ?? null,
+        weight: u.weight ?? null,
+        targetWeight: u.targetWeight ?? null,
+        bodyFat: u.bodyFat ?? null,
+        muscle: u.muscleMass ?? null,
+        goal: u.fitnessGoal || '',
+        diet: u.dietType || '',
+        activity: u.activityLevel || '',
+        calorieGoal: u.calorieGoal ?? null,
+        proteinGoal: u.proteinGoal ?? null,
+        carbGoal: u.carbGoal ?? null,
+        fatGoal: u.fatGoal ?? null,
+        waterGoal: u.waterGoal ?? null,
+        sleepGoal: u.sleepGoal ?? null,
       }))
     }
     auth.getMe().then(res => applyUser(res.data)).catch(() => {
@@ -275,6 +304,17 @@ export default function ProfilePage() {
         if (raw && raw !== 'undefined') applyUser(JSON.parse(raw))
       } catch (e) {}
     })
+    // Real hero stats: XP/level + counts from the backend, never literals.
+    api.get('/api/badges/xp').then(r => setXpStats(r.data)).catch(() => {})
+    api.get('/api/stats').then(r => setRealStats(r.data)).catch(() => {})
+    // Real weight history for the trend chart (last 10 logs, chronological).
+    api.get('/api/weight/history').then(r => {
+      const logs = Array.isArray(r.data) ? r.data : []
+      setWeightHistory(logs.slice(-10).map(l => ({
+        date: new Date(l.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
+        w: l.weight,
+      })))
+    }).catch(() => setWeightHistory([]))
   }, [])
 
   const theme  = THEMES.find(t=>t.id===selectedTheme) || THEMES[0]
@@ -282,11 +322,16 @@ export default function ProfilePage() {
   const frame  = FRAME_STYLES.find(f=>f.id===selectedFrame)   || FRAME_STYLES[0]
   const actOpt = ACTIVITY_OPTS.find(a=>a.id===profile.activity)
 
-  const tdmr   = (profile.gender==='Male' ? 88.36 : 447.6)
+  // TDEE only when all inputs are real; otherwise null → renders as '–'.
+  // (Computing from placeholder numbers used to show a fake 2,000+ kcal TDEE
+  // for users who never entered their stats.)
+  const hasBodyStats = profile.weight != null && profile.height != null && profile.dob
+  const tdmr   = hasBodyStats ? (profile.gender==='Male' ? 88.36 : 447.6)
              + (profile.gender==='Male' ? 13.4 : 9.25)*profile.weight
              + (profile.gender==='Male' ? 4.8  : 3.1 )*profile.height
              - (profile.gender==='Male' ? 5.7  : 4.3 )*(new Date().getFullYear()-new Date(profile.dob).getFullYear())
-  const tdee   = Math.round(tdmr * (actOpt?.multi||1.55))
+             : null
+  const tdee   = tdmr == null ? null : Math.round(tdmr * (actOpt?.multi||1.55))
 
   const card = {
     background: 'var(--glass-bg)',
@@ -298,7 +343,7 @@ export default function ProfilePage() {
   const inp = (key, type='text', placeholder='') => (
     editMode ? (
       <input
-        type={type} value={profile[key]} placeholder={placeholder}
+        type={type} value={profile[key] ?? ''} placeholder={placeholder}
         onChange={e=>setProfile(p=>({...p,[key]:e.target.value}))}
         style={{
           width:'100%', boxSizing:'border-box',
@@ -321,8 +366,8 @@ export default function ProfilePage() {
   const numInp = (key, min, max, step=1) => (
     editMode ? (
       <input
-        type="number" value={profile[key]} min={min} max={max} step={step}
-        onChange={e=>setProfile(p=>({...p,[key]:parseFloat(e.target.value)||0}))}
+        type="number" value={profile[key] ?? ''} min={min} max={max} step={step}
+        onChange={e=>setProfile(p=>({...p,[key]:e.target.value === '' ? null : parseFloat(e.target.value)}))}
         style={{
           width:'100%', boxSizing:'border-box',
           background:'var(--border)',
@@ -350,11 +395,44 @@ export default function ProfilePage() {
 
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState('')
+  const [exporting, setExporting] = useState(false)
+  const [exportMsg, setExportMsg] = useState('')
+
+  // Real data export: fetch the user's own records from existing endpoints
+  // and download them as one JSON file. Nothing leaves the device except the
+  // API calls the app already makes for these pages.
+  const handleExportData = async () => {
+    setExporting(true); setExportMsg('')
+    try {
+      const [me, meals, workouts, water, sleep, weight] = await Promise.all([
+        api.get('/api/auth/me').then(r => r.data),
+        api.get('/api/meals/today').then(r => r.data),
+        api.get('/api/workouts').then(r => r.data),
+        api.get('/api/water').then(r => r.data),
+        api.get('/api/sleep?days=31').then(r => r.data),
+        api.get('/api/weight').then(r => r.data).catch(() => null),
+      ])
+      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), profile: me, mealsToday: meals, workouts, water, sleep, weight }, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'nutriai-export.json'
+      a.click()
+      URL.revokeObjectURL(url)
+      setExportMsg('Export downloaded.')
+    } catch (e) {
+      setExportMsg('Export failed — please try again.')
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true); setSaveError('')
     try {
-      const res = await auth.updateProfile({
+      // Omit null/undefined fields: the backend rejects null strings (400)
+      // and would store null numbers as 0. Only send what the user set.
+      const payload = {
         name: profile.name, phone: profile.phone, dob: profile.dob,
         gender: profile.gender, location: profile.location,
         height: profile.height, weight: profile.weight,
@@ -364,7 +442,11 @@ export default function ProfilePage() {
         calorieGoal: profile.calorieGoal, proteinGoal: profile.proteinGoal,
         carbGoal: profile.carbGoal, fatGoal: profile.fatGoal,
         waterGoal: profile.waterGoal, sleepGoal: profile.sleepGoal,
-      })
+      }
+      for (const k of Object.keys(payload)) {
+        if (payload[k] === null || payload[k] === undefined) delete payload[k]
+      }
+      const res = await auth.updateProfile(payload)
       // keep the cached identity in sync so other pages show the new name
       try {
         const raw = localStorage.getItem('nutriai_user')
@@ -520,38 +602,21 @@ export default function ProfilePage() {
                       color:theme.primary, fontSize:'0.78rem', fontWeight:800,
                       boxShadow:`0 0 14px ${theme.primary}30` 
                     }}
-                  >⚡ LV.7 Expert</motion.div>
+                  >⚡ LV.{xpStats?.level ?? '–'} {xpStats?.levelName || ''}</motion.div>
                 </div>
                 <div style={{ color:'var(--text-muted)', fontSize:'0.82rem', marginBottom:'8px' }}>
-                  @{profile.username} · {profile.location}
+                  @{profile.username || '—'}{profile.location ? ` · ${profile.location}` : ''}
                 </div>
-                {editMode ? (
-                  <input
-                    value={profile.tagline}
-                    onChange={e=>setProfile(p=>({...p,tagline:e.target.value}))}
-                    style={{
-                      background:'var(--border)',
-                      border:`1px solid ${theme.primary}30`,
-                      borderRadius:'8px', padding:'6px 12px',
-                      color:'var(--text-faint)', fontSize:'0.85rem', outline:'none',
-                      width:'100%', maxWidth:'420px', boxSizing:'border-box',
-                      fontFamily:"'Satoshi',sans-serif"
-                    }}
-                  />
-                ) : (
-                  <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', fontStyle:'italic' }}>
-                    "{profile.tagline}"
-                  </div>
-                )}
+                {/* Tagline removed: it had no backend field, so edits were silently lost. */}
               </div>
 
-              {/* QUICK STATS */}
+              {/* QUICK STATS — real backend values, never literals */}
               <div style={{ display:'flex', gap:'12px', paddingTop:'56px', flexWrap:'wrap' }}>
                 {[
-                  { val:'12,340', label:'XP',         color:theme.primary  },
-                  { val:'14',     label:'Day Streak',  color:'#9DCE2C'      },
-                  { val:'#6',     label:'Global Rank', color:theme.secondary},
-                  { val:'16',     label:'Badges',      color:'#FFD700'      },
+                  { val:(xpStats?.totalXP ?? 0).toLocaleString('en-GB'), label:'XP',         color:theme.primary  },
+                  { val:String(realStats?.streak ?? 0),     label:'Day Streak',  color:'#9DCE2C'      },
+                  { val:String(realStats?.totalWorkouts ?? 0), label:'Workouts', color:theme.secondary},
+                  { val:String(realStats?.totalBadges ?? 0),  label:'Badges',      color:'#FFD700'      },
                 ].map(s => (
                   <div key={s.label} style={{
                     background:'var(--border)',
@@ -586,7 +651,7 @@ export default function ProfilePage() {
                     <motion.button
                       whileHover={{ scale:1.04 }}
                       whileTap={{ scale:0.96 }}
-                      onClick={()=>setEditMode(false)}
+                      onClick={cancelEdit}
                       style={{
                         background:'var(--border)',
                         border:'1px solid var(--border)',
@@ -599,7 +664,7 @@ export default function ProfilePage() {
                   <motion.button
                     whileHover={{ scale:1.04 }}
                     whileTap={{ scale:0.96 }}
-                    onClick={()=>setEditMode(true)}
+                    onClick={startEdit}
                     style={{
                       background:'var(--border)',
                       border:`1px solid ${theme.primary}30`,
@@ -694,7 +759,7 @@ export default function ProfilePage() {
                           <motion.button
                             whileHover={{ scale:1.04 }}
                             whileTap={{ scale:0.96 }}
-                            onClick={()=>setEditMode(false)}
+                            onClick={cancelEdit}
                             style={{
                               background:'var(--border)',
                               border:'1px solid var(--border)',
@@ -707,7 +772,7 @@ export default function ProfilePage() {
                         <motion.button
                           whileHover={{ scale:1.04 }}
                           whileTap={{ scale:0.96 }}
-                          onClick={()=>setEditMode(true)}
+                          onClick={startEdit}
                           style={{
                             background:'var(--border)',
                             border:`1px solid ${theme.primary}30`,
@@ -783,34 +848,50 @@ export default function ProfilePage() {
                       ))}
                     </div>
 
-                    {/* Danger zone */}
+                    {/* Danger zone — Export is real (downloads your own data
+                        as JSON from existing endpoints). Reset/Delete have no
+                        backend endpoint, so they are shown as unavailable
+                        instead of dead buttons that pretend to work. */}
                     <div style={{ ...card, padding:'24px', border:'1px solid rgba(239,68,68,0.15)' }}>
                       <h3 style={{ fontFamily:"'Clash Display',sans-serif", color:'#EF4444', fontSize:'0.95rem', fontWeight:700, margin:'0 0 14px', display:'flex', alignItems:'center', gap:'6px' }}>
                         ⚠️ Danger Zone
                       </h3>
+                      <div style={{
+                        display:'flex', justifyContent:'space-between', alignItems:'center',
+                        padding:'10px 0', borderBottom:'1px solid var(--border)'
+                      }}>
+                        <div>
+                          <div style={{ color:'var(--text-faint)', fontSize:'0.82rem', fontWeight:600 }}>Export Data</div>
+                          <div style={{ color:'#4B5563', fontSize:'0.72rem' }}>Download your profile, meals, workouts, water & sleep as JSON</div>
+                          {exportMsg && <div style={{ color: exportMsg.startsWith('Export failed') ? '#EF4444' : '#9DCE2C', fontSize:'0.72rem', marginTop:'4px' }}>{exportMsg}</div>}
+                        </div>
+                        <motion.button
+                          whileHover={{ scale:1.05, background:'rgba(79,211,237,0.1)' }}
+                          whileTap={{ scale:0.95 }}
+                          disabled={exporting}
+                          onClick={handleExportData}
+                          style={{
+                            background:'transparent',
+                            border:'1px solid rgba(79,211,237,0.3)',
+                            borderRadius:'8px', padding:'5px 14px',
+                            color:'#4FD3ED', cursor: exporting ? 'wait' : 'pointer', fontSize:'0.75rem', fontWeight:600,
+                            opacity: exporting ? 0.6 : 1,
+                          }}
+                        >{exporting ? '…' : 'Export'}</motion.button>
+                      </div>
                       {[
-                        { label:'Reset All Data',   desc:'Wipe your logged meals & workouts', color:'#FF6B5E' },
-                        { label:'Export Data',      desc:'Download all your data as CSV',     color:'#4FD3ED' },
-                        { label:'Delete Account',   desc:'Permanently remove your account',  color:'#EF4444' },
+                        { label:'Reset All Data',   desc:'Wipe your logged meals & workouts' },
+                        { label:'Delete Account',   desc:'Permanently remove your account' },
                       ].map(a => (
                         <div key={a.label} style={{
                           display:'flex', justifyContent:'space-between', alignItems:'center',
-                          padding:'10px 0', borderBottom:'1px solid var(--border)'
+                          padding:'10px 0', borderBottom:'1px solid var(--border)', opacity: 0.6,
                         }}>
                           <div>
                             <div style={{ color:'var(--text-faint)', fontSize:'0.82rem', fontWeight:600 }}>{a.label}</div>
                             <div style={{ color:'#4B5563', fontSize:'0.72rem' }}>{a.desc}</div>
                           </div>
-                          <motion.button
-                            whileHover={{ scale:1.05, background:`${a.color}18` }}
-                            whileTap={{ scale:0.95 }}
-                            style={{
-                              background:'transparent',
-                              border:`1px solid ${a.color}30`,
-                              borderRadius:'8px', padding:'5px 14px',
-                              color:a.color, cursor:'pointer', fontSize:'0.75rem', fontWeight:600
-                            }}
-                          >{a.label.split(' ')[0]}</motion.button>
+                          <span style={{ fontSize:'0.7rem', fontWeight:700, color:'#FFB020', border:'1px solid rgba(255,176,32,0.4)', borderRadius:'99px', padding:'3px 10px', whiteSpace:'nowrap' }}>Not available yet</span>
                         </div>
                       ))}
                     </div>
@@ -869,10 +950,10 @@ export default function ProfilePage() {
                   </h3>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap:'14px' }}>
                     {[
-                      { label:'BMR',            val:Math.round(tdmr), color:'var(--text-muted)',      unit:'kcal', icon:'💤' },
-                      { label:'TDEE',           val:tdee,             color:theme.primary,  unit:'kcal', icon:'🔥' },
-                      { label:'Cut (-300)',      val:tdee-300,         color:'#4FD3ED',      unit:'kcal', icon:'📉' },
-                      { label:'Bulk (+300)',     val:tdee+300,         color:'#FF6B5E',      unit:'kcal', icon:'📈' },
+                      { label:'BMR',            val:tdmr == null ? '–' : Math.round(tdmr), color:'var(--text-muted)',      unit:'kcal', icon:'💤' },
+                      { label:'TDEE',           val:tdee ?? '–',             color:theme.primary,  unit:'kcal', icon:'🔥' },
+                      { label:'Cut (-300)',      val:tdee == null ? '–' : tdee-300,         color:'#4FD3ED',      unit:'kcal', icon:'📉' },
+                      { label:'Bulk (+300)',     val:tdee == null ? '–' : tdee+300,         color:'#FF6B5E',      unit:'kcal', icon:'📈' },
                     ].map(s => (
                       <motion.div key={s.label}
                         whileHover={{ y:-4, boxShadow:`0 8px 24px ${s.color}25` }}
@@ -890,18 +971,27 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Weight progress chart */}
+                {/* Weight progress chart — real logs from /api/weight/history */}
                 <div style={{ ...card, padding:'28px' }}>
                   <h3 style={{ fontFamily:"'Clash Display',sans-serif", color: 'var(--text-primary)', fontSize:'1.05rem', fontWeight:700, margin:'0 0 20px' }}>
-                    📈 Weight Trend (10 Weeks)
+                    📈 Weight Trend
                   </h3>
+                  {weightHistory === null ? (
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', padding:'20px 0', textAlign:'center' }}>Loading…</div>
+                  ) : weightHistory.length === 0 ? (
+                    <div style={{ color:'var(--text-muted)', fontSize:'0.85rem', padding:'20px 0', textAlign:'center' }}>
+                      No weight logs yet — log your weight to see your trend here.
+                    </div>
+                  ) : (
+                  <>
                   <div style={{ display:'flex', alignItems:'flex-end', gap:'14px', height:'100px', marginBottom:'10px' }}>
-                    {WEIGHT_HISTORY.map((d,i) => {
-                      const minW=73, maxW=80
-                      const pct = (d.w-minW)/(maxW-minW)
-                      const h   = Math.max(20, (1-pct)*90+10)
+                    {weightHistory.map((d,i) => {
+                      const ws = weightHistory.map(x => x.w)
+                      const minW = Math.min(...ws) - 1, maxW = Math.max(...ws) + 1
+                      const pct = maxW === minW ? 0.5 : (d.w-minW)/(maxW-minW)
+                      const h   = Math.max(20, pct*90+10)
                       return (
-                        <div key={d.date} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:'4px' }}>
+                        <div key={d.date + i} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:'4px' }}>
                           <div style={{ color:theme.primary, fontSize:'0.68rem', fontWeight:600 }}>{d.w}</div>
                           <motion.div
                             initial={{ height:0 }}
@@ -909,10 +999,10 @@ export default function ProfilePage() {
                             transition={{ delay:i*0.08, duration:0.6, type:'spring' }}
                             style={{
                               width:'100%', borderRadius:'6px 6px 0 0',
-                              background: i===WEIGHT_HISTORY.length-1
-                                ? `linear-gradient(180deg,${theme.primary},${theme.primary}60)` 
+                              background: i===weightHistory.length-1
+                                ? `linear-gradient(180deg,${theme.primary},${theme.primary}60)`
                                 : `linear-gradient(180deg,${theme.secondary}80,${theme.secondary}30)`,
-                              boxShadow: i===WEIGHT_HISTORY.length-1 ? `0 0 12px ${theme.primary}50` : 'none'
+                              boxShadow: i===weightHistory.length-1 ? `0 0 12px ${theme.primary}50` : 'none'
                             }}
                           />
                         </div>
@@ -920,10 +1010,12 @@ export default function ProfilePage() {
                     })}
                   </div>
                   <div style={{ display:'flex', justifyContent:'space-between' }}>
-                    {WEIGHT_HISTORY.map(d => (
-                      <div key={d.date} style={{ color:'#4B5563', fontSize:'0.68rem', flex:1, textAlign:'center' }}>{d.date}</div>
+                    {weightHistory.map((d,i) => (
+                      <div key={d.date + i} style={{ color:'#4B5563', fontSize:'0.68rem', flex:1, textAlign:'center' }}>{d.date}</div>
                     ))}
                   </div>
+                  </>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -1255,6 +1347,7 @@ export default function ProfilePage() {
                       🔔 Notification Preferences
                     </h3>
                     <p style={{ color:'#4B5563', fontSize:'0.8rem', margin:'0 0 20px' }}>Control what NutriAI notifies you about</p>
+                    <p style={{ color:'#FFB020', fontSize:'0.78rem', margin:'0 0 16px', background:'rgba(255,176,32,0.08)', border:'1px solid rgba(255,176,32,0.25)', borderRadius:'10px', padding:'8px 12px' }}>Coming soon — these switches are shown for preview and don&apos;t change anything yet.</p>
                     {NOTIF_OPTS.map((n,i) => (
                       <motion.div key={n.id}
                         initial={{ opacity:0, x:-20 }}
@@ -1275,7 +1368,7 @@ export default function ProfilePage() {
                             <div style={{ color:'#374151', fontSize:'0.72rem' }}>{n.desc}</div>
                           </div>
                         </div>
-                        <Toggle on={notifs[n.id]} onChange={()=>setNotifs(p=>({...p,[n.id]:!p[n.id]}))} color={theme.primary}/>
+                        <Toggle disabled on={notifs[n.id]} onChange={()=>setNotifs(p=>({...p,[n.id]:!p[n.id]}))} color={theme.primary}/>
                       </motion.div>
                     ))}
                   </div>
@@ -1332,6 +1425,7 @@ export default function ProfilePage() {
                       🔒 Privacy Settings
                     </h3>
                     <p style={{ color:'#4B5563', fontSize:'0.8rem', margin:'0 0 20px' }}>Manage what others can see about you</p>
+                    <p style={{ color:'#FFB020', fontSize:'0.78rem', margin:'0 0 16px', background:'rgba(255,176,32,0.08)', border:'1px solid rgba(255,176,32,0.25)', borderRadius:'10px', padding:'8px 12px' }}>Coming soon — these switches are shown for preview and don&apos;t change anything yet.</p>
                     {PRIVACY_OPTS.map((p,i) => (
                       <motion.div key={p.id}
                         initial={{ opacity:0, x:-20 }}
@@ -1352,7 +1446,7 @@ export default function ProfilePage() {
                             <div style={{ color:'#374151', fontSize:'0.72rem' }}>{p.desc}</div>
                           </div>
                         </div>
-                        <Toggle on={privacyS[p.id]} onChange={()=>setPrivacyS(pp=>({...pp,[p.id]:!pp[p.id]}))} color='#4FD3ED'/>
+                        <Toggle disabled on={privacyS[p.id]} onChange={()=>setPrivacyS(pp=>({...pp,[p.id]:!pp[p.id]}))} color='#4FD3ED'/>
                       </motion.div>
                     ))}
                   </div>
@@ -1408,7 +1502,11 @@ export default function ProfilePage() {
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'16px' }}>
                   {apps.map((app,i) => {
                     const isGFit = app.name === 'Google Fit'
-                    const connected = isGFit ? gfit.connected : app.connected
+                    // Only Google Fit has a real connection; every other app
+                    // renders as disconnected with a "Coming soon" button —
+                    // the old hardcoded connected:true for Apple Health/Fitbit
+                    // claimed syncs that never happened.
+                    const connected = isGFit ? gfit.connected : false
                     return (
                     <motion.div key={app.name}
                       initial={{ opacity:0, scale:0.9 }}
@@ -1453,20 +1551,21 @@ export default function ProfilePage() {
                         </div>
                       )}
                       <motion.button
-                        whileHover={{ scale:1.04 }}
-                        whileTap={{ scale:0.96 }}
-                        disabled={isGFit && gfit.busy}
-                        onClick={isGFit ? (connected ? disconnectGfit : connectGfit) : ()=>setApps(p=>p.map(a=>a.name===app.name?{...a,connected:!a.connected}:a))}
+                        whileHover={isGFit ? { scale:1.04 } : {}}
+                        whileTap={isGFit ? { scale:0.96 } : {}}
+                        disabled={(isGFit && gfit.busy) || !isGFit}
+                        onClick={isGFit ? (connected ? disconnectGfit : connectGfit) : undefined}
+                        title={isGFit ? undefined : 'Coming soon — only Google Fit syncs today'}
                         style={{
                           width:'100%', padding:'9px',
                           background: connected ? 'rgba(239,68,68,0.12)' : `${app.color}18`,
                           border:`1px solid ${connected ? 'rgba(239,68,68,0.3)' : app.color+'35'}`,
                           borderRadius:'10px',
                           color: connected ? '#EF4444' : app.color,
-                          cursor: (isGFit && gfit.busy) ? 'wait' : 'pointer', fontSize:'0.82rem', fontWeight:700,
-                          opacity: (isGFit && gfit.busy) ? 0.7 : 1
+                          cursor: !isGFit ? 'not-allowed' : (isGFit && gfit.busy) ? 'wait' : 'pointer', fontSize:'0.82rem', fontWeight:700,
+                          opacity: !isGFit ? 0.55 : (isGFit && gfit.busy) ? 0.7 : 1
                         }}
-                      >{(isGFit && gfit.busy) ? '⏳ Working…' : connected ? '🔌 Disconnect' : `🔗 Connect ${app.name}`}</motion.button>
+                      >{(isGFit && gfit.busy) ? '⏳ Working…' : !isGFit ? 'Coming soon' : connected ? '🔌 Disconnect' : `🔗 Connect ${app.name}`}</motion.button>
                       {isGFit && connected && (
                         <motion.button
                           whileHover={{ scale:1.04 }}

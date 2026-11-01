@@ -202,52 +202,39 @@ export const logMeal = meals.log
 
 export const deleteMeal = meals.remove
 
-/** Fetch today's nutrition from real API */
+/** Fetch today's nutrition from real API.
+ * THROWS on failure — callers must show an error state, never render a
+ * silent zero day (a backend outage used to look like an empty day). */
 export const getTodayNutrition = async () => {
-  try {
-    // Add _t to bust browser cache (prevents 304 returning stale data)
-    const res = await api.get(`/api/meals/today?_t=${Date.now()}`)
-    const data = res.data
-    // Handle both mock server (data.totals.calories) and real server (data.totalCalories)
-    const calories = data.totalCalories ?? data.totals?.calories ?? 0
-    const protein  = data.protein  ?? data.totals?.protein  ?? 0
-    const carbs    = data.carbs    ?? data.totals?.carbs    ?? 0
-    const fat      = data.fat      ?? data.totals?.fat      ?? 0
-    return {
-      calories:     Math.round(calories),
-      protein:      Math.round(protein),
-      carbs:        Math.round(carbs),
-      fat:          Math.round(fat),
-      goalCalories: data.goalCalories || 1800,
-      meals:        data.meals || [],
-      grouped:      data.grouped || {},
-    }
-  } catch (e) {
-    console.error('getTodayNutrition error:', e.message)
-    return { calories: 0, protein: 0, carbs: 0, fat: 0, goalCalories: 1800, meals: [], grouped: {} }
+  // Add _t to bust browser cache (prevents 304 returning stale data)
+  const res = await api.get(`/api/meals/today?_t=${Date.now()}`)
+  const data = res.data
+  // Handle both mock server (data.totals.calories) and real server (data.totalCalories)
+  const calories = data.totalCalories ?? data.totals?.calories ?? 0
+  const protein  = data.protein  ?? data.totals?.protein  ?? 0
+  const carbs    = data.carbs    ?? data.totals?.carbs    ?? 0
+  const fat      = data.fat      ?? data.totals?.fat      ?? 0
+  return {
+    calories:     Math.round(calories),
+    protein:      Math.round(protein),
+    carbs:        Math.round(carbs),
+    fat:          Math.round(fat),
+    goalCalories: data.goalCalories || 2000,
+    meals:        data.meals || [],
+    grouped:      data.grouped || {},
   }
 }
 
-/** Fetch weekly nutrition from real API */
+/** Fetch weekly nutrition from real API. THROWS on failure (see above). */
 export const getWeeklyNutrition = async () => {
-  try {
-    const res = await api.get('/api/meals/weekly')
-    return res.data
-  } catch (e) {
-    console.error('getWeeklyNutrition error:', e.message)
-    return []
-  }
+  const res = await api.get('/api/meals/weekly')
+  return res.data
 }
 
-/** Fetch user XP and level from real API */
+/** Fetch user XP and level from real API. THROWS on failure (see above). */
 export const getUserXP = async () => {
-  try {
-    const res = await api.get('/api/badges/xp')
-    return res.data
-  } catch (e) {
-    console.error('getUserXP error:', e.message)
-    return { xp: 0, level: 1, levelName: 'Rookie', totalXP: 0 }
-  }
+  const res = await api.get('/api/badges/xp')
+  return res.data
 }
 
 /** Fetch today's meals from real API */

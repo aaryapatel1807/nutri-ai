@@ -6,50 +6,6 @@ import useIsMobile from '../../lib/useIsMobile'
 import ScenicBackdrop from '@/components/shared/ScenicBackdrop'
 
 
-const BADGES_MOCK = [
-  // NUTRITION BADGES
-  { id:1,  name:'First Bite',        emoji:'🍽️', category:'Nutrition',  rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Log your very first meal',                 color:'#15B2CF', unlockDate:'Jan 15' },
-  { id:2,  name:'Protein King',      emoji:'💪', category:'Nutrition',  rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Hit 200g+ protein for 7 days straight',    color:'#15B2CF', unlockDate:'Feb 2' },
-  { id:3,  name:'Hydration Hero',    emoji:'💧', category:'Nutrition',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Drink 8 glasses of water for 14 days',     color:'#4FD3ED', unlockDate:'Feb 10' },
-  { id:4,  name:'Clean Eater',       emoji:'🥗', category:'Nutrition',  rarity:'Epic',      xp:800,  unlocked:true,  progress:100, desc:'30 days of hitting all macro targets',     color:'#B5E5F2', unlockDate:'Feb 28' },
-  { id:5,  name:'Macro Master',      emoji:'⚖️', category:'Nutrition',  rarity:'Legendary', xp:2000, unlocked:false, progress:68,  desc:'Perfect macros 60 days in a row',          color:'#FFD700' },
-  { id:6,  name:'Veggie Warrior',    emoji:'🥦', category:'Nutrition',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Eat 5 servings of vegetables daily for 21 days', color:'#B5E5F2', unlockDate:'Mar 1' },
-  { id:7,  name:'Sugar Slayer',      emoji:'🚫', category:'Nutrition',  rarity:'Epic',      xp:750,  unlocked:false, progress:45,  desc:'Zero added sugar for 30 consecutive days', color:'#1FA8C9' },
-  { id:8,  name:'Meal Prep God',     emoji:'🍱', category:'Nutrition',  rarity:'Legendary', xp:1500, unlocked:false, progress:30,  desc:'Prep 52 weeks of meals in advance',        color:'#15B2CF' },
-
-  // FITNESS BADGES
-  { id:9,  name:'First Rep',         emoji:'🏋️', category:'Fitness',   rarity:'Common',    xp:100,  unlocked:true,  progress:100, desc:'Complete your first workout',              color:'#7B61FF', unlockDate:'Jan 15' },
-  { id:10, name:'Iron Will',         emoji:'🔩', category:'Fitness',   rarity:'Rare',      xp:500,  unlocked:true,  progress:100, desc:'Work out 4 times per week for a month',    color:'#7B61FF', unlockDate:'Feb 5' },
-  { id:11, name:'Century Club',      emoji:'💯', category:'Fitness',   rarity:'Epic',      xp:1000, unlocked:true,  progress:100, desc:'Complete 100 total workouts',              color:'#A78BFA', unlockDate:'Feb 25' },
-  { id:12, name:'Beast Mode',        emoji:'🦁', category:'Fitness',   rarity:'Legendary', xp:2500, unlocked:false, progress:72,  desc:'500 total workouts completed',             color:'#1FA8C9' },
-  { id:13, name:'Early Bird',        emoji:'🌅', category:'Fitness',   rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Work out before 7am for 10 days',          color:'#FFD700', unlockDate:'Jan 28' },
-  { id:14, name:'Night Owl',         emoji:'🦉', category:'Fitness',   rarity:'Rare',      xp:300,  unlocked:false, progress:60,  desc:'Work out after 9pm for 15 days',           color:'#A78BFA' },
-  { id:15, name:'Cardio King',       emoji:'🏃', category:'Fitness',   rarity:'Epic',      xp:800,  unlocked:false, progress:55,  desc:'Run 100km total distance',                 color:'#4FD3ED' },
-  { id:16, name:'Strength Legend',   emoji:'⚡', category:'Fitness',   rarity:'Legendary', xp:3000, unlocked:false, progress:25,  desc:'Lift 1000 total tons (volume)',             color:'#FFD700' },
-
-  // STREAK BADGES
-  { id:17, name:'Week Warrior',      emoji:'📅', category:'Streak',    rarity:'Common',    xp:150,  unlocked:true,  progress:100, desc:'7-day streak achieved',                    color:'#15B2CF', unlockDate:'Jan 22' },
-  { id:18, name:'Two Week Titan',    emoji:'🔥', category:'Streak',    rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'14-day streak achieved',                   color:'#1FA8C9', unlockDate:'Feb 1' },
-  { id:19, name:'Monthly Monster',   emoji:'📆', category:'Streak',    rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'30-day streak achieved',                   color:'#1FA8C9', unlockDate:'Feb 15' },
-  { id:20, name:'Quarter Legend',    emoji:'🗓️', category:'Streak',   rarity:'Epic',      xp:2000, unlocked:false, progress:40,  desc:'90-day streak — true dedication',          color:'#1FA8C9' },
-  { id:21, name:'Year of Champions', emoji:'👑', category:'Streak',   rarity:'Mythic',    xp:10000,unlocked:false, progress:3,   desc:'365-day unbroken streak',                  color:'#FFD700' },
-  { id:22, name:'Comeback Kid',      emoji:'↩️', category:'Streak',   rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Return after a 7+ day break',              color:'#15B2CF', unlockDate:'Feb 20' },
-
-  // WEIGHT/BODY BADGES
-  { id:23, name:'First Kilo',        emoji:'⚖️', category:'Body',     rarity:'Common',    xp:300,  unlocked:true,  progress:100, desc:'Lose your first kilogram',                 color:'#4FD3ED', unlockDate:'Jan 30' },
-  { id:24, name:'5kg Club',          emoji:'🏅', category:'Body',     rarity:'Rare',      xp:750,  unlocked:true,  progress:100, desc:'Lose 5 kilograms total',                   color:'#4FD3ED', unlockDate:'Feb 28' },
-  { id:25, name:'10kg Champion',     emoji:'🥇', category:'Body',     rarity:'Epic',      xp:1500, unlocked:false, progress:48,  desc:'Lose 10 kilograms total',                  color:'#FFD700' },
-  { id:26, name:'Body Recomp',       emoji:'🔄', category:'Body',     rarity:'Legendary', xp:3000, unlocked:false, progress:20,  desc:'Lose 5% body fat while gaining muscle',    color:'#7B61FF' },
-  { id:27, name:'Muscle Machine',    emoji:'💪', category:'Body',     rarity:'Epic',      xp:1200, unlocked:false, progress:62,  desc:'Gain 5kg of lean muscle mass',             color:'#15B2CF' },
-
-  // SOCIAL/SPECIAL
-  { id:28, name:'Profile Complete',  emoji:'✅', category:'Special',  rarity:'Common',    xp:200,  unlocked:true,  progress:100, desc:'Complete your NutriAI profile',            color:'#B5E5F2', unlockDate:'Jan 15' },
-  { id:29, name:'AI Apprentice',     emoji:'🤖', category:'Special',  rarity:'Rare',      xp:400,  unlocked:true,  progress:100, desc:'Have 50 conversations with AI Coach',      color:'#4FD3ED', unlockDate:'Mar 1' },
-  { id:30, name:'Data Nerd',         emoji:'📊', category:'Special',  rarity:'Epic',      xp:600,  unlocked:false, progress:78,  desc:'Log data every single day for 60 days',   color:'#7B61FF' },
-  { id:31, name:'Recipe Master',     emoji:'👨‍🍳',category:'Special',  rarity:'Rare',      xp:500,  unlocked:false, progress:40,  desc:'Save and cook 25 different recipes',      color:'#15B2CF' },
-  { id:32, name:'NutriAI Legend',    emoji:'🌟', category:'Special',  rarity:'Mythic',    xp:50000,unlocked:false, progress:8,   desc:'The ultimate achievement — master of all', color:'#FFD700' },
-]
-
 const LEVELS = [
   { level:1,  name:'Rookie',         minXP:0,     maxXP:500,   color:'var(--text-muted)', emoji:'🌱' },
   { level:2,  name:'Beginner',       minXP:500,   maxXP:1200,  color:'#9DCE2C', emoji:'🌿' },
@@ -61,28 +17,6 @@ const LEVELS = [
   { level:8,  name:'Elite',          minXP:14000, maxXP:20000, color:'#FF6B5E', emoji:'⭐' },
   { level:9,  name:'Master',         minXP:20000, maxXP:30000, color:'#FFD700', emoji:'👑' },
   { level:10, name:'Legend',         minXP:30000, maxXP:999999,color:'#FF6B5E', emoji:'🌟' },
-]
-
-const CHALLENGES = [
-  { id:1, name:'7-Day Protein Sprint', emoji:'💪', desc:'Hit 180g+ protein every day this week', progress:5, total:7, reward:500, xp:300,  color:'#15B2CF', deadline:'2 days left',  type:'Weekly' },
-  { id:2, name:'10k Steps Daily',      emoji:'👟', desc:'Walk 10,000 steps for 5 consecutive days', progress:3, total:5, reward:300, xp:200, color:'#4FD3ED', deadline:'3 days left',  type:'Weekly' },
-  { id:3, name:'Hydration Master',     emoji:'💧', desc:'8 glasses of water for 7 days straight',  progress:4, total:7, reward:250, xp:150, color:'#60A5FA', deadline:'4 days left',  type:'Weekly' },
-  { id:4, name:'Zero Cheat Days',      emoji:'🥗', desc:'Stick to meal plan all 30 days this month',progress:14,total:30,reward:2000,xp:1000,color:'#B5E5F2', deadline:'16 days left', type:'Monthly' },
-  { id:5, name:'Strength PR Week',     emoji:'🏋️', desc:'Set a new PR in any lift this week',      progress:0, total:1, reward:400, xp:250, color:'#7B61FF', deadline:'5 days left',  type:'Weekly' },
-  { id:6, name:'100 Push Ups Today',   emoji:'⬆️', desc:'Complete 100 push ups in a single day',  progress:67,total:100,reward:200,xp:100, color:'#1FA8C9', deadline:'Today',        type:'Daily' },
-  { id:7, name:'Meal Prep Sunday',     emoji:'🍱', desc:'Prep all meals for next 5 days today',    progress:0, total:1, reward:350, xp:200, color:'#15B2CF', deadline:'Today',        type:'Daily' },
-  { id:8, name:'Sleep 8 Hours',        emoji:'😴', desc:'Get 8+ hours of sleep for 5 nights',      progress:2, total:5, reward:300, xp:200, color:'#A78BFA', deadline:'3 days left',  type:'Weekly' },
-]
-
-const LEADERBOARD = [
-  { rank:1, name:'Priya S.',    xp:28450, level:9, avatar:'PS', color:'#FFD700', badge:'👑', change:'↑2' },
-  { rank:2, name:'Rahul M.',    xp:24200, level:9, avatar:'RM', color:'#C0C0C0', badge:'🥈', change:'↓1' },
-  { rank:3, name:'Arjun K.',    xp:19800, level:8, avatar:'AK', color:'#CD7F32', badge:'🥉', change:'↑1' },
-  { rank:4, name:'Sneha P.',    xp:16500, level:8, avatar:'SP', color:'#FF6B5E', badge:'⭐', change:'↑3' },
-  { rank:5, name:'Vikram T.',   xp:14200, level:7, avatar:'VT', color:'#7B61FF', badge:'🏆', change:'↓2' },
-  { rank:6, name:'Aarya (You)', xp:12340, level:7, avatar:'A',  color:'#FFB020', badge:'💎', change:'↑4', isUser:true },
-  { rank:7, name:'Meera R.',    xp:11800, level:7, avatar:'MR', color:'#7B61FF', badge:'🔥', change:'↓1' },
-  { rank:8, name:'Karan S.',    xp:9400,  level:6, avatar:'KS', color:'#B5E5F2', badge:'💫', change:'→0' },
 ]
 
 const RARITY_CONFIG = {
@@ -338,7 +272,18 @@ export default function Achievements() {
           levelName: xpRes.data.levelName,
           nextLevelXP: xpRes.data.nextLevelXP
         })
-        setBadges(badgesRes.data)
+        // Map the real API shape onto the card's shape: the API returns
+        // `description` / `unlocked` / `unlockedAt`, while the card reads
+        // `desc` / `progress` / `unlockDate`. Mapping here (not in the card)
+        // also fixes the search crash on badge.desc.
+        setBadges((Array.isArray(badgesRes.data) ? badgesRes.data : []).map(b => ({
+          ...b,
+          desc: b.description ?? b.desc ?? '',
+          progress: b.unlocked ? 100 : 0,
+          unlockDate: b.unlockedAt
+            ? new Date(b.unlockedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+            : '',
+        })))
         setStreak(statsRes.data.streak)
       } catch (err) {
         console.error('Failed to load achievements:', err)
@@ -361,8 +306,8 @@ export default function Achievements() {
     const filterMatch = activeFilter === 'All' || 
       (activeFilter === 'Unlocked' && badge.unlocked) || 
       (activeFilter === 'Locked' && !badge.unlocked)
-    const searchMatch = badge.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       badge.desc.toLowerCase().includes(searchTerm.toLowerCase())
+    const searchMatch = (badge.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                       (badge.desc || '').toLowerCase().includes(searchTerm.toLowerCase())
     return categoryMatch && filterMatch && searchMatch
   })
 
@@ -374,7 +319,9 @@ export default function Achievements() {
     }
   }
 
-  const currentBadges = badges.length > 0 ? badges : BADGES_MOCK
+  // Real badges only — no mock fallback. An empty API response means the
+  // user genuinely has no badges yet, not 16 fake unlocked ones.
+  const currentBadges = badges
   const stats = {
     total: currentBadges.length,
     unlocked: currentBadges.filter(b => b.unlocked).length,
@@ -587,7 +534,7 @@ export default function Achievements() {
 
             {/* Results count */}
             <div style={{ color:'var(--text-muted)', fontSize:'0.85rem' }}>
-              Showing {filteredBadges.length} of {(badges.length > 0 ? badges : BADGES_MOCK).length} achievements
+              Showing {filteredBadges.length} of {badges.length} achievements
             </div>
           </motion.div>
 
@@ -602,9 +549,15 @@ export default function Achievements() {
               }}>
                 {filteredBadges.length === 0 && (
                   <div style={{ gridColumn:'1 / -1', textAlign:'center', padding:'48px 20px', color:'var(--text-muted)' }}>
-                    <div style={{ fontSize:'2.5rem', marginBottom:'12px' }}>🌱</div>
-                    <div style={{ fontWeight:700, color:'var(--text-primary)', marginBottom:'8px' }}>No badges yet</div>
-                    <div style={{ fontSize:'0.85rem' }}>Log your first meal or finish a workout to start earning badges.</div>
+                    <div style={{ fontSize:'2.5rem', marginBottom:'12px' }}>{badges.length === 0 ? '🌱' : '🔍'}</div>
+                    <div style={{ fontWeight:700, color:'var(--text-primary)', marginBottom:'8px' }}>
+                      {badges.length === 0 ? 'No badges yet' : 'No achievements match'}
+                    </div>
+                    <div style={{ fontSize:'0.85rem' }}>
+                      {badges.length === 0
+                        ? 'Log your first meal or finish a workout to start earning badges.'
+                        : 'Try adjusting your filters or search terms.'}
+                    </div>
                   </div>
                 )}
                 {filteredBadges.map((badge, index) => (
@@ -616,25 +569,6 @@ export default function Achievements() {
                   />
                 ))}
               </div>
-
-              {filteredBadges.length === 0 && (
-                <motion.div
-                  initial={{ opacity:0, scale:0.9 }}
-                  animate={{ opacity:1, scale:1 }}
-                  style={{
-                    ...card, padding:'60px 40px', textAlign:'center',
-                    background:'rgba(10,10,18,0.6)'
-                  }}
-                >
-                  <div style={{ fontSize:'3rem', marginBottom:'16px', opacity:0.5 }}>🔍</div>
-                  <div style={{ color:'var(--text-muted)', fontSize:'1.1rem', marginBottom:'8px' }}>
-                    No achievements found
-                  </div>
-                  <div style={{ color:'#4B5563', fontSize:'0.9rem' }}>
-                    Try adjusting your filters or search terms
-                  </div>
-                </motion.div>
-              )}
             </div>
 
             {/* RIGHT SIDEBAR */}
@@ -715,73 +649,6 @@ export default function Achievements() {
                 </div>
               </motion.div>
 
-              {/* LEADERBOARD */}
-              <motion.div
-                initial={{ opacity:0, x:20 }}
-                animate={{ opacity:1, x:0 }}
-                transition={{ delay:0.5 }}
-                style={{ ...card, padding:'20px' }}
-              >
-                <div style={{
-                  fontFamily:"'Clash Display',sans-serif",
-                  color: 'var(--text-primary)', fontSize:'1rem', fontWeight:700,
-                  marginBottom:'16px', display:'flex', alignItems:'center', gap:'8px'
-                }}>
-                  🏆 Leaderboard
-                </div>
-                <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
-                  {LEADERBOARD.map((user, i) => (
-                    <motion.div
-                      key={user.rank}
-                      initial={{ opacity:0, x:20 }}
-                      animate={{ opacity:1, x:0 }}
-                      transition={{ delay:0.6 + i*0.05 }}
-                      whileHover={{ x:4 }}
-                      style={{
-                        display:'flex', alignItems:'center', gap:'10px',
-                        padding:'10px', borderRadius:'10px',
-                        background: user.isUser ? 'rgba(79,211,237,0.1)' : 'var(--border)',
-                        border: user.isUser ? '1px solid rgba(79,211,237,0.3)' : '1px solid var(--border)',
-                        cursor: user.isUser ? 'default' : 'pointer'
-                      }}
-                    >
-                      <div style={{
-                        width:'24px', height:'24px',
-                        borderRadius:'50%', background:user.color,
-                        display:'flex', alignItems:'center', justifyContent:'center',
-                        fontSize:'0.7rem', fontWeight:700, color:'#000'
-                      }}>
-                        {user.rank}
-                      </div>
-                      <div style={{
-                        width:'32px', height:'32px', borderRadius:'50%',
-                        background:user.color, display:'flex', alignItems:'center',
-                        justifyContent:'center', fontSize:'0.8rem', fontWeight:700,
-                        color:'#000'
-                      }}>
-                        {user.avatar}
-                      </div>
-                      <div style={{ flex:1 }}>
-                        <div style={{
-                          color:user.isUser ? '#FFB020' : 'white',
-                          fontSize:'0.85rem', fontWeight:600
-                        }}>{user.name}</div>
-                        <div style={{ color:'var(--text-muted)', fontSize:'0.7rem' }}>
-                          Level {user.level} • {user.xp.toLocaleString()} XP
-                        </div>
-                      </div>
-                      <div style={{ textAlign:'right' }}>
-                        <div style={{ fontSize:'1rem' }}>{user.badge}</div>
-                        <div style={{
-                          fontSize:'0.65rem', fontWeight:600,
-                          color: user.change.includes('↑') ? '#9DCE2C' : 
-                                 user.change.includes('↓') ? '#FF6B5E' : 'var(--text-muted)'
-                        }}>{user.change}</div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
             </div>
           </div>
         </div>

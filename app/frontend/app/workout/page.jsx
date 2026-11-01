@@ -334,6 +334,7 @@ export default function WorkoutPage() {
   const [selected, setSelected] = useState(null)
   const [activeWorkout, setActiveWorkout] = useState(null)
   const [completedExercises, setCompletedExercises] = useState([])
+  const [finishError, setFinishError] = useState('')
   const [myWorkouts, setMyWorkouts] = useState([])
 
   // Real workout history for stats + heatmap
@@ -469,8 +470,10 @@ export default function WorkoutPage() {
     if (completedExercises.length === 0 && !window.confirm('Finish without completing any exercises?')) return
     if (completedExercises.length > 0 && !window.confirm(`Finish workout? ${completedExercises.length} exercise${completedExercises.length === 1 ? '' : 's'} completed.`)) return
 
-    // PR detection: best Epley 1RM per completed exercise from the user's working-set inputs
-    const newPRs = []
+    // PR detection: best Epley 1RM per completed exercise from the user's working-set inputs.
+    // (Computed here, but only SAVED after the backend confirms — otherwise a
+    // failed save followed by a retry would award/duplicate PRs and recap logs.)
+    const pendingPRs = []
     const prs = loadPRs()
     const sessionExercises = []
     for (const idx of completedExercises) {
@@ -478,43 +481,51 @@ export default function WorkoutPage() {
       const input = exInputs[idx] || {}
       const weight = Number(input.weight)
       const reps = Number(input.reps) || parseReps(ex.reps)
-      sessionExercises.push({ name: ex.name, weight: Number.isFinite(weight) ? weight : null, reps })
+      sessionExercises.push({ name: ex.name, sets: ex.sets || null, weight: Number.isFinite(weight) ? weight : null, reps })
       const oneRM = epley1RM(weight, reps)
       if (oneRM == null) continue
       const prev = prs[ex.name]
       if (!prev || oneRM > prev.oneRM) {
-        savePR(ex.name, weight, reps, oneRM)
-        newPRs.push({ name: ex.name, oneRM, prev: prev ? prev.oneRM : null, weight, reps })
+        pendingPRs.push({ name: ex.name, oneRM, prev: prev ? prev.oneRM : null, weight, reps })
       }
     }
-    if (newPRs.length > 0) {
-      setPrCelebration(newPRs)
-      setRealPRs(loadPRs())
-      confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#9DCE2C', '#FF6B5E', '#FFB020', '#7B61FF'] })
-      setTimeout(() => confetti({ particleCount: 90, angle: 60, spread: 60, origin: { x: 0, y: 0.4 }, colors: ['#9DCE2C', '#FFB020'] }), 250)
-      setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 60, origin: { x: 1, y: 0.4 }, colors: ['#9DCE2C', '#FFB020'] }), 400)
-    }
-    // Persist session for the recap page (volume, top exercises)
-    appendSessionLog({
-      date: new Date().toISOString(),
-      name: activeWorkout.name,
-      category: activeWorkout.category,
-      durationMin: Math.max(1, Math.round(timer / 60)),
-      calories: totalVolume,
-      exercises: sessionExercises,
-    })
 
+    // Save the session to the backend WITH its per-exercise detail, so the
+    // history survives a device/browser change. On failure the session stays
+    // mounted with an error + retry — it used to be silently discarded.
     try {
       await workoutsApi.log({
         name: activeWorkout.name || 'Workout',
         duration: Math.max(1, Math.round(timer / 60)),
         calories: totalVolume,
         category: activeWorkout.category || 'Strength',
-        difficulty: activeWorkout.difficulty || 'Intermediate'
+        difficulty: activeWorkout.difficulty || 'Intermediate',
+        exercises: sessionExercises,
+      })
+      // Backend confirmed: now persist PRs, celebrate, and log the recap.
+      for (const pr of pendingPRs) savePR(pr.name, pr.weight, pr.reps, pr.oneRM)
+      if (pendingPRs.length > 0) {
+        setPrCelebration(pendingPRs)
+        setRealPRs(loadPRs())
+        confetti({ particleCount: 160, spread: 80, origin: { y: 0.25 }, colors: ['#9DCE2C', '#FF6B5E', '#FFB020', '#7B61FF'] })
+        setTimeout(() => confetti({ particleCount: 90, angle: 60, spread: 60, origin: { x: 0, y: 0.4 }, colors: ['#9DCE2C', '#FFB020'] }), 250)
+        setTimeout(() => confetti({ particleCount: 90, angle: 120, spread: 60, origin: { x: 1, y: 0.4 }, colors: ['#9DCE2C', '#FFB020'] }), 400)
+      }
+      appendSessionLog({
+        date: new Date().toISOString(),
+        name: activeWorkout.name,
+        category: activeWorkout.category,
+        durationMin: Math.max(1, Math.round(timer / 60)),
+        calories: totalVolume,
+        exercises: sessionExercises,
       })
       loadMyWorkouts()
-    } catch (e) { console.error('Failed to log workout:', e.message) }
-    setTimerRunning(false); setActiveWorkout(null); setExInputs({})
+      setFinishError('')
+      setTimerRunning(false); setActiveWorkout(null); setExInputs({})
+    } catch (e) {
+      console.error('Failed to log workout:', e.message)
+      setFinishError('Could not save this workout — your session is kept. Check your connection and tap Finish again.')
+    }
   }
 
   const card = {
@@ -623,6 +634,13 @@ export default function WorkoutPage() {
                         fontSize:'0.85rem', fontWeight:600
                       }}>✓ Finish</button>
                     </div>
+                    {finishError && (
+                      <div style={{ marginTop:'10px', fontSize:'0.8rem', color:'#FF6B5E',
+                        background:'rgba(255,107,94,0.08)', border:'1px solid rgba(255,107,94,0.3)',
+                        borderRadius:'10px', padding:'10px 12px' }}>
+                        {finishError}
+                      </div>
+                    )}
                   </div>
 
                   {/* Progress */}
