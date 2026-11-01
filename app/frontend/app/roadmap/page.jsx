@@ -69,7 +69,7 @@ export default function RoadmapPage() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12 text-center">
-            <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">🗺️ Our Roadmap</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold break-words text-[var(--text-primary)] mb-2">🗺️ Our Roadmap</h1>
             <p className="text-gray-400">Here's what we're building for NutriAI in 2026 and beyond</p>
           </div>
 

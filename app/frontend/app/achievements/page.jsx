@@ -544,7 +544,7 @@ export default function Achievements() {
             {/* BADGES GRID */}
             <div>
               <div style={{
-                display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',
+                display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(min(280px,100%),1fr))',
                 gap:'16px'
               }}>
                 {filteredBadges.length === 0 && (

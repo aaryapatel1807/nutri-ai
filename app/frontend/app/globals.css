@@ -246,6 +246,15 @@ html[data-theme="dark"] {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(21, 178, 207, 0.15);
 }
+
+/* Visible keyboard focus everywhere (laptop keyboard nav). Many controls
+   set outline:none, which left keyboard users with no focus indicator at
+   all. :focus-visible keeps mouse clicks clean while showing a ring for
+   keyboard focus. */
+:focus-visible {
+  outline: 2px solid #7B61FF;
+  outline-offset: 2px;
+}
 .input-dark::placeholder { color: var(--text-muted); }
 
 /* Glow effects */

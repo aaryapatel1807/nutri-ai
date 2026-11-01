@@ -1499,7 +1499,7 @@ export default function ProfilePage() {
               <motion.div key="apps"
                 initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-20 }}
               >
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'16px' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(min(250px,100%), 1fr))', gap:'16px' }}>
                   {apps.map((app,i) => {
                     const isGFit = app.name === 'Google Fit'
                     // Only Google Fit has a real connection; every other app

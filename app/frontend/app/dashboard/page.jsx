@@ -299,7 +299,8 @@ export default function Dashboard() {
         style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '22px', flexWrap: 'wrap' }}>
         <div style={{ flex: '1 1 220px', minWidth: 0 }}>
           <h1 style={{ fontFamily: "'Clash Display',sans-serif", fontSize: isMobile ? '1.6rem' : '2rem',
-            fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.01em' }}>
+            fontWeight: 700, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.01em',
+            overflowWrap: 'break-word' }}>
             {getGreeting()}, {user.name?.split(' ')[0] || 'there'} 👋
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: '4px 0 0', fontFamily: "'Satoshi',sans-serif" }}>

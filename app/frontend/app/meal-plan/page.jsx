@@ -534,7 +534,7 @@ export default function MealPlanPage() {
                 </div>
 
                 {/* Plans Grid */}
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:'28px' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(min(300px,100%), 1fr))', gap:'28px' }}>
                   {filtered.map((plan, i) => (
                     <motion.div
                       key={plan.id}

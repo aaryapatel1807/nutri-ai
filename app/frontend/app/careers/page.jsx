@@ -77,7 +77,7 @@ export default function CareersPage() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-2">🌟 Join Our Team</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold break-words text-[var(--text-primary)] mb-2">🌟 Join Our Team</h1>
             <p className="text-gray-400">
               Help millions of people achieve their health and fitness goals. We're hiring talented, passionate individuals.
             </p>
